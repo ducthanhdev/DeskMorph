@@ -1,0 +1,1385 @@
+/* DeskMorph Global & Component Styles */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+:root {
+  --bg-dark: #090d16;
+  --bg-card: rgba(20, 27, 45, 0.7);
+  --bg-card-hover: rgba(30, 41, 68, 0.85);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-focus: rgba(72, 185, 199, 0.4);
+  --accent-pop: #48b9c7;
+  --accent-purple: #8b5cf6;
+  --text-main: #f1f5f9;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  background: transparent !important;
+  background-color: transparent !important;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: var(--text-main);
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* =========================================
+   STUDIO (MAIN WINDOW) STYLES
+   ========================================= */
+
+.studio-app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  background: radial-gradient(circle at 10% 10%, rgba(72, 185, 199, 0.06) 0%, transparent 40%),
+              radial-gradient(circle at 90% 90%, rgba(139, 92, 246, 0.06) 0%, transparent 40%),
+              var(--bg-dark);
+}
+
+.toast-feedback {
+  position: fixed;
+  top: 20px;
+  right: 24px;
+  background: rgba(18, 24, 38, 0.95);
+  border: 1px solid var(--accent-pop);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 15px rgba(72, 185, 199, 0.2);
+  padding: 10px 18px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  z-index: 9999;
+  animation: slideInDown 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideInDown {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Header */
+.studio-header {
+  height: 72px;
+  padding: 0 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-subtle);
+  background: rgba(12, 17, 28, 0.6);
+  backdrop-filter: blur(12px);
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.logo-box {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent-pop), var(--accent-purple));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 15px rgba(72, 185, 199, 0.35);
+}
+
+.brand-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-title {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  background: linear-gradient(to right, #fff, #cbd5e1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.version-pill {
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(72, 185, 199, 0.15);
+  color: var(--accent-pop);
+  padding: 2px 8px;
+  border-radius: 20px;
+  border: 1px solid rgba(72, 185, 199, 0.3);
+}
+
+.brand-subtitle {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-top: 1px;
+}
+
+.header-stats {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sys-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border-subtle);
+}
+
+.sys-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.sys-dot.online {
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+}
+
+.stat-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border-subtle);
+}
+
+/* Studio Body & Sidebar */
+.studio-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.studio-nav {
+  width: 220px;
+  padding: 20px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-right: 1px solid var(--border-subtle);
+  background: rgba(10, 14, 24, 0.4);
+}
+
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  position: relative;
+}
+
+.nav-btn:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: #fff;
+}
+
+.nav-btn.active {
+  background: rgba(72, 185, 199, 0.12);
+  color: var(--accent-pop);
+  border: 1px solid rgba(72, 185, 199, 0.25);
+}
+
+.nav-badge {
+  margin-left: auto;
+  font-size: 10px;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--accent-purple), var(--accent-pop));
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+/* Studio Main Workspace */
+.studio-main {
+  flex: 1;
+  padding: 28px 34px;
+  overflow-y: auto;
+}
+
+.studio-main::-webkit-scrollbar {
+  width: 6px;
+}
+.studio-main::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.tab-pane {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 1000px;
+}
+
+.animate-fade {
+  animation: fadeIn 0.25s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.pane-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pane-header h2 {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+}
+
+.pane-header p {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.pane-actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* Buttons */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, var(--accent-pop), #38a5b2);
+  color: #0c1017;
+  font-weight: 700;
+  font-size: 13px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(72, 185, 199, 0.3);
+  transition: all 0.2s;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(72, 185, 199, 0.45);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 15px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Toggle Switch Button */
+.toggle-switch-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s;
+  border: 1px solid transparent;
+}
+
+.toggle-switch-btn.on {
+  background: rgba(16, 185, 129, 0.18);
+  border-color: rgba(16, 185, 129, 0.5);
+  color: #34d399;
+}
+
+.toggle-switch-btn.off {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #f87171;
+}
+
+/* Wallpaper Gallery */
+.hero-wallpaper-card {
+  background: linear-gradient(135deg, rgba(20, 28, 48, 0.8), rgba(12, 16, 28, 0.9));
+  border: 1px solid var(--border-subtle);
+  border-left: 4px solid var(--accent-pop);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.hero-preview-thumb {
+  width: 90px;
+  height: 60px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: #111625;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+}
+
+.hero-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.hero-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.hero-tag {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--accent-pop);
+  letter-spacing: 0.5px;
+}
+
+.hero-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.hero-path {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.custom-folder-row {
+  display: flex;
+  gap: 10px;
+}
+
+.folder-input {
+  flex: 1;
+  background: rgba(15, 20, 32, 0.8);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  color: #fff;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.folder-input:focus {
+  border-color: var(--accent-pop);
+}
+
+.wallpaper-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.wallpaper-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.wallpaper-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(72, 185, 199, 0.4);
+  background: var(--bg-card-hover);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+
+.wallpaper-card.active-card {
+  border-color: var(--accent-pop);
+  box-shadow: 0 0 16px rgba(72, 185, 199, 0.25);
+}
+
+.wallpaper-thumb-wrapper {
+  position: relative;
+  width: 100%;
+  height: 125px;
+  background: #111625;
+  overflow: hidden;
+}
+
+.wallpaper-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.wallpaper-card:hover .wallpaper-thumb-img {
+  transform: scale(1.05);
+}
+
+.active-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: var(--accent-pop);
+  color: #0c1017;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.wallpaper-info {
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.wallpaper-name {
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.quick-apply-btn {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent-pop);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* Taskbar Studio Preview */
+.preview-container {
+  background: rgba(14, 18, 30, 0.9);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  position: relative;
+}
+
+.preview-label {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  letter-spacing: 0.8px;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.preview-desktop-mock {
+  height: 180px;
+  background: radial-gradient(circle at 50% 50%, rgba(72, 185, 199, 0.15), rgba(10, 14, 24, 0.95)), #080c14;
+  border-radius: var(--radius-md);
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 0 20px;
+}
+
+.preview-dock {
+  height: 44px;
+  width: 90%;
+  max-width: 650px;
+  border: 1px solid;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(12px);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mock-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.brand-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.mock-group {
+  display: flex;
+  gap: 8px;
+}
+
+.mock-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.mock-stat-pill {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-family: 'JetBrains Mono', monospace;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 4px 8px;
+  border-radius: 12px;
+}
+
+.mock-clock {
+  font-size: 11px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+}
+
+/* Settings Cards Grid */
+.settings-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.setting-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.setting-card h3 {
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.choice-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.choice-btn {
+  padding: 10px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.choice-btn.selected {
+  background: rgba(72, 185, 199, 0.15);
+  border-color: var(--accent-pop);
+  color: #fff;
+}
+
+.color-palette-row {
+  display: flex;
+  gap: 10px;
+}
+
+.color-choice-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
+}
+
+.color-choice-btn:hover {
+  transform: scale(1.15);
+}
+
+.color-choice-btn.active-color {
+  outline: 3px solid rgba(255, 255, 255, 0.8);
+  outline-offset: 2px;
+}
+
+.slider-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.slider-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent-pop);
+}
+
+.custom-slider {
+  width: 100%;
+  accent-color: var(--accent-pop);
+  cursor: pointer;
+}
+
+/* Widget Toggles */
+.widget-toggle-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 20px;
+}
+
+.widget-toggle-card h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
+.widget-toggle-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--text-main);
+  cursor: pointer;
+}
+
+.toggle-label input[type="checkbox"] {
+  width: 17px;
+  height: 17px;
+  accent-color: var(--accent-pop);
+  cursor: pointer;
+}
+
+/* Presets & Marketplace */
+.presets-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.preset-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.preset-color-bar {
+  height: 8px;
+  width: 100%;
+}
+
+.preset-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.preset-body h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.preset-body p {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.preset-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-bottom: 18px;
+}
+
+.full-width {
+  width: 100%;
+  justify-content: center;
+}
+
+.commercial-banner {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(72, 185, 199, 0.15));
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.banner-text h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.banner-text p {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.pro-pill-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, var(--accent-purple), var(--accent-pop));
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 20px;
+}
+
+/* Settings List */
+.settings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.setting-row {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 18px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.setting-row h4 {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.setting-row p {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.badge-tag {
+  font-size: 12px;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  padding: 6px 12px;
+  border-radius: 6px;
+  color: var(--accent-pop);
+}
+
+/* =========================================
+   TASKBAR (FLOATING DOCK WINDOW) STYLES
+   ========================================= */
+
+.taskbar-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 52px;
+  padding: 0 18px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  user-select: none;
+  overflow: visible; /* Cho phép context menu và flyout vươn lên trên mà không bị cắt mép */
+  gap: 10px;
+  position: relative;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.taskbar-wrapper {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  background: transparent !important;
+  pointer-events: none; /* Vùng đệm 180px+ phía trên cho phép click xuyên qua vào ứng dụng bên dưới */
+  overflow: visible;
+}
+
+.taskbar-wrapper .taskbar-container {
+  pointer-events: auto; /* Chỉ riêng thanh Dock thực tế ở sát đáy mới nhận tương tác */
+}
+
+/* =========================================
+   DOCK GLASSMORPHISM CONTEXT MENU
+   ========================================= */
+
+@keyframes dockContextMenuEnter {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(8px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+
+.dock-context-menu {
+  position: absolute;
+  z-index: 10000;
+  min-width: 195px;
+  max-width: 250px;
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 6px;
+  user-select: none;
+  pointer-events: auto;
+  animation: dockContextMenuEnter 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
+.standalone-context-menu-wrapper {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  background: transparent !important;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.dock-context-menu.standalone {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  border-radius: 12px;
+  animation: none;
+  transform: none !important;
+}
+
+.dock-menu-header {
+  padding: 7px 10px 5px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dock-menu-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #f8fafc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: -0.2px;
+}
+
+.dock-menu-subtitle {
+  font-size: 10.5px;
+  color: var(--text-dim, #64748b);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.dock-menu-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  margin: 4px 6px;
+}
+
+.dock-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 7px 10px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: #e2e8f0;
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
+}
+
+.dock-menu-item:hover {
+  background: rgba(255, 255, 255, 0.09);
+  color: #ffffff;
+}
+
+.dock-menu-item:active {
+  transform: scale(0.98);
+}
+
+.dock-menu-item-danger {
+  color: #f87171;
+}
+
+.dock-menu-item-danger:hover {
+  background: rgba(239, 68, 68, 0.18) !important;
+  color: #fca5a5 !important;
+}
+
+.dock-menu-item-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.dock-edge-trigger {
+  position: fixed;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: transparent;
+  pointer-events: auto;
+  z-index: 99999;
+}
+
+.dock-autohidden {
+  opacity: 0 !important;
+  border-color: transparent !important;
+  border-width: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  pointer-events: none !important;
+}
+
+.dock-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.dock-launcher-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(72, 185, 199, 0.35);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  flex-shrink: 0;
+}
+
+.dock-launcher-btn:hover {
+  transform: scale(1.08);
+}
+
+.dock-divider {
+  width: 1px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.12);
+  flex-shrink: 0;
+}
+
+.dock-apps {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 8px;
+  flex: 1;
+  overflow: visible;
+  padding: 0 4px;
+  padding-bottom: 6px;
+  height: 100%;
+}
+
+.dock-apps::-webkit-scrollbar {
+  display: none;
+}
+
+.dock-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.running-app-icon-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  transform-origin: bottom center;
+  transform: scale(var(--magnify-scale, 1));
+  will-change: transform;
+  transition: transform 0.18s cubic-bezier(0.2, 0, 0, 1), background 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+  padding: 0;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
+}
+
+/* Khi đang lướt chuột theo sóng Cosine, bám dính tức thì 60 FPS không bị delay */
+.dock-apps.is-magnifying .running-app-icon-btn {
+  transition: transform 0s linear, background 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+}
+
+.running-app-icon-btn:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+}
+
+.running-app-icon-btn.app-active {
+  box-shadow: 0 0 12px rgba(72, 185, 199, 0.35);
+}
+
+.dock-pinned-group, .dock-unpinned-group {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  height: 100%;
+}
+
+.dock-apps-separator {
+  width: 2px;
+  height: 20px;
+  border-radius: 1px;
+  background: rgba(255, 255, 255, 0.16);
+  margin: 0 2px;
+  margin-bottom: 8px;
+  flex-shrink: 0;
+}
+
+/* macOS Dock Bouncing Launch Animation & Floor Shadow Physics */
+@keyframes dockAppBounce {
+  0%, 100% {
+    transform: translateY(0) scaleX(1.06) scaleY(0.94);
+    animation-timing-function: cubic-bezier(0.28, 0.84, 0.42, 1);
+  }
+  35% {
+    transform: translateY(-9px) scaleX(0.96) scaleY(1.04);
+    animation-timing-function: cubic-bezier(0.77, 0, 0.175, 1);
+  }
+  65% {
+    transform: translateY(-3px) scaleX(0.98) scaleY(1.02);
+    animation-timing-function: cubic-bezier(0.28, 0.84, 0.42, 1);
+  }
+  80% {
+    transform: translateY(0) scaleX(1.04) scaleY(0.96);
+    animation-timing-function: cubic-bezier(0.28, 0.84, 0.42, 1);
+  }
+  90% {
+    transform: translateY(-1.2px) scaleX(0.99) scaleY(1.01);
+    animation-timing-function: cubic-bezier(0.77, 0, 0.175, 1);
+  }
+}
+
+/* Dynamic Floor Shadow/Glow: Loang rộng & đậm khi chạm đất, mờ & thu nhỏ khi nảy cao */
+@keyframes dockFloorShadowBounce {
+  0%, 100% {
+    transform: translateX(-50%) scaleX(1.35) scaleY(1.1);
+    opacity: 0.95;
+    filter: blur(1.2px);
+    animation-timing-function: cubic-bezier(0.28, 0.84, 0.42, 1);
+  }
+  35% {
+    transform: translateX(-50%) scaleX(0.35) scaleY(0.4);
+    opacity: 0.15;
+    filter: blur(4.5px);
+    animation-timing-function: cubic-bezier(0.77, 0, 0.175, 1);
+  }
+  65% {
+    transform: translateX(-50%) scaleX(0.8) scaleY(0.75);
+    opacity: 0.55;
+    filter: blur(2.5px);
+    animation-timing-function: cubic-bezier(0.28, 0.84, 0.42, 1);
+  }
+  80% {
+    transform: translateX(-50%) scaleX(1.22) scaleY(1.05);
+    opacity: 0.88;
+    filter: blur(1.5px);
+    animation-timing-function: cubic-bezier(0.28, 0.84, 0.42, 1);
+  }
+  90% {
+    transform: translateX(-50%) scaleX(0.95) scaleY(0.88);
+    opacity: 0.72;
+    filter: blur(2px);
+    animation-timing-function: cubic-bezier(0.77, 0, 0.175, 1);
+  }
+}
+
+.running-app-icon-btn.app-launching {
+  border-color: var(--launch-border, rgba(72, 185, 199, 0.4)) !important;
+  box-shadow: 0 0 12px var(--launch-glow, rgba(72, 185, 199, 0.25)) !important;
+}
+
+.running-app-icon-btn.app-idle:hover {
+  opacity: 1 !important;
+  background: rgba(255, 255, 255, 0.09) !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+.app-icon-glyph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+  transition: transform 0.15s ease;
+  will-change: transform;
+}
+
+.app-icon-glyph.glyph-bouncing {
+  animation: dockAppBounce 0.85s infinite;
+}
+
+/* Dynamic Shadow / Light Reflection beneath the bouncing icon */
+.dock-launch-shadow {
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  width: 22px;
+  height: 5px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(
+    ellipse at center,
+    var(--shadow-color, rgba(72, 185, 199, 0.95)) 0%,
+    rgba(72, 185, 199, 0.35) 45%,
+    rgba(0, 0, 0, 0.75) 75%,
+    transparent 100%
+  );
+  box-shadow: 0 0 8px var(--shadow-color, rgba(72, 185, 199, 0.5));
+  animation: dockFloorShadowBounce 0.85s infinite;
+  will-change: transform, opacity, filter;
+}
+
+.running-dot {
+  position: absolute;
+  bottom: 2px;
+  border-radius: 3px;
+  transition: all 0.25s ease;
+}
+
+.running-dot.dot-inactive {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  opacity: 0.6;
+}
+
+.running-dot.dot-active {
+  width: 12px;
+  height: 3px;
+  border-radius: 3px;
+  opacity: 1;
+}
+
+.dock-icon-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dock-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+  color: #fff;
+}
+
+.stat-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 5px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.stat-bar-mini {
+  width: 38px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.stat-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+.stat-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  color: #e2e8f0;
+}
+
+.dock-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dock-action-btn:hover {
+  background: var(--accent-pop);
+  color: #0c1017;
+}
+
+.clock-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.clock-time {
+  font-size: 13px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.2px;
+}
+
+.clock-date {
+  font-size: 10px;
+  color: var(--text-dim);
+  font-weight: 500;
+}
