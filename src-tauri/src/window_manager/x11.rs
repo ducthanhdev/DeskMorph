@@ -238,7 +238,10 @@ fn client_ids(properties: &str) -> Result<Vec<u64>, String> {
         .collect()
 }
 fn parse_window(wid: &str, info: &str, active: Option<u64>, own_pid: u32) -> Option<OpenWindow> {
-    if info.contains("_NET_WM_WINDOW_TYPE_DOCK") || info.contains("_NET_WM_WINDOW_TYPE_DESKTOP") {
+    let excluded_type = property(info, "_NET_WM_WINDOW_TYPE")
+        .and_then(|line| line.split_once('='))
+        .is_some_and(|(_, values)| values.split(',').any(|value| matches!(value.trim(), "_NET_WM_WINDOW_TYPE_DOCK" | "_NET_WM_WINDOW_TYPE_DESKTOP")));
+    if excluded_type {
         return None;
     }
     if property(info, "_NET_WM_PID")
@@ -337,6 +340,16 @@ mod tests {
         assert!(listed_xid("0x100000000", clients).is_err());
         assert!(listed_xid("0x2", clients).is_err());
         assert!(listed_xid("0x12", "_NET_CLIENT_LIST: not found.").is_err());
+    }
+    #[test]
+    fn internal_filter_uses_pid_and_type_property_not_title_or_class_text() {
+        let info = "WM_CLASS(STRING) = \"deskmorph\", \"Deskmorph\"\n_NET_WM_NAME(UTF8_STRING) = \"DeskMorph Studio _NET_WM_WINDOW_TYPE_DOCK\"\n_NET_WM_PID(CARDINAL) = 123\n_NET_WM_WINDOW_TYPE(ATOM) = _NET_WM_WINDOW_TYPE_NORMAL";
+        assert!(parse_window("0x12", info, Some(0x12), 999).unwrap().is_active);
+        assert!(parse_window("0x12", info, None, 123).is_none());
+        for kind in ["_NET_WM_WINDOW_TYPE_DOCK", "_NET_WM_WINDOW_TYPE_DESKTOP"] {
+            let panel = info.replace("= _NET_WM_WINDOW_TYPE_NORMAL", &format!("= _NET_WM_WINDOW_TYPE_NORMAL, {kind}"));
+            assert!(parse_window("0x12", &panel, None, 999).is_none());
+        }
     }
     #[test]
     fn parses_unicode_escaped_titles_and_exact_active_id() {

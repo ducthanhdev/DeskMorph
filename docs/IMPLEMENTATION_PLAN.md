@@ -67,7 +67,7 @@ Phụ thuộc G1. Module dự kiến: platform/capabilities, window-manager/x11,
 - [ ] G2.9 Chuẩn hóa tọa độ logical/physical, monitor origin và work area; tính vị trí từ kích thước Dock thực, clamp popup vào màn hình.
 - [ ] G2.10 Kiểm tra Dock trên/dưới, monitor bên trái có tọa độ âm, scale 100/125/150/200%, màn hình hỗn hợp DPI và đổi độ phân giải.
 - [ ] G2.11 Chọn màn hình đặt Dock; xử lý rút/cắm màn hình và fallback về màn hình còn lại. Dock trên tất cả màn hình là phần mở rộng sau khi chế độ chọn một màn hình ổn định.
-- [ ] G2.12 Tránh hiển thị cửa sổ nội bộ DeskMorph trong danh sách app; active indicator phải chính xác với ID cửa sổ.
+- [x] G2.12 Tránh hiển thị cửa sổ nội bộ DeskMorph trong danh sách app; active indicator phải chính xác với ID cửa sổ.
 
 Tiêu chí: không bị cắt popup, không đóng nhầm, không popup mồ côi; danh sách và Dock cùng phản ánh trạng thái. Test thuần cho geometry/grouping, kiểm thử desktop cho focus/outside-click/DPI và hotplug nếu có thiết bị.
 
