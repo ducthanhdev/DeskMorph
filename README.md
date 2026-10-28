@@ -99,6 +99,7 @@ cargo build --offline --manifest-path src-tauri/Cargo.toml --target-dir src-taur
 /usr/bin/python3 tests/desktop_smoke.py --tooltip-smoke
 /usr/bin/python3 tests/desktop_smoke.py --launch-smoke
 /usr/bin/python3 tests/desktop_smoke.py --overflow-smoke
+/usr/bin/python3 tests/desktop_smoke.py --layout-smoke
 /usr/bin/python3 tests/desktop_smoke.py --window-list-smoke
 /usr/bin/python3 tests/desktop_smoke.py --lifecycle-smoke
 /usr/bin/python3 tests/desktop_smoke.py --registration-smoke
@@ -106,6 +107,8 @@ cargo build --offline --manifest-path src-tauri/Cargo.toml --target-dir src-taur
 /usr/bin/python3 tests/desktop_smoke.py --force-close-smoke --wallpaper-smoke
 /usr/bin/python3 tests/desktop_smoke.py --system-smoke --system-open-smoke
 ```
+
+Ca `--layout-smoke` tạm bật/tắt `org.gnome.desktop.interface enable-animations` để kiểm tra reduced-motion thật của WebKit, rồi khôi phục preference GNOME và toàn bộ cấu hình test trong `finally`.
 
 Các ca `--system-open-smoke` hiện dành cho COSMIC Files trên máy tham chiếu. Xem PROGRESS.md để biết các ca service lỗi, scheduler và thư viện lớn. Báo cáo nằm trong `/tmp/deskmorph-desktop-test`; không suy diễn một lần pass thành hỗ trợ mọi desktop.
 

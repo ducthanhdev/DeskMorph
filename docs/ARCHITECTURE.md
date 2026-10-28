@@ -115,3 +115,11 @@ Dock dùng data-dock-tooltip cho pin, nhóm cửa sổ và các widget; useDockT
 ## Overflow ứng dụng trên Dock
 
 Chiều rộng mong muốn lấy từ nội dung thực (nhóm pin, unpinned và widget), native layout giới hạn theo work area với lề 16 logical px. Phần ứng dụng cuộn ngang độc lập, widget không co lại. Khi nội dung vượt viewport, hai nút cuộn có nhãn vi/en xuất hiện; nút ở biên disabled, mỗi lần đi khoảng 80% viewport. Giảm hoạt ảnh dùng cuộn tức thời. Tab vào button được WebKit cuộn vào vùng nhìn thấy. ResizeObserver và scroll listener cập nhật trạng thái, được dọn khi effect kết thúc; so scrollWidth với toàn viewport trước khi trừ nút để tránh nút tự gây overflow. Khi pin giảm hoặc widget thay kích thước, Dock đo và thu lại theo nội dung; popup đang mở vẫn hoãn native resize tới lúc đóng như trước.
+
+## Animation và vùng tương tác của icon
+
+Mỗi ứng dụng có button với slot cố định theo chiều cao Dock và kích thước lớn nhất của hình trong animation. Bên trong là tile nền theo iconSize, lớp visual chỉ phóng to và lớp glyph chỉ nảy; các lớp trang trí không nhận pointer events. Cả pin và nhóm unpinned dùng cùng cấu trúc. Button, native hit bounds và focus outline không scale theo hover; kéo thả và tooltip vẫn nhận sự kiện từ button. Badge/count và running dot ở trong tile.
+
+dockMetrics giữ giới hạn kích thước, glyph, scale, khoảng nảy và slot; chiều cao tối thiểu vẫn 40 px, iconSize 24–56 px được giới hạn theo chiều cao, spacing 0–24 px. Scale và squash được giữ trong chiều rộng slot, độ nảy được giảm khi thiếu khoảng trống dọc. Nhóm icon căn giữa viewport; glyph SVG dự phòng và ảnh dùng cùng kích thước. CPU/RAM chuyển sang hàng ngang khi Dock thấp, text phần trăm có chiều rộng ổn định. prefers-reduced-motion được nghe trực tiếp qua matchMedia; lựa chọn app hoặc hệ thống đều dừng magnification/bounce/shadow và dùng cuộn tức thời.
+
+Native layout smoke đọc pixels bằng XGetImage từ X server sau mỗi resize, tránh allocation cũ của GDK foreign window. Nó đối chiếu cả accessible bounds cố định, pixel envelope và marker launch, đồng thời kiểm thử thay đổi live preference GNOME rồi khôi phục. Unit envelope bao phủ từng kích thước hợp lệ; không thay cho mixed DPI/hotplug hay kiểm tra indicator ở các mức biên.

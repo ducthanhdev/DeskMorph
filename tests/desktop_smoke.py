@@ -90,13 +90,14 @@ if __name__ == '__main__':
     parser.add_argument('--tooltip-smoke', action='store_true')
     parser.add_argument('--launch-smoke', action='store_true')
     parser.add_argument('--overflow-smoke', action='store_true')
+    parser.add_argument('--layout-smoke', action='store_true')
     parser.add_argument('--environment', action='store_true')
     parser.add_argument('--platform-tool-missing', action='store_true', help='Read-only startup check with an empty PATH in the isolated app')
     args = parser.parse_args()
     if args.audio_tool_missing: args.audio_unavailable = True
     if args.force_close_smoke: args.launcher_smoke = True
     if args.popup_smoke: args.restart = True
-    if args.window_list_smoke or args.reorder_smoke or args.tooltip_smoke or args.launch_smoke or args.overflow_smoke: args.restart = True
+    if args.window_list_smoke or args.reorder_smoke or args.tooltip_smoke or args.launch_smoke or args.overflow_smoke or args.layout_smoke: args.restart = True
     if args.platform_tool_missing: args.restart = True
     if args.scheduler_smoke: args.wallpaper_smoke = True
     if args.environment:
@@ -110,7 +111,7 @@ if __name__ == '__main__':
             raise RuntimeError('Cannot verify GNOME lock state; no native input will be sent')
         if re.search(r'\btrue\b', result.stdout):
             raise RuntimeError('GNOME desktop is locked; unlock it before native UI tests. No input was sent.')
-    input_tests = any((args.action, args.screenshot, args.basic, args.popup_smoke, args.autohide_smoke, args.shortcut_smoke, args.lifecycle_smoke, args.registration_smoke, args.window_list_smoke, args.reorder_smoke, args.tooltip_smoke, args.launch_smoke, args.overflow_smoke, args.launcher_smoke, args.studio_smoke, args.config_smoke,
+    input_tests = any((args.action, args.screenshot, args.basic, args.popup_smoke, args.autohide_smoke, args.shortcut_smoke, args.lifecycle_smoke, args.registration_smoke, args.window_list_smoke, args.reorder_smoke, args.tooltip_smoke, args.launch_smoke, args.overflow_smoke, args.layout_smoke, args.launcher_smoke, args.studio_smoke, args.config_smoke,
                        args.wallpaper_smoke, args.scheduler_smoke, args.library_stress, args.audio_smoke, args.media_smoke,
                        args.audio_exit, args.audio_unavailable, args.system_smoke, args.system_unavailable, args.system_open_smoke))
     if input_tests: require_unlocked_desktop()
@@ -240,6 +241,15 @@ if __name__ == '__main__':
                 f'[Desktop Entry]\nType=Application\nName=DeskMorph Overflow {index:02}\n'
                 f'Exec=/usr/bin/touch /tmp/deskmorph-desktop-test/overflow-launched-{index:02}\n'
                 f'Icon=utilities-terminal\nStartupWMClass=DeskMorphOverflow{index:02}\nCategories=Utility;\n')
+    if args.layout_smoke:
+        root = Path('/tmp/deskmorph-desktop-test')
+        (root / 'layout-icon.svg').write_text('<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64"><path fill="#ff00ff" d="M0 0h64v64H0z"/></svg>')
+        desktop_dir = root / 'data/applications'
+        desktop_dir.mkdir(parents=True, exist_ok=True)
+        (desktop_dir / 'deskmorph-layout.desktop').write_text(
+            '[Desktop Entry]\nType=Application\nName=DeskMorph Layout Fixture\n'
+            'Exec=/usr/bin/touch /tmp/deskmorph-desktop-test/layout-launched\n'
+            f'Icon={root / "layout-icon.svg"}\nStartupWMClass=DeskMorphLayout\nCategories=Utility;\n')
     if args.restart:
         try:
             previous = test_app()
@@ -646,6 +656,9 @@ if __name__ == '__main__':
         click('Taskbar Studio')
         if json.loads(baseline_path.read_text())['config']['autoHide']:
             click('Tự động ẩn Dock Chạm cạnh màn hình để hiện lại; Dock giữ hiện khi bạn thao tác popup.')
+    if args.layout_smoke:
+        from dock_layout_smoke import run
+        run(app, TEST_CONFIG, click, focus_studio, native_keys, native_click_node, require_unlocked_desktop, assert_pointer_over_test_app)
     if args.overflow_smoke:
         gi.require_version('Gdk', '3.0'); gi.require_version('GdkX11', '3.0')
         from gi.repository import Gdk, GdkX11
@@ -1099,8 +1112,16 @@ if __name__ == '__main__':
             if not reorder_original['enabled']: click('Bật Dock')
             if reorder_original['autoHide']: click('Tự động ẩn Dock Chạm cạnh màn hình để hiện lại; Dock giữ hiện khi bạn thao tác popup.')
             if reorder_snapshot()['config']['position'] != 'top': click('Trên đỉnh màn hình')
+            native_keys(chord=[0xff1b])  # Dismiss the native select menu before opening a WebView popup.
+            wait_reorder(lambda: reorder_snapshot()['config']['position'] == 'top', 'Dock position did not persist')
+            def reorder_launcher_focused():
+                active = re.search(r'0x[0-9a-fA-F]+', subprocess.check_output(['xprop', '-root', '_NET_ACTIVE_WINDOW'], text=True)).group(0)
+                props = subprocess.check_output(['xprop', '-id', active, '_NET_WM_PID', '_NET_WM_NAME'], text=True)
+                return 'DeskMorph Context Menu' in props and re.search(r'_NET_WM_PID.*= ' + str(app.get_process_id()) + r'\b', props)
             for letter in 'ABC':
-                click('Tìm ứng dụng')
+                focus_studio()
+                native_click_node(next(n for n, _ in descendants(app) if n.get_name() == 'Tìm ứng dụng' and n.get_role_name() == 'button'))
+                wait_reorder(reorder_launcher_focused, 'Launcher did not receive native focus; no text will be sent')
                 entry = next(n for n, _ in descendants(app) if n.get_name() == 'Tìm ứng dụng' and n.get_role_name() == 'entry')
                 assert entry.get_component_iface().grab_focus(); time.sleep(0.2)
                 native_keys(value='deskmorph reorder')

@@ -1083,7 +1083,7 @@ body {
   flex-shrink: 0;
 }
 
-.dock-launcher-btn:hover {
+.dock-launcher-btn:hover > svg {
   transform: scale(1.08);
 }
 
@@ -1120,38 +1120,48 @@ body {
 .running-app-icon-btn {
   width: 36px;
   height: 36px;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 0;
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   position: relative;
-  transform-origin: bottom center;
-  transform: scale(var(--magnify-scale, 1));
-  will-change: transform;
-  transition: transform 0.18s cubic-bezier(0.2, 0, 0, 1), background 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+  transition: background 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
   padding: 0;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   flex-shrink: 0;
+}
+.app-icon-tile {
+  width: var(--icon-size, 36px);
+  height: var(--icon-size, 36px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  flex-shrink: 0;
+  pointer-events: none;
+  border-radius: 10px;
+  border: 1px solid var(--icon-border, rgba(255, 255, 255, .08));
+  background: var(--icon-background, rgba(255, 255, 255, .03));
+  box-shadow: 0 4px 10px rgba(0, 0, 0, .2);
 }
 
 /* Khi đang lướt chuột theo sóng Cosine, bám dính tức thì 60 FPS không bị delay */
-.dock-apps.is-magnifying .running-app-icon-btn {
+.dock-apps.is-magnifying .app-icon-visual {
   transition: transform 0s linear, background 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
 }
 
-.running-app-icon-btn:hover {
+.running-app-icon-btn:hover .app-icon-tile {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
 }
 
-.running-app-icon-btn.app-active {
+.running-app-icon-btn.app-active .app-icon-tile {
   box-shadow: 0 0 12px rgba(72, 185, 199, 0.35);
 }
 
 .dock-pinned-group, .dock-unpinned-group {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   gap: 8px;
   height: 100%;
 }
@@ -1173,11 +1183,11 @@ body {
     animation-timing-function: cubic-bezier(0.28, 0.84, 0.42, 1);
   }
   35% {
-    transform: translateY(-9px) scaleX(0.96) scaleY(1.04);
+    transform: translateY(calc(-1 * var(--bounce-distance, 9px))) scaleX(0.96) scaleY(1.04);
     animation-timing-function: cubic-bezier(0.77, 0, 0.175, 1);
   }
   65% {
-    transform: translateY(-3px) scaleX(0.98) scaleY(1.02);
+    transform: translateY(calc(-.3333 * var(--bounce-distance, 9px))) scaleX(0.98) scaleY(1.02);
     animation-timing-function: cubic-bezier(0.28, 0.84, 0.42, 1);
   }
   80% {
@@ -1185,7 +1195,7 @@ body {
     animation-timing-function: cubic-bezier(0.28, 0.84, 0.42, 1);
   }
   90% {
-    transform: translateY(-1.2px) scaleX(0.99) scaleY(1.01);
+    transform: translateY(calc(-.1333 * var(--bounce-distance, 9px))) scaleX(0.99) scaleY(1.01);
     animation-timing-function: cubic-bezier(0.77, 0, 0.175, 1);
   }
 }
@@ -1224,18 +1234,27 @@ body {
   }
 }
 
-.running-app-icon-btn.app-launching {
+.running-app-icon-btn.app-launching .app-icon-tile {
   border-color: var(--launch-border, rgba(72, 185, 199, 0.4)) !important;
   box-shadow: 0 0 12px var(--launch-glow, rgba(72, 185, 199, 0.25)) !important;
 }
 
-.running-app-icon-btn.app-idle:hover {
-  opacity: 1 !important;
+.running-app-icon-btn.app-idle:hover { opacity: 1 !important; }
+.running-app-icon-btn.app-idle:hover .app-icon-tile {
   background: rgba(255, 255, 255, 0.09) !important;
   border-color: rgba(255, 255, 255, 0.18) !important;
 }
 
+.app-icon-visual {
+  display: flex;
+  pointer-events: none;
+  transform: scale(var(--magnify-scale, 1));
+  transition: transform .18s cubic-bezier(.2, 0, 0, 1);
+}
+
 .app-icon-glyph {
+  width: var(--glyph-size, 24px);
+  height: var(--glyph-size, 24px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1244,6 +1263,7 @@ body {
   transition: transform 0.15s ease;
   will-change: transform;
 }
+.app-icon-glyph > img, .app-icon-glyph > svg { width: 100%; height: 100%; }
 
 .app-icon-glyph.glyph-bouncing {
   animation: dockAppBounce 0.85s infinite;
@@ -1337,11 +1357,15 @@ body {
 }
 
 .stat-text {
+  min-width: 4ch;
+  text-align: right;
   font-family: ui-monospace, monospace;
   font-size: 11px;
   font-weight: 700;
   color: #e2e8f0;
 }
+.stats-section { display: flex; flex-direction: var(--stats-direction, column); gap: 2px; }
+.stats-section .stat-pill { padding: 2px 10px; }
 
 .dock-action-btn {
   display: flex;
@@ -1380,10 +1404,6 @@ body {
 .clock-section.interactive-widget:hover {
   background: rgba(255, 255, 255, 0.08);
   box-shadow: 0 0 12px rgba(72, 185, 199, 0.25);
-}
-
-.clock-section.interactive-widget:active {
-  transform: scale(0.96);
 }
 
 .clock-time {
@@ -1616,7 +1636,7 @@ body {
 
 /* Grouped windows and their standalone picker. */
 .dock-window-count {
-  position: absolute; top: -5px; right: -5px; min-width: 17px;
+  position: absolute; top: 0; right: 0; min-width: 17px;
   padding: 1px 4px; border-radius: 9px; background: #48b9c7;
   color: #08131b; font-size: 10px; font-weight: 800; pointer-events: none;
 }
@@ -1678,13 +1698,14 @@ button:focus-visible { outline: 2px solid #48b9c7; outline-offset: -2px; }
 .dock-scroll-btn:disabled { opacity: .35; cursor: default; }
 .dock-apps { min-width: 0; overflow-x: auto; overflow-y: hidden; justify-content: flex-start; align-items: center; padding: 4px; }
 .dock-pinned-group, .dock-unpinned-group { gap: var(--icon-spacing, 8px); flex-shrink: 0; }
-.running-app-icon-btn { transform-origin: center; }
 .running-app-icon-btn.is-dragging { opacity: .35 !important; }
 .running-app-icon-btn.is-drop-target { outline: 2px solid var(--dock-accent, #48b9c7); outline-offset: -2px; }
 .dock-pinned-group { touch-action: none; user-select: none; }
 .app-icon-glyph img { object-fit: contain; }
 .reduce-motion *, .reduce-motion { animation: none !important; transition: none !important; }
+.reduce-motion .dock-launcher-btn:hover > svg { transform: none; }
 @media (prefers-reduced-motion: reduce) {
+  .dock-launcher-btn:hover > svg { transform: none; }
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
 }
 

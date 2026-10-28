@@ -205,7 +205,7 @@ export const Taskbar: React.FC = () => {
     };
   }, []);
 
-  const { height: currentHeight, iconSize: btnSize, maxScale } = dockMetrics(config);
+  const { height: currentHeight, iconSize: btnSize, maxScale, hitWidth, hitHeight } = dockMetrics(config);
   const isHidden = Boolean(config.autoHide && !isHovered && !previewVisible && !contextMenuVisible && !popupVisible);
 
   // Sync window physical size when hidden state changes
@@ -289,7 +289,7 @@ export const Taskbar: React.FC = () => {
       iconRefs.current.forEach((el, id) => {
         if (!el) return;
         const rect = el.getBoundingClientRect();
-        // Since transform-origin is bottom center, horizontal center is invariant under scaling
+        // The button stays fixed; only its decorative visual layer is scaled.
         const centerX = rect.left + rect.width / 2;
         const d = Math.abs(centerX - mouseViewportX);
 
@@ -775,16 +775,16 @@ export const Taskbar: React.FC = () => {
                       : `${pinned.name} (Đã ghim - Nhấn để mở)`
                   }
                   style={{
-                    width: `${btnSize}px`,
-                    height: `${btnSize}px`,
+                    width: `${hitWidth}px`,
+                    height: `${hitHeight}px`,
                     ["--magnify-scale" as string]: magnifyScale,
                     color: visual.color,
-                    background: isActive
+                    ["--icon-background" as string]: isActive
                       ? visual.bg
                       : isRunning
                       ? "rgba(255, 255, 255, 0.08)"
                       : "rgba(255, 255, 255, 0.03)",
-                    borderColor: isActive
+                    ["--icon-border" as string]: isActive
                       ? visual.border
                       : isRunning
                       ? "rgba(255, 255, 255, 0.12)"
@@ -794,13 +794,14 @@ export const Taskbar: React.FC = () => {
                     ["--launch-glow" as string]: visual.bg,
                   }}
                 >
-                  <span
+                  <span className="app-icon-tile">
+                  <span className="app-icon-visual"><span
                     className={`app-icon-glyph ${
                       isLaunching && config.bouncingLaunch !== false && !reducedMotion ? "glyph-bouncing" : ""
                     }`}
                   >
                     {installed?.iconPath ? <AppIcon path={installed.iconPath} size={Math.round(btnSize * .68)} /> : visual.icon}
-                  </span>
+                  </span></span>
 
                   {/* Dynamic Floor Shadow / Glow beneath bouncing icon */}
                   {isLaunching && config.dynamicShadow !== false && !reducedMotion && (
@@ -823,6 +824,7 @@ export const Taskbar: React.FC = () => {
                       }}
                     />
                   )}
+                  </span>
                 </button>
               );
             })}
@@ -870,15 +872,16 @@ export const Taskbar: React.FC = () => {
                     }
                     data-dock-tooltip={`${win.class_name} • ${count("window", windows.length)} • ${t("selectWindow")}`}
                     style={{
-                      width: `${btnSize}px`,
-                      height: `${btnSize}px`,
+                      width: `${hitWidth}px`,
+                      height: `${hitHeight}px`,
                       ["--magnify-scale" as string]: magnifyScale,
                       color: visual.color,
-                      background: isActive ? visual.bg : "rgba(255, 255, 255, 0.05)",
-                      borderColor: isActive ? visual.border : "rgba(255, 255, 255, 0.08)",
+                      ["--icon-background" as string]: isActive ? visual.bg : "rgba(255, 255, 255, 0.05)",
+                      ["--icon-border" as string]: isActive ? visual.border : "rgba(255, 255, 255, 0.08)",
                     }}
                   >
-                    <span className="app-icon-glyph">{installed?.iconPath ? <AppIcon path={installed.iconPath} size={Math.round(btnSize * .68)} /> : visual.icon}</span>
+                    <span className="app-icon-tile">
+                    <span className="app-icon-visual"><span className="app-icon-glyph">{installed?.iconPath ? <AppIcon path={installed.iconPath} size={Math.round(btnSize * .68)} /> : visual.icon}</span></span>
                     {windows.length > 1 && <span className="dock-window-count">{windows.length}</span>}
                     <span
                       className={`running-dot ${isActive ? "dot-active" : "dot-inactive"}`}
@@ -887,6 +890,7 @@ export const Taskbar: React.FC = () => {
                         boxShadow: isActive ? `0 0 8px ${visual.color}` : "none",
                       }}
                     />
+                    </span>
                   </button>
                 );
               })}
