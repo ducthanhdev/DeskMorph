@@ -72,6 +72,7 @@ if __name__ == '__main__':
     parser.add_argument('--registration-smoke', action='store_true')
     parser.add_argument('--studio-smoke', action='store_true')
     parser.add_argument('--config-smoke', action='store_true')
+    parser.add_argument('--command-errors-smoke', action='store_true')
     parser.add_argument('--wallpaper-smoke', action='store_true')
     parser.add_argument('--scheduler-smoke', action='store_true')
     parser.add_argument('--system-open-smoke', action='store_true')
@@ -121,7 +122,7 @@ if __name__ == '__main__':
             raise RuntimeError('Cannot verify GNOME lock state; no native input will be sent')
         if re.search(r'\btrue\b', result.stdout):
             raise RuntimeError('GNOME desktop is locked; unlock it before native UI tests. No input was sent.')
-    input_tests = any((args.action, args.screenshot, args.basic, args.popup_smoke, args.autohide_smoke, args.shortcut_smoke, args.lifecycle_smoke, args.registration_smoke, args.window_list_smoke, args.reorder_smoke, args.tooltip_smoke, args.launch_smoke, args.overflow_smoke, args.layout_smoke, args.indicator_smoke, args.mapping_smoke, args.internal_smoke, args.polling_smoke, args.launcher_smoke, args.studio_smoke, args.config_smoke,
+    input_tests = any((args.action, args.screenshot, args.basic, args.popup_smoke, args.autohide_smoke, args.shortcut_smoke, args.lifecycle_smoke, args.registration_smoke, args.window_list_smoke, args.reorder_smoke, args.tooltip_smoke, args.launch_smoke, args.overflow_smoke, args.layout_smoke, args.indicator_smoke, args.mapping_smoke, args.internal_smoke, args.polling_smoke, args.launcher_smoke, args.studio_smoke, args.config_smoke, args.command_errors_smoke,
                        args.wallpaper_smoke, args.scheduler_smoke, args.library_stress, args.audio_smoke, args.media_smoke,
                        args.audio_exit, args.audio_unavailable, args.system_smoke, args.system_unavailable, args.system_open_smoke))
     if input_tests: require_unlocked_desktop()
@@ -1954,6 +1955,9 @@ if __name__ == '__main__':
                              'language persists and synchronizes to Dock', 'reset review and cancellation', 'native export dialog cancellation', 'confirmed reset scope and undo'], 'pid': app.get_process_id()}
         print(json.dumps(report, ensure_ascii=False))
         Path('/tmp/deskmorph-desktop-test/studio-result.json').write_text(json.dumps(report, ensure_ascii=False, indent=2))
+    if args.command_errors_smoke:
+        from command_errors_smoke import run
+        run(app, TEST_CONFIG, click, focus_studio, native_keys, type_entry, native_click_node)
     if args.config_smoke:
         focus_studio()
         click('Hệ thống')

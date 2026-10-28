@@ -1,7 +1,7 @@
 import { useConfig } from "../config/store";
 import { useI18n } from "../i18n/useI18n";
 import React, { useState, useEffect } from "react";
-import { invoke } from "@tauri-apps/api/core";
+import { invoke } from "../ipc";
 import { listen } from "@tauri-apps/api/event";
 import { useClock } from "../hooks/useClock";
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Clock } from "lucide-react";

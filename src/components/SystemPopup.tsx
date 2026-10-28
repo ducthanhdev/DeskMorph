@@ -1,5 +1,6 @@
+import { CommandError } from "../commandError";
 import { useEffect, useRef, useState } from "react";
-import { invoke } from "@tauri-apps/api/core";
+import { invoke } from "../ipc";
 import { useI18n } from "../i18n/useI18n";
 import { usePolling } from "../hooks/usePolling";
 import { useSystemStatus } from "../hooks/useSystemStatus";
@@ -36,7 +37,7 @@ export function SystemPopup({ generation }: { generation?: number }) {
     if (!active.current || changing.current) return;
     changing.current = true; setBusy(true); setError(null);
     try { await invoke("open_system_location", { location }); }
-    catch (e) { if (active.current) setError(String(e) === "downloads_missing" ? t("downloadsMissing") : `${t("systemOpenError")} (${String(e)})`); }
+    catch (e) { if (active.current) setError(e instanceof CommandError && e.code === "downloads_missing" ? t("downloadsMissing") : `${t("systemOpenError")} (${String(e)})`); }
     finally { changing.current = false; if (active.current) setBusy(false); }
   };
   return <section className="audio-popup system-popup" ref={root} aria-label={t("systemTools")}>

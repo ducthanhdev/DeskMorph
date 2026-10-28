@@ -11,9 +11,11 @@ const VERSION: u32 = 1;
 pub struct ConfigError {
     code: &'static str,
     message: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    context: Option<Value>,
 }
 impl ConfigError {
-    fn new(code: &'static str, message: impl ToString) -> Self { Self { code, message: message.to_string() } }
+    fn new(code: &'static str, message: impl ToString) -> Self { Self { code, message: message.to_string(), context: None } }
 }
 type Result<T> = std::result::Result<T, ConfigError>;
 
@@ -268,8 +270,8 @@ pub fn publish(app: &AppHandle, snapshot: &Snapshot, previous: Option<&Value>) -
     if changed("launcherShortcut") || changed("enabled") {
         super::shortcuts::configure(app, if c["enabled"] == true { c["launcherShortcut"].as_str() } else { None });
     }
-    super::layout::configure(app, c).map_err(|e| ConfigError::new("layout_config", e))?;
     let apply = (|| -> Result<()> {
+        super::layout::configure(app, c).map_err(|e| ConfigError::new("layout_config", e))?;
         if c["enabled"] == false && changed("enabled") {
             super::hide_dock_context_menu(app.clone(), None).map_err(|e| ConfigError::new("popup_hide", e))?;
             super::hide_calendar_flyout(app.clone()).map_err(|e| ConfigError::new("popup_hide", e))?;
@@ -285,8 +287,12 @@ pub fn publish(app: &AppHandle, snapshot: &Snapshot, previous: Option<&Value>) -
         Ok(())
     })();
     // Persisted state must reach every UI even if a native window operation fails.
-    app.emit("deskmorph:config-snapshot", snapshot).map_err(|e| ConfigError::new("config_event", e))?;
-    apply
+    let broadcast = app.emit("deskmorph:config-snapshot", snapshot).map_err(|e| ConfigError::new("config_event", e));
+    apply.and(broadcast).map_err(|mut error| {
+        error.message = format!("Đã lưu cấu hình nhưng chưa áp dụng đầy đủ. Thử lại để áp dụng: {}", error.message);
+        error.context = Some(json!({"persisted": true, "revision": snapshot.revision}));
+        error
+    })
 }
 
 #[tauri::command]
@@ -297,19 +303,36 @@ pub fn get_config(app: AppHandle, state: tauri::State<ConfigState>, legacy: Opti
     if !was_initialized { publish(&app, &snapshot, None)?; }
     Ok(snapshot)
 }
+fn check_retry_revision(expected: Option<u64>, current: u64) -> Result<()> {
+    if expected.is_some_and(|revision| revision != current) {
+        return Err(ConfigError::new("config_conflict", "Cấu hình đã thay đổi sau thao tác thất bại. Hãy tải lại và kiểm tra trước khi sửa tiếp."));
+    }
+    Ok(())
+}
+/// Retry side effects using the latest saved snapshot; do not persist/replay a mutation.
 #[tauri::command]
-pub fn patch_config(app: AppHandle, state: tauri::State<ConfigState>, patch: Value) -> Result<Snapshot> {
+pub fn retry_config_apply(app: AppHandle, state: tauri::State<ConfigState>) -> Result<Snapshot> {
+    let store = state.0.lock().map_err(|e| ConfigError::new("config_lock", e))?;
+    if !store.initialized { return Err(ConfigError::new("config_not_ready", "Cấu hình chưa tải xong")); }
+    let snapshot = store.snapshot.clone();
+    publish(&app, &snapshot, None)?;
+    Ok(snapshot)
+}
+#[tauri::command]
+pub fn patch_config(app: AppHandle, state: tauri::State<ConfigState>, patch: Value, expected_revision: Option<u64>) -> Result<Snapshot> {
     let mut store = state.0.lock().map_err(|e| ConfigError::new("config_lock", e))?;
     if !store.initialized { return Err(ConfigError::new("config_not_ready", "Cấu hình chưa tải xong; hãy thử lại")); }
+    check_retry_revision(expected_revision, store.snapshot.revision)?;
     let previous = store.snapshot.config.clone();
     let snapshot = store.patch(patch)?;
     publish(&app, &snapshot, Some(&previous))?;
     Ok(snapshot)
 }
 #[tauri::command]
-pub fn mutate_pin(app: AppHandle, state: tauri::State<ConfigState>, action: String, id: String, pin: Option<Value>, target: Option<usize>) -> Result<Snapshot> {
+pub fn mutate_pin(app: AppHandle, state: tauri::State<ConfigState>, action: String, id: String, pin: Option<Value>, target: Option<usize>, expected_revision: Option<u64>) -> Result<Snapshot> {
     let mut store = state.0.lock().map_err(|e| ConfigError::new("config_lock", e))?;
     if !store.initialized { return Err(ConfigError::new("config_not_ready", "Cấu hình chưa tải xong; hãy thử lại")); }
+    check_retry_revision(expected_revision, store.snapshot.revision)?;
     let previous = store.snapshot.config.clone();
     let snapshot = store.pin(&action, &id, pin, target)?;
     publish(&app, &snapshot, Some(&previous))?;
@@ -384,6 +407,12 @@ mod tests {
     fn path() -> PathBuf {
         let stamp = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_nanos();
         std::env::temp_dir().join(format!("deskmorph-config-{}-{stamp}", std::process::id())).join("config.json")
+    }
+    #[test]
+    fn retry_rejects_newer_config_instead_of_replaying_a_stale_mutation() {
+        assert!(check_retry_revision(None, 5).is_ok());
+        assert!(check_retry_revision(Some(5), 5).is_ok());
+        assert_eq!(check_retry_revision(Some(4), 5).unwrap_err().code, "config_conflict");
     }
     #[test]
     fn shortcut_is_opt_in_validated_persisted_and_can_be_disabled() {

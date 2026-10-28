@@ -1826,3 +1826,19 @@ button:focus-visible { outline: 2px solid #48b9c7; outline-offset: -2px; }
 .class-mapping p { color: var(--text-muted); }
 .class-mapping textarea { display: block; width: 100%; box-sizing: border-box; margin: 8px 0; }
 .class-mapping button, .class-mapping select { margin: 4px 8px 4px 0; }
+
+/* Native Dock has only its own height: keep actionable errors inside that surface. */
+.taskbar-wrapper > .app-status {
+  padding: 4px 10px;
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow: auto;
+  border-radius: 12px;
+}
+.taskbar-wrapper > .app-status .dock-error-message { flex: 1; min-width: 0; max-height: 100%; overflow: auto; }
+.taskbar-wrapper > .app-status button { flex: none; margin-left: 0; padding: 6px 10px; }

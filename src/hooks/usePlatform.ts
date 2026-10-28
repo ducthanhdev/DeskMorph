@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { listen } from "@tauri-apps/api/event";
-import { invoke } from "@tauri-apps/api/core";
+import { invoke } from "../ipc";
 import { errorMessage } from "../config/store";
 export interface PlatformInfo {
   session: string; desktop: string; windowManagement: boolean; wallpaper: boolean;

@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { invoke } from "@tauri-apps/api/core";
+import { invoke } from "../ipc";
 import type { DockContextMenuState, OpenWindow } from "../types";
 import { errorMessage, useConfig } from "../config/store";
 import { groupWindows } from "../windowGroups";

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { invoke } from "@tauri-apps/api/core";
+import { invoke } from "../ipc";
 import { usePolling } from "./usePolling";
 export type SystemStatus = {
   battery: { percentage: number; state: string; remainingSeconds: number | null } | null;

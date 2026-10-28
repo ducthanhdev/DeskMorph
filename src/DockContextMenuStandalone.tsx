@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { invoke } from "@tauri-apps/api/core";
+import { invoke } from "./ipc";
 import { listen } from "@tauri-apps/api/event";
 import { ArrowLeft, ArrowRight, Flame, Pin, PinOff, Plus, X } from "lucide-react";
 import { useConfig, errorMessage } from "./config/store";

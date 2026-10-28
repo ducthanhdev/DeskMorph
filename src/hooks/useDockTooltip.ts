@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { invoke } from "@tauri-apps/api/core";
+import { invoke } from "../ipc";
 import type { FocusEvent, PointerEvent } from "react";
 export function useDockTooltip(disabled: boolean) {
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);

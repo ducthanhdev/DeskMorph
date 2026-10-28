@@ -1,4 +1,4 @@
-import { invoke } from "@tauri-apps/api/core";
+import { invoke } from "../ipc";
 import { Battery, BatteryCharging, Wifi, Network, Activity } from "lucide-react";
 import { useConfig } from "../config/store";
 import { useI18n } from "../i18n/useI18n";

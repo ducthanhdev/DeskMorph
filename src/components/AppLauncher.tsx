@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { invoke } from "@tauri-apps/api/core";
+import { invoke } from "../ipc";
 import { Pin, PinOff, RefreshCw, Search, Settings } from "lucide-react";
 import { useInstalledApps } from "../hooks/useInstalledApps";
 import { useConfig, errorMessage } from "../config/store";
@@ -21,6 +21,7 @@ export function AppLauncher({ generation }: { generation?: number }) {
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState(0);
   const [launching, setLaunching] = useState<string | null>(null);
+  const [failedApp, setFailedApp] = useState<InstalledApp | null>(null);
   const [launchError, setLaunchError] = useState<string | null>(null);
   const input = useRef<HTMLInputElement>(null);
   const rows = useRef(new Map<string, HTMLButtonElement>());
@@ -33,10 +34,10 @@ export function AppLauncher({ generation }: { generation?: number }) {
   const launch = async (app?: InstalledApp) => {
     if (!app || launchLock.current || !active) return;
     const signal = lifetime.capture();
-    launchLock.current = true; setLaunching(app.id); setLaunchError(null);
+    launchLock.current = true; setLaunching(app.id); setLaunchError(null); setFailedApp(null);
     try {
       await completePopupAction(() => invoke("launch_installed_app", { id: app.id, action: null }), close, signal);
-    } catch (e) { if (!signal.aborted) setLaunchError(errorMessage(e)); }
+    } catch (e) { if (!signal.aborted) { setLaunchError(errorMessage(e)); setFailedApp(app); } }
     finally { launchLock.current = false; if (!signal.aborted) setLaunching(null); }
   };
   return <section className="app-launcher" aria-label={t("searchApps")} onKeyDown={(e) => {
@@ -49,7 +50,7 @@ export function AppLauncher({ generation }: { generation?: number }) {
       onChange={(e) => { setQuery(e.target.value); setSelected(0); }}
       onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); void launch(results[current]); } }} />
       <button onClick={refresh} aria-label={t("refresh")} title={t("refresh")}><RefreshCw size={16} /></button></header>
-    {(error || configError || launchError) && <p role="alert">{error || configError || launchError}</p>}
+    {(error || configError || launchError) && <p role="alert">{error || configError || launchError} {launchError && failedApp && <button disabled={!!launching} onClick={() => void launch(failedApp)}>{t("retry")}</button>}</p>}
     {loading && <p role="status">{t("scanningApps")}</p>}
     {!loading && !results.length && <p role="status">{t("noApps")}</p>}
     <div className="app-launcher-results" aria-label={t("appsTab")}>

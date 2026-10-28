@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useState, useRef } from "react";
-import { invoke } from "@tauri-apps/api/core";
+import { invoke } from "./ipc";
 import { useConfig } from "./config/store";
 import { dockMetrics, dockSurface } from "./dockAppearance";
 import { useI18n } from "./i18n/useI18n";
@@ -39,6 +39,8 @@ export const Taskbar: React.FC = () => {
   const { t, locale, count } = useI18n();
   const { apps: installedApps } = useInstalledApps();
   const { platform } = usePlatform();
+  const [windowsError, setWindowsError] = useState<string | null>(null);
+  const [retryAction, setRetryAction] = useState<(() => void) | null>(null);
   const [operationError, setOperationError] = useState<string | null>(null);
   const [stats, setStats] = useState<SystemStats | null>(null);
   const ramDescription = stats ? `RAM: ${(stats.ram_used_mb / 1024).toFixed(1)} GiB / ${(stats.ram_total_mb / 1024).toFixed(1)} GiB (${stats.ram_percent}%)` : undefined;
@@ -61,8 +63,8 @@ export const Taskbar: React.FC = () => {
   const iconRefs = useRef<Map<string, HTMLElement>>(new Map());
   const rafId = useRef<number | null>(null);
 
-  const { config, ready, error: configError, mutatePin } = useConfig();
-  const isHidden = Boolean(config.autoHide && !isHovered && !previewVisible && !contextMenuVisible && !popupVisible);
+  const { config, ready, error: configError, mutatePin, retry: configRetry } = useConfig();
+  const isHidden = Boolean(config.autoHide && !isHovered && !previewVisible && !contextMenuVisible && !popupVisible && !operationError && !configError && !windowsError);
   const now = useClock(ready && config.enabled && config.showClock && !isHidden);
   const outsideSince = useRef<number | null>(null);
   // Native resize can remove the edge trigger without a DOM mouseleave, or
@@ -166,8 +168,8 @@ export const Taskbar: React.FC = () => {
   usePolling(async (signal) => {
     try {
       const wins = await invoke<OpenWindow[]>("get_open_windows");
-      if (!signal.aborted) { setOpenWindows(wins); setOperationError(null); }
-    } catch (e) { if (!signal.aborted) setOperationError(String(e)); }
+      if (!signal.aborted) { setOpenWindows(wins); setWindowsError(null); }
+    } catch (e) { if (!signal.aborted) setWindowsError(String(e)); }
   }, 1500, ready && config.enabled && !isHidden && config.showApps && Boolean(platform?.windowManagement));
   usePolling(async (signal) => {
     const res = await invoke<SystemStats>("get_system_stats");
@@ -352,14 +354,15 @@ export const Taskbar: React.FC = () => {
   const shuffleBusy = useRef(false);
   const handleShuffle = async () => {
     if (shuffleBusy.current) return;
-    shuffleBusy.current = true;
+    shuffleBusy.current = true; setOperationError(null); setRetryAction(null);
     const signal = lifetime.capture();
     try { await invoke("shuffle_wallpaper"); if (!signal.aborted) setOperationError(null); }
-    catch (error) { if (!signal.aborted) setOperationError(String(error)); }
+    catch (error) { if (!signal.aborted) { setOperationError(String(error)); setRetryAction(() => () => { void handleShuffle(); }); } }
     finally { shuffleBusy.current = false; }
   };
 
   const handleActivateWindow = async (id: string) => {
+    setRetryAction(null); setOperationError(null);
     const signal = lifetime.capture();
     try {
       await invoke("activate_window", { windowId: id });
@@ -371,6 +374,7 @@ export const Taskbar: React.FC = () => {
 
   const handleLaunchApp = async (appId: string, cmd: string) => {
     const signal = lifetime.capture();
+    setOperationError(null); setRetryAction(null);
     // 1. Add appId to launchingAppIds to start bouncing
     setLaunchingAppIds((prev) => new Set(prev).add(appId));
 
@@ -394,6 +398,7 @@ export const Taskbar: React.FC = () => {
     } catch (err) {
       if (signal.aborted) return;
       setOperationError(String(err));
+      setRetryAction(() => () => { void handleLaunchApp(appId, cmd); });
       console.error("Failed to launch app", err);
       // Remove bouncing immediately on error
       setLaunchingAppIds((prev) => {
@@ -632,8 +637,9 @@ export const Taskbar: React.FC = () => {
       className="taskbar-wrapper"
       onContextMenu={(e) => e.preventDefault()}
     >
-      {operationError && <div className="app-status" role="alert">{operationError}</div>}
-      {configError && <div className="app-status" role="alert">{configError}</div>}
+      {windowsError && !operationError && !configError && <div className="app-status" role="alert"><span className="dock-error-message">{windowsError}</span><button onClick={() => setWindowsError(null)}>{t("close")}</button></div>}
+      {operationError && <div className="app-status" role="alert"><span className="dock-error-message">{operationError}</span> {retryAction && <button onClick={retryAction}>{t("retry")}</button>} <button onClick={() => { setOperationError(null); setRetryAction(null); }}>{t("close")}</button></div>}
+      {configError && !operationError && <div className="app-status" role="alert"><span className="dock-error-message">{configError}</span><button onClick={configRetry}>{t("retry")}</button></div>}
       {/* Hit test trigger area at the edge when hidden */}
       {isHidden && (
         <div

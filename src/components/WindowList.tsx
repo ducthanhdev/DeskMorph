@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { invoke } from "@tauri-apps/api/core";
+import { invoke } from "../ipc";
 import { AppWindow, X } from "lucide-react";
 import type { DockContextMenuState } from "../types";
 import { useI18n } from "../i18n/useI18n";

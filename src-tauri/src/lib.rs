@@ -216,7 +216,7 @@ fn force_kill_window(xid: String) -> Result<bool, String> { window_manager::back
 fn spawn_app(exec_cmd: String) -> Result<bool, String> {
     let cmd = exec_cmd.trim();
     if cmd.is_empty() {
-        return Err("Execution command cannot be empty".to_string());
+        return Err("app_command_empty: Lệnh mở ứng dụng không được để trống".to_string());
     }
 
     if let Some(id) = cmd.strip_prefix("desktop:") {
@@ -350,6 +350,7 @@ fn run_app() -> Result<(), String> {
             platform::get_platform_info,
             config::get_config,
             config::patch_config,
+            config::retry_config_apply,
             config::mutate_pin,
             config::review_config_document,
             config::replace_config_document,

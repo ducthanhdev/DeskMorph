@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useRef, useState } from "react";
-import { invoke } from "@tauri-apps/api/core";
+import { invoke } from "../../ipc";
 import { DEFAULT_CONFIG, type TaskbarConfig } from "../../types";
 import { useConfig, errorMessage } from "../../config/store";
 import { usePlatform } from "../../hooks/usePlatform";

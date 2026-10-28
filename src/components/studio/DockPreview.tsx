@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { invoke } from "@tauri-apps/api/core";
+import { invoke } from "../../ipc";
 import { Cpu, HardDrive, Shuffle, Sparkles, Volume2 } from "lucide-react";
 import { useConfig } from "../../config/store";
 import { useInstalledApps } from "../../hooks/useInstalledApps";

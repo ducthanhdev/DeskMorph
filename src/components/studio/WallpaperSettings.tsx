@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { convertFileSrc, invoke } from "@tauri-apps/api/core";
+import { convertFileSrc } from "@tauri-apps/api/core";
+import { invoke } from "../../ipc";
 import { useConfig, errorMessage } from "../../config/store";
 import { usePlatform } from "../../hooks/usePlatform";
 import { usePolling } from "../../hooks/usePolling";
@@ -21,6 +22,9 @@ export function WallpaperSettings() {
   const [loading, setLoading] = useState(false);
   const [applying, setApplying] = useState(false);
   const [error, setError] = useState("");
+  const [libraryError, setLibraryError] = useState("");
+  const [pollError, setPollError] = useState("");
+  const [failedApply, setFailedApply] = useState<{ path?: string } | null>(null);
   const [status, setStatus] = useState("");
   const [query, setQuery] = useState("");
   const [filterFolder, setFilterFolder] = useState("");
@@ -36,20 +40,20 @@ export function WallpaperSettings() {
   useEffect(() => {
     let disposed = false;
     const requestId = crypto.randomUUID();
-    setLoading(true); setError("");
+    setLoading(true); setLibraryError("");
     invoke<Scan>("scan_wallpapers", { requestId }).then((result) => {
       if (!disposed) { setScan(result); setPage(0); setThumbnails({}); }
-    }).catch((e) => { if (!disposed) setError(errorMessage(e)); })
+    }).catch((e) => { if (!disposed) setLibraryError(errorMessage(e)); })
       .finally(() => { if (!disposed) setLoading(false); });
     return () => { disposed = true; void invoke("cancel_wallpaper_scan", { requestId }).catch(console.error); };
   }, [roots, config.wallpaperRecursive, refresh]);
   usePolling(async (signal) => {
-    try { const path = await invoke<string>("get_current_wallpaper"); if (!signal.aborted) setCurrent(path); }
-    catch (e) { if (!signal.aborted) setError(errorMessage(e)); }
+    try { const path = await invoke<string>("get_current_wallpaper"); if (!signal.aborted) { setCurrent(path); setPollError(""); } }
+    catch (e) { if (!signal.aborted) setPollError(errorMessage(e)); }
   }, 3000, Boolean(platform?.wallpaper));
   usePolling(async (signal) => {
     try { const status = await invoke<ScheduleStatus>("get_wallpaper_schedule_status"); if (!signal.aborted) setSchedule(status); }
-    catch (e) { if (!signal.aborted) setError(errorMessage(e)); }
+    catch (e) { if (!signal.aborted) setPollError(errorMessage(e)); }
   }, 2000, Boolean(platform?.wallpaper));
   const favorites = new Set(config.wallpaperFavorites);
   const filtered = scan.images.filter((image) => (!query || image.filename.toLocaleLowerCase().includes(query.toLocaleLowerCase())) && (!filterFolder || image.folder === filterFolder) && (!format || image.format === format) && (!favoritesOnly || favorites.has(image.path)));
@@ -63,18 +67,18 @@ export function WallpaperSettings() {
     if (!paths.length || loading) return;
     invoke<Thumbnail[]>("wallpaper_thumbnails", { paths }).then((result) => {
       if (!disposed) setThumbnails(Object.fromEntries(result.map((item) => [item.path, item])));
-    }).catch((e) => { if (!disposed) setError(errorMessage(e)); });
+    }).catch((e) => { if (!disposed) setLibraryError(errorMessage(e)); });
     return () => { disposed = true; };
   }, [visiblePaths, loading, refresh]);
   const apply = async (path?: string) => {
     if (applyLock.current) return;
-    applyLock.current = true; setApplying(true); setStatus("");
+    applyLock.current = true; setApplying(true); setStatus(""); setError(""); setFailedApply(null);
     try {
       let applied = path;
       if (path) { if (!await invoke<boolean>("set_wallpaper", { path })) throw new Error(t("wallpaperError")); }
       else applied = await invoke<string>("shuffle_wallpaper");
       if (mounted.current) { setCurrent(applied || ""); setStatus(t("wallpaperApplied")); setError(""); }
-    } catch (e) { if (mounted.current) setError(errorMessage(e)); }
+    } catch (e) { if (mounted.current) { setError(errorMessage(e)); setFailedApply({ path }); } }
     finally { applyLock.current = false; if (mounted.current) setApplying(false); }
   };
   return <Card title={t("wallpaperTab")}>
@@ -104,7 +108,9 @@ export function WallpaperSettings() {
       <select aria-label={t("format")} value={format} onChange={(e) => { setFormat(e.target.value); setPage(0); }}><option value="">{t("allFormats")}</option>{[...new Set(scan.images.map((image) => image.format))].sort().map((value) => <option key={value} value={value}>{value.toUpperCase()}</option>)}</select>
       <Toggle label={t("favoritesOnly")} value={favoritesOnly} onChange={(value) => { setFavoritesOnly(value); setPage(0); }} />
     </div>
-    {error && <p role="alert">{error}</p>}{status && <p role="status">{status}</p>}
+    {libraryError && <p role="alert">{libraryError} <button onClick={() => setRefresh((value) => value + 1)}>{t("retry")}</button></p>}
+    {pollError && <p role="alert">{pollError}</p>}
+    {error && <p role="alert">{error} {failedApply && <button disabled={applying} onClick={() => void apply(failedApply.path)}>{t("retry")}</button>}</p>}{status && <p role="status">{status}</p>}
     {scan.limited && <p role="status">{t("scanLimited")}</p>}
     {scan.issues.length > 0 && <details className="wallpaper-issues"><summary>{t("scanIssues")} ({scan.issues.length})</summary><ul>{scan.issues.map((issue, i) => <li key={i}><code>{issue.path}</code>: {issue.message}</li>)}</ul></details>}
     {loading ? <p role="status">{t("loading")}</p> : !filtered.length ? <p role="status">{t("noWallpapers")}</p> : <>

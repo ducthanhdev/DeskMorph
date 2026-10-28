@@ -1,0 +1,13 @@
+{
+  "pid": 1038378,
+  "passed": [
+    "Dock missing executable error survives >2 window polls; repair + explicit Retry dispatches exact command",
+    "desktop entry removed after listing stays in launcher with context; restore + Retry launches original desktop ID even after results refresh",
+    "read-only config directory leaves disk/revision unchanged and shows code/context; Retry persists original patch exactly once",
+    "Studio failed patch followed by popup unpin: Retry rejects stale revision without extra writes; reload keeps concurrent data",
+    "deleted image fails without GNOME URI change or false success; restore + Retry applies exact original path"
+  ],
+  "environment": "Pop!_OS 24.04, GNOME 46, X11, scale 1; isolated custom-protocol debug build",
+  "dockHeight": 40,
+  "cleanup": "config restored, directory permissions restored, fixture desktop entry/executable/marker removed, both GNOME wallpaper URI values restored"
+}
