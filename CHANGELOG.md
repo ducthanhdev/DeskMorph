@@ -29,4 +29,6 @@
 
 - Giữ vùng bấm/focus icon cố định bằng slot chứa tile và các lớp animation riêng; giới hạn bounce theo khoảng trống, căn giữa icon và giữ badge trong tile. CPU/RAM có bố cục phù hợp Dock thấp. Thêm ma trận native cho kích thước và bật/tắt hiệu ứng, gồm reduced-motion của app/GNOME cập nhật trực tiếp.
 
+- Giới hạn badge cửa sổ ở 9+ để vừa icon nhỏ, giữ số đầy đủ qua nhãn và tooltip. Thêm native indicator tests với cửa sổ thật ở kích thước biên, trạng thái active/inactive, 12 cửa sổ và đóng ngoài về 1/0.
+
 Chưa phát hành: còn các cổng chất lượng G0–G9 trong kế hoạch, đặc biệt Wayland, mixed DPI/hotplug, sleep/resume, Wayland shortcuts portal, cài sạch và nâng cấp. Không coi mục Unreleased là tuyên bố mọi chức năng đã đạt chuẩn phát hành.

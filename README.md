@@ -100,6 +100,7 @@ cargo build --offline --manifest-path src-tauri/Cargo.toml --target-dir src-taur
 /usr/bin/python3 tests/desktop_smoke.py --launch-smoke
 /usr/bin/python3 tests/desktop_smoke.py --overflow-smoke
 /usr/bin/python3 tests/desktop_smoke.py --layout-smoke
+/usr/bin/python3 tests/desktop_smoke.py --indicator-smoke
 /usr/bin/python3 tests/desktop_smoke.py --window-list-smoke
 /usr/bin/python3 tests/desktop_smoke.py --lifecycle-smoke
 /usr/bin/python3 tests/desktop_smoke.py --registration-smoke

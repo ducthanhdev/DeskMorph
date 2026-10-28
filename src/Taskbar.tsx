@@ -813,7 +813,7 @@ export const Taskbar: React.FC = () => {
                     />
                   )}
 
-                  {windows.length > 1 && <span className="dock-window-count">{windows.length}</span>}
+                  {windows.length > 1 && <span className="dock-window-count" aria-hidden="true">{windows.length > 9 ? "9+" : windows.length}</span>}
                   {/* Running Indicator Dot */}
                   {isRunning && (
                     <span
@@ -882,7 +882,7 @@ export const Taskbar: React.FC = () => {
                   >
                     <span className="app-icon-tile">
                     <span className="app-icon-visual"><span className="app-icon-glyph">{installed?.iconPath ? <AppIcon path={installed.iconPath} size={Math.round(btnSize * .68)} /> : visual.icon}</span></span>
-                    {windows.length > 1 && <span className="dock-window-count">{windows.length}</span>}
+                    {windows.length > 1 && <span className="dock-window-count" aria-hidden="true">{windows.length > 9 ? "9+" : windows.length}</span>}
                     <span
                       className={`running-dot ${isActive ? "dot-active" : "dot-inactive"}`}
                       style={{
