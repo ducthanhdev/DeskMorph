@@ -74,9 +74,25 @@ export const Taskbar: React.FC = () => {
   const time = now.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit", second: config.clockSeconds ? "2-digit" : undefined, hour12: !config.clock24 });
   const date = now.toLocaleDateString(locale, { weekday: "short", month: "short", day: "numeric" });
   const dockRef = useRef<HTMLDivElement>(null);
-  const draggedPin = useRef<string | null>(null);
+  const pointerDrag = useRef<{ id: string; pointerId: number; x: number; y: number; started: boolean; cancelled: boolean } | null>(null);
+  const movingPin = useRef(false);
   const suppressClickUntil = useRef(0);
   const [draggingId, setDraggingId] = useState<string | null>(null);
+  const [dropTargetId, setDropTargetId] = useState<string | null>(null);
+  useEffect(() => {
+    const cancel = (event?: KeyboardEvent) => {
+      if (event && event.key !== "Escape") return;
+      if (!pointerDrag.current) return;
+      pointerDrag.current.cancelled = true;
+      suppressClickUntil.current = Infinity;
+      setDraggingId(null); setDropTargetId(null);
+      event?.preventDefault();
+    };
+    const onBlur = () => cancel();
+    window.addEventListener("keydown", cancel);
+    window.addEventListener("blur", onBlur);
+    return () => { window.removeEventListener("keydown", cancel); window.removeEventListener("blur", onBlur); };
+  }, []);
   const [systemReducedMotion, setSystemReducedMotion] = useState(() => matchMedia("(prefers-reduced-motion: reduce)").matches);
   const reducedMotion = config.reduceMotion || systemReducedMotion;
   const tooltip = useDockTooltip(popupVisible || Boolean(draggingId));
@@ -245,7 +261,7 @@ export const Taskbar: React.FC = () => {
   };
 
   // Magnification Engine: Cosine Wave Algorithm
-  const isMagnifyActive = config.magnification !== false && !reducedMotion && !contextMenuVisible && !popupVisible;
+  const isMagnifyActive = config.magnification !== false && !reducedMotion && !contextMenuVisible && !popupVisible && !draggingId;
 
   const handleDockMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!isMagnifyActive) {
@@ -529,8 +545,26 @@ export const Taskbar: React.FC = () => {
   }, [ready, config.enabled, config.iconSize, config.iconSpacing, config.height, config.showApps, config.showAudio, config.showBattery, config.showNetwork, config.showSystem, config.showClock, config.showStats, config.showShuffle, pinnedItems.length, unpinnedGroups.length]);
 
   const movePin = async (id: string, target: number) => {
-    await mutatePin("move", id, undefined, target);
-    requestAnimationFrame(() => iconRefs.current.get(id)?.focus());
+    if (movingPin.current || pinnedList.findIndex((pin) => pin.id === id) === target) return;
+    movingPin.current = true;
+    try {
+      if (await mutatePin("move", id, undefined, target)) requestAnimationFrame(() => iconRefs.current.get(id)?.focus());
+    } finally { movingPin.current = false; }
+  };
+
+  const pinAt = (x: number, y: number) => document.elementFromPoint(x, y)?.closest<HTMLElement>("[data-pin-id]")?.dataset.pinId;
+  const finishPinDrag = (event: React.PointerEvent<HTMLButtonElement>, cancelled = false) => {
+    const drag = pointerDrag.current;
+    if (!drag || event.pointerId !== drag.pointerId) return;
+    pointerDrag.current = null;
+    setDraggingId(null); setDropTargetId(null);
+    if (!drag.started && !drag.cancelled && !cancelled) return;
+    event.preventDefault();
+    suppressClickUntil.current = Date.now() + 350;
+    if (cancelled || drag.cancelled) return;
+    const targetId = pinAt(event.clientX, event.clientY);
+    const target = pinnedList.findIndex((pin) => pin.id === targetId);
+    if (target >= 0 && targetId !== drag.id) void movePin(drag.id, target);
   };
 
   const selectWindows = async (e: React.MouseEvent, windows: OpenWindow[], appName: string) => {
@@ -643,25 +677,33 @@ export const Taskbar: React.FC = () => {
               return (
                 <button
                   aria-label={`${pinned.name} • ${count("window", windows.length)}`}
+                  aria-keyshortcuts="Control+Shift+ArrowLeft Control+Shift+ArrowRight"
                   key={pinned.id}
-                  draggable
-                  onDragStart={(e) => {
-                    draggedPin.current = pinned.id;
-                    setDraggingId(pinned.id);
-                    e.dataTransfer.effectAllowed = "move";
-                    e.dataTransfer.setData("application/x-deskmorph-pin", pinned.id);
+                  data-pin-id={pinned.id}
+                  draggable={false}
+                  onDragStart={(event) => event.preventDefault()}
+                  onPointerDown={(event) => {
+                    if (event.button !== 0 || !event.isPrimary || movingPin.current || pointerDrag.current) return;
+                    pointerDrag.current = { id: pinned.id, pointerId: event.pointerId, x: event.clientX, y: event.clientY, started: false, cancelled: false };
+                    event.currentTarget.setPointerCapture(event.pointerId);
                   }}
-                  onDragOver={(e) => { if (draggedPin.current && draggedPin.current !== pinned.id) { e.preventDefault(); e.dataTransfer.dropEffect = "move"; } }}
-                  onDrop={(e) => {
-                    if (!draggedPin.current) return;
-                    e.preventDefault();
-                    const id = draggedPin.current;
-                    draggedPin.current = null; setDraggingId(null);
-                    suppressClickUntil.current = Date.now() + 350;
-                    const target = pinnedList.findIndex((app) => app.id === pinned.id);
-                    if (target >= 0 && id !== pinned.id) void movePin(id, target);
+                  onPointerMove={(event) => {
+                    const drag = pointerDrag.current;
+                    if (!drag || drag.pointerId !== event.pointerId || drag.cancelled) return;
+                    if (!drag.started && Math.hypot(event.clientX - drag.x, event.clientY - drag.y) >= 8) {
+                      drag.started = true;
+                      suppressClickUntil.current = Infinity;
+                      setDraggingId(drag.id); setIsMagnifying(false); setMagnifyScales({});
+                    }
+                    if (drag.started) {
+                      event.preventDefault();
+                      const targetId = pinAt(event.clientX, event.clientY);
+                      setDropTargetId(targetId && targetId !== drag.id ? targetId : null);
+                    }
                   }}
-                  onDragEnd={() => { draggedPin.current = null; setDraggingId(null); suppressClickUntil.current = Date.now() + 350; }}
+                  onPointerUp={(event) => finishPinDrag(event)}
+                  onPointerCancel={(event) => finishPinDrag(event, true)}
+                  onLostPointerCapture={(event) => finishPinDrag(event, true)}
                   onKeyDown={(e) => {
                     if (e.ctrlKey && e.shiftKey && ["ArrowLeft", "ArrowRight"].includes(e.key)) {
                       e.preventDefault();
@@ -676,7 +718,7 @@ export const Taskbar: React.FC = () => {
                   }}
                   className={`running-app-icon-btn ${isRunning ? "app-running" : "app-idle"} ${
                     isActive ? "app-active" : ""
-                  } ${isLaunching ? "app-launching" : ""} ${draggingId === pinned.id ? "is-dragging" : ""}`}
+                  } ${isLaunching ? "app-launching" : ""} ${draggingId === pinned.id ? "is-dragging" : ""} ${dropTargetId === pinned.id ? "is-drop-target" : ""}`}
                   onClick={(e) => {
                     if (Date.now() < suppressClickUntil.current) return;
                     if (window) {

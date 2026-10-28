@@ -99,8 +99,8 @@ Bằng chứng G3.2–G3.3: `application_fixtures.rs` chạy mỗi scenario tron
 
 Phụ thuộc G2–G3. Đây là cổng bản xem trước dùng hằng ngày đầu tiên.
 
-- [ ] G4.1 Kéo thả icon pinned để sắp xếp; lưu một lần khi kết thúc; hủy thao tác không đổi thứ tự và không vô tình mở app.
-- [ ] G4.2 Cung cấp thao tác bàn phím/menu để đổi thứ tự, thay thế cho kéo thả.
+- [x] G4.1 Kéo thả icon pinned để sắp xếp; lưu một lần khi kết thúc; hủy thao tác không đổi thứ tự và không vô tình mở app.
+- [x] G4.2 Cung cấp thao tác bàn phím/menu để đổi thứ tự, thay thế cho kéo thả.
 - [ ] G4.3 Tooltip thống nhất, có delay, không đè popup và không bị cắt ngoài cửa sổ native.
 - [ ] G4.4 Middle-click mở phiên mới khi app hỗ trợ; ứng dụng single-instance giữ hành vi riêng, không hứa luôn tạo cửa sổ mới.
 - [x] G4.5 Menu chuột phải hiển thị cửa sổ cùng app, chọn active và đóng từng cửa sổ.

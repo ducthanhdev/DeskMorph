@@ -41,6 +41,8 @@ Lần đầu Cargo cần tải dependencies. Cổng Vite mặc định là 1420.
 
 Đóng Studio giữ Dock khi bật “Giữ Dock khi đóng Studio”. Chạy executable một lần nữa để mở lại Studio; dùng “Thoát DeskMorph” trong Hệ thống để thoát hẳn. Tự ẩn, chọn màn hình và các widget được điều chỉnh ở Taskbar Studio.
 
+Kéo icon đã ghim lên icon khác để đổi thứ tự; thả ngoài Dock hoặc Escape để hủy. Bạn cũng có thể focus icon rồi dùng Ctrl+Shift+←/→, hoặc chọn Sang trái/Sang phải trong menu chuột phải. Thứ tự được lưu khi thả và giữ sau restart.
+
 Trong Hệ thống, bạn có thể bật phím tắt launcher như `Ctrl+Super+K`. Cú pháp dùng Ctrl/Alt/Shift/Super và chữ ASCII, số, F1–F12 hoặc Space; không nhận phím trần hay chỉ Shift. `Ctrl+Alt+F1–F12` bị từ chối vì có thể chuyển virtual console. Khi có xung đột, phím đã chọn được lưu nhưng báo chưa hoạt động; đổi phím hoặc thử lại sau khi giải phóng tổ hợp. Tắt Dock tạm ngừng đăng ký; mở lại Dock khôi phục lựa chọn. Wayland hiện chưa hỗ trợ.
 
 ## Build và cài thủ công
@@ -93,6 +95,7 @@ cargo build --offline --manifest-path src-tauri/Cargo.toml --target-dir src-taur
 /usr/bin/python3 tests/desktop_smoke.py --restart --basic --studio-smoke --config-smoke --launcher-smoke
 /usr/bin/python3 tests/desktop_smoke.py --autohide-smoke --popup-smoke
 /usr/bin/python3 tests/desktop_smoke.py --shortcut-smoke
+/usr/bin/python3 tests/desktop_smoke.py --reorder-smoke
 /usr/bin/python3 tests/desktop_smoke.py --window-list-smoke
 /usr/bin/python3 tests/desktop_smoke.py --lifecycle-smoke
 /usr/bin/python3 tests/desktop_smoke.py --registration-smoke

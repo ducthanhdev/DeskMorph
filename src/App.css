@@ -1677,6 +1677,8 @@ button:focus-visible { outline: 2px solid #48b9c7; outline-offset: -2px; }
 .dock-pinned-group, .dock-unpinned-group { gap: var(--icon-spacing, 8px); flex-shrink: 0; }
 .running-app-icon-btn { transform-origin: center; }
 .running-app-icon-btn.is-dragging { opacity: .35 !important; }
+.running-app-icon-btn.is-drop-target { outline: 2px solid var(--dock-accent, #48b9c7); outline-offset: -2px; }
+.dock-pinned-group { touch-action: none; user-select: none; }
 .app-icon-glyph img { object-fit: contain; }
 .reduce-motion *, .reduce-motion { animation: none !important; transition: none !important; }
 @media (prefers-reduced-motion: reduce) {

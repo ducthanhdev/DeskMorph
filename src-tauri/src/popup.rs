@@ -65,12 +65,18 @@ pub fn hide(app: &AppHandle, label: &str, generation: Option<u64>) -> Result<boo
     let state = app.state::<PopupState>();
     let mut c = state.0.lock().map_err(|e| e.to_string())?;
     if generation.is_some_and(|g| g != c.generation) { return Ok(false); }
-    if c.active.is_some_and(|(active, _)| active == label) {
+    let hidden = c.active.is_some_and(|(active, _)| active == label);
+    if hidden {
         if let Some(window) = app.get_webview_window(label) { window.hide().map_err(|e| e.to_string())?; }
         c.active = None;
         hidden_events(app, label, c.generation);
         c.generation = c.generation.wrapping_add(1);
     }
+    drop(c);
+    // Content width can change while a popup anchors to the old Dock rect.
+    // Apply that deferred layout when the interaction ends, outside the lock:
+    // layout::apply checks the coordinator again for popup/auto-hide state.
+    if hidden { crate::layout::apply(app)?; }
     Ok(true)
 }
 pub fn active_generation(app: &AppHandle, label: &str) -> Option<u64> {

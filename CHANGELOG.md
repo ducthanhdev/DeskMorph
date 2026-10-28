@@ -19,4 +19,6 @@
 
 - Đồng bộ trực tiếp danh sách cửa sổ và menu chuột phải khi title/active/thêm/bớt thay đổi; dừng poll khi popup ẩn và truyền generation cho callback đóng. Giữ lựa chọn theo XID, chuyển focus sang hàng kế bên khi cửa sổ mất, bổ sung native fixture cho bàn phím và pinned/unpinned 0/1/nhiều cửa sổ.
 
+- Sắp xếp pin bằng Pointer Events/capture, lưu một lần khi thả, hủy Escape/thả ngoài và không mở app sau kéo. Giữ focus khi đổi thứ tự bằng bàn phím, bỏ ghi ở biên; sửa tooltip chiếm focus và áp dụng chiều rộng Dock chờ sau khi popup đóng để icon mới không bị widget che. Thêm native test reorder/cancel/menu/restart và marker phát hiện mở app ngoài ý muốn.
+
 Chưa phát hành: còn các cổng chất lượng G0–G9 trong kế hoạch, đặc biệt Wayland, mixed DPI/hotplug, sleep/resume, Wayland shortcuts portal, cài sạch và nâng cấp. Không coi mục Unreleased là tuyên bố mọi chức năng đã đạt chuẩn phát hành.

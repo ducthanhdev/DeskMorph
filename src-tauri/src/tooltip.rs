@@ -5,9 +5,12 @@ use tauri::{AppHandle, Emitter, Manager, PhysicalPosition, PhysicalSize};
 pub struct TooltipState(pub Mutex<u64>);
 pub fn install(app: &AppHandle) -> Result<(), String> {
     let window = app.get_webview_window("dock-tooltip").ok_or("Không tìm thấy tooltip")?;
+    let native = window.gtk_window().map_err(|e| e.to_string())?;
+    native.set_accept_focus(false);
+    native.set_focus_on_map(false);
     // Tao's set_ignore_cursor_events unwraps the GDK window, which does not
     // exist before first map (or after a queued hide). Apply on GTK map instead.
-    window.gtk_window().map_err(|e| e.to_string())?.connect_map(|widget| {
+    native.connect_map(|widget| {
         if let Some(native) = widget.window() {
             native.input_shape_combine_region(&gtk::cairo::Region::create(), 0, 0);
         }

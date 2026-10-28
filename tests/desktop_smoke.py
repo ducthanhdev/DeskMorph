@@ -86,13 +86,14 @@ if __name__ == '__main__':
     parser.add_argument('--fixture', action='store_true')
     parser.add_argument('--window-fixture', action='store_true')
     parser.add_argument('--window-list-smoke', action='store_true')
+    parser.add_argument('--reorder-smoke', action='store_true')
     parser.add_argument('--environment', action='store_true')
     parser.add_argument('--platform-tool-missing', action='store_true', help='Read-only startup check with an empty PATH in the isolated app')
     args = parser.parse_args()
     if args.audio_tool_missing: args.audio_unavailable = True
     if args.force_close_smoke: args.launcher_smoke = True
     if args.popup_smoke: args.restart = True
-    if args.window_list_smoke: args.restart = True
+    if args.window_list_smoke or args.reorder_smoke: args.restart = True
     if args.platform_tool_missing: args.restart = True
     if args.scheduler_smoke: args.wallpaper_smoke = True
     if args.environment:
@@ -106,7 +107,7 @@ if __name__ == '__main__':
             raise RuntimeError('Cannot verify GNOME lock state; no native input will be sent')
         if re.search(r'\btrue\b', result.stdout):
             raise RuntimeError('GNOME desktop is locked; unlock it before native UI tests. No input was sent.')
-    input_tests = any((args.action, args.screenshot, args.basic, args.popup_smoke, args.autohide_smoke, args.shortcut_smoke, args.lifecycle_smoke, args.registration_smoke, args.window_list_smoke, args.launcher_smoke, args.studio_smoke, args.config_smoke,
+    input_tests = any((args.action, args.screenshot, args.basic, args.popup_smoke, args.autohide_smoke, args.shortcut_smoke, args.lifecycle_smoke, args.registration_smoke, args.window_list_smoke, args.reorder_smoke, args.launcher_smoke, args.studio_smoke, args.config_smoke,
                        args.wallpaper_smoke, args.scheduler_smoke, args.library_stress, args.audio_smoke, args.media_smoke,
                        args.audio_exit, args.audio_unavailable, args.system_smoke, args.system_unavailable, args.system_open_smoke))
     if input_tests: require_unlocked_desktop()
@@ -198,6 +199,14 @@ if __name__ == '__main__':
             '[Desktop Entry]\nType=Application\nName=DeskMorph Window Fixture\n'
             f'Exec=/usr/bin/python3 "{Path(__file__).resolve()}" --window-fixture\n'
             'Icon=utilities-terminal\nStartupWMClass=DeskMorphWindowFixture\nCategories=Utility;\n')
+    if args.reorder_smoke:
+        desktop_dir = Path('/tmp/deskmorph-desktop-test/data/applications')
+        desktop_dir.mkdir(parents=True, exist_ok=True)
+        for letter in 'ABC':
+            (desktop_dir / f'deskmorph-reorder-{letter.lower()}.desktop').write_text(
+                f'[Desktop Entry]\nType=Application\nName=DeskMorph Reorder {letter}\n'
+                f'Exec=/usr/bin/touch /tmp/deskmorph-desktop-test/reorder-launched-{letter}\n'
+                f'Icon=utilities-terminal\nStartupWMClass=DeskMorphReorder{letter}\nCategories=Utility;\n')
     if args.restart:
         try:
             previous = test_app()
@@ -433,6 +442,32 @@ if __name__ == '__main__':
         finally:
             x11.XCloseDisplay(display)
         if chord or value is not None: time.sleep(0.4)
+    def assert_pointer_over_test_app():
+        require_unlocked_desktop()
+        x11 = ctypes.CDLL('libX11.so.6')
+        x11.XOpenDisplay.restype = ctypes.c_void_p
+        x11.XDefaultRootWindow.argtypes = [ctypes.c_void_p]; x11.XDefaultRootWindow.restype = ctypes.c_ulong
+        x11.XQueryPointer.argtypes = [ctypes.c_void_p, ctypes.c_ulong, ctypes.POINTER(ctypes.c_ulong), ctypes.POINTER(ctypes.c_ulong), ctypes.POINTER(ctypes.c_int), ctypes.POINTER(ctypes.c_int), ctypes.POINTER(ctypes.c_int), ctypes.POINTER(ctypes.c_int), ctypes.POINTER(ctypes.c_uint)]
+        x11.XCloseDisplay.argtypes = [ctypes.c_void_p]
+        display = x11.XOpenDisplay(None); assert display
+        try:
+            current = x11.XDefaultRootWindow(display)
+            observed_owners = []
+            for _ in range(12):
+                root, child = ctypes.c_ulong(), ctypes.c_ulong()
+                rx, ry, wx, wy, mask = ctypes.c_int(), ctypes.c_int(), ctypes.c_int(), ctypes.c_int(), ctypes.c_uint()
+                assert x11.XQueryPointer(display, current, ctypes.byref(root), ctypes.byref(child), ctypes.byref(rx), ctypes.byref(ry), ctypes.byref(wx), ctypes.byref(wy), ctypes.byref(mask))
+                if not child.value: break
+                current = child.value
+                props = subprocess.run(['xprop', '-id', hex(current), '_NET_WM_PID'], capture_output=True, text=True).stdout
+                owner = re.search(r'_NET_WM_PID.*= (\d+)', props)
+                if owner:
+                    if int(owner.group(1)) == app.get_process_id(): return
+                    # A WM-owned decoration can wrap our client. Follow the
+                    # actual child under the pointer before rejecting ownership.
+                    observed_owners.append((hex(current), int(owner.group(1))))
+            raise AssertionError('Cannot establish isolated ownership of window under pointer; no click will be sent; observed=' + str(observed_owners))
+        finally: x11.XCloseDisplay(display)
     def native_click_node(node, button=1, point=None):
         assert button in (1, 2, 3)
         # Verify focus belongs to our isolated PID before moving the real pointer.
@@ -451,6 +486,8 @@ if __name__ == '__main__':
         assert display
         try:
             assert xtst.XTestFakeMotionEvent(display, -1, x, y, 0)
+            x11.XSync.argtypes = [ctypes.c_void_p, ctypes.c_int]; x11.XSync(display, 0)
+            assert_pointer_over_test_app()
             assert xtst.XTestFakeButtonEvent(display, button, 1, 0)
             assert xtst.XTestFakeButtonEvent(display, button, 0, 0)
             x11.XFlush(display)
@@ -576,6 +613,161 @@ if __name__ == '__main__':
         click('Taskbar Studio')
         if json.loads(baseline_path.read_text())['config']['autoHide']:
             click('Tự động ẩn Dock Chạm cạnh màn hình để hiện lại; Dock giữ hiện khi bạn thao tác popup.')
+    if args.reorder_smoke:
+        reorder_path = Path(TEST_CONFIG) / 'com.ducthanhdev.deskmorph/config.json'
+        reorder_snapshot = lambda: json.loads(reorder_path.read_text())
+        reorder_original = reorder_snapshot()['config']
+        original_pins = reorder_original['pinnedApps']
+        fixture_ids = [f'deskmorph-reorder-{letter.lower()}.desktop' for letter in 'ABC']
+        markers = [Path(f'/tmp/deskmorph-desktop-test/reorder-launched-{letter}') for letter in 'ABC']
+        assert not any(pin.get('desktopId') in fixture_ids for pin in original_pins), 'Reorder fixtures must start unpinned'
+        assert not any(marker.exists() for marker in markers), 'Do not overwrite existing launch markers'
+        reorder_passed = []
+        def wait_reorder(predicate, message):
+            deadline = time.monotonic() + 10
+            while time.monotonic() < deadline:
+                if predicate(): return
+                time.sleep(0.1)
+            focused = [(n.get_role_name(), n.get_name()) for n, _ in descendants(app) if n.get_state_set().contains(Atspi.StateType.FOCUSED)]
+            raise AssertionError(message + f'; order={fixture_order()}; focus={focused}')
+        def order(): return [pin['id'] for pin in reorder_snapshot()['config']['pinnedApps']]
+        def fixture_order(): return [pin['desktopId'] for pin in reorder_snapshot()['config']['pinnedApps'] if pin.get('desktopId') in fixture_ids]
+        def reorder_node(letter):
+            return next(n for n, _ in descendants(app) if n.get_role_name() == 'button' and n.get_name() == f'DeskMorph Reorder {letter} • 0 cửa sổ')
+        def focus_pin(letter):
+            focus_studio('DeskMorph Taskbar')
+            assert reorder_node(letter).get_component_iface().grab_focus()
+            time.sleep(0.2)
+        def native_drag(source_letter, target_letter, cancel=False):
+            before_drag = reorder_snapshot()
+            focus_studio(); focus_pin(source_letter); native_keys()
+            start = reorder_node(source_letter).get_component_iface().get_extents(Atspi.CoordType.SCREEN)
+            end = reorder_node(target_letter).get_component_iface().get_extents(Atspi.CoordType.SCREEN) if target_letter else None
+            dock = next(n for n, _ in descendants(app) if n.get_role_name() == 'frame' and n.get_name() == 'DeskMorph Taskbar')
+            dock_rect = dock.get_component_iface().get_extents(Atspi.CoordType.SCREEN)
+            for rect in (start, end) if end else (start,):
+                assert rect.width > 0 and rect.height > 0
+                assert dock_rect.x <= rect.x and rect.x + rect.width <= dock_rect.x + dock_rect.width
+                assert dock_rect.y <= rect.y and rect.y + rect.height <= dock_rect.y + dock_rect.height
+            x11 = ctypes.CDLL('libX11.so.6'); xtst = ctypes.CDLL('libXtst.so.6')
+            x11.XOpenDisplay.restype = ctypes.c_void_p
+            x11.XFlush.argtypes = [ctypes.c_void_p]; x11.XCloseDisplay.argtypes = [ctypes.c_void_p]
+            xtst.XTestFakeMotionEvent.argtypes = [ctypes.c_void_p, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_ulong]
+            xtst.XTestFakeButtonEvent.argtypes = [ctypes.c_void_p, ctypes.c_uint, ctypes.c_int, ctypes.c_ulong]
+            display = x11.XOpenDisplay(None); assert display
+            pressed = False
+            try:
+                sx, sy = start.x + start.width // 2, start.y + start.height // 2
+                if end: ex, ey = end.x + end.width // 2, end.y + end.height // 2
+                else:
+                    studio = next(n for n, _ in descendants(app) if n.get_role_name() == 'frame' and n.get_name() == 'DeskMorph Studio').get_component_iface().get_extents(Atspi.CoordType.SCREEN)
+                    heading = next(n for n, _ in descendants(app) if n.get_role_name() == 'heading' and n.get_name() == 'DeskMorph').get_component_iface().get_extents(Atspi.CoordType.SCREEN)
+                    ex, ey = studio.x + studio.width - 30, heading.y + heading.height // 2
+                    assert not (dock_rect.x <= ex < dock_rect.x + dock_rect.width and dock_rect.y <= ey < dock_rect.y + dock_rect.height), 'Outside drop point must be outside Dock'
+                require_unlocked_desktop()
+                # Verify both endpoints before pressing; AT-SPI bounds alone do not prove an uncovered target.
+                for px, py in ((ex, ey), (sx, sy)):
+                    assert xtst.XTestFakeMotionEvent(display, -1, px, py, 0)
+                    x11.XSync.argtypes = [ctypes.c_void_p, ctypes.c_int]; x11.XSync(display, 0)
+                    assert_pointer_over_test_app()
+                time.sleep(0.15)
+                assert xtst.XTestFakeButtonEvent(display, 1, 1, 0); pressed = True; x11.XFlush(display); time.sleep(0.15)
+                for step in range(1, 13):
+                    require_unlocked_desktop()
+                    assert xtst.XTestFakeMotionEvent(display, -1, sx + (ex - sx) * step // 12, sy + (ey - sy) * step // 12, 0)
+                    x11.XFlush(display); time.sleep(0.05)
+                time.sleep(0.2)
+                assert reorder_snapshot() == before_drag, 'Dragging before drop must not persist config'
+                if cancel: native_keys(chord=[0xff1b])
+            finally:
+                if pressed: xtst.XTestFakeButtonEvent(display, 1, 0, 0); x11.XFlush(display)
+                x11.XCloseDisplay(display)
+            time.sleep(0.8)
+        try:
+            focus_studio(); click('Taskbar Studio')
+            if not reorder_original['enabled']: click('Bật Dock')
+            if reorder_original['autoHide']: click('Tự động ẩn Dock Chạm cạnh màn hình để hiện lại; Dock giữ hiện khi bạn thao tác popup.')
+            if reorder_snapshot()['config']['position'] != 'top': click('Trên đỉnh màn hình')
+            for letter in 'ABC':
+                click('Tìm ứng dụng')
+                entry = next(n for n, _ in descendants(app) if n.get_name() == 'Tìm ứng dụng' and n.get_role_name() == 'entry')
+                assert entry.get_component_iface().grab_focus(); time.sleep(0.2)
+                native_keys(value='deskmorph reorder')
+                wait_reorder(lambda: any(n.get_name() == f'Ghim DeskMorph Reorder {letter}' for n, _ in descendants(app)), 'Reorder fixture missing from launcher')
+                click(f'Ghim DeskMorph Reorder {letter}')
+                native_keys(chord=[0xff1b])
+            assert fixture_order() == fixture_ids
+            revision = reorder_snapshot()['revision']
+            native_drag('A', 'C')
+            wait_reorder(lambda: fixture_order() == [fixture_ids[1], fixture_ids[2], fixture_ids[0]], 'Native drop did not reorder pins')
+            assert reorder_snapshot()['revision'] == revision + 1, 'Drag must persist exactly once at drop'
+            assert not any(marker.exists() for marker in markers), 'Drag accidentally launched a fixture'
+            reorder_passed.append('native drag A to C updates order and persists exactly once without launching app')
+            before = reorder_snapshot()
+            native_drag('A', 'B', cancel=True)
+            assert reorder_snapshot() == before, 'Cancelled drag changed config or revision'
+            assert not any(marker.exists() for marker in markers), 'Cancelled drag accidentally launched a fixture'
+            reorder_passed.append('Escape cancels native drag without changing order/revision or launching app')
+            before = reorder_snapshot()
+            native_drag('A', None)
+            assert reorder_snapshot() == before and not any(marker.exists() for marker in markers), 'Dropping outside Dock must cancel without writing or launching'
+            reorder_passed.append('dropping outside Dock cancels without changing config or launching app')
+            focus_pin('A'); revision = reorder_snapshot()['revision']
+            native_keys(chord=[0xffe3, 0xffe1, 0xff51])
+            wait_reorder(lambda: fixture_order() == [fixture_ids[1], fixture_ids[0], fixture_ids[2]], 'Keyboard reorder left failed')
+            assert reorder_snapshot()['revision'] == revision + 1
+            wait_reorder(lambda: reorder_node('A').get_component_iface().get_extents(Atspi.CoordType.SCREEN).x < reorder_node('C').get_component_iface().get_extents(Atspi.CoordType.SCREEN).x, 'Dock has not rendered keyboard move yet')
+            node = reorder_node('A')
+            assert node.get_state_set().contains(Atspi.StateType.FOCUSED), 'Keyboard reorder did not retain moved pin focus'
+            time.sleep(0.7)
+            active_xid = re.search(r'0x[0-9a-fA-F]+', subprocess.check_output(['xprop', '-root', '_NET_ACTIVE_WINDOW'], text=True)).group(0)
+            active_title = subprocess.check_output(['xprop', '-id', active_xid, '_NET_WM_NAME'], text=True).strip()
+            assert 'DeskMorph Taskbar' in active_title, 'Keyboard focus left Dock after tooltip delay: ' + active_title
+            native_keys(chord=[0xffe3, 0xffe1, 0xff53])
+            wait_reorder(lambda: fixture_order() == [fixture_ids[1], fixture_ids[2], fixture_ids[0]], 'Keyboard reorder right failed')
+            before = reorder_snapshot()
+            native_keys(chord=[0xffe3, 0xffe1, 0xff53])
+            assert reorder_snapshot() == before, 'Boundary keyboard reorder should not write unchanged config'
+            reorder_passed.append('Ctrl+Shift+Left/Right moves pins, retains focus and does not write at boundary')
+            focus_studio()
+            native_click_node(reorder_node('A'), button=3); click('Sang trái')
+            wait_reorder(lambda: fixture_order() == [fixture_ids[1], fixture_ids[0], fixture_ids[2]], 'Context-menu reorder failed')
+            reorder_passed.append('context-menu move updates same persistent pin order')
+            saved_order = order()
+            click('Hệ thống'); old_pid = app.get_process_id(); click('Thoát DeskMorph')
+            def exited():
+                try: return Path(f'/proc/{old_pid}/stat').read_text().rsplit(')', 1)[1].split()[0] == 'Z'
+                except FileNotFoundError: return True
+            wait_reorder(exited, 'Reorder app did not exit normally')
+            try: os.waitpid(old_pid, os.WNOHANG)
+            except ChildProcessError: pass
+            app = start_isolated_app()
+            assert order() == saved_order, 'Restart lost reordered pins'
+            rects = [reorder_node(letter).get_component_iface().get_extents(Atspi.CoordType.SCREEN).x for letter in 'BAC']
+            assert rects == sorted(rects) and len(set(rects)) == 3, 'Restart Dock positions do not match saved order'
+            assert not any(marker.exists() for marker in markers), 'Reordering or restart launched a fixture'
+            reorder_passed.append('normal restart preserves pin order and actual native icon positions')
+            focus_studio(); native_click_node(reorder_node('A'))
+            wait_reorder(markers[0].exists, 'Ordinary click stopped launching a pinned app after pointer capture changes')
+            markers[0].unlink()
+            focus_studio(); native_click_node(reorder_node('B'), button=2)
+            wait_reorder(markers[1].exists, 'Middle click stopped launching a pinned desktop entry')
+            markers[1].unlink()
+            reorder_passed.append('ordinary and middle click still launch their exact fixture desktop entries')
+        finally:
+            focus_studio()
+            for letter, desktop_id in zip('ABC', fixture_ids):
+                if any(pin.get('desktopId') == desktop_id for pin in reorder_snapshot()['config']['pinnedApps']):
+                    native_click_node(reorder_node(letter), button=3); click('Bỏ ghim')
+            assert reorder_snapshot()['config']['pinnedApps'] == original_pins, 'Reorder test did not restore original pins/order'
+            click('Taskbar Studio')
+            if reorder_snapshot()['config']['position'] != reorder_original['position']: click('Trên đỉnh màn hình' if reorder_original['position'] == 'top' else 'Dưới đáy (Đề xuất)')
+            if reorder_snapshot()['config']['autoHide'] != reorder_original['autoHide']: click('Tự động ẩn Dock Chạm cạnh màn hình để hiện lại; Dock giữ hiện khi bạn thao tác popup.')
+            if reorder_snapshot()['config']['enabled'] != reorder_original['enabled']: click('Bật Dock')
+            for marker in markers: marker.unlink(missing_ok=True)
+        report = {'passed': reorder_passed, 'pid': app.get_process_id(), 'pinsRestored': True}
+        Path('/tmp/deskmorph-desktop-test/reorder-result.json').write_text(json.dumps(report, indent=2))
+        print(json.dumps(report))
     if args.window_list_smoke:
         import select
         fixture = None

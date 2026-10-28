@@ -27,6 +27,12 @@ Danh sách cửa sổ và phần cửa sổ trong menu chuột phải dùng `use
 
 WindowList giữ lựa chọn theo XID khi đổi tiêu đề. Nếu hàng biến mất, chọn hàng kế bên theo vị trí trước đó (hoặc hàng cuối còn lại), chỉ yêu cầu DOM focus khi popup active và document có focus; nghe thêm window focus cho trường hợp GTK map hoàn tất sau React effect. Home/End/mũi tên đổi lựa chọn; Enter dùng button activation, Escape do coordinator xử lý. Hàng không bị xóa lạc quan sau yêu cầu close: ứng dụng có thể đang chờ xác nhận. Danh sách rỗng tự đóng theo generation; menu chuột phải vẫn giữ các thao tác của app và loại target force-close đã biến mất.
 
+## Sắp xếp Dock và tooltip
+
+Pin dùng Pointer Events với pointer capture: ngưỡng kéo 8 CSS px, chỉ nhận pointer chính/nút trái, xác định pin đích trong document. Kéo giữ nguyên thứ tự cho tới pointer-up; thả hợp lệ gọi một mutation, thả ngoài/Escape/blur/pointer-cancel/lost capture hủy. Click sau kéo bị chặn để không mở app; magnification tạm dừng và đích thả có viền. Không dùng HTML drag-and-drop cho sắp xếp pin. Ctrl+Shift+Left/Right và menu Sang trái/Sang phải dùng cùng native mutation; không ghi khi vị trí không đổi, giữ focus pin sau lưu thành công. Pin có aria-keyshortcuts.
+
+Chiều rộng nội dung có thể được cập nhật trong khi popup đang bám Dock. Backend hoãn resize tới lúc popup đóng; hide nhả coordinator lock rồi áp dụng layout mới nhất để không deadlock và không để icon mới bị widget che. Tooltip GTK đặt accept_focus=false và focus_on_map=false; focus=false lúc tạo window chưa đủ cho những lần show sau. Input shape rỗng tiếp tục được đặt khi map để tooltip không chặn click.
+
 ## Cấu hình bền vững
 
 `src/config/defaults.json` là nguồn mặc định chung cho TypeScript và Rust. `ConfigStore` giữ schema version, revision và snapshot; managed mutex serialize patch/import/pin. Native store validate trước ghi. File tạm được sync, rename và sync thư mục; file mới/recovery dùng quyền 0600. Nếu IO trước commit thất bại, snapshot trong bộ nhớ không đổi. Nếu rename đã thành công nhưng sync thư mục lỗi, cấu hình mới được giữ nhất quán với file và phát cảnh báo độ bền; không trả lỗi ghi khiến bộ nhớ giữ revision cũ. Có test fault injection cho trường hợp sau rename.
