@@ -5,6 +5,7 @@ import { useConfig, errorMessage } from "../../config/store";
 import { usePlatform } from "../../hooks/usePlatform";
 import { useI18n } from "../../i18n/useI18n";
 import { Card, Toggle } from "./Controls";
+import { ShortcutSettings } from "./ShortcutSettings";
 interface Review { config: TaskbarConfig; changedFields: string[]; expectedRevision: number; kind: "import" | "reset" }
 export function SystemSettings() {
   const { config, revision, updateConfig, replaceConfigDocument } = useConfig();
@@ -38,6 +39,7 @@ export function SystemSettings() {
       <Toggle label={t("autostart")} value={autostart} onChange={(enabled) => perform(async () => setAutostart(await invoke<boolean>("set_autostart", { enabled })))} />
       <div className="settings-inline"><button className="studio-button" onClick={() => void perform(() => invoke("install_app_icon"))}>{t("installIcon")}</button><button className="studio-button danger" onClick={() => void invoke("quit_app")}>{t("quit")}</button></div>
     </Card>
+    <ShortcutSettings />
     <Card title={t("importConfig")}>
       <p className="settings-help">{t("exportHelp")}</p>
       <div className="settings-inline"><button className="studio-button" onClick={() => void perform(async () => { const path = await invoke<string | null>("export_config"); if (path) setStatus(path); })}>{t("exportConfig")}</button><button className="studio-button" onClick={() => input.current?.click()}>{t("importConfig")}</button></div>

@@ -34,6 +34,7 @@ export interface AppearancePreset {
 }
 
 export interface TaskbarConfig {
+  launcherShortcut: string | null;
   wallpaperScheduleEnabled: boolean;
   wallpaperIntervalMinutes: number;
   wallpaperFolders: string[];

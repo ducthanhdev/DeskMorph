@@ -19,10 +19,11 @@ Dock tùy biến cho Linux, xây bằng React 19, TypeScript và Tauri 2/Rust. M
 | Media | MPRIS trên session bus; hai fixture players đã qua test; ảnh bìa chỉ nhận file cục bộ |
 | Pin/mạng | UPower display aggregate và NetworkManager; có trạng thái thiếu service |
 | Downloads | XDG user directories; adapter COSMIC Files đã kiểm thử trên máy tham chiếu |
+| Phím tắt launcher X11 | Tùy chỉnh, mặc định tắt; phát hiện xung đột, thử lại và tắt trong Hệ thống |
 | Thùng rác | Chỉ bật khi desktop có URI handler; chưa khả dụng trên máy tham chiếu |
 | Wayland native / KDE / COSMIC session | Chưa được xác minh; không công bố hỗ trợ window management native |
 
-Có COSMIC Files được cài không đồng nghĩa phiên desktop là COSMIC. Máy tham chiếu hiện chạy GNOME/X11. Mixed DPI, hotplug, sleep/resume thực tế và global shortcuts còn trong kế hoạch.
+Có COSMIC Files được cài không đồng nghĩa phiên desktop là COSMIC. Máy tham chiếu hiện chạy GNOME/X11. Mixed DPI, hotplug, sleep/resume thực tế và global shortcuts portal trên Wayland còn trong kế hoạch.
 
 Xem [ma trận capability và cách phát hiện](docs/CAPABILITIES.md) cho liệt kê/chuyển/đóng cửa sổ, các trường hợp thiếu hỗ trợ và giới hạn Wayland.
 
@@ -31,7 +32,7 @@ Xem [ma trận capability và cách phát hiện](docs/CAPABILITIES.md) cho li�
 Cần Node.js 22.12 trở lên, npm, Rust stable/Cargo và các thư viện native. Trên Ubuntu/Pop!_OS 24.04:
 
 ```sh
-sudo apt install build-essential pkg-config libssl-dev libgtk-3-dev libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev libx11-dev libxi-dev patchelf x11-utils pulseaudio-utils
+sudo apt install build-essential pkg-config libssl-dev libgtk-3-dev libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev libx11-dev libxi-dev libxcb1-dev patchelf x11-utils pulseaudio-utils
 npm ci
 npm run tauri -- dev
 ```
@@ -39,6 +40,8 @@ npm run tauri -- dev
 Lần đầu Cargo cần tải dependencies. Cổng Vite mặc định là 1420. Nếu một instance cùng profile đang chạy, lần mở tiếp theo chuyển tới instance đó và mở Studio; không tạo Dock thứ hai.
 
 Đóng Studio giữ Dock khi bật “Giữ Dock khi đóng Studio”. Chạy executable một lần nữa để mở lại Studio; dùng “Thoát DeskMorph” trong Hệ thống để thoát hẳn. Tự ẩn, chọn màn hình và các widget được điều chỉnh ở Taskbar Studio.
+
+Trong Hệ thống, bạn có thể bật phím tắt launcher như `Ctrl+Super+K`. Cú pháp dùng Ctrl/Alt/Shift/Super và chữ ASCII, số, F1–F12 hoặc Space; không nhận phím trần hay chỉ Shift. `Ctrl+Alt+F1–F12` bị từ chối vì có thể chuyển virtual console. Khi có xung đột, phím đã chọn được lưu nhưng báo chưa hoạt động; đổi phím hoặc thử lại sau khi giải phóng tổ hợp. Tắt Dock tạm ngừng đăng ký; mở lại Dock khôi phục lựa chọn. Wayland hiện chưa hỗ trợ.
 
 ## Build và cài thủ công
 
@@ -80,7 +83,7 @@ cargo check --locked --manifest-path src-tauri/Cargo.toml
 cargo test --locked --manifest-path src-tauri/Cargo.toml --lib -- --include-ignored
 ```
 
-Workflow CI được cấu hình để chạy các kiểm tra này trên Ubuntu 24.04; chưa chạy trên GitHub trong phiên này và không thay thế kiểm thử desktop. Trong sandbox cấm Unix socket, chạy Rust tests không có `--include-ignored` và ghi rõ test bị bỏ qua.
+Workflow CI được cấu hình để chạy các kiểm tra này (Rust tests dùng Xvfb với `xvfb`/`xauth`) trên Ubuntu 24.04; chưa chạy trên GitHub trong phiên này và không thay thế kiểm thử desktop. Trong sandbox cấm Unix socket, chạy Rust tests không có `--include-ignored` và ghi rõ test bị bỏ qua.
 
 Native UI tests là opt-in, chỉ thao tác profile tạm có nhận diện PID riêng. Chúng cần phiên X11 đang **mở khóa**, AT-SPI/Python GI/GTK3/libXtst và binary với frontend được nhúng. Script chặn phím khi focus không thuộc PID test. Các ca audio dùng null sink, MPRIS dùng fixtures, wallpaper khôi phục trạng thái cũ trong `finally`.
 
@@ -89,6 +92,7 @@ npm run build
 cargo build --offline --manifest-path src-tauri/Cargo.toml --target-dir src-tauri/target/agent --features custom-protocol
 /usr/bin/python3 tests/desktop_smoke.py --restart --basic --studio-smoke --config-smoke --launcher-smoke
 /usr/bin/python3 tests/desktop_smoke.py --autohide-smoke --popup-smoke
+/usr/bin/python3 tests/desktop_smoke.py --shortcut-smoke
 /usr/bin/python3 tests/desktop_smoke.py --audio-smoke --media-smoke --audio-exit
 /usr/bin/python3 tests/desktop_smoke.py --force-close-smoke --wallpaper-smoke
 /usr/bin/python3 tests/desktop_smoke.py --system-smoke --system-open-smoke

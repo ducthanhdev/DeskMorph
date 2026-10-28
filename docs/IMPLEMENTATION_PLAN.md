@@ -170,7 +170,7 @@ Phụ thuộc G2/G4; mỗi tiện ích là module có thể bật/tắt.
 - [x] G8.3 Popup CPU/RAM: số liệu, đơn vị, chu kỳ cập nhật; bật khi cần, không tạo thêm nguồn refresh cạnh tranh.
 - [ ] G8.4 Mở system monitor bằng desktop entry/app được phát hiện, có fallback và báo thiếu ứng dụng.
 - [ ] G8.5 Mở Downloads theo XDG user directories, xử lý thư mục chưa có; mở Thùng rác bằng cơ chế desktop hỗ trợ, không tự xóa dữ liệu.
-- [ ] G8.6 Phím tắt launcher có thể tùy chỉnh; phát hiện đăng ký thất bại/xung đột, cho đổi/tắt; không chiếm Super/Alt+Space mặc định khi chưa kiểm tra môi trường.
+- [x] G8.6 Phím tắt launcher có thể tùy chỉnh; phát hiện đăng ký thất bại/xung đột, cho đổi/tắt; không chiếm Super/Alt+Space mặc định khi chưa kiểm tra môi trường.
 - [ ] G8.7 Trên Wayland, thử global shortcuts portal theo compositor; nếu thiếu thì cung cấp hướng dẫn gán phím trong desktop.
 
 G8 hiện đã kiểm thử UPower/NetworkManager và CPU/RAM trên máy tham chiếu, gồm service không khả dụng. Downloads mở đúng qua COSMIC Files; Trash đang tắt vì thiếu URI handler đã xác minh. Chưa đánh dấu G8.4–G8.7 hoàn tất.

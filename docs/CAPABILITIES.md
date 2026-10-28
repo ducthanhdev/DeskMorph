@@ -4,8 +4,8 @@ Ma trận ban đầu cho G0.5/G2.1. Đây là bản development; cổng phát h�
 
 | Môi trường | Liệt kê / chuyển / yêu cầu đóng cửa sổ native | Dock / popup | Hình nền | Workspace | Global shortcut |
 | --- | --- | --- | --- | --- | --- |
-| Pop!_OS 24.04, GNOME 46.0, X11, x86_64 | Backend X11; GNOME công bố `_NET_CLIENT_LIST`, `_NET_ACTIVE_WINDOW`, `_NET_CLOSE_WINDOW`; đã có native test luồng cơ bản trên artifact trước, hồi quy tương tác sau capability/force-close mới còn chờ | Startup, trên/dưới và màn hình chính đã quan sát; focus/auto-hide/overflow/stress/mixed DPI/hotplug chưa hoàn tất | Adapter GNOME GSettings; áp dụng/shuffle/lịch một phút đã kiểm thử | Chưa triển khai | Chưa triển khai |
-| X11 trên KDE, COSMIC hoặc desktop khác | Adapter dùng EWMH, chỉ bật capability API được phát hiện; chưa kiểm thử môi trường này | Chưa kiểm thử | Không bật adapter chưa xác minh | Chưa triển khai | Chưa triển khai |
+| Pop!_OS 24.04, GNOME 46.0, X11, x86_64 | Backend X11; GNOME công bố `_NET_CLIENT_LIST`, `_NET_ACTIVE_WINDOW`, `_NET_CLOSE_WINDOW`; đã qua native launcher/close-confirmation và force-close fixture có PID giả, sentinel còn sống | Đã qua focus/Escape/outside-click, auto-hide top/bottom và stress ba vòng; overflow/mixed DPI/hotplug chưa hoàn tất | Adapter GNOME GSettings; áp dụng/shuffle/lịch một phút đã kiểm thử | Chưa triển khai | XCB tùy chọn; xung đột/retry/đổi/tắt/focus/exit-restart đã qua |
+| X11 trên KDE, COSMIC hoặc desktop khác | Adapter dùng EWMH, chỉ bật capability API được phát hiện; chưa kiểm thử môi trường này | Chưa kiểm thử | Không bật adapter chưa xác minh | Chưa triển khai | Có code XCB, chưa kiểm thử desktop này |
 | GNOME Wayland | Chưa hỗ trợ cửa sổ Wayland native | Chưa có prototype đạt yêu cầu placement/auto-hide | Adapter GNOME có code, chưa kiểm thử trong phiên Wayland | Chưa triển khai | Portal chưa thử trên phiên Wayland |
 | COSMIC/KDE Wayland và compositor khác | Chưa có adapter được xác minh | Chưa kiểm thử | Chưa có adapter được xác minh | Chưa triển khai | Portal chưa thử trên compositor mục tiêu |
 

@@ -67,6 +67,7 @@ if __name__ == '__main__':
     parser.add_argument('--force-close-smoke', action='store_true')
     parser.add_argument('--popup-smoke', action='store_true')
     parser.add_argument('--autohide-smoke', action='store_true')
+    parser.add_argument('--shortcut-smoke', action='store_true')
     parser.add_argument('--studio-smoke', action='store_true')
     parser.add_argument('--config-smoke', action='store_true')
     parser.add_argument('--wallpaper-smoke', action='store_true')
@@ -100,7 +101,7 @@ if __name__ == '__main__':
             raise RuntimeError('Cannot verify GNOME lock state; no native input will be sent')
         if re.search(r'\btrue\b', result.stdout):
             raise RuntimeError('GNOME desktop is locked; unlock it before native UI tests. No input was sent.')
-    input_tests = any((args.action, args.screenshot, args.basic, args.popup_smoke, args.autohide_smoke, args.launcher_smoke, args.studio_smoke, args.config_smoke,
+    input_tests = any((args.action, args.screenshot, args.basic, args.popup_smoke, args.autohide_smoke, args.shortcut_smoke, args.launcher_smoke, args.studio_smoke, args.config_smoke,
                        args.wallpaper_smoke, args.scheduler_smoke, args.library_stress, args.audio_smoke, args.media_smoke,
                        args.audio_exit, args.audio_unavailable, args.system_smoke, args.system_unavailable, args.system_open_smoke))
     if input_tests: require_unlocked_desktop()
@@ -204,6 +205,7 @@ if __name__ == '__main__':
         report = {'passed': ['missing xprop reaches Studio capability status', 'Dock and launcher remain available'], 'pid': app.get_process_id(), 'inputSent': False}
         Path('/tmp/deskmorph-desktop-test/platform-tool-missing-result.json').write_text(json.dumps(report, indent=2))
         print(json.dumps(report))
+    owned_input_pids = set()
     def click(name, role=None):
         require_unlocked_desktop()
         deadline = time.monotonic() + 12
@@ -220,8 +222,10 @@ if __name__ == '__main__':
         if not action or not action.do_action(0):
             raise RuntimeError(f'Action failed: {name}')
         time.sleep(0.7)
-    def focus_studio(title="DeskMorph Studio"):
+    def focus_studio(title="DeskMorph Studio", target_pid=None):
         require_unlocked_desktop()
+        target_pid = app.get_process_id() if target_pid is None else target_pid
+        assert target_pid == app.get_process_id() or target_pid in owned_input_pids, 'Focus target is not an owned test process'
         gi.require_version('Gdk', '3.0')
         gi.require_version('GdkX11', '3.0')
         from gi.repository import Gdk, GdkX11
@@ -229,7 +233,7 @@ if __name__ == '__main__':
         for xid in re.findall(r'0x[0-9a-fA-F]+', clients):
             properties = subprocess.run(['xprop', '-id', xid, '_NET_WM_PID', '_NET_WM_NAME'], capture_output=True, text=True).stdout
             pid = re.search(r'_NET_WM_PID.*= (\d+)', properties)
-            if pid and int(pid.group(1)) == app.get_process_id() and title in properties:
+            if pid and int(pid.group(1)) == target_pid and title in properties:
                 active = subprocess.check_output(['xprop', '-root', '_NET_ACTIVE_WINDOW'], text=True)
                 if re.search(r'0x[0-9a-fA-F]+', active).group(0) == xid:
                     return
@@ -267,6 +271,23 @@ if __name__ == '__main__':
         binary = Path(__file__).resolve().parents[1] / 'src-tauri/target/agent/debug/deskmorph'
         subprocess.run([str(binary)], env=env, timeout=5, check=True, capture_output=True)
         time.sleep(0.7)
+    def start_isolated_app():
+        require_unlocked_desktop()
+        test_root = Path('/tmp/deskmorph-desktop-test')
+        env = dict(os.environ, DESKMORPH_CONFIG_HOME=TEST_CONFIG, XDG_DATA_HOME=str(test_root / 'data'),
+                   XDG_CACHE_HOME=str(test_root / 'cache'), WEBKIT_DISABLE_DMABUF_RENDERER='1')
+        binary = Path(__file__).resolve().parents[1] / 'src-tauri/target/agent/debug/deskmorph'
+        with (test_root / 'runtime.log').open('a') as log:
+            launched = subprocess.Popen([str(binary)], env=env, stdout=log, stderr=log, start_new_session=True)
+        deadline = time.monotonic() + 12
+        while time.monotonic() < deadline:
+            if launched.poll() is not None: raise AssertionError('Fresh isolated app exited during startup')
+            time.sleep(0.2)
+            try:
+                candidate = test_app()
+                if candidate.get_process_id() == launched.pid and any(n.get_role_name() == 'button' for n, _ in descendants(candidate)): return candidate
+            except RuntimeError: pass
+        raise AssertionError('Fresh isolated app did not become accessible')
     def close_studio_native():
         require_unlocked_desktop()
         clients = subprocess.check_output(['xprop', '-root', '_NET_CLIENT_LIST'], text=True)
@@ -307,13 +328,16 @@ if __name__ == '__main__':
         active = subprocess.check_output(['xprop', '-root', '_NET_ACTIVE_WINDOW'], text=True)
         xid = re.search(r'0x[0-9a-fA-F]+', active).group(0)
         pid = subprocess.check_output(['xprop', '-id', xid, '_NET_WM_PID'], text=True)
-        assert int(pid.split('=')[1].strip()) == app.get_process_id(), 'Keyboard focus left isolated test app'
+        focused_pid = int(pid.split('=')[1].strip())
+        assert focused_pid == app.get_process_id() or focused_pid in owned_input_pids, 'Keyboard focus left isolated app and explicitly owned fixture'
         x11 = ctypes.CDLL('libX11.so.6')
         xtst = ctypes.CDLL('libXtst.so.6')
         x11.XOpenDisplay.restype = ctypes.c_void_p
         x11.XOpenDisplay.argtypes = [ctypes.c_char_p]
         x11.XKeysymToKeycode.argtypes = [ctypes.c_void_p, ctypes.c_ulong]
         x11.XKeysymToKeycode.restype = ctypes.c_uint
+        x11.XKeycodeToKeysym.argtypes = [ctypes.c_void_p, ctypes.c_uint, ctypes.c_int]
+        x11.XKeycodeToKeysym.restype = ctypes.c_ulong
         x11.XFlush.argtypes = [ctypes.c_void_p]
         x11.XCloseDisplay.argtypes = [ctypes.c_void_p]
         xtst.XTestFakeKeyEvent.argtypes = [ctypes.c_void_p, ctypes.c_uint, ctypes.c_int, ctypes.c_ulong]
@@ -332,8 +356,13 @@ if __name__ == '__main__':
                 key(ord('a'), 1); key(ord('a'), 0); key(0xffe3, 0)
                 if value == '': key(0xff08, 1); key(0xff08, 0)
                 for char in value:
-                    assert char in 'abcdefghijklmnopqrstuvwxyz0123456789 -./', 'Test helper accepts lowercase ASCII only'
+                    assert char in 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 -./+', 'Test helper accepts bounded ASCII only'
+                    code = x11.XKeysymToKeycode(display, ord(char))
+                    shifted = x11.XKeycodeToKeysym(display, code, 0) != ord(char)
+                    assert not shifted or x11.XKeycodeToKeysym(display, code, 1) == ord(char), 'Test character needs an unsupported keymap level'
+                    if shifted: key(0xffe1, 1)
                     key(ord(char), 1); key(ord(char), 0)
+                    if shifted: key(0xffe1, 0)
             x11.XFlush(display)
         finally:
             x11.XCloseDisplay(display)
@@ -475,12 +504,154 @@ if __name__ == '__main__':
     # The dedicated case above exercises auto-hide. Other cases interact with
     # a fully shown Dock; AT-SPI actions on off-screen children are not a real
     # user interaction and can leave the popup unfocused during native resize.
-    if any((args.popup_smoke, args.audio_smoke, args.media_smoke, args.launcher_smoke)):
+    if any((args.popup_smoke, args.shortcut_smoke, args.audio_smoke, args.media_smoke, args.launcher_smoke)):
         baseline_path = Path(TEST_CONFIG) / 'com.ducthanhdev.deskmorph/config.json'
         focus_studio()
         click('Taskbar Studio')
         if json.loads(baseline_path.read_text())['config']['autoHide']:
             click('Tự động ẩn Dock Chạm cạnh màn hình để hiện lại; Dock giữ hiện khi bạn thao tác popup.')
+    if args.shortcut_smoke:
+        config_path = Path(TEST_CONFIG) / 'com.ducthanhdev.deskmorph/config.json'
+        shortcut_config = lambda: json.loads(config_path.read_text())['config']
+        original_shortcut = shortcut_config()['launcherShortcut']
+        original_enabled = shortcut_config()['enabled']
+        def wait_shortcut(predicate, message):
+            deadline = time.monotonic() + 10
+            while time.monotonic() < deadline:
+                if predicate(): return
+                time.sleep(0.1)
+            raise AssertionError(message)
+        def text_present(value):
+            return any(n.get_text_iface() and value in Atspi.Text.get_text(n.get_text_iface(), 0, -1) for n, _ in descendants(app))
+        def launcher_mapped():
+            for xid in re.findall(r'0x[0-9a-fA-F]+', subprocess.check_output(['xprop', '-root', '_NET_CLIENT_LIST'], text=True)):
+                props = subprocess.check_output(['xprop', '-id', xid, '_NET_WM_PID', '_NET_WM_NAME'], text=True)
+                if 'DeskMorph Context Menu' in props and re.search(r'_NET_WM_PID.*= ' + str(app.get_process_id()) + r'\b', props): return True
+            return False
+        class Cookie(ctypes.Structure): _fields_ = [('sequence', ctypes.c_uint)]
+        xcb = ctypes.CDLL('libxcb.so.1'); x11 = ctypes.CDLL('libX11.so.6'); libc = ctypes.CDLL(None)
+        xcb.xcb_connect.argtypes = [ctypes.c_char_p, ctypes.POINTER(ctypes.c_int)]; xcb.xcb_connect.restype = ctypes.c_void_p
+        xcb.xcb_disconnect.argtypes = [ctypes.c_void_p]
+        xcb.xcb_grab_key_checked.argtypes = [ctypes.c_void_p, ctypes.c_ubyte, ctypes.c_uint, ctypes.c_ushort, ctypes.c_ubyte, ctypes.c_ubyte, ctypes.c_ubyte]; xcb.xcb_grab_key_checked.restype = Cookie
+        xcb.xcb_request_check.argtypes = [ctypes.c_void_p, Cookie]; xcb.xcb_request_check.restype = ctypes.c_void_p
+        libc.free.argtypes = [ctypes.c_void_p]
+        x11.XOpenDisplay.restype = ctypes.c_void_p; x11.XCloseDisplay.argtypes = [ctypes.c_void_p]
+        x11.XDefaultRootWindow.argtypes = [ctypes.c_void_p]; x11.XDefaultRootWindow.restype = ctypes.c_ulong
+        x11.XKeysymToKeycode.argtypes = [ctypes.c_void_p, ctypes.c_ulong]; x11.XKeysymToKeycode.restype = ctypes.c_ubyte
+        display = x11.XOpenDisplay(None); assert display
+        root = x11.XDefaultRootWindow(display)
+        codes = {key: x11.XKeysymToKeycode(display, key) for key in (0x6b, 0x6a)}
+        x11.XCloseDisplay(display)
+        def claim(key):
+            connection = xcb.xcb_connect(None, None); assert connection
+            error = xcb.xcb_request_check(connection, xcb.xcb_grab_key_checked(connection, 0, root, 4 | 8 | 64, codes[key], 1, 1))
+            if error:
+                code = ctypes.cast(error, ctypes.POINTER(ctypes.c_ubyte))[1]
+                libc.free(error); xcb.xcb_disconnect(connection)
+                assert code == 10, 'Unexpected native key-grab error'
+                return None
+            return connection
+        def free_chord(key):
+            probe = claim(key)
+            if not probe: return False
+            xcb.xcb_disconnect(probe); return True
+        def save_shortcut(value):
+            click('Hệ thống')
+            type_entry('Tổ hợp phím', value)
+            click('Lưu phím tắt')
+            wait_shortcut(lambda: shortcut_config()['launcherShortcut'] == value, 'Shortcut was not persisted')
+        def expect_open(key, fixture=None):
+            if fixture is None: focus_studio()
+            else:
+                assert fixture.poll() is None, 'Owned keyboard fixture exited'
+                focus_studio('DeskMorph Smoke 2', fixture.pid)
+            native_keys(chord=[0xffe3, 0xffe9, 0xffeb, key])
+            wait_shortcut(launcher_mapped, 'Registered shortcut did not open the launcher')
+            def launcher_focused():
+                xid = re.search(r'0x[0-9a-fA-F]+', subprocess.check_output(['xprop', '-root', '_NET_ACTIVE_WINDOW'], text=True)).group(0)
+                props = subprocess.check_output(['xprop', '-id', xid, '_NET_WM_PID', '_NET_WM_NAME'], text=True)
+                return 'DeskMorph Context Menu' in props and bool(re.search(r'_NET_WM_PID.*= ' + str(app.get_process_id()) + r'\b', props))
+            wait_shortcut(launcher_focused, 'Shortcut launcher did not receive native keyboard focus')
+            native_keys(chord=[0xff1b])
+            wait_shortcut(lambda: not launcher_mapped(), 'Shortcut launcher did not dismiss with Escape')
+        holder = None
+        keyboard_fixture = None
+        passed = []
+        try:
+            if not original_enabled:
+                click('Taskbar Studio'); click('Bật Dock')
+            click('Hệ thống')
+            if original_shortcut is not None:
+                click('Tắt phím tắt')
+                wait_shortcut(lambda: text_present('Phím tắt đang tắt'), 'Could not disable existing test-profile shortcut')
+            holder = claim(0x6b)
+            assert holder, 'Reference Ctrl+Alt+Super+K is already owned; no shortcut input will be sent'
+            save_shortcut('Ctrl+Alt+Super+K')
+            wait_shortcut(lambda: text_present('Tổ hợp phím đã được ứng dụng hoặc desktop khác sử dụng'), 'Conflict did not produce a clear UI error')
+            passed.append('checked native conflict is visible without stealing the existing grab')
+            xcb.xcb_disconnect(holder); holder = None
+            click('Thử lại')
+            wait_shortcut(lambda: text_present('Phím tắt đang hoạt động: Ctrl+Alt+Super+K'), 'Retry did not register released shortcut')
+            expect_open(0x6b)
+            passed.append('retry and physical shortcut open launcher, Escape dismisses')
+            fixture_env = dict(os.environ, DESKMORPH_CONFIG_HOME=TEST_CONFIG)
+            keyboard_fixture = subprocess.Popen(['/usr/bin/python3', str(Path(__file__).resolve()), '--fixture'], env=fixture_env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            expected_env = b'DESKMORPH_CONFIG_HOME=' + TEST_CONFIG.encode()
+            assert expected_env in Path(f'/proc/{keyboard_fixture.pid}/environ').read_bytes().split(b'\0')
+            owned_input_pids.add(keyboard_fixture.pid)
+            time.sleep(0.8)
+            expect_open(0x6b, keyboard_fixture)
+            passed.append('global shortcut opens focused launcher from a separate owned GTK fixture')
+            focus_studio()
+            save_shortcut('Ctrl+Alt+Super+J')
+            wait_shortcut(lambda: text_present('Phím tắt đang hoạt động: Ctrl+Alt+Super+J'), 'Changed shortcut was not registered')
+            wait_shortcut(lambda: free_chord(0x6b), 'Previous shortcut was not released after change')
+            expect_open(0x6a)
+            passed.append('changing shortcut releases the old chord and activates the new chord')
+            click('Taskbar Studio'); click('Bật Dock')
+            wait_shortcut(lambda: free_chord(0x6a), 'Disabling Dock did not release shortcut')
+            click('Hệ thống')
+            wait_shortcut(lambda: text_present('Phím tắt tạm dừng vì Dock đang tắt'), 'Paused shortcut state was not visible')
+            click('Taskbar Studio'); click('Bật Dock'); click('Hệ thống')
+            wait_shortcut(lambda: text_present('Phím tắt đang hoạt động: Ctrl+Alt+Super+J'), 'Enabling Dock did not restore shortcut')
+            expect_open(0x6a)
+            passed.append('disabling Dock pauses grabs and enabling restores saved shortcut')
+            click('Hệ thống')
+            old_pid = app.get_process_id()
+            click('Thoát DeskMorph')
+            wait_shortcut(lambda: free_chord(0x6a), 'Normal exit did not release shortcut')
+            # This is a fresh long-running process, unlike reopen_studio(),
+            # which forwards to an existing instance and waits for its ACK.
+            try:
+                if process.pid == old_pid: process.wait(timeout=8)
+            except NameError: pass
+            app = start_isolated_app()
+            assert app.get_process_id() != old_pid, 'Shortcut restart did not create a new isolated app process'
+            click('Hệ thống')
+            wait_shortcut(lambda: text_present('Phím tắt đang hoạt động: Ctrl+Alt+Super+J'), 'Saved shortcut did not register on startup')
+            expect_open(0x6a)
+            passed.append('normal exit releases grabs and startup restores saved shortcut')
+            click('Hệ thống'); click('Tắt phím tắt')
+            wait_shortcut(lambda: free_chord(0x6a), 'Disable left the shortcut registered')
+            assert shortcut_config()['launcherShortcut'] is None
+            passed.append('disable persists null and releases native grab')
+        finally:
+            if holder: xcb.xcb_disconnect(holder)
+            if keyboard_fixture:
+                owned_input_pids.discard(keyboard_fixture.pid)
+                if keyboard_fixture.poll() is None: keyboard_fixture.terminate()
+                keyboard_fixture.wait(timeout=5)
+            try: app = test_app()
+            except RuntimeError: app = start_isolated_app()
+            focus_studio(); click('Hệ thống')
+            if original_shortcut is None:
+                if shortcut_config()['launcherShortcut'] is not None: click('Tắt phím tắt')
+            else: save_shortcut(original_shortcut)
+            if shortcut_config()['enabled'] != original_enabled:
+                click('Taskbar Studio'); click('Bật Dock')
+        report = {'passed': passed, 'pid': app.get_process_id(), 'originalShortcutRestored': True}
+        Path('/tmp/deskmorph-desktop-test/shortcut-result.json').write_text(json.dumps(report, indent=2))
+        print(json.dumps(report))
     if args.popup_smoke:
         popup_config_path = Path(TEST_CONFIG) / 'com.ducthanhdev.deskmorph/config.json'
         popup_config = lambda: json.loads(popup_config_path.read_text())['config']

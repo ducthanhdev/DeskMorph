@@ -82,6 +82,22 @@ pub fn is_audio_active(app: &AppHandle) -> bool {
 pub fn is_active(app: &AppHandle, label: &str) -> bool {
     app.state::<PopupState>().0.lock().map(|c| c.active.is_some_and(|(active, _)| active == label)).unwrap_or(false)
 }
+/// Use the timestamp of the native shortcut event so the WM can distinguish
+/// explicit keyboard activation from a background application's focus request.
+pub fn focus_at(app: &AppHandle, label: &'static str, timestamp: u32) -> Result<(), String> {
+    let Some(generation) = active_generation(app, label) else { return Ok(()); };
+    let handle = app.clone();
+    app.get_webview_window(label).ok_or("Không tìm thấy popup")?.with_webview(move |platform| {
+        let view = platform.inner();
+        gio::glib::idle_add_local_once(move || {
+            if active_generation(&handle, label) != Some(generation) { return; }
+            if let Some(top) = view.toplevel().and_then(|window| window.downcast::<gtk::Window>().ok()) {
+                top.present_with_time(timestamp);
+                view.grab_focus();
+            }
+        });
+    }).map_err(|e| e.to_string())
+}
 pub fn show(app: &AppHandle, label: &'static str, anchor: i32, width: u32, height: u32, data: Option<serde_json::Value>) -> Result<bool, String> {
     let state = app.state::<PopupState>();
     let mut c = state.0.lock().map_err(|e| e.to_string())?;

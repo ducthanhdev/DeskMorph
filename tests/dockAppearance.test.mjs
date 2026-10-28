@@ -9,10 +9,10 @@ const { appearanceOf, dockMetrics, dockSurface, BUILTIN_PRESETS } = await import
 const defaults = JSON.parse(fs.readFileSync(new URL('../src/config/defaults.json', import.meta.url)));
 
 test('presets preserve pins, lifecycle, monitor and widget preferences', () => {
-  const original = { ...defaults, enabled: false, autoHide: true, monitor: 'external', language: 'en', clockSeconds: false };
+  const original = { ...defaults, enabled: false, autoHide: true, monitor: 'external', language: 'en', clockSeconds: false, launcherShortcut: 'Ctrl+Super+K' };
   for (const preset of BUILTIN_PRESETS) {
     const updated = { ...original, ...preset.appearance };
-    for (const field of ['pinnedApps', 'enabled', 'autoHide', 'monitor', 'keepDockOnClose', 'showClock', 'language', 'clockSeconds']) {
+    for (const field of ['pinnedApps', 'enabled', 'autoHide', 'monitor', 'keepDockOnClose', 'showClock', 'language', 'clockSeconds', 'launcherShortcut']) {
       assert.deepEqual(updated[field], original[field]);
     }
     assert.deepEqual(appearanceOf(updated), preset.appearance);

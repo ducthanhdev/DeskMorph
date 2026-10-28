@@ -44,6 +44,7 @@ fn validate_pin(v: &Value) -> bool {
 }
 fn valid_field(key: &str, v: &Value) -> bool {
     match key {
+        "launcherShortcut" => v.is_null() || v.as_str().is_some_and(super::shortcuts::valid),
         "wallpaperScheduleEnabled" | "wallpaperRecursive" | "clock24" | "clockSeconds" | "reduceMotion" | "keepDockOnClose" | "enabled" | "autoHide" | "showBattery" | "showNetwork" | "showSystem" | "showAudio" | "showClock" | "showStats" | "showShuffle" | "showApps" | "bouncingLaunch" | "dynamicShadow" | "magnification" => v.is_boolean(),
         "wallpaperIntervalMinutes" => v.as_u64().is_some_and(|minutes| (1..=1440).contains(&minutes)),
         "wallpaperFolders" | "wallpaperFavorites" => v.as_array().is_some_and(|paths| {
@@ -246,6 +247,9 @@ pub fn publish(app: &AppHandle, snapshot: &Snapshot, previous: Option<&Value>) -
     if ["wallpaperScheduleEnabled", "wallpaperIntervalMinutes", "wallpaperFolders", "wallpaperRecursive"].iter().any(|key| changed(key)) {
         super::wallpaper::schedule_changed(app);
     }
+    if changed("launcherShortcut") || changed("enabled") {
+        super::shortcuts::configure(app, if c["enabled"] == true { c["launcherShortcut"].as_str() } else { None });
+    }
     super::layout::configure(app, c).map_err(|e| ConfigError::new("layout_config", e))?;
     let apply = (|| -> Result<()> {
         if c["enabled"] == false && changed("enabled") {
@@ -362,6 +366,23 @@ mod tests {
     fn path() -> PathBuf {
         let stamp = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_nanos();
         std::env::temp_dir().join(format!("deskmorph-config-{}-{stamp}", std::process::id())).join("config.json")
+    }
+    #[test]
+    fn shortcut_is_opt_in_validated_persisted_and_can_be_disabled() {
+        let path = path();
+        let mut store = ConfigStore::load(path.clone()).unwrap();
+        assert!(store.initialize(None).unwrap().config["launcherShortcut"].is_null());
+        store.patch(json!({"launcherShortcut": "Ctrl+Super+K"})).unwrap();
+        let bytes = fs::read(&path).unwrap();
+        for invalid in [json!("L"), json!("Shift+L"), json!("Ctrl+Ctrl+L"), json!(42), json!(true)] {
+            assert!(store.patch(json!({"launcherShortcut": invalid})).is_err());
+            assert_eq!(fs::read(&path).unwrap(), bytes);
+        }
+        let mut loaded = ConfigStore::load(path.clone()).unwrap();
+        assert_eq!(loaded.snapshot.config["launcherShortcut"], "Ctrl+Super+K");
+        loaded.patch(json!({"launcherShortcut": null})).unwrap();
+        assert!(ConfigStore::load(path.clone()).unwrap().snapshot.config["launcherShortcut"].is_null());
+        fs::remove_dir_all(path.parent().unwrap()).unwrap();
     }
     #[test]
     fn migration_defaults_and_restart() {

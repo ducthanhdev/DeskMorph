@@ -1,5 +1,6 @@
 export const messages = {
   vi: {
+    shortcutTitle: "Phím tắt launcher", shortcutLabel: "Tổ hợp phím", shortcutHelp: "Mặc định tắt. Nhập Ctrl, Alt, Shift hoặc Super kết hợp chữ/số, F1–F12 hoặc Space, ví dụ Ctrl+Super+K. Phải có Ctrl, Alt hoặc Super. Không dùng Ctrl+Alt+F1–F12 vì dành cho chuyển console; không tự chiếm phím desktop đang dùng.", shortcutSave: "Lưu phím tắt", shortcutDisable: "Tắt phím tắt", shortcutOff: "Phím tắt đang tắt", shortcutPaused: "Phím tắt tạm dừng vì Dock đang tắt", shortcutPending: "Đang đăng ký phím tắt", shortcutActive: "Phím tắt đang hoạt động", shortcutConflict: "Tổ hợp phím đã được ứng dụng hoặc desktop khác sử dụng. Chọn tổ hợp khác hoặc tắt phím tắt.", shortcutUnsupported: "Hiện chỉ đăng ký phím tắt toàn cục trên X11. Wayland cần tích hợp portal/desktop riêng; chưa được bật.", shortcutFailed: "Không đăng ký hoặc dùng được phím tắt. Kiểm tra phiên desktop, thử lại hoặc chọn tổ hợp khác.",
     activateUnavailable: "Window manager chưa hỗ trợ chuyển tới cửa sổ.", closeUnavailable: "Window manager chưa hỗ trợ yêu cầu đóng cửa sổ.",
     enumerateWindows: "Liệt kê cửa sổ", activateWindows: "Chuyển tới cửa sổ", closeWindows: "Yêu cầu đóng cửa sổ", workspaces: "Workspace",
     forceUnavailable: "Buộc đóng yêu cầu xkill và phiên X11.",
@@ -25,6 +26,7 @@ export const messages = {
     unknown: "Chưa xác định", today: "Hôm nay", previousMonth: "Tháng trước", nextMonth: "Tháng sau", details: "Chi tiết", themeNord: "Nord tối giản", themeNeon: "Neon tím", themePop: "Pop Teal",
   },
   en: {
+    shortcutTitle: "Launcher shortcut", shortcutLabel: "Key combination", shortcutHelp: "Disabled by default. Combine Ctrl, Alt, Shift or Super with a letter, digit, F1–F12 or Space, for example Ctrl+Super+K. Requires Ctrl, Alt or Super. Ctrl+Alt+F1–F12 is reserved for console switching; existing desktop shortcuts are never overridden.", shortcutSave: "Save shortcut", shortcutDisable: "Disable shortcut", shortcutOff: "Shortcut disabled", shortcutPaused: "Shortcut paused while the Dock is disabled", shortcutPending: "Registering shortcut", shortcutActive: "Shortcut active", shortcutConflict: "Another application or the desktop owns this combination. Choose another combination or disable the shortcut.", shortcutUnsupported: "Global shortcuts currently require X11. Wayland needs a separate portal/desktop integration and is not enabled yet.", shortcutFailed: "Unable to register or use this shortcut. Check the desktop session, retry or choose another combination.",
     activateUnavailable: "The window manager does not support window activation.", closeUnavailable: "The window manager does not support window close requests.",
     enumerateWindows: "List windows", activateWindows: "Activate windows", closeWindows: "Request window close", workspaces: "Workspaces",
     forceUnavailable: "Force close requires xkill and an X11 session.",

@@ -15,4 +15,6 @@
 - Sửa bỏ sót click ngoài ngắn bằng XInput2 (thêm libxi-dev), cấp focus nội dung sau GTK map và xử lý Escape ở GTK toplevel. Thêm stress ba vòng popup, fixture force-close và ảnh Studio thật trong README; còn tiếp tục kiểm tra ma trận focus/auto-hide.
 - Gắn generation cho visibility của audio/media/system; đối chiếu con trỏ native khi tự ẩn và tránh panic tooltip chưa map. Chuỗi native top/bottom, popup stress, audio/media, thumbnail, close/force-close và exit/relaunch đã qua trên GNOME/X11 tham chiếu.
 
-Chưa phát hành: còn các cổng chất lượng G0–G9 trong kế hoạch, đặc biệt Wayland, mixed DPI/hotplug, sleep/resume, global shortcuts, cài sạch và nâng cấp. Không coi mục Unreleased là tuyên bố mọi chức năng đã đạt chuẩn phát hành.
+- Thêm phím tắt launcher X11 tùy chỉnh, mặc định tắt; checked XCB grabs với trạng thái xung đột/thử lại, pause theo Dock, giải phóng khi thoát và focus bằng timestamp phím. Thêm libxcb1-dev và kiểm thử native đăng ký/xung đột cùng GUI xuyên ứng dụng. CI dùng Xvfb cho native grab test; chưa chạy workflow trên GitHub.
+
+Chưa phát hành: còn các cổng chất lượng G0–G9 trong kế hoạch, đặc biệt Wayland, mixed DPI/hotplug, sleep/resume, Wayland shortcuts portal, cài sạch và nâng cấp. Không coi mục Unreleased là tuyên bố mọi chức năng đã đạt chuẩn phát hành.

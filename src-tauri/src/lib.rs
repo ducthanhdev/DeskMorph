@@ -1,3 +1,4 @@
+mod shortcuts;
 mod system_widgets;
 mod media;
 mod audio;
@@ -260,6 +261,7 @@ fn run_app() -> Result<(), String> {
     sys.refresh_all();
 
     tauri::Builder::default()
+        .manage(shortcuts::ShortcutState::default())
         .manage(system_widgets::SystemStatusState::default())
         .manage(media::MediaState::default())
         .manage(audio::AudioState::default())
@@ -272,6 +274,7 @@ fn run_app() -> Result<(), String> {
             sys: Mutex::new(SystemSampler { sys, last: None }),
         })
         .setup(move |app| {
+            shortcuts::start(app.handle());
             popup::install_keyboard(app.handle()).map_err(std::io::Error::other)?;
             tooltip::install(app.handle()).map_err(std::io::Error::other)?;
             app.manage(instance.start(app.handle().clone()).map_err(std::io::Error::other)?);
@@ -318,6 +321,8 @@ fn run_app() -> Result<(), String> {
             }
         })
         .invoke_handler(tauri::generate_handler![
+            shortcuts::get_launcher_shortcut_status,
+            shortcuts::retry_launcher_shortcut,
             layout::is_pointer_over_dock,
             system_widgets::get_system_status,
             system_widgets::open_system_location,
@@ -369,6 +374,7 @@ fn run_app() -> Result<(), String> {
         .run(|app, event| {
             if matches!(event, tauri::RunEvent::Exit) {
                 if let Some(instance) = app.try_state::<instance::InstanceGuard>() { instance.stop(); }
+                shortcuts::stop(app);
                 applications::stop_watching();
                 layout::stop_watching();
                 wallpaper::stop_scheduler(app);

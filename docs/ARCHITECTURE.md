@@ -74,7 +74,15 @@ Artwork chỉ nhận file URI cục bộ, giới hạn 8 MB/16 MP, resize 160 px
 
 `system_widgets.rs` đọc UPower display device (aggregate) và NetworkManager qua system bus, timeout từng call, cache chung 5 giây cho Dock/popup. Không tự tạo time estimate khi UPower trả 0. Network state và connectivity probe được trình bày riêng. `get_system_stats` có sampler/cache chung 2 giây, tránh refresh CPU cạnh tranh giữa Dock/preview/popup; RAM hiển thị GiB.
 
-System monitor chỉ chọn desktop ID đã nhận diện và tắt nút khi thiếu app. Downloads theo XDG user directories, từ chối thư mục không tồn tại, chọn app category FileManager thay vì giả định mọi default inode/directory đều là file manager. COSMIC Files dùng argv native path đã kiểm thử. Trash chỉ bật khi có URI handler; máy tham chiếu hiện unsupported. Global shortcuts chưa được triển khai.
+System monitor chỉ chọn desktop ID đã nhận diện và tắt nút khi thiếu app. Downloads theo XDG user directories, từ chối thư mục không tồn tại, chọn app category FileManager thay vì giả định mọi default inode/directory đều là file manager. COSMIC Files dùng argv native path đã kiểm thử. Trash chỉ bật khi có URI handler; máy tham chiếu hiện unsupported.
+
+## Phím tắt launcher
+
+`shortcuts.rs` sở hữu một XCB connection riêng trên worker; không thay global Xlib error handler của GTK. Cấu hình `launcherShortcut` mặc định null, chỉ bật khi người dùng lưu. Checked passive grabs phát hiện xung đột, đăng ký mọi biến thể Caps/Num/Scroll Lock theo keymap thực tế và giải phóng cả đăng ký dở khi lỗi. Không dùng AnyModifier. MappingNotify đăng ký lại; mất connection báo lỗi và cho thử lại, chưa tự reconnect.
+
+Trạng thái requested/registered/pending/error tách lựa chọn đã lưu khỏi đăng ký thực tế; generation bỏ kết quả và callback activation cũ. Tắt Dock giải phóng grabs; bật lại dùng lựa chọn đã lưu. Thoát app stop/join worker và đóng connection. Khi kích hoạt từ ứng dụng khác, timestamp X11 của phím được chuyển tới GTK `present_with_time`; callback focus cũng kiểm tra popup generation. Không nhận XSendEvent làm kích hoạt.
+
+Cú pháp giới hạn Ctrl/Alt/Shift/Super cùng chữ ASCII, số, F1–F12 hoặc Space. Từ chối Ctrl+Alt+Fn vì checked grab không bảo đảm chặn cơ chế virtual console của Xorg. Keymap thiếu hoặc modifier mơ hồ báo lỗi; chưa xác minh mọi layout, remap thực tế, sleep/resume hoặc desktop X11 khác. Wayland portal chưa triển khai. Native GNOME/X11 đã qua xung đột/retry, focus từ GTK fixture riêng, đổi/tắt, pause theo Dock và exit/restart.
 
 ## Quyền và nội dung WebView
 
