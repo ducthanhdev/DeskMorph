@@ -34,7 +34,7 @@
         "alwaysOnTop": true,
         "skipTaskbar": true,
         "resizable": true,
-        "visible": true,
+        "visible": false,
         "shadow": false
       },
       {
@@ -52,14 +52,46 @@
         "resizable": true,
         "visible": false,
         "shadow": false
+      },
+      {
+        "label": "calendar-flyout",
+        "title": "DeskMorph Calendar",
+        "url": "/?window=calendar-flyout",
+        "width": 320,
+        "height": 340,
+        "minWidth": 260,
+        "minHeight": 280,
+        "decorations": false,
+        "transparent": true,
+        "alwaysOnTop": true,
+        "skipTaskbar": true,
+        "resizable": false,
+        "visible": false,
+        "shadow": false
+      },
+      {
+        "label": "dock-tooltip",
+        "title": "DeskMorph Tooltip",
+        "url": "/?window=dock-tooltip",
+        "width": 250,
+        "height": 44,
+        "decorations": false,
+        "transparent": true,
+        "alwaysOnTop": true,
+        "skipTaskbar": true,
+        "resizable": false,
+        "visible": false,
+        "shadow": false,
+        "focus": false
       }
     ],
     "security": {
-      "csp": null,
+      "csp": "default-src 'self'; script-src 'self'; connect-src ipc: http://ipc.localhost; img-src 'self' asset: http://asset.localhost data:; style-src 'self' 'unsafe-inline'; font-src 'self'; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'",
       "assetProtocol": {
         "enable": true,
-        "scope": ["**"]
-      }
+        "scope": []
+      },
+      "devCsp": "default-src 'self'; script-src 'self'; connect-src ipc: http://ipc.localhost ws://localhost:1420 http://localhost:1420; img-src 'self' asset: http://asset.localhost data:; style-src 'self' 'unsafe-inline'; font-src 'self'; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'"
     }
   },
   "bundle": {

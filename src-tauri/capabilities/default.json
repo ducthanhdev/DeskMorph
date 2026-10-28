@@ -1,10 +1,16 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
-  "description": "Capability for the main window",
-  "windows": ["main", "taskbar", "dock-context-menu"],
+  "description": "Local UI event subscriptions; native operations use DeskMorph commands.",
+  "windows": [
+    "main",
+    "taskbar",
+    "dock-context-menu",
+    "calendar-flyout",
+    "dock-tooltip"
+  ],
   "permissions": [
-    "core:default",
-    "opener:default"
+    "core:event:allow-listen",
+    "core:event:allow-unlisten"
   ]
 }

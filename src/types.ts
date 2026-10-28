@@ -1,3 +1,5 @@
+import defaults from "./config/defaults.json";
+
 export interface SystemStats {
   cpu_usage: number;
   ram_used_mb: number;
@@ -5,10 +7,7 @@ export interface SystemStats {
   ram_percent: number;
 }
 
-export interface WallpaperInfo {
-  path: string;
-  filename: string;
-}
+
 
 export interface OpenWindow {
   id: string;
@@ -21,19 +20,44 @@ export interface PinnedApp {
   id: string;
   name: string;
   command: string;
+  desktopId?: string;
   matchClasses: string[];
   iconType: "chrome" | "terminal" | "code" | "files" | "settings" | "browser" | "custom";
   color?: string;
   enabled?: boolean;
 }
 
+export interface AppearancePreset {
+  id: string;
+  name: string;
+  appearance: import("./dockAppearance").Appearance;
+}
+
 export interface TaskbarConfig {
+  wallpaperScheduleEnabled: boolean;
+  wallpaperIntervalMinutes: number;
+  wallpaperFolders: string[];
+  wallpaperRecursive: boolean;
+  wallpaperFavorites: string[];
+  language: "vi" | "en";
+  clock24: boolean;
+  clockSeconds: boolean;
+  presets: AppearancePreset[];
+  monitor: string | null;
+  iconSize: number;
+  iconSpacing: number;
+  reduceMotion: boolean;
+  keepDockOnClose: boolean;
   enabled: boolean;
   position: "top" | "bottom";
   height?: number;
   autoHide?: boolean;
   opacity: number;
   borderRadius: number;
+  showBattery: boolean;
+  showNetwork: boolean;
+  showSystem: boolean;
+  showAudio: boolean;
   showClock: boolean;
   showStats: boolean;
   showShuffle: boolean;
@@ -46,55 +70,18 @@ export interface TaskbarConfig {
   maxMagnificationScale?: number;
 }
 
-export const DEFAULT_PINNED_APPS: PinnedApp[] = [
-  {
-    id: "chrome",
-    name: "Google Chrome",
-    command: "google-chrome",
-    matchClasses: ["chrome", "google-chrome", "chromium"],
-    iconType: "chrome",
-    color: "#38bdf8",
-    enabled: true,
-  },
-  {
-    id: "code",
-    name: "VS Code / IDE",
-    command: "code",
-    matchClasses: ["code", "cursor", "antigravity"],
-    iconType: "code",
-    color: "#818cf8",
-    enabled: true,
-  },
-  {
-    id: "terminal",
-    name: "Terminal",
-    command: "cosmic-term",
-    matchClasses: ["cosmic-term", "terminal", "kitty", "alacritty", "console", "pty"],
-    iconType: "terminal",
-    color: "#34d399",
-    enabled: true,
-  },
-  {
-    id: "files",
-    name: "Tệp tin (Files)",
-    command: "cosmic-files",
-    matchClasses: ["cosmic-files", "nautilus", "files", "thunar"],
-    iconType: "files",
-    color: "#fbbf24",
-    enabled: true,
-  },
-  {
-    id: "settings",
-    name: "Cài đặt (Settings)",
-    command: "cosmic-settings",
-    matchClasses: ["cosmic-settings", "gnome-control-center", "settings", "preference"],
-    iconType: "settings",
-    color: "#94a3b8",
-    enabled: true,
-  },
-];
+export const DEFAULT_CONFIG = defaults as TaskbarConfig;
+export const DEFAULT_PINNED_APPS = DEFAULT_CONFIG.pinnedApps!;
 
 export interface DockContextMenuState {
+  mode?: "windows" | "launcher" | "audio" | "system";
+  popupGeneration?: number;
+  desktopId?: string;
+  matchClasses?: string[];
+  iconPath?: string | null;
+  pinIndex?: number;
+  pinCount?: number;
+  windows?: OpenWindow[];
   appId?: string;
   appName: string;
   command?: string;
@@ -103,3 +90,16 @@ export interface DockContextMenuState {
   isRunning: boolean;
   anchorX: number;
 }
+
+export interface InstalledApp {
+  id: string;
+  name: string;
+  genericName: string;
+  keywords: string[];
+  executable: string;
+  matchClasses: string[];
+  iconPath: string | null;
+  actions: { id: string; name: string }[];
+}
+
+export type PopupVisibility = { generation: number; visible: boolean };

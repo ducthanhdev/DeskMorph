@@ -1,247 +1,99 @@
-import React, { useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
-import { listen, emit } from "@tauri-apps/api/event";
-import { Plus, Pin, PinOff, X, Flame } from "lucide-react";
-import { DockContextMenuState, PinnedApp, TaskbarConfig } from "./types";
+import { listen } from "@tauri-apps/api/event";
+import { ArrowLeft, ArrowRight, Flame, Pin, PinOff, Plus, X } from "lucide-react";
+import { useConfig, errorMessage } from "./config/store";
+import { usePlatform } from "./hooks/usePlatform";
+import { useInstalledApps } from "./hooks/useInstalledApps";
+import { useI18n } from "./i18n/useI18n";
+import { SystemPopup } from "./components/SystemPopup";
+import { AudioPopup } from "./components/AudioPopup";
+import { AppLauncher } from "./components/AppLauncher";
+import { WindowList } from "./components/WindowList";
+import { AppIcon } from "./components/AppIcon";
+import type { DockContextMenuState, PinnedApp } from "./types";
 
-const DEFAULT_PINNED_APPS: PinnedApp[] = [
-  {
-    id: "chrome",
-    name: "Google Chrome",
-    command: "google-chrome",
-    matchClasses: ["google-chrome", "chromium"],
-    iconType: "chrome",
-    color: "#38bdf8",
-    enabled: true,
-  },
-  {
-    id: "code",
-    name: "VS Code / IDE",
-    command: "code",
-    matchClasses: ["code", "vscodium", "antigravity"],
-    iconType: "code",
-    color: "#a855f7",
-    enabled: true,
-  },
-  {
-    id: "terminal",
-    name: "Terminal",
-    command: "gnome-terminal",
-    matchClasses: ["terminal", "alacritty", "kitty", "ptyxis"],
-    iconType: "terminal",
-    color: "#34d399",
-    enabled: true,
-  },
-  {
-    id: "nautilus",
-    name: "Files",
-    command: "nautilus",
-    matchClasses: ["nautilus", "files"],
-    iconType: "files",
-    color: "#fbbf24",
-    enabled: true,
-  },
-];
+function ContextActions({ menu }: { menu: DockContextMenuState }) {
+  const { platform } = usePlatform();
+  const { t } = useI18n();
+  const { config, mutatePin, error: configError } = useConfig();
+  const { apps } = useInstalledApps();
+  const installed = apps.find((app) => app.id === menu.desktopId);
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [confirmKill, setConfirmKill] = useState(false);
+  const root = useRef<HTMLElement>(null);
+  const pinIndex = config.pinnedApps?.findIndex((pin) => pin.id === menu.appId) ?? -1;
+  const hide = () => invoke("hide_dock_context_menu");
+  useEffect(() => { root.current?.querySelector<HTMLButtonElement>("button:not(:disabled)")?.focus(); }, []);
+  const perform = async (task: () => Promise<unknown>, close = true) => {
+    if (busy) return;
+    setBusy(true); setError(null);
+    try { await task(); if (close) await hide(); }
+    catch (e) { setError(errorMessage(e)); }
+    finally { setBusy(false); }
+  };
+  const togglePin = async () => {
+    const id = menu.appId || menu.desktopId;
+    if (!id) { setError(t("identifyApp")); return; }
+    const pin: PinnedApp = {
+      id, desktopId: menu.desktopId, name: menu.appName,
+      command: menu.desktopId ? `desktop:${menu.desktopId}` : menu.command || id,
+      matchClasses: menu.matchClasses || [id], iconType: "custom", enabled: true,
+    };
+    if (await mutatePin(menu.isPinned ? "remove" : "add", id, pin)) await hide();
+  };
+  return <section ref={root} className="context-actions" aria-label={`${t("details")} ${menu.appName}`} onContextMenu={(e) => e.preventDefault()}
+    onKeyDown={(e) => {
+      if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(e.key)) return;
+      e.preventDefault();
+      const buttons = Array.from(root.current?.querySelectorAll<HTMLButtonElement>("button:not(:disabled)") || []);
+      const index = buttons.indexOf(document.activeElement as HTMLButtonElement);
+      const next = e.key === "Home" ? 0 : e.key === "End" ? buttons.length - 1 : (index + (e.key === "ArrowDown" ? 1 : -1) + buttons.length) % buttons.length;
+      buttons[next]?.focus();
+    }}>
+    <header><AppIcon path={menu.iconPath} /><strong>{menu.appName}</strong></header>
+    {(error || configError) && <p role="alert">{error || configError}</p>}
+    {(menu.command || installed) && <button disabled={busy} onClick={() => void perform(() => installed ? invoke("launch_installed_app", { id: installed.id, action: null }) : invoke("spawn_app", { execCmd: menu.command }))}><Plus size={16} /> {t("newLaunch")}</button>}
+    <button disabled={busy || (!menu.isPinned && !menu.desktopId)} onClick={() => void togglePin()}>{menu.isPinned ? <PinOff size={16} /> : <Pin size={16} />}{menu.isPinned ? t("unpin") : t("pin")}</button>
+    {menu.isPinned && pinIndex >= 0 && <div className="context-reorder">
+      <button disabled={busy || pinIndex === 0} onClick={() => void perform(() => mutatePin("move", menu.appId!, undefined, pinIndex - 1))}><ArrowLeft size={14} /> {t("moveLeft")}</button>
+      <button disabled={busy || pinIndex === (config.pinnedApps?.length || 0) - 1} onClick={() => void perform(() => mutatePin("move", menu.appId!, undefined, pinIndex + 1))}>{t("moveRight")} <ArrowRight size={14} /></button>
+    </div>}
+    {installed?.actions.map((action) => <button key={action.id} disabled={busy} onClick={() => void perform(() => invoke("launch_installed_app", { id: installed.id, action: action.id }))}><Plus size={16} />{action.name}</button>)}
+    {Boolean(menu.windows?.length) && <div className="context-window-items" aria-label={t("windows")}>
+      {menu.windows!.map((window) => <div key={window.id} className={`context-window-row ${window.is_active ? "is-active" : ""}`}>
+        <button disabled={busy || !platform?.windows.activate} title={platform?.windows.activate ? window.title : t("activateUnavailable")} onClick={() => void perform(() => invoke("activate_window", { windowId: window.id }))}>{window.title}</button>
+        <button disabled={busy || !platform?.windows.close} title={platform?.windows.close ? t("close") : t("closeUnavailable")} aria-label={`${t("close")} ${window.title}`} onClick={() => void perform(() => invoke("close_window", { xid: window.id }))}><X size={14} /></button>
+      </div>)}
+    </div>}
+    {menu.windowId && <>
+      <button className="context-danger" title={platform?.forceQuit ? undefined : t("forceUnavailable")} disabled={busy || !platform?.forceQuit} onClick={() => setConfirmKill(true)}><Flame size={16} /> {t("forceQuit")}</button>
+      {confirmKill && <div className="context-confirm" role="alert">
+        <p>{t("forceWarning")}</p>
+        <button disabled={busy} onClick={() => setConfirmKill(false)}>{t("cancel")}</button>
+        <button className="context-danger" disabled={busy} onClick={() => void perform(() => invoke("force_kill_window", { xid: menu.windowId }))}>{t("forceConfirm")}</button>
+      </div>}
+    </>}
+  </section>;
+}
 
-export const DockContextMenuStandalone: React.FC = () => {
+export const DockContextMenuStandalone = () => {
   const [menu, setMenu] = useState<DockContextMenuState | null>(null);
-
   useEffect(() => {
-    const unlisten = listen<DockContextMenuState>("deskmorph:context-menu-data", (event) => {
-      if (event.payload) {
-        setMenu(event.payload);
-      }
-    });
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        invoke("hide_dock_context_menu").catch(console.error);
-      }
-    };
-
-    const handleBlur = () => {
-      invoke("hide_dock_context_menu").catch(console.error);
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("blur", handleBlur);
-
-    return () => {
-      unlisten.then((fn) => fn());
-      window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("blur", handleBlur);
-    };
+    let disposed = false;
+    let stop: (() => void) | undefined;
+    listen<DockContextMenuState>("deskmorph:context-menu-data", (event) => { if (!disposed) setMenu(event.payload); })
+      .then((unlisten) => { if (disposed) unlisten(); else stop = unlisten; }).catch(console.error);
+    const onKey = (event: KeyboardEvent) => { if (event.key === "Escape") void invoke("hide_dock_context_menu").catch(console.error); };
+    // Native coordinator handles focus loss; duplicating it in DOM blur races with popup replacement.
+    window.addEventListener("keydown", onKey);
+    return () => { disposed = true; stop?.(); window.removeEventListener("keydown", onKey); };
   }, []);
-
-  const closeMenu = () => {
-    invoke("hide_dock_context_menu").catch(console.error);
-  };
-
-  const handleSpawnApp = async (cmd?: string) => {
-    if (cmd) {
-      try {
-        await invoke("spawn_app", { execCmd: cmd });
-      } catch (err) {
-        console.error("Failed to spawn app", err);
-      }
-    }
-    closeMenu();
-  };
-
-  const handleTogglePin = (appId?: string, appName?: string, command?: string) => {
-    let savedConfig: TaskbarConfig | null = null;
-    try {
-      const saved = localStorage.getItem("deskmorph_config");
-      if (saved) savedConfig = JSON.parse(saved);
-    } catch (e) {
-      console.error(e);
-    }
-
-    const currentPinned = savedConfig?.pinnedApps || DEFAULT_PINNED_APPS;
-    let nextPinned: PinnedApp[];
-
-    if (appId && currentPinned.some((p) => p.id === appId)) {
-      nextPinned = currentPinned.filter((p) => p.id !== appId);
-    } else {
-      const newId = appId || (command ? command.toLowerCase() : "custom-app");
-      const newPin: PinnedApp = {
-        id: newId,
-        name: appName || newId,
-        command: command || newId,
-        matchClasses: [newId],
-        iconType: "custom",
-        color: "#38bdf8",
-        enabled: true,
-      };
-      nextPinned = [...currentPinned, newPin];
-    }
-
-    const updatedConfig = {
-      ...(savedConfig || {
-        enabled: true,
-        position: "bottom" as const,
-        opacity: 0.85,
-        borderRadius: 16,
-        showClock: true,
-        showStats: true,
-        showShuffle: true,
-        showApps: true,
-        accentColor: "#48b9c7",
-      }),
-      pinnedApps: nextPinned,
-    };
-
-    localStorage.setItem("deskmorph_config", JSON.stringify(updatedConfig));
-    emit("deskmorph:config-update", updatedConfig).catch(console.error);
-    closeMenu();
-  };
-
-  const handleCloseWindow = async (windowId?: string) => {
-    if (windowId) {
-      try {
-        await invoke("close_window", { xid: windowId });
-      } catch (err) {
-        console.error("Failed to close window", err);
-      }
-    }
-    closeMenu();
-  };
-
-  const handleForceKill = async (windowId?: string) => {
-    if (windowId) {
-      try {
-        await invoke("force_kill_window", { xid: windowId });
-      } catch (err) {
-        console.error("Failed to force kill window", err);
-      }
-    }
-    closeMenu();
-  };
-
-  if (!menu) {
-    return <div className="standalone-context-menu-empty" />;
-  }
-
-  return (
-    <div
-      className="standalone-context-menu-wrapper"
-      onClick={closeMenu}
-      onContextMenu={(e) => e.preventDefault()}
-    >
-      <div
-        className="dock-context-menu standalone"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Header with App Title & Status */}
-        <div className="dock-menu-header">
-          <span className="dock-menu-title">{menu.appName}</span>
-          <span className="dock-menu-subtitle">
-            <span
-              style={{
-                width: "6px",
-                height: "6px",
-                borderRadius: "50%",
-                background: menu.isRunning ? "#10b981" : "#64748b",
-                display: "inline-block",
-              }}
-            />
-            {menu.isRunning ? "Đang chạy" : "Chưa khởi chạy"}
-          </span>
-        </div>
-
-        <div className="dock-menu-divider" />
-
-        {/* Action 1: New Window / Spawn App */}
-        <button
-          className="dock-menu-item"
-          onClick={() => handleSpawnApp(menu.command)}
-        >
-          <span className="dock-menu-item-icon" style={{ color: "#38bdf8" }}>
-            <Plus size={15} />
-          </span>
-          <span>Mở cửa sổ mới</span>
-        </button>
-
-        {/* Action 2: Toggle Pin to Dock */}
-        <button
-          className="dock-menu-item"
-          onClick={() => handleTogglePin(menu.appId, menu.appName, menu.command)}
-        >
-          <span className="dock-menu-item-icon" style={{ color: menu.isPinned ? "#f59e0b" : "#94a3b8" }}>
-            {menu.isPinned ? <PinOff size={15} /> : <Pin size={15} />}
-          </span>
-          <span>{menu.isPinned ? "Bỏ ghim khỏi Dock" : "Ghim vào Dock"}</span>
-        </button>
-
-        {/* Actions when app is running */}
-        {menu.isRunning && (
-          <>
-            <div className="dock-menu-divider" />
-
-            {/* Action 3: Safe Close Window */}
-            <button
-              className="dock-menu-item"
-              onClick={() => handleCloseWindow(menu.windowId)}
-            >
-              <span className="dock-menu-item-icon" style={{ color: "#94a3b8" }}>
-                <X size={15} />
-              </span>
-              <span>Đóng cửa sổ</span>
-            </button>
-
-            {/* Action 4: Force Kill Process */}
-            <button
-              className="dock-menu-item dock-menu-item-danger"
-              onClick={() => handleForceKill(menu.windowId)}
-            >
-              <span className="dock-menu-item-icon" style={{ color: "#ef4444" }}>
-                <Flame size={15} />
-              </span>
-              <span>Buộc dừng (Force Kill)</span>
-            </button>
-          </>
-        )}
-      </div>
-    </div>
-  );
+  if (!menu) return null;
+  if (menu.mode === "system") return <SystemPopup key={menu.popupGeneration} generation={menu.popupGeneration} />;
+  if (menu.mode === "audio") return <AudioPopup key={menu.popupGeneration} generation={menu.popupGeneration} />;
+  if (menu.mode === "launcher") return <AppLauncher key={menu.popupGeneration} />;
+  if (menu.mode === "windows") return <WindowList key={menu.popupGeneration} menu={menu} />;
+  return <ContextActions key={menu.popupGeneration} menu={menu} />;
 };

@@ -1,15 +1,26 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useLayoutEffect, useState, useRef } from "react";
 import { invoke } from "@tauri-apps/api/core";
+import { useConfig } from "./config/store";
+import { dockMetrics, dockSurface } from "./dockAppearance";
+import { useI18n } from "./i18n/useI18n";
+import { installedForPin } from "./appSearch";
+import { useInstalledApps } from "./hooks/useInstalledApps";
+import { SystemWidgets } from "./components/SystemWidgets";
+import { AppIcon } from "./components/AppIcon";
+import { useDockTooltip } from "./hooks/useDockTooltip";
+import { usePlatform } from "./hooks/usePlatform";
+import { usePolling } from "./hooks/usePolling";
+import { useClock } from "./hooks/useClock";
+import { groupWindows } from "./windowGroups";
 import { listen } from "@tauri-apps/api/event";
 import {
   SystemStats,
-  TaskbarConfig,
-  WallpaperInfo,
   OpenWindow,
   PinnedApp,
   DEFAULT_PINNED_APPS,
 } from "./types";
 import {
+  Volume2,
   Cpu,
   HardDrive,
   Shuffle,
@@ -23,10 +34,12 @@ import {
 } from "lucide-react";
 
 export const Taskbar: React.FC = () => {
+  const { t, locale, count } = useI18n();
+  const { apps: installedApps } = useInstalledApps();
+  const { platform } = usePlatform();
+  const [operationError, setOperationError] = useState<string | null>(null);
   const [stats, setStats] = useState<SystemStats | null>(null);
   const [openWindows, setOpenWindows] = useState<OpenWindow[]>([]);
-  const [time, setTime] = useState("");
-  const [date, setDate] = useState("");
   const [isHovered, setIsHovered] = useState(false);
   const [previewVisible, setPreviewVisible] = useState(true);
   const [launchingAppIds, setLaunchingAppIds] = useState<Set<string>>(new Set());
@@ -39,28 +52,40 @@ export const Taskbar: React.FC = () => {
   const [magnifyScales, setMagnifyScales] = useState<Record<string, number>>({});
   const [isMagnifying, setIsMagnifying] = useState(false);
   const [contextMenuVisible, setContextMenuVisible] = useState(false);
+  const [popupVisible, setPopupVisible] = useState(false);
   const iconRefs = useRef<Map<string, HTMLElement>>(new Map());
   const rafId = useRef<number | null>(null);
 
-  const [config, setConfig] = useState<TaskbarConfig>({
-    enabled: true,
-    position: "bottom",
-    height: 52,
-    autoHide: false,
-    opacity: 0.85,
-    borderRadius: 16,
-    showClock: true,
-    showStats: true,
-    showShuffle: true,
-    showApps: true,
-    accentColor: "#48b9c7",
-    pinnedApps: DEFAULT_PINNED_APPS,
-    bouncingLaunch: true,
-    dynamicShadow: true,
-    magnification: true,
-    maxMagnificationScale: 1.35,
-  });
-  const [wallpapers, setWallpapers] = useState<WallpaperInfo[]>([]);
+  const { config, ready, error: configError, mutatePin } = useConfig();
+  const now = useClock(ready && config.enabled && config.showClock);
+  const outsideSince = useRef<number | null>(null);
+  // Native resize can remove the edge trigger without a DOM mouseleave, or
+  // synthesize an enter at stale coordinates. Reconcile with global X11
+  // coordinates only while auto-hide is enabled; this starts no child process.
+  usePolling(async (signal) => {
+    const inside = await invoke<boolean>("is_pointer_over_dock");
+    if (signal.aborted) return;
+    if (inside) { outsideSince.current = null; setIsHovered(true); }
+    else {
+      outsideSince.current ??= performance.now();
+      if (performance.now() - outsideSince.current >= 500) setIsHovered(false);
+    }
+  }, 250, ready && config.enabled && config.autoHide && platform?.session === "x11" && !popupVisible);
+  const time = now.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit", second: config.clockSeconds ? "2-digit" : undefined, hour12: !config.clock24 });
+  const date = now.toLocaleDateString(locale, { weekday: "short", month: "short", day: "numeric" });
+  const dockRef = useRef<HTMLDivElement>(null);
+  const draggedPin = useRef<string | null>(null);
+  const suppressClickUntil = useRef(0);
+  const [draggingId, setDraggingId] = useState<string | null>(null);
+  const [systemReducedMotion, setSystemReducedMotion] = useState(() => matchMedia("(prefers-reduced-motion: reduce)").matches);
+  const reducedMotion = config.reduceMotion || systemReducedMotion;
+  const tooltip = useDockTooltip(popupVisible || Boolean(draggingId));
+  useEffect(() => {
+    const query = matchMedia("(prefers-reduced-motion: reduce)");
+    const changed = () => setSystemReducedMotion(query.matches);
+    query.addEventListener("change", changed);
+    return () => query.removeEventListener("change", changed);
+  }, []);
 
   const keepVisibleBriefly = (durationMs = 7000) => {
     setPreviewVisible(true);
@@ -72,72 +97,27 @@ export const Taskbar: React.FC = () => {
     }, durationMs);
   };
 
-  // Load config from localStorage & listen to real-time events
   useEffect(() => {
-    const saved = localStorage.getItem("deskmorph_config");
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        setConfig((prev) => ({
-          ...prev,
-          ...parsed,
-          autoHide: false,
-          pinnedApps: parsed.pinnedApps || DEFAULT_PINNED_APPS,
-        }));
-      } catch (e) {
-        console.error(e);
-      }
-    }
     keepVisibleBriefly(7000);
-
-    const handleStorage = () => {
-      const updated = localStorage.getItem("deskmorph_config");
-      if (updated) {
-        try {
-          const parsed = JSON.parse(updated);
-          setConfig((prev) => ({
-            ...prev,
-            ...parsed,
-            pinnedApps: parsed.pinnedApps || DEFAULT_PINNED_APPS,
-          }));
-          keepVisibleBriefly(7000);
-        } catch (e) {
-          console.error(e);
-        }
-      }
-    };
-    window.addEventListener("storage", handleStorage);
-
-    let unlisten: (() => void) | null = null;
-    listen<TaskbarConfig>("deskmorph:config-update", (event) => {
-      if (event.payload) {
-        setConfig((prev) => ({
-          ...prev,
-          ...event.payload,
-          pinnedApps: event.payload.pinnedApps || prev.pinnedApps || DEFAULT_PINNED_APPS,
-        }));
-        keepVisibleBriefly(8000);
-      }
-    }).then((fn) => {
-      unlisten = fn;
-    });
-
-    let unlistenMenu: (() => void) | null = null;
+    let disposed = false;
+    let unlisten: (() => void) | undefined;
+    let unlistenPopup: (() => void) | undefined;
+    listen<boolean>("deskmorph:popup-visible", (event) => {
+      if (!disposed) setPopupVisible(event.payload);
+    }).then((stop) => { if (disposed) stop(); else unlistenPopup = stop; }).catch(console.error);
     listen<boolean>("deskmorph:context-menu-visibility", (event) => {
-      const isVisible = Boolean(event.payload);
-      setContextMenuVisible(isVisible);
-      if (isVisible) {
+      if (disposed) return;
+      setContextMenuVisible(Boolean(event.payload));
+      if (event.payload) {
         setIsMagnifying(false);
         setMagnifyScales({});
       }
-    }).then((fn) => {
-      unlistenMenu = fn;
-    });
-
+    }).then((stop) => { if (disposed) stop(); else unlisten = stop; }).catch(console.error);
     return () => {
-      window.removeEventListener("storage", handleStorage);
-      if (unlisten) unlisten();
-      if (unlistenMenu) unlistenMenu();
+      disposed = true;
+      unlisten?.();
+      unlistenPopup?.();
+      if (hideTimer.current) clearTimeout(hideTimer.current);
       if (previewTimer.current) clearTimeout(previewTimer.current);
       if (rafId.current) cancelAnimationFrame(rafId.current);
     };
@@ -157,57 +137,17 @@ export const Taskbar: React.FC = () => {
     };
   }, [contextMenuVisible]);
 
-  // Update clock
-  useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      setTime(
-        now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })
-      );
-      setDate(
-        now.toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" })
-      );
-    };
-    updateTime();
-    const timer = setInterval(updateTime, 1000);
-    return () => clearInterval(timer);
-  }, []);
+  usePolling(async (signal) => {
+    try {
+      const wins = await invoke<OpenWindow[]>("get_open_windows");
+      if (!signal.aborted) { setOpenWindows(wins); setOperationError(null); }
+    } catch (e) { if (!signal.aborted) setOperationError(String(e)); }
+  }, 1500, ready && config.enabled && config.showApps && Boolean(platform?.windowManagement));
+  usePolling(async (signal) => {
+    const res = await invoke<SystemStats>("get_system_stats");
+    if (!signal.aborted) setStats(res);
+  }, 2000, ready && config.enabled && config.showStats);
 
-  // Fetch open windows, stats, and wallpapers
-  useEffect(() => {
-    const fetchWindows = async () => {
-      try {
-        const wins = await invoke<OpenWindow[]>("get_open_windows");
-        setOpenWindows(wins);
-      } catch (err) {
-        console.error("Failed to fetch open windows", err);
-      }
-    };
-
-    const fetchStats = async () => {
-      try {
-        const res = await invoke<SystemStats>("get_system_stats");
-        setStats(res);
-      } catch (err) {
-        console.error("Failed to fetch stats", err);
-      }
-    };
-
-    fetchWindows();
-    fetchStats();
-
-    const winInterval = setInterval(fetchWindows, 1500);
-    const statInterval = setInterval(fetchStats, 2000);
-
-    invoke<WallpaperInfo[]>("get_wallpapers")
-      .then((res) => setWallpapers(res))
-      .catch((err) => console.error(err));
-
-    return () => {
-      clearInterval(winInterval);
-      clearInterval(statInterval);
-    };
-  }, []);
 
   // Auto-cancel bouncing as soon as the app window appears in openWindows
   useEffect(() => {
@@ -246,17 +186,18 @@ export const Taskbar: React.FC = () => {
     };
   }, []);
 
-  const currentHeight = config.height || 52;
-  const isHidden = Boolean(config.autoHide && !isHovered && !previewVisible);
+  const { height: currentHeight, iconSize: btnSize, maxScale } = dockMetrics(config);
+  const isHidden = Boolean(config.autoHide && !isHovered && !previewVisible && !contextMenuVisible && !popupVisible);
 
   // Sync window physical size when hidden state changes
   useEffect(() => {
+    if (!ready || !config.enabled) return;
     invoke("set_taskbar_autohide_state", {
       hidden: isHidden,
       height: currentHeight,
       position: config.position,
     }).catch(console.error);
-  }, [isHidden, currentHeight, config.position]);
+  }, [isHidden, currentHeight, config.position, ready, config.enabled]);
 
   // Context Menu Management
   const openContextMenu = async (
@@ -266,6 +207,12 @@ export const Taskbar: React.FC = () => {
       appName: string;
       command?: string;
       windowId?: string;
+      desktopId?: string;
+      windows?: OpenWindow[];
+      matchClasses?: string[];
+      iconPath?: string | null;
+      pinIndex?: number;
+      pinCount?: number;
       isPinned: boolean;
       isRunning: boolean;
     }
@@ -292,12 +239,13 @@ export const Taskbar: React.FC = () => {
         },
       });
     } catch (err) {
+      setContextMenuVisible(false);
       console.error("Failed to show dock context menu", err);
     }
   };
 
   // Magnification Engine: Cosine Wave Algorithm
-  const isMagnifyActive = config.magnification !== false && !contextMenuVisible;
+  const isMagnifyActive = config.magnification !== false && !reducedMotion && !contextMenuVisible && !popupVisible;
 
   const handleDockMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!isMagnifyActive) {
@@ -316,7 +264,7 @@ export const Taskbar: React.FC = () => {
 
     rafId.current = requestAnimationFrame(() => {
       const R = 110; // Influence radius in pixels
-      const maxScale = config.maxMagnificationScale ?? 1.35;
+
       const nextScales: Record<string, number> = {};
 
       iconRefs.current.forEach((el, id) => {
@@ -372,21 +320,20 @@ export const Taskbar: React.FC = () => {
     }
   };
 
+  const shuffleBusy = useRef(false);
   const handleShuffle = async () => {
-    if (wallpapers.length === 0) return;
-    const randomIndex = Math.floor(Math.random() * wallpapers.length);
-    const chosen = wallpapers[randomIndex];
-    try {
-      await invoke("set_wallpaper", { path: chosen.path });
-    } catch (err) {
-      console.error(err);
-    }
+    if (shuffleBusy.current) return;
+    shuffleBusy.current = true;
+    try { await invoke("shuffle_wallpaper"); setOperationError(null); }
+    catch (error) { setOperationError(String(error)); }
+    finally { shuffleBusy.current = false; }
   };
 
   const handleActivateWindow = async (id: string) => {
     try {
       await invoke("activate_window", { windowId: id });
     } catch (err) {
+      setOperationError(String(err));
       console.error("Failed to activate window", err);
     }
   };
@@ -413,6 +360,7 @@ export const Taskbar: React.FC = () => {
     try {
       await invoke("launch_app", { command: cmd });
     } catch (err) {
+      setOperationError(String(err));
       console.error("Failed to launch app", err);
       // Remove bouncing immediately on error
       setLaunchingAppIds((prev) => {
@@ -552,39 +500,77 @@ export const Taskbar: React.FC = () => {
     };
   };
 
-  const btnSize = Math.max(30, Math.min(42, currentHeight - 16));
+
   const launcherSize = Math.max(28, btnSize - 2);
 
   // Group windows into Pinned vs Unpinned Running Apps
   const pinnedList = config.pinnedApps || DEFAULT_PINNED_APPS;
   const activePinned = pinnedList.filter((app) => app.enabled !== false);
-  const matchedWindowIds = new Set<string>();
+  const { pinnedItems, unpinnedGroups } = groupWindows(openWindows, activePinned);
 
-  const pinnedItems = activePinned.map((app) => {
-    const matchingWin = openWindows.find((w) =>
-      app.matchClasses.some((cls) => w.class_name.toLowerCase().includes(cls.toLowerCase()))
-    );
-    if (matchingWin) {
-      matchedWindowIds.add(matchingWin.id);
-    }
-    return {
-      pinned: app,
-      window: matchingWin || null,
+  useLayoutEffect(() => {
+    if (!ready || !config.enabled || !dockRef.current) return;
+    const root = dockRef.current;
+    let timer: ReturnType<typeof setTimeout>;
+    let lastWidth = 0;
+    const elements = [".dock-left", ".dock-right", ".dock-pinned-group", ".dock-unpinned-group", ".dock-apps-separator"]
+      .flatMap((selector) => Array.from(root.querySelectorAll<HTMLElement>(selector)));
+    const measure = () => {
+      const width = Math.ceil(elements.reduce((sum, el) => sum + el.offsetWidth, 0) + 76 + (unpinnedGroups.length && activePinned.length ? 16 : 0));
+      if (width === lastWidth) return;
+      lastWidth = width;
+      clearTimeout(timer);
+      timer = setTimeout(() => void invoke("set_dock_content_width", { width }).catch(console.error), 80);
     };
-  });
+    const observer = new ResizeObserver(measure);
+    elements.forEach((el) => observer.observe(el));
+    measure();
+    return () => { clearTimeout(timer); observer.disconnect(); };
+  }, [ready, config.enabled, config.iconSize, config.iconSpacing, config.height, config.showApps, config.showAudio, config.showBattery, config.showNetwork, config.showSystem, config.showClock, config.showStats, config.showShuffle, pinnedItems.length, unpinnedGroups.length]);
 
-  const unpinnedWindows = openWindows.filter((w) => !matchedWindowIds.has(w.id));
+  const movePin = async (id: string, target: number) => {
+    await mutatePin("move", id, undefined, target);
+    requestAnimationFrame(() => iconRefs.current.get(id)?.focus());
+  };
+
+  const selectWindows = async (e: React.MouseEvent, windows: OpenWindow[], appName: string) => {
+    if (windows.length === 1) {
+      await handleActivateWindow(windows[0].id);
+      return;
+    }
+    const rect = e.currentTarget.getBoundingClientRect();
+    setContextMenuVisible(true);
+    setIsMagnifying(false);
+    setMagnifyScales({});
+    try {
+      await invoke("show_dock_context_menu", {
+        iconCenterX: Math.round(rect.left + rect.width / 2),
+        menuData: { mode: "windows", appName, windows },
+      });
+    } catch (err) {
+      setContextMenuVisible(false);
+      console.error("Failed to show window list", err);
+    }
+  };
 
   return (
     <div
       className="taskbar-wrapper"
       onContextMenu={(e) => e.preventDefault()}
     >
+      {operationError && <div className="app-status" role="alert">{operationError}</div>}
+      {configError && <div className="app-status" role="alert">{configError}</div>}
       {/* Hit test trigger area at the edge when hidden */}
       {isHidden && (
         <div
           className="dock-edge-trigger"
-          onMouseEnter={handleMouseEnter}
+          onMouseEnter={() => {
+            handleMouseEnter();
+            // Revealing moves the native window away from the screen edge.
+            // The removed trigger cannot deliver mouseleave. Give the pointer
+            // time to reach the Dock; entering its surface cancels this timer.
+            handleMouseLeave();
+          }}
           style={{
             [config.position === "top" ? "top" : "bottom"]: 0,
           }}
@@ -593,18 +579,20 @@ export const Taskbar: React.FC = () => {
 
 
       <div
-        className={`taskbar-container ${isHidden ? "dock-autohidden" : ""}`}
+        {...tooltip}
+        ref={dockRef}
+        className={`taskbar-container ${reducedMotion ? "reduce-motion" : ""} ${isHidden ? "dock-autohidden" : ""}`}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onContextMenu={(e) => e.preventDefault()}
         style={{
-          height: `${currentHeight}px`,
+          ...dockSurface(config),
           transform: isHidden
             ? config.position === "top"
               ? "translateY(-120%)"
               : "translateY(120%)"
             : "translateY(0)",
-          transition: "transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, background 0.3s ease",
+          transition: reducedMotion ? "none" : "transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, background 0.3s ease",
           background: isHidden ? "transparent" : `rgba(13, 17, 28, ${config.opacity})`,
           borderRadius: `${config.borderRadius}px`,
           borderWidth: isHidden ? "0px" : "1px",
@@ -616,9 +604,12 @@ export const Taskbar: React.FC = () => {
       >
         {/* 1. Left Area: Launcher button */}
         <div className="dock-left">
-          <div
+          <button
+            type="button"
+            aria-label={t("searchApps")}
+            onClick={() => void invoke("show_app_launcher").catch(console.error)}
             className="dock-launcher-btn"
-            title="DeskMorph Studio"
+            data-dock-tooltip={t("searchApps")}
             onContextMenu={(e) => e.preventDefault()}
             style={{
               width: `${launcherSize}px`,
@@ -627,55 +618,92 @@ export const Taskbar: React.FC = () => {
             }}
           >
             <Sparkles size={Math.round(launcherSize * 0.48)} color="#0c1017" />
-          </div>
+          </button>
           <div className="dock-divider" />
         </div>
 
         {/* 2. Center Area: Pinned Applications & Open Windows */}
         <div
+          style={{ display: config.showApps ? undefined : "none" }}
           className={`dock-apps ${isMagnifying ? "is-magnifying" : ""}`}
           onMouseMove={handleDockMouseMove}
           onMouseLeave={handleDockMouseLeave}
         >
           {/* A. Pinned Apps Group */}
           <div className="dock-pinned-group">
-            {pinnedItems.map(({ pinned, window }) => {
+            {pinnedItems.map(({ pinned, windows }) => {
               const visual = getPinnedVisual(pinned);
-              const isRunning = Boolean(window);
-              const isActive = Boolean(window?.is_active);
+              const installed = installedForPin(pinned, installedApps);
+              const window = windows.find((w) => w.is_active) || windows[0];
+              const isRunning = windows.length > 0;
+              const isActive = windows.some((w) => w.is_active);
               const isLaunching = launchingAppIds.has(pinned.id);
               const magnifyScale = isMagnifyActive ? (magnifyScales[pinned.id] ?? 1) : 1;
 
               return (
                 <button
+                  aria-label={`${pinned.name} • ${count("window", windows.length)}`}
                   key={pinned.id}
+                  draggable
+                  onDragStart={(e) => {
+                    draggedPin.current = pinned.id;
+                    setDraggingId(pinned.id);
+                    e.dataTransfer.effectAllowed = "move";
+                    e.dataTransfer.setData("application/x-deskmorph-pin", pinned.id);
+                  }}
+                  onDragOver={(e) => { if (draggedPin.current && draggedPin.current !== pinned.id) { e.preventDefault(); e.dataTransfer.dropEffect = "move"; } }}
+                  onDrop={(e) => {
+                    if (!draggedPin.current) return;
+                    e.preventDefault();
+                    const id = draggedPin.current;
+                    draggedPin.current = null; setDraggingId(null);
+                    suppressClickUntil.current = Date.now() + 350;
+                    const target = pinnedList.findIndex((app) => app.id === pinned.id);
+                    if (target >= 0 && id !== pinned.id) void movePin(id, target);
+                  }}
+                  onDragEnd={() => { draggedPin.current = null; setDraggingId(null); suppressClickUntil.current = Date.now() + 350; }}
+                  onKeyDown={(e) => {
+                    if (e.ctrlKey && e.shiftKey && ["ArrowLeft", "ArrowRight"].includes(e.key)) {
+                      e.preventDefault();
+                      const index = pinnedList.findIndex((app) => app.id === pinned.id);
+                      void movePin(pinned.id, Math.max(0, Math.min(pinnedList.length - 1, index + (e.key === "ArrowLeft" ? -1 : 1))));
+                    }
+                  }}
+                  onAuxClick={(e) => { if (e.button === 1) { e.preventDefault(); void handleLaunchApp(pinned.id, installed ? `desktop:${installed.id}` : pinned.command); } }}
                   ref={(el) => {
                     if (el) iconRefs.current.set(pinned.id, el);
                     else iconRefs.current.delete(pinned.id);
                   }}
                   className={`running-app-icon-btn ${isRunning ? "app-running" : "app-idle"} ${
                     isActive ? "app-active" : ""
-                  } ${isLaunching ? "app-launching" : ""}`}
-                  onClick={() => {
+                  } ${isLaunching ? "app-launching" : ""} ${draggingId === pinned.id ? "is-dragging" : ""}`}
+                  onClick={(e) => {
+                    if (Date.now() < suppressClickUntil.current) return;
                     if (window) {
-                      handleActivateWindow(window.id);
+                      void selectWindows(e, windows, pinned.name);
                     } else {
-                      handleLaunchApp(pinned.id, pinned.command);
+                      handleLaunchApp(pinned.id, installed ? `desktop:${installed.id}` : pinned.command);
                     }
                   }}
                   onContextMenu={(e) =>
                     openContextMenu(e, {
+                      desktopId: installed?.id || pinned.desktopId,
+                      windows,
+                      matchClasses: pinned.matchClasses,
+                      iconPath: installed?.iconPath,
+                      pinIndex: pinnedList.findIndex((app) => app.id === pinned.id),
+                      pinCount: pinnedList.length,
                       appId: pinned.id,
                       appName: pinned.name,
-                      command: pinned.command,
+                      command: installed ? `desktop:${installed.id}` : pinned.command,
                       windowId: window?.id,
                       isPinned: true,
                       isRunning,
                     })
                   }
-                  title={
+                  data-dock-tooltip={
                     window
-                      ? `${pinned.name} • ${window.title} (Đang chạy - Nhấn để chuyển)`
+                      ? `${pinned.name} • ${count("window", windows.length)} • ${t("selectWindow")}`
                       : `${pinned.name} (Đã ghim - Nhấn để mở)`
                   }
                   style={{
@@ -700,14 +728,14 @@ export const Taskbar: React.FC = () => {
                 >
                   <span
                     className={`app-icon-glyph ${
-                      isLaunching && config.bouncingLaunch !== false ? "glyph-bouncing" : ""
+                      isLaunching && config.bouncingLaunch !== false && !reducedMotion ? "glyph-bouncing" : ""
                     }`}
                   >
-                    {visual.icon}
+                    {installed?.iconPath ? <AppIcon path={installed.iconPath} size={Math.round(btnSize * .68)} /> : visual.icon}
                   </span>
 
                   {/* Dynamic Floor Shadow / Glow beneath bouncing icon */}
-                  {isLaunching && config.dynamicShadow !== false && (
+                  {isLaunching && config.dynamicShadow !== false && !reducedMotion && (
                     <span
                       className="dock-launch-shadow"
                       style={{
@@ -716,6 +744,7 @@ export const Taskbar: React.FC = () => {
                     />
                   )}
 
+                  {windows.length > 1 && <span className="dock-window-count">{windows.length}</span>}
                   {/* Running Indicator Dot */}
                   {isRunning && (
                     <span
@@ -732,51 +761,62 @@ export const Taskbar: React.FC = () => {
           </div>
 
           {/* B. Subtle Divider between Pinned Apps and Unpinned Running Apps */}
-          {unpinnedWindows.length > 0 && activePinned.length > 0 && (
+          {unpinnedGroups.length > 0 && activePinned.length > 0 && (
             <div className="dock-apps-separator" title="Ứng dụng đang chạy khác" />
           )}
 
           {/* C. Unpinned Running Apps */}
-          {unpinnedWindows.length > 0 && (
+          {unpinnedGroups.length > 0 && (
             <div className="dock-unpinned-group">
-              {unpinnedWindows.map((win) => {
+              {unpinnedGroups.map((windows) => {
+                const win = windows.find((w) => w.is_active) || windows[0];
+                const groupId = win.class_name.toLowerCase();
+                const isActive = windows.some((w) => w.is_active);
                 const visual = getAppVisual(win.class_name);
-                const magnifyScale = isMagnifyActive ? (magnifyScales[win.id] ?? 1) : 1;
+                const installed = installedApps.find((app) => app.matchClasses.includes(win.class_name.toLowerCase()));
+                const magnifyScale = isMagnifyActive ? (magnifyScales[groupId] ?? 1) : 1;
 
                 return (
                   <button
-                    key={win.id}
+                    aria-label={`${win.class_name} • ${count("window", windows.length)}`}
+                    key={groupId}
                     ref={(el) => {
-                      if (el) iconRefs.current.set(win.id, el);
-                      else iconRefs.current.delete(win.id);
+                      if (el) iconRefs.current.set(groupId, el);
+                      else iconRefs.current.delete(groupId);
                     }}
-                    className={`running-app-icon-btn ${win.is_active ? "app-active" : ""}`}
-                    onClick={() => handleActivateWindow(win.id)}
+                    className={`running-app-icon-btn ${isActive ? "app-active" : ""}`}
+                    onClick={(e) => void selectWindows(e, windows, win.class_name)}
+                    onAuxClick={(e) => { if (e.button === 1 && installed) { e.preventDefault(); void handleLaunchApp(installed.id, `desktop:${installed.id}`); } }}
                     onContextMenu={(e) =>
                       openContextMenu(e, {
-                        appName: win.class_name,
-                        command: win.class_name.toLowerCase(),
+                        desktopId: installed?.id,
+                        windows,
+                        matchClasses: installed?.matchClasses || [win.class_name],
+                        iconPath: installed?.iconPath,
+                        appName: installed?.name || win.class_name,
+                        command: installed ? `desktop:${installed.id}` : undefined,
                         windowId: win.id,
                         isPinned: false,
                         isRunning: true,
                       })
                     }
-                    title={`${win.class_name} • ${win.title} (Đang chạy)`}
+                    data-dock-tooltip={`${win.class_name} • ${count("window", windows.length)} • ${t("selectWindow")}`}
                     style={{
                       width: `${btnSize}px`,
                       height: `${btnSize}px`,
                       ["--magnify-scale" as string]: magnifyScale,
                       color: visual.color,
-                      background: win.is_active ? visual.bg : "rgba(255, 255, 255, 0.05)",
-                      borderColor: win.is_active ? visual.border : "rgba(255, 255, 255, 0.08)",
+                      background: isActive ? visual.bg : "rgba(255, 255, 255, 0.05)",
+                      borderColor: isActive ? visual.border : "rgba(255, 255, 255, 0.08)",
                     }}
                   >
-                    <span className="app-icon-glyph">{visual.icon}</span>
+                    <span className="app-icon-glyph">{installed?.iconPath ? <AppIcon path={installed.iconPath} size={Math.round(btnSize * .68)} /> : visual.icon}</span>
+                    {windows.length > 1 && <span className="dock-window-count">{windows.length}</span>}
                     <span
-                      className={`running-dot ${win.is_active ? "dot-active" : "dot-inactive"}`}
+                      className={`running-dot ${isActive ? "dot-active" : "dot-inactive"}`}
                       style={{
-                        background: win.is_active ? visual.color : "rgba(255, 255, 255, 0.5)",
-                        boxShadow: win.is_active ? `0 0 8px ${visual.color}` : "none",
+                        background: isActive ? visual.color : "rgba(255, 255, 255, 0.5)",
+                        boxShadow: isActive ? `0 0 8px ${visual.color}` : "none",
                       }}
                     />
                   </button>
@@ -833,18 +873,42 @@ export const Taskbar: React.FC = () => {
             <button
               className="dock-action-btn"
               onClick={handleShuffle}
-              title="Đổi ảnh nền ngẫu nhiên ngay lập tức"
+              disabled={!platform?.wallpaper}
+              title={platform?.wallpaper ? t("shuffle") : t("unsupported")}
             >
               <Shuffle size={14} />
             </button>
           )}
 
+          {config.showAudio && <button className="dock-action-btn" aria-label={t("audio")} title={t("audio")} onClick={(e) => {
+            const rect = e.currentTarget.getBoundingClientRect();
+            void invoke("show_dock_context_menu", { iconCenterX: Math.round(rect.left + rect.width / 2), menuData: { mode: "audio", appName: t("audio") } }).catch((error) => setOperationError(String(error)));
+          }}><Volume2 size={16} /></button>}
+
+          <SystemWidgets onError={setOperationError} />
+
           {/* Clock & Date */}
           {config.showClock && (
-            <div className="taskbar-section clock-section">
+            <button
+              type="button"
+              aria-label={t("calendar")}
+              className="taskbar-section clock-section interactive-widget"
+              onClick={async (e) => {
+                e.stopPropagation();
+                const rect = e.currentTarget.getBoundingClientRect();
+                const anchorX = Math.round(rect.left + rect.width / 2);
+                const anchorY = Math.round(rect.top);
+                try {
+                  await invoke("toggle_calendar_flyout", { anchorX, anchorY });
+                } catch (err) {
+                  console.error("Failed to toggle calendar flyout", err);
+                }
+              }}
+              title={t("calendar")}
+            >
               <span className="clock-time">{time}</span>
               <span className="clock-date">{date}</span>
-            </div>
+            </button>
           )}
         </div>
       </div>
