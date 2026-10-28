@@ -1,0 +1,107 @@
+{
+  "enabled": true,
+  "position": "bottom",
+  "height": 52,
+  "autoHide": false,
+  "opacity": 0.85,
+  "borderRadius": 16,
+  "showBattery": false,
+  "showNetwork": false,
+  "showSystem": true,
+  "showAudio": true,
+  "showClock": true,
+  "showStats": true,
+  "showShuffle": true,
+  "showApps": true,
+  "accentColor": "#48b9c7",
+  "pinnedApps": [
+    {
+      "id": "chrome",
+      "name": "Google Chrome",
+      "command": "google-chrome",
+      "matchClasses": [
+        "chrome",
+        "google-chrome",
+        "chromium"
+      ],
+      "iconType": "chrome",
+      "color": "#38bdf8",
+      "enabled": true
+    },
+    {
+      "id": "code",
+      "name": "VS Code / IDE",
+      "command": "code",
+      "matchClasses": [
+        "code",
+        "cursor",
+        "antigravity"
+      ],
+      "iconType": "code",
+      "color": "#818cf8",
+      "enabled": true
+    },
+    {
+      "id": "terminal",
+      "name": "Terminal",
+      "command": "cosmic-term",
+      "matchClasses": [
+        "cosmic-term",
+        "terminal",
+        "kitty",
+        "alacritty",
+        "console",
+        "pty"
+      ],
+      "iconType": "terminal",
+      "color": "#34d399",
+      "enabled": true
+    },
+    {
+      "id": "files",
+      "name": "Tệp tin (Files)",
+      "command": "cosmic-files",
+      "matchClasses": [
+        "cosmic-files",
+        "nautilus",
+        "files",
+        "thunar"
+      ],
+      "iconType": "files",
+      "color": "#fbbf24",
+      "enabled": true
+    },
+    {
+      "id": "settings",
+      "name": "Cài đặt (Settings)",
+      "command": "cosmic-settings",
+      "matchClasses": [
+        "cosmic-settings",
+        "gnome-control-center",
+        "settings",
+        "preference"
+      ],
+      "iconType": "settings",
+      "color": "#94a3b8",
+      "enabled": true
+    }
+  ],
+  "bouncingLaunch": true,
+  "dynamicShadow": true,
+  "magnification": true,
+  "maxMagnificationScale": 1.35,
+  "keepDockOnClose": true,
+  "monitor": null,
+  "iconSize": 36,
+  "iconSpacing": 8,
+  "reduceMotion": false,
+  "language": "vi",
+  "clock24": true,
+  "clockSeconds": true,
+  "presets": [],
+  "wallpaperFolders": [],
+  "wallpaperRecursive": false,
+  "wallpaperFavorites": [],
+  "wallpaperScheduleEnabled": false,
+  "wallpaperIntervalMinutes": 15
+}
