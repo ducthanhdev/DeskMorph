@@ -39,6 +39,7 @@ export const Taskbar: React.FC = () => {
   const { platform } = usePlatform();
   const [operationError, setOperationError] = useState<string | null>(null);
   const [stats, setStats] = useState<SystemStats | null>(null);
+  const ramDescription = stats ? `RAM: ${(stats.ram_used_mb / 1024).toFixed(1)} GiB / ${(stats.ram_total_mb / 1024).toFixed(1)} GiB (${stats.ram_percent}%)` : undefined;
   const [openWindows, setOpenWindows] = useState<OpenWindow[]>([]);
   const [isHovered, setIsHovered] = useState(false);
   const [previewVisible, setPreviewVisible] = useState(true);
@@ -804,7 +805,7 @@ export const Taskbar: React.FC = () => {
 
           {/* B. Subtle Divider between Pinned Apps and Unpinned Running Apps */}
           {unpinnedGroups.length > 0 && activePinned.length > 0 && (
-            <div className="dock-apps-separator" title="Ứng dụng đang chạy khác" />
+            <div className="dock-apps-separator" aria-hidden="true" />
           )}
 
           {/* C. Unpinned Running Apps */}
@@ -875,7 +876,7 @@ export const Taskbar: React.FC = () => {
           {/* Live System Stats */}
           {config.showStats && stats && (
             <div className="taskbar-section stats-section">
-              <div className="stat-pill" title={`CPU Usage: ${stats.cpu_usage}%`}>
+              <div className="stat-pill" role="img" aria-label={`CPU: ${stats.cpu_usage}%`} data-dock-tooltip={`CPU: ${stats.cpu_usage}%`}>
                 <Cpu size={14} className="stat-icon cpu-icon" />
                 <div className="stat-bar-mini">
                   <div
@@ -891,9 +892,8 @@ export const Taskbar: React.FC = () => {
 
               <div
                 className="stat-pill"
-                title={`RAM: ${(stats.ram_used_mb / 1024).toFixed(1)}GB / ${(
-                  stats.ram_total_mb / 1024
-                ).toFixed(1)}GB (${stats.ram_percent}%)`}
+                role="img" aria-label={ramDescription}
+                data-dock-tooltip={ramDescription}
               >
                 <HardDrive size={14} className="stat-icon ram-icon" />
                 <div className="stat-bar-mini">
@@ -916,13 +916,14 @@ export const Taskbar: React.FC = () => {
               className="dock-action-btn"
               onClick={handleShuffle}
               disabled={!platform?.wallpaper}
-              title={platform?.wallpaper ? t("shuffle") : t("unsupported")}
+              aria-label={t("shuffle")}
+              data-dock-tooltip={platform?.wallpaper ? t("shuffle") : t("unsupported")}
             >
               <Shuffle size={14} />
             </button>
           )}
 
-          {config.showAudio && <button className="dock-action-btn" aria-label={t("audio")} title={t("audio")} onClick={(e) => {
+          {config.showAudio && <button className="dock-action-btn" aria-label={t("audio")} data-dock-tooltip={t("audio")} onClick={(e) => {
             const rect = e.currentTarget.getBoundingClientRect();
             void invoke("show_dock_context_menu", { iconCenterX: Math.round(rect.left + rect.width / 2), menuData: { mode: "audio", appName: t("audio") } }).catch((error) => setOperationError(String(error)));
           }}><Volume2 size={16} /></button>}
@@ -946,7 +947,7 @@ export const Taskbar: React.FC = () => {
                   console.error("Failed to toggle calendar flyout", err);
                 }
               }}
-              title={t("calendar")}
+              data-dock-tooltip={t("calendar")}
             >
               <span className="clock-time">{time}</span>
               <span className="clock-date">{date}</span>

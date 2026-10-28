@@ -1700,6 +1700,7 @@ button:focus-visible { outline: 2px solid #48b9c7; outline-offset: -2px; }
 .context-window-row button:last-child { width: 32px; flex-shrink: 0; }
 
 .dock-tooltip-card { display: flex; align-items: center; justify-content: center; height: 100vh; padding: 8px 12px; color: #e2e8f0; background: #172235; border: 1px solid #52647e; border-radius: 8px; font-size: 11px; text-align: center; overflow: hidden; }
+.dock-tooltip-card > span { min-width: 0; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .dock-layout-settings { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin: 16px 0; font-size: 13px; }
 .dock-layout-settings select { display: block; margin-top: 8px; width: 100%; background: #172235; color: #e2e8f0; border: 1px solid #52647e; padding: 8px; border-radius: 6px; }
 .dock-layout-settings input[type="range"] { display: block; width: 100%; margin-top: 12px; }

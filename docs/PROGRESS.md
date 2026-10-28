@@ -2,7 +2,7 @@
 
 Mục tiêu giữ nguyên toàn bộ 99 đầu việc trong IMPLEMENTATION_PLAN.md. Chưa đạt cổng hoàn thành toàn dự án. Checkbox chưa đánh dấu không đồng nghĩa chưa có code: nhiều mục đang chờ kiểm thử đủ phạm vi.
 
-Hiện đã đánh dấu 51/99 mục, gồm G3.2–G3.3 bằng fixture môi trường cô lập và G0.5/G2.1/G2.3 qua capability EWMH, kiểm thử lỗi adapter và native startup thiếu xprop. Đã bổ sung G0.4/G2.4/G2.5 qua popup/auto-hide native và G9.6/G9.9 bằng hồi quy policy/asset/force-close và ảnh Studio thật trong README. Các cổng GUI, Wayland và phát hành vẫn chưa hoàn tất.
+Hiện đã đánh dấu 52/99 mục, gồm G3.2–G3.3 bằng fixture môi trường cô lập và G0.5/G2.1/G2.3 qua capability EWMH, kiểm thử lỗi adapter và native startup thiếu xprop. Đã bổ sung G0.4/G2.4/G2.5 qua popup/auto-hide native và G9.6/G9.9 bằng hồi quy policy/asset/force-close và ảnh Studio thật trong README. Các cổng GUI, Wayland và phát hành vẫn chưa hoàn tất.
 
 ## Môi trường tham chiếu đã xác minh
 
@@ -182,3 +182,11 @@ Script cần AT-SPI, Python GI, GTK3 và libXtst. Chỉ gửi phím khi kiểm t
 - Các lượt chưa đạt không được tính pass: thử tắt native file-drop handler không giải quyết nên đã bỏ thay đổi config thử nghiệm; width chờ và focus tooltip được xác minh riêng như trên. Không dùng việc build hay mã HTML drag có sẵn làm bằng chứng kéo thả thực tế.
 - Frontend 14/14, TS/Vite build/custom-protocol native build qua; Rust native cuối 41/41, Python compile và diff check qua. G4.3 vẫn chờ kiểm thử đủ delay/geometry/tooltip toàn bộ; G4.8 overflow nhiều app, G4.9 reduced-motion/hit targets toàn phạm vi và G4.4 hành vi instance/cửa sổ thực tế vẫn pending. Marker middle-click chỉ chứng minh launch entry, không chứng minh mọi app tạo cửa sổ mới.
 - Hồi quy binary cuối `--autohide-smoke --popup-smoke --force-close-smoke` exit 0, PID 265687: auto-hide top/bottom, ba vòng/15 chuỗi popup, launcher/close-confirmation (fixture 270883) và force-close PID giả (fixture 271083, sentinel 271082) đều qua; sentinel/cửa sổ có sẵn giữ nguyên. G4.1/G4.2 được đánh dấu từ reorder-result và chuỗi hồi quy này.
+
+## G4.3 — Tooltip dùng chung và kích thước native (29/10/2026)
+
+- Chuyển CPU/RAM, shuffle, audio, lịch và SystemWidgets Dock từ title trình duyệt sang data-dock-tooltip dùng chung; preview Studio vẫn dùng title. CPU/RAM có accessible name, RAM ghi GiB. Tooltip có accessible name rõ ràng, chữ dài một dòng ellipsis, giới hạn command 200 ký tự.
+- Kiểm thử phát hiện tooltip render chữ đúng nhưng cửa sổ thật cao 200 px. Đặt minimum size riêng chưa đủ; cấu hình cho phép resize giúp GTK nhận 250×44 px. Cửa sổ không decoration, không nhận focus và input shape rỗng nên không có thao tác resize tương tác. Không quy lỗi này cho sự kiện nội dung bị mất hoặc GDK cache: xwininfo xác nhận 250×200 trước sửa và 250×44 sau sửa.
+- `--tooltip-smoke` exit 0, PID 326911: 20 lượt hover top/bottom gồm launcher, pin tên dài, lịch, audio, system, CPU/RAM, shuffle, pin và mạng. Quan sát sớm 120 ms chưa map; xuất hiện 0,548–0,583 giây, đúng delay 500 ms. Tất cả giữ native active window, ở trong work area, đúng phía Dock và input shape rỗng. Launcher/calendar/audio mở đều chặn tooltip mới. Fixture không được launch, pin/order/widgets/enabled/autoHide/position được khôi phục. Báo cáo `/tmp/deskmorph-desktop-test/tooltip-result.json`.
+- Ảnh tooltip-top.png/tooltip-bottom.png và kiểm tra pixels xác minh tên dài nằm trong padding một dòng có ellipsis, AT-SPI đọc tên đầy đủ. Trước thêm aria-label, chữ có trong ảnh nhưng AT-SPI không công bố text; hai lượt lỗi text và các lượt lỗi chiều cao không được tính pass.
+- Hồi quy `--autohide-smoke --popup-smoke` exit 0, PID 331851: auto-hide top/bottom và ba vòng/15 chuỗi popup qua, không tooltip chồng popup hay giành focus. Frontend 14/14, Rust native 41/41, TS/Vite/custom-protocol build qua; Python compile/diff check qua. Chỉ xác minh GNOME/X11 scale 1 trên môi trường tham chiếu; mixed DPI, mọi desktop và toàn bộ accessibility vẫn pending. G4.3 được đánh dấu từ bằng chứng này.

@@ -96,6 +96,7 @@ cargo build --offline --manifest-path src-tauri/Cargo.toml --target-dir src-taur
 /usr/bin/python3 tests/desktop_smoke.py --autohide-smoke --popup-smoke
 /usr/bin/python3 tests/desktop_smoke.py --shortcut-smoke
 /usr/bin/python3 tests/desktop_smoke.py --reorder-smoke
+/usr/bin/python3 tests/desktop_smoke.py --tooltip-smoke
 /usr/bin/python3 tests/desktop_smoke.py --window-list-smoke
 /usr/bin/python3 tests/desktop_smoke.py --lifecycle-smoke
 /usr/bin/python3 tests/desktop_smoke.py --registration-smoke

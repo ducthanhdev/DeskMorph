@@ -34,6 +34,10 @@ pub fn set_dock_tooltip(app: AppHandle, revision: u64, text: Option<String>, anc
     let size = dock.outer_size().map_err(|e| e.to_string())?;
     let area = crate::monitor_area(&monitor);
     let rect = crate::geometry::popup_rect(area, crate::geometry::Rect { x:pos.x, y:pos.y, width:size.width, height:size.height }, monitor.scale_factor(), anchor.unwrap_or(0), 250, 44, pos.y < area.y + area.height as i32 / 2);
+    // Keep the small tooltip below WebKitGTK's natural height. Its undecorated
+    // window is resizable in config so GTK honors resize rather than natural size;
+    // the empty input region prevents interactive resizing.
+    window.set_min_size(Some(PhysicalSize::new(1, 1))).map_err(|e| e.to_string())?;
     window.set_size(PhysicalSize::new(rect.width, rect.height)).map_err(|e| e.to_string())?;
     window.set_position(PhysicalPosition::new(rect.x, rect.y)).map_err(|e| e.to_string())?;
     window.emit("deskmorph:tooltip", text.unwrap().chars().take(200).collect::<String>()).map_err(|e| e.to_string())?;

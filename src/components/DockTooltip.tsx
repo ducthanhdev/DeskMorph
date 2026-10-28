@@ -9,5 +9,5 @@ export function DockTooltip() {
       .then((unlisten) => { if (disposed) unlisten(); else stop = unlisten; }).catch(console.error);
     return () => { disposed = true; stop?.(); };
   }, []);
-  return <div className="dock-tooltip-card" role="tooltip">{text}</div>;
+  return <div className="dock-tooltip-card" role="tooltip" aria-label={text}><span>{text}</span></div>;
 }

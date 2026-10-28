@@ -87,13 +87,14 @@ if __name__ == '__main__':
     parser.add_argument('--window-fixture', action='store_true')
     parser.add_argument('--window-list-smoke', action='store_true')
     parser.add_argument('--reorder-smoke', action='store_true')
+    parser.add_argument('--tooltip-smoke', action='store_true')
     parser.add_argument('--environment', action='store_true')
     parser.add_argument('--platform-tool-missing', action='store_true', help='Read-only startup check with an empty PATH in the isolated app')
     args = parser.parse_args()
     if args.audio_tool_missing: args.audio_unavailable = True
     if args.force_close_smoke: args.launcher_smoke = True
     if args.popup_smoke: args.restart = True
-    if args.window_list_smoke or args.reorder_smoke: args.restart = True
+    if args.window_list_smoke or args.reorder_smoke or args.tooltip_smoke: args.restart = True
     if args.platform_tool_missing: args.restart = True
     if args.scheduler_smoke: args.wallpaper_smoke = True
     if args.environment:
@@ -107,7 +108,7 @@ if __name__ == '__main__':
             raise RuntimeError('Cannot verify GNOME lock state; no native input will be sent')
         if re.search(r'\btrue\b', result.stdout):
             raise RuntimeError('GNOME desktop is locked; unlock it before native UI tests. No input was sent.')
-    input_tests = any((args.action, args.screenshot, args.basic, args.popup_smoke, args.autohide_smoke, args.shortcut_smoke, args.lifecycle_smoke, args.registration_smoke, args.window_list_smoke, args.reorder_smoke, args.launcher_smoke, args.studio_smoke, args.config_smoke,
+    input_tests = any((args.action, args.screenshot, args.basic, args.popup_smoke, args.autohide_smoke, args.shortcut_smoke, args.lifecycle_smoke, args.registration_smoke, args.window_list_smoke, args.reorder_smoke, args.tooltip_smoke, args.launcher_smoke, args.studio_smoke, args.config_smoke,
                        args.wallpaper_smoke, args.scheduler_smoke, args.library_stress, args.audio_smoke, args.media_smoke,
                        args.audio_exit, args.audio_unavailable, args.system_smoke, args.system_unavailable, args.system_open_smoke))
     if input_tests: require_unlocked_desktop()
@@ -207,6 +208,14 @@ if __name__ == '__main__':
                 f'[Desktop Entry]\nType=Application\nName=DeskMorph Reorder {letter}\n'
                 f'Exec=/usr/bin/touch /tmp/deskmorph-desktop-test/reorder-launched-{letter}\n'
                 f'Icon=utilities-terminal\nStartupWMClass=DeskMorphReorder{letter}\nCategories=Utility;\n')
+    if args.tooltip_smoke:
+        tooltip_fixture_name = 'DeskMorph Tooltip — tên ứng dụng rất dài để kiểm tra hiển thị trong khung native và điều hướng bàn phím'
+        desktop_dir = Path('/tmp/deskmorph-desktop-test/data/applications')
+        desktop_dir.mkdir(parents=True, exist_ok=True)
+        (desktop_dir / 'deskmorph-tooltip-fixture.desktop').write_text(
+            f'[Desktop Entry]\nType=Application\nName={tooltip_fixture_name}\n'
+            'Exec=/usr/bin/touch /tmp/deskmorph-desktop-test/tooltip-launched\n'
+            'Icon=utilities-terminal\nStartupWMClass=DeskMorphTooltipFixture\nCategories=Utility;\n')
     if args.restart:
         try:
             previous = test_app()
@@ -613,6 +622,181 @@ if __name__ == '__main__':
         click('Taskbar Studio')
         if json.loads(baseline_path.read_text())['config']['autoHide']:
             click('Tự động ẩn Dock Chạm cạnh màn hình để hiện lại; Dock giữ hiện khi bạn thao tác popup.')
+    if args.tooltip_smoke:
+        gi.require_version('Gdk', '3.0')
+        gi.require_version('GdkX11', '3.0')
+        from gi.repository import Gdk, GdkX11
+        tooltip_path = Path(TEST_CONFIG) / 'com.ducthanhdev.deskmorph/config.json'
+        tooltip_config = lambda: json.loads(tooltip_path.read_text())['config']
+        tooltip_original = tooltip_config()
+        marker_path = Path('/tmp/deskmorph-desktop-test/tooltip-launched')
+        assert not marker_path.exists(), 'Do not overwrite existing tooltip fixture marker'
+        assert not any(pin.get('desktopId') == 'deskmorph-tooltip-fixture.desktop' for pin in tooltip_original['pinnedApps']), 'Tooltip fixture must start unpinned'
+        passed = []
+        timings = []
+        tooltip_xid_cache = None
+        widget_fields = [('showApps', 'Ứng dụng trên Dock'), ('showStats', 'CPU và RAM'), ('showAudio', 'Âm thanh'), ('showClock', 'Đồng hồ'), ('showSystem', 'Nút tiện ích hệ thống'), ('showShuffle', 'Nút đổi hình nền'), ('showBattery', 'Hiện pin trên Dock'), ('showNetwork', 'Hiện mạng trên Dock')]
+        def wait_tooltip(predicate, message):
+            deadline = time.monotonic() + 8
+            while time.monotonic() < deadline:
+                if predicate(): return
+                time.sleep(0.05)
+            raise AssertionError(message)
+        def owned_native_windows():
+            result = {}
+            for xid in re.findall(r'0x[0-9a-fA-F]+', subprocess.check_output(['xprop', '-root', '_NET_CLIENT_LIST'], text=True)):
+                props = subprocess.run(['xprop', '-id', xid, '_NET_WM_PID', '_NET_WM_NAME'], capture_output=True, text=True).stdout
+                if re.search(r'_NET_WM_PID.*= ' + str(app.get_process_id()) + r'\b', props):
+                    title = re.search(r'_NET_WM_NAME\([^)]*\) = "(.*)"', props)
+                    if title: result[title.group(1)] = xid
+            return result
+        def tooltip_mapped():
+            # Cache the known owned XID after first map; xwininfo queries the server.
+            global tooltip_xid_cache
+            if tooltip_xid_cache is None: tooltip_xid_cache = owned_native_windows().get('DeskMorph Tooltip')
+            if tooltip_xid_cache is None: return False
+            result = subprocess.run(['xwininfo', '-id', tooltip_xid_cache], capture_output=True, text=True)
+            return result.returncode == 0 and 'Map State: IsViewable' in result.stdout
+        def tooltip_text():
+            frame = next((n for n, _ in descendants(app) if n.get_role_name() == 'frame' and n.get_name() == 'DeskMorph Tooltip'), None)
+            parts = []
+            if frame:
+                for node, _ in descendants(frame):
+                    parts.append(node.get_name() or '')
+                    iface = node.get_text_iface()
+                    if iface: parts.append(Atspi.Text.get_text(iface, 0, -1))
+            return '\n'.join(parts)
+        def tooltip_node(name, prefix=False):
+            return next(n for n, _ in descendants(app) if (n.get_name().startswith(name) if prefix else n.get_name() == name) and n.get_role_name() in ('button', 'image'))
+        def move_tooltip_pointer(node):
+            native_keys()
+            rect = node.get_component_iface().get_extents(Atspi.CoordType.SCREEN)
+            assert rect.width > 0 and rect.height > 0
+            x11 = ctypes.CDLL('libX11.so.6'); xtst = ctypes.CDLL('libXtst.so.6')
+            x11.XOpenDisplay.restype = ctypes.c_void_p
+            x11.XSync.argtypes = [ctypes.c_void_p, ctypes.c_int]; x11.XCloseDisplay.argtypes = [ctypes.c_void_p]
+            xtst.XTestFakeMotionEvent.argtypes = [ctypes.c_void_p, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_ulong]
+            display = x11.XOpenDisplay(None); assert display
+            try:
+                require_unlocked_desktop()
+                started = time.monotonic()
+                assert xtst.XTestFakeMotionEvent(display, -1, rect.x + rect.width // 2, rect.y + rect.height // 2, 0)
+                x11.XSync(display, 0)
+                assert_pointer_over_test_app()
+                return started
+            finally: x11.XCloseDisplay(display)
+        def clear_tooltip():
+            focus_studio()
+            heading = next(n for n, _ in descendants(app) if n.get_role_name() == 'heading' and n.get_name() == 'DeskMorph')
+            move_tooltip_pointer(heading)
+            wait_tooltip(lambda: not tooltip_mapped(), 'Tooltip did not hide after leaving Dock')
+        def assert_empty_input_region(xid):
+            x11 = ctypes.CDLL('libX11.so.6'); shape = ctypes.CDLL('libXext.so.6')
+            x11.XOpenDisplay.restype = ctypes.c_void_p; x11.XCloseDisplay.argtypes = [ctypes.c_void_p]; x11.XFree.argtypes = [ctypes.c_void_p]
+            shape.XShapeGetRectangles.argtypes = [ctypes.c_void_p, ctypes.c_ulong, ctypes.c_int, ctypes.POINTER(ctypes.c_int), ctypes.POINTER(ctypes.c_int)]
+            shape.XShapeGetRectangles.restype = ctypes.c_void_p
+            display = x11.XOpenDisplay(None); assert display
+            try:
+                count, ordering = ctypes.c_int(), ctypes.c_int()
+                rectangles = shape.XShapeGetRectangles(display, int(xid, 16), 2, ctypes.byref(count), ctypes.byref(ordering))
+                try: assert count.value == 0, 'Tooltip native input region must be empty'
+                finally:
+                    if rectangles: x11.XFree(rectangles)
+            finally: x11.XCloseDisplay(display)
+        def hover_tooltip(node, expected, position, pixels=False):
+            clear_tooltip()
+            active = subprocess.check_output(['xprop', '-root', '_NET_ACTIVE_WINDOW'], text=True).strip()
+            started = move_tooltip_pointer(node)
+            time.sleep(0.12)
+            early = time.monotonic() - started
+            assert early < 0.45, 'Timing observation was delayed; cannot prove tooltip delay'
+            assert not tooltip_mapped(), 'Tooltip appeared before the hover delay'
+            wait_tooltip(tooltip_mapped, 'Unified native tooltip did not appear')
+            latency = time.monotonic() - started
+            assert latency >= 0.45, 'Tooltip appeared before its configured delay'
+            try: wait_tooltip(lambda: expected in tooltip_text(), 'Tooltip did not show the expected accessible text: ' + expected)
+            except AssertionError:
+                native = GdkX11.X11Window.foreign_new_for_display(Gdk.Display.get_default(), int(tooltip_xid_cache, 16))
+                bounds = native.get_frame_extents()
+                picture = Gdk.pixbuf_get_from_window(native, 0, 0, bounds.width, bounds.height)
+                if picture: picture.savev('/tmp/deskmorph-desktop-test/tooltip-failure.png', 'png', [], [])
+                print('Tooltip text diagnostic:', repr(tooltip_text()), [(n.get_role_name(), n.get_name()) for n, _ in descendants(app) if n.get_role_name() == 'frame'], flush=True)
+                raise
+            assert subprocess.check_output(['xprop', '-root', '_NET_ACTIVE_WINDOW'], text=True).strip() == active, 'Tooltip stole native focus'
+            native = GdkX11.X11Window.foreign_new_for_display(Gdk.Display.get_default(), int(tooltip_xid_cache, 16))
+            server_geometry = subprocess.check_output(['xwininfo', '-id', tooltip_xid_cache], text=True)
+            rect = Gdk.Rectangle()
+            for field, label in (('x', 'Absolute upper-left X'), ('y', 'Absolute upper-left Y'), ('width', 'Width'), ('height', 'Height')):
+                setattr(rect, field, int(re.search(re.escape(label) + r':\s*(-?\d+)', server_geometry).group(1)))
+            dock = next(n for n, _ in descendants(app) if n.get_role_name() == 'frame' and n.get_name() == 'DeskMorph Taskbar').get_component_iface().get_extents(Atspi.CoordType.SCREEN)
+            monitor = Gdk.Display.get_default().get_monitor_at_point(dock.x + dock.width // 2, dock.y + dock.height // 2)
+            assert monitor.get_scale_factor() == 1, 'This reference pixel test requires X11 scale 1; mixed DPI remains a separate gate'
+            area = monitor.get_workarea()
+            assert area.x <= rect.x and rect.x + rect.width <= area.x + area.width and area.y <= rect.y and rect.y + rect.height <= area.y + area.height, 'Tooltip escaped monitor work area'
+            assert rect.height == 44 and rect.width == 250, f'Unexpected native tooltip size: {rect.width}x{rect.height}'
+            assert (rect.y >= dock.y + dock.height) if position == 'top' else (rect.y + rect.height <= dock.y), 'Tooltip overlaps native Dock'
+            assert_empty_input_region(tooltip_xid_cache)
+            if pixels:
+                picture = Gdk.pixbuf_get_from_window(native, 0, 0, rect.width, rect.height)
+                assert picture, 'Could not capture owned tooltip pixels'
+                picture.savev(f'/tmp/deskmorph-desktop-test/tooltip-{position}.png', 'png', [], [])
+                data, stride, channels = picture.get_pixels(), picture.get_rowstride(), picture.get_n_channels()
+                text_pixels = [(x, y) for y in range(rect.height) for x in range(rect.width) if all(data[y * stride + x * channels + offset] >= 150 for offset in (0, 1, 2))]
+                assert len(text_pixels) > 20, 'Long tooltip text was not rendered'
+                xs, ys = zip(*text_pixels)
+                assert min(xs) >= 10 and max(xs) < rect.width - 10 and min(ys) >= 8 and max(ys) < rect.height - 8 and max(ys) - min(ys) < 20, 'Long tooltip text escaped padded single-line bounds'
+            timings.append({'text': expected[:50], 'position': position, 'seconds': round(latency, 3), 'rect': [rect.x, rect.y, rect.width, rect.height]})
+        try:
+            focus_studio(); click('Taskbar Studio')
+            if not tooltip_original['enabled']: click('Bật Dock')
+            if tooltip_original['autoHide']: click('Tự động ẩn Dock Chạm cạnh màn hình để hiện lại; Dock giữ hiện khi bạn thao tác popup.')
+            for field, label in widget_fields:
+                if not tooltip_config()[field]: click(label)
+            click('Tìm ứng dụng')
+            entry = next(n for n, _ in descendants(app) if n.get_name() == 'Tìm ứng dụng' and n.get_role_name() == 'entry')
+            assert entry.get_component_iface().grab_focus(); time.sleep(0.2); native_keys(value='deskmorph tooltip')
+            wait_tooltip(lambda: any(n.get_name() == 'Ghim ' + tooltip_fixture_name for n, _ in descendants(app)), 'Long tooltip fixture missing from launcher')
+            click('Ghim ' + tooltip_fixture_name); native_keys(chord=[0xff1b])
+            for position in ('top', 'bottom'):
+                focus_studio(); click('Taskbar Studio')
+                if tooltip_config()['position'] != position: click('Trên đỉnh màn hình' if position == 'top' else 'Dưới đáy (Đề xuất)')
+                hover_tooltip(tooltip_node('Tìm ứng dụng'), 'Tìm ứng dụng', position)
+                hover_tooltip(tooltip_node('Mở lịch'), 'Mở lịch', position)
+                hover_tooltip(tooltip_node(tooltip_fixture_name + ' • 0 cửa sổ'), tooltip_fixture_name, position, pixels=True)
+                for name in ('Âm thanh', 'Tiện ích hệ thống'):
+                    hover_tooltip(tooltip_node(name), name, position)
+                hover_tooltip(tooltip_node('CPU:', prefix=True), 'CPU:', position)
+                hover_tooltip(tooltip_node('RAM:', prefix=True), 'RAM:', position)
+                hover_tooltip(tooltip_node('Đổi hình nền ngẫu nhiên'), 'Đổi hình nền ngẫu nhiên', position)
+                for node, _ in descendants(app):
+                    if node.get_role_name() == 'button' and (node.get_name().startswith('Pin ') or node.get_name() in ('Mạng', 'Đã ngắt mạng', 'Không đọc được UPower', 'Không đọc được NetworkManager')):
+                        hover_tooltip(node, node.get_name(), position)
+                passed.append(position + ': launcher/pin/clock/widgets share delay, native focus, work-area bounds and empty input region; long text pixels fit')
+                clear_tooltip()
+                for action, title, hover in (('Tìm ứng dụng', 'DeskMorph Context Menu', 'Âm thanh'), ('Mở lịch', 'DeskMorph Calendar', 'Tiện ích hệ thống'), ('Âm thanh', 'DeskMorph Context Menu', 'Mở lịch')):
+                    native_click_node(tooltip_node(action))
+                    wait_tooltip(lambda: title in owned_native_windows(), 'Interactive popup did not open')
+                    move_tooltip_pointer(tooltip_node(hover)); time.sleep(0.7)
+                    assert not tooltip_mapped(), 'Tooltip appeared over an interactive popup'
+                    native_keys(chord=[0xff1b])
+                    wait_tooltip(lambda: title not in owned_native_windows(), 'Escape did not close popup')
+                passed.append(position + ': launcher/calendar/audio suppress pending and new tooltips while open')
+            assert not marker_path.exists(), 'Tooltip interactions accidentally launched the pinned fixture'
+        finally:
+            clear_tooltip()
+            if any(pin.get('desktopId') == 'deskmorph-tooltip-fixture.desktop' for pin in tooltip_config()['pinnedApps']):
+                native_click_node(tooltip_node(tooltip_fixture_name + ' • 0 cửa sổ'), button=3); click('Bỏ ghim')
+            assert tooltip_config()['pinnedApps'] == tooltip_original['pinnedApps'], 'Tooltip test did not restore original pins'
+            click('Taskbar Studio')
+            for field, label in widget_fields:
+                if tooltip_config()[field] != tooltip_original[field]: click(label)
+            if tooltip_config()['position'] != tooltip_original['position']: click('Trên đỉnh màn hình' if tooltip_original['position'] == 'top' else 'Dưới đáy (Đề xuất)')
+            if tooltip_config()['autoHide'] != tooltip_original['autoHide']: click('Tự động ẩn Dock Chạm cạnh màn hình để hiện lại; Dock giữ hiện khi bạn thao tác popup.')
+            if tooltip_config()['enabled'] != tooltip_original['enabled']: click('Bật Dock')
+            marker_path.unlink(missing_ok=True)
+        report = {'passed': passed, 'timings': timings, 'pid': app.get_process_id(), 'preferencesRestored': True}
+        Path('/tmp/deskmorph-desktop-test/tooltip-result.json').write_text(json.dumps(report, ensure_ascii=False, indent=2))
+        print(json.dumps(report, ensure_ascii=False))
     if args.reorder_smoke:
         reorder_path = Path(TEST_CONFIG) / 'com.ducthanhdev.deskmorph/config.json'
         reorder_snapshot = lambda: json.loads(reorder_path.read_text())
