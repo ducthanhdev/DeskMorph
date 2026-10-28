@@ -88,13 +88,14 @@ if __name__ == '__main__':
     parser.add_argument('--window-list-smoke', action='store_true')
     parser.add_argument('--reorder-smoke', action='store_true')
     parser.add_argument('--tooltip-smoke', action='store_true')
+    parser.add_argument('--launch-smoke', action='store_true')
     parser.add_argument('--environment', action='store_true')
     parser.add_argument('--platform-tool-missing', action='store_true', help='Read-only startup check with an empty PATH in the isolated app')
     args = parser.parse_args()
     if args.audio_tool_missing: args.audio_unavailable = True
     if args.force_close_smoke: args.launcher_smoke = True
     if args.popup_smoke: args.restart = True
-    if args.window_list_smoke or args.reorder_smoke or args.tooltip_smoke: args.restart = True
+    if args.window_list_smoke or args.reorder_smoke or args.tooltip_smoke or args.launch_smoke: args.restart = True
     if args.platform_tool_missing: args.restart = True
     if args.scheduler_smoke: args.wallpaper_smoke = True
     if args.environment:
@@ -108,7 +109,7 @@ if __name__ == '__main__':
             raise RuntimeError('Cannot verify GNOME lock state; no native input will be sent')
         if re.search(r'\btrue\b', result.stdout):
             raise RuntimeError('GNOME desktop is locked; unlock it before native UI tests. No input was sent.')
-    input_tests = any((args.action, args.screenshot, args.basic, args.popup_smoke, args.autohide_smoke, args.shortcut_smoke, args.lifecycle_smoke, args.registration_smoke, args.window_list_smoke, args.reorder_smoke, args.tooltip_smoke, args.launcher_smoke, args.studio_smoke, args.config_smoke,
+    input_tests = any((args.action, args.screenshot, args.basic, args.popup_smoke, args.autohide_smoke, args.shortcut_smoke, args.lifecycle_smoke, args.registration_smoke, args.window_list_smoke, args.reorder_smoke, args.tooltip_smoke, args.launch_smoke, args.launcher_smoke, args.studio_smoke, args.config_smoke,
                        args.wallpaper_smoke, args.scheduler_smoke, args.library_stress, args.audio_smoke, args.media_smoke,
                        args.audio_exit, args.audio_unavailable, args.system_smoke, args.system_unavailable, args.system_open_smoke))
     if input_tests: require_unlocked_desktop()
@@ -216,6 +217,20 @@ if __name__ == '__main__':
             f'[Desktop Entry]\nType=Application\nName={tooltip_fixture_name}\n'
             'Exec=/usr/bin/touch /tmp/deskmorph-desktop-test/tooltip-launched\n'
             'Icon=utilities-terminal\nStartupWMClass=DeskMorphTooltipFixture\nCategories=Utility;\n')
+    if args.launch_smoke:
+        launch_fixture_script = Path(__file__).resolve().with_name('launch_fixture.py')
+        desktop_dir = Path('/tmp/deskmorph-desktop-test/data/applications')
+        desktop_dir.mkdir(parents=True, exist_ok=True)
+        for mode in ('multi', 'single'):
+            actions = ('Actions=Compose;Private;\n'
+                       '[Desktop Action Compose]\nName=Soạn tài liệu fixture\n'
+                       f'Exec=/usr/bin/python3 "{launch_fixture_script}" action compose "two words"\n'
+                       '[Desktop Action Private]\nName=Phiên riêng fixture\n'
+                       f'Exec=/usr/bin/python3 "{launch_fixture_script}" action private\n') if mode == 'multi' else ''
+            (desktop_dir / f'deskmorph-launch-{mode}.desktop').write_text(
+                f'[Desktop Entry]\nType=Application\nName=DeskMorph Launch {mode}\n'
+                f'Exec=/usr/bin/python3 "{launch_fixture_script}" {mode}\n'
+                f'Icon=utilities-terminal\nStartupWMClass=DeskMorphLaunch{mode.title()}\nCategories=Utility;\n' + actions)
     if args.restart:
         try:
             previous = test_app()
@@ -622,6 +637,104 @@ if __name__ == '__main__':
         click('Taskbar Studio')
         if json.loads(baseline_path.read_text())['config']['autoHide']:
             click('Tự động ẩn Dock Chạm cạnh màn hình để hiện lại; Dock giữ hiện khi bạn thao tác popup.')
+    if args.launch_smoke:
+        launch_path = Path(TEST_CONFIG) / 'com.ducthanhdev.deskmorph/config.json'
+        launch_config = lambda: json.loads(launch_path.read_text())['config']
+        launch_original = launch_config()
+        launch_log = Path('/tmp/deskmorph-desktop-test/launch-events.jsonl')
+        assert not launch_log.exists(), 'Do not overwrite a previous fixture log; inspect and remove it before rerunning'
+        assert not any(pin.get('desktopId') in ('deskmorph-launch-multi.desktop', 'deskmorph-launch-single.desktop') for pin in launch_original['pinnedApps'])
+        launch_passed = []
+        def launch_events():
+            return [json.loads(line) for line in launch_log.read_text().splitlines()] if launch_log.exists() else []
+        def activations(mode): return [row for row in launch_events() if row['mode'] == mode and row['event'] == 'activate']
+        def wait_launch(predicate, message):
+            deadline = time.monotonic() + 10
+            while time.monotonic() < deadline:
+                if predicate(): return
+                time.sleep(0.1)
+            raise AssertionError(message + '; events=' + repr(launch_events()))
+        def launch_pinned(mode):
+            return any(pin.get('desktopId') == f'deskmorph-launch-{mode}.desktop' for pin in launch_config()['pinnedApps'])
+        def launch_node(mode, count):
+            name = ('DeskMorph Launch ' + mode) if launch_pinned(mode) else ('DeskMorphLaunch' + mode.title())
+            return next((n for n, _ in descendants(app) if n.get_role_name() == 'button' and n.get_name() == f'{name} • {count} cửa sổ'), None)
+        def ready_launch_node(mode, count):
+            wait_launch(lambda: launch_node(mode, count) is not None, 'Missing fixture Dock group')
+            return launch_node(mode, count)
+        def context_launch(mode, count):
+            focus_studio()
+            native_click_node(ready_launch_node(mode, count), button=3)
+            wait_launch(lambda: any(n.get_name() == ('Bỏ ghim' if launch_pinned(mode) else 'Ghim') for n, _ in descendants(app)), 'Fixture context menu not ready')
+        def assert_fixture_windows(mode, count):
+            rows = activations(mode)
+            assert len({row['xid'] for row in rows}) == count
+            managed = re.findall(r'0x[0-9a-fA-F]+', subprocess.check_output(['xprop', '-root', '_NET_CLIENT_LIST'], text=True))
+            for row in rows:
+                assert row['xid'] in managed, 'Fixture window disappeared'
+                properties = subprocess.check_output(['xprop', '-id', row['xid'], '_NET_WM_PID'], text=True)
+                assert re.search(r'= ' + str(row['pid']) + r'\b', properties), 'Fixture XID changed owner'
+        try:
+            focus_studio(); click('Taskbar Studio')
+            if not launch_original['enabled']: click('Bật Dock')
+            if launch_original['autoHide']: click('Tự động ẩn Dock Chạm cạnh màn hình để hiện lại; Dock giữ hiện khi bạn thao tác popup.')
+            if launch_original['position'] != 'top': click('Trên đỉnh màn hình')
+            for mode in ('multi', 'single'):
+                focus_studio(); click('Tìm ứng dụng')
+                entry = next(n for n, _ in descendants(app) if n.get_name() == 'Tìm ứng dụng' and n.get_role_name() == 'entry')
+                assert entry.get_component_iface().grab_focus(); time.sleep(0.2)
+                native_keys(value='deskmorph launch ' + mode)
+                wait_launch(lambda: any(n.get_name() == 'Ghim DeskMorph Launch ' + mode for n, _ in descendants(app)), 'Fixture entry missing from launcher')
+                click('Ghim DeskMorph Launch ' + mode); native_keys(chord=[0xff1b])
+                focus_studio(); native_click_node(ready_launch_node(mode, 0))
+                wait_launch(lambda: len(activations(mode)) == 1, 'Ordinary click did not launch fixture')
+                context_launch(mode, 1); click('Bỏ ghim')
+                focus_studio(); native_click_node(ready_launch_node(mode, 1), button=2)
+                wait_launch(lambda: len(activations(mode)) == 2, 'Unpinned middle click did not activate desktop entry')
+                count = 2 if mode == 'multi' else 1
+                context_launch(mode, count); click('Ghim')
+                focus_studio(); native_click_node(ready_launch_node(mode, count), button=2)
+                wait_launch(lambda: len(activations(mode)) == 3, 'Pinned middle click did not activate desktop entry')
+                count = 3 if mode == 'multi' else 1
+                ready_launch_node(mode, count)
+                assert_fixture_windows(mode, count)
+                assert len({row['pid'] for row in activations(mode)}) == count
+                launch_passed.append(mode + ': ordinary launch plus unpinned/pinned middle click preserve application instance semantics and Dock count')
+            for name, arguments in (('Soạn tài liệu fixture', ['compose', 'two words']), ('Phiên riêng fixture', ['private'])):
+                context_launch('multi', 3)
+                wait_launch(lambda: any(n.get_name() == name for n, _ in descendants(app)), 'Declared Desktop Action missing')
+                previous = len([row for row in launch_events() if row['event'] == 'action'])
+                click(name)
+                wait_launch(lambda: len([row for row in launch_events() if row['event'] == 'action']) == previous + 1, 'Desktop Action did not run')
+                assert [row for row in launch_events() if row['event'] == 'action'][-1]['arguments'] == arguments
+                assert len(activations('multi')) == 3, 'Desktop Action fell back to ordinary launch'
+            context_launch('single', 1)
+            assert not any(n.get_name() in ('Soạn tài liệu fixture', 'Phiên riêng fixture') for n, _ in descendants(app)), 'Menu retained actions from previous application'
+            native_keys(chord=[0xff1b])
+            launch_passed.append('declared Desktop Actions run exact arguments; application without actions has no stale action buttons')
+        finally:
+            events = launch_events()
+            for pid in {row['pid'] for row in events if row['event'] == 'activate'}:
+                try: handle = os.pidfd_open(pid)
+                except ProcessLookupError: continue
+                try:
+                    assert b'DESKMORPH_CONFIG_HOME=' + TEST_CONFIG.encode() in Path(f'/proc/{pid}/environ').read_bytes().split(b'\0')
+                    assert str(launch_fixture_script).encode() in Path(f'/proc/{pid}/cmdline').read_bytes().split(b'\0'), 'Refuse to terminate an unowned process'
+                    signal.pidfd_send_signal(handle, signal.SIGTERM)
+                finally: os.close(handle)
+            focus_studio()
+            for mode in ('multi', 'single'):
+                if launch_pinned(mode): context_launch(mode, 0); click('Bỏ ghim')
+            assert launch_config()['pinnedApps'] == launch_original['pinnedApps'], 'Launch test changed original pins/order'
+            click('Taskbar Studio')
+            if launch_config()['position'] != launch_original['position']: click('Trên đỉnh màn hình' if launch_original['position'] == 'top' else 'Dưới đáy (Đề xuất)')
+            if launch_config()['autoHide'] != launch_original['autoHide']: click('Tự động ẩn Dock Chạm cạnh màn hình để hiện lại; Dock giữ hiện khi bạn thao tác popup.')
+            if launch_config()['enabled'] != launch_original['enabled']: click('Bật Dock')
+            Path('/tmp/deskmorph-desktop-test/launch-last-events.json').write_text(json.dumps(events, indent=2))
+            launch_log.unlink(missing_ok=True)
+        report = {'passed': launch_passed, 'events': events, 'pid': app.get_process_id(), 'preferencesRestored': True}
+        Path('/tmp/deskmorph-desktop-test/launch-result.json').write_text(json.dumps(report, ensure_ascii=False, indent=2))
+        print(json.dumps(report, ensure_ascii=False))
     if args.tooltip_smoke:
         gi.require_version('Gdk', '3.0')
         gi.require_version('GdkX11', '3.0')

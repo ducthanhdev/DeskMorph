@@ -2,7 +2,7 @@
 
 Mục tiêu giữ nguyên toàn bộ 99 đầu việc trong IMPLEMENTATION_PLAN.md. Chưa đạt cổng hoàn thành toàn dự án. Checkbox chưa đánh dấu không đồng nghĩa chưa có code: nhiều mục đang chờ kiểm thử đủ phạm vi.
 
-Hiện đã đánh dấu 52/99 mục, gồm G3.2–G3.3 bằng fixture môi trường cô lập và G0.5/G2.1/G2.3 qua capability EWMH, kiểm thử lỗi adapter và native startup thiếu xprop. Đã bổ sung G0.4/G2.4/G2.5 qua popup/auto-hide native và G9.6/G9.9 bằng hồi quy policy/asset/force-close và ảnh Studio thật trong README. Các cổng GUI, Wayland và phát hành vẫn chưa hoàn tất.
+Hiện đã đánh dấu 54/99 mục, gồm G3.2–G3.3 bằng fixture môi trường cô lập và G0.5/G2.1/G2.3 qua capability EWMH, kiểm thử lỗi adapter và native startup thiếu xprop. Đã bổ sung G0.4/G2.4/G2.5 qua popup/auto-hide native và G9.6/G9.9 bằng hồi quy policy/asset/force-close và ảnh Studio thật trong README. Các cổng GUI, Wayland và phát hành vẫn chưa hoàn tất.
 
 ## Môi trường tham chiếu đã xác minh
 
@@ -190,3 +190,12 @@ Script cần AT-SPI, Python GI, GTK3 và libXtst. Chỉ gửi phím khi kiểm t
 - `--tooltip-smoke` exit 0, PID 326911: 20 lượt hover top/bottom gồm launcher, pin tên dài, lịch, audio, system, CPU/RAM, shuffle, pin và mạng. Quan sát sớm 120 ms chưa map; xuất hiện 0,548–0,583 giây, đúng delay 500 ms. Tất cả giữ native active window, ở trong work area, đúng phía Dock và input shape rỗng. Launcher/calendar/audio mở đều chặn tooltip mới. Fixture không được launch, pin/order/widgets/enabled/autoHide/position được khôi phục. Báo cáo `/tmp/deskmorph-desktop-test/tooltip-result.json`.
 - Ảnh tooltip-top.png/tooltip-bottom.png và kiểm tra pixels xác minh tên dài nằm trong padding một dòng có ellipsis, AT-SPI đọc tên đầy đủ. Trước thêm aria-label, chữ có trong ảnh nhưng AT-SPI không công bố text; hai lượt lỗi text và các lượt lỗi chiều cao không được tính pass.
 - Hồi quy `--autohide-smoke --popup-smoke` exit 0, PID 331851: auto-hide top/bottom và ba vòng/15 chuỗi popup qua, không tooltip chồng popup hay giành focus. Frontend 14/14, Rust native 41/41, TS/Vite/custom-protocol build qua; Python compile/diff check qua. Chỉ xác minh GNOME/X11 scale 1 trên môi trường tham chiếu; mixed DPI, mọi desktop và toàn bộ accessibility vẫn pending. G4.3 được đánh dấu từ bằng chứng này.
+
+## G4.4/G4.6 — Middle-click và Desktop Actions (29/10/2026)
+
+- Thêm `--launch-smoke` cùng `tests/launch_fixture.py`: GTK Application NON_UNIQUE cho multi và GApplication single-instance thật qua session bus cho single, mỗi app có desktop entry/StartupWMClass riêng trong profile test. Không sửa production vì luồng hiện tại đã qua các ca này.
+- Native test exit 0, app PID 345267. Multi: click thường tạo PID 345783/XID 0x4600003; middle-click khi unpinned tạo PID 345983/XID 0x4800003; ghim lại rồi middle-click tạo PID 346162/XID 0x4a00003. Dock count tương ứng 1 → 2 → 3; đối chiếu managed XID và PID chủ cửa sổ.
+- Single: click thường và hai middle-click khi unpinned/pinned ghi ba activate trên cùng PID 346473/XID 0x4c00003; Dock count vẫn một. Không tự thêm cờ new-window hay hứa tạo cửa sổ mới. UI menu hiện nhãn “Mở ứng dụng”.
+- Hai Desktop Actions khai báo Compose/Private, tên hiển thị “Soạn tài liệu fixture”/“Phiên riêng fixture”, ghi đúng argv ['compose', 'two words'] và ['private']; không chạy ordinary launch thay thế. Mở menu single ngay sau đó không có hai action cũ. Parser/launch fixture Rust trước đó cũng xác minh Desktop Actions qua GIO. Không giả định app có action nếu entry không khai báo.
+- Finally xác minh exact test env và cmdline trước pidfd SIGTERM từng process fixture, bỏ pin test, khôi phục pin/order/enabled/autoHide/position. Báo cáo `/tmp/deskmorph-desktop-test/launch-result.json`, log sự kiện `launch-last-events.json`. Python compile và diff check qua; production giữ nguyên binary đã qua frontend 14/14, Rust 41/41 và native tooltip/popup hồi quy ở G4.3.
+- G4.4/G4.6 được đánh dấu theo hợp đồng trên GNOME/X11 tham chiếu. Đây là ứng dụng GTK fixture thực thi thật, chưa phải tập ứng dụng đại diện Flatpak/Snap/terminal của G3.4. GIO launch_action không cung cấp kết quả chạy command, nên test chỉ xác minh nhận action/argv qua fixture; lỗi ứng dụng đích sau dispatch vẫn thuộc giới hạn theo dõi launch và G1.9. Không tuyên bố tạo cửa sổ mới cho mọi ứng dụng.

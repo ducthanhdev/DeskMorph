@@ -23,4 +23,6 @@
 
 - Thống nhất tooltip Dock cho ứng dụng và widget với delay 500 ms; sửa chiều cao native GTK 200 px thành 44 px, ellipsis tên dài và accessible name. Thêm native test top/bottom cho nội dung, geometry, focus, input region và ẩn khi popup mở.
 
+- Thêm native GTK tests cho middle-click pinned/unpinned với multi-instance và single-instance; xác minh Desktop Actions chạy đúng argv và không lưu nút action từ ứng dụng trước.
+
 Chưa phát hành: còn các cổng chất lượng G0–G9 trong kế hoạch, đặc biệt Wayland, mixed DPI/hotplug, sleep/resume, Wayland shortcuts portal, cài sạch và nâng cấp. Không coi mục Unreleased là tuyên bố mọi chức năng đã đạt chuẩn phát hành.

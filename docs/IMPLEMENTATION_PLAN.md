@@ -102,9 +102,9 @@ Phụ thuộc G2–G3. Đây là cổng bản xem trước dùng hằng ngày đ
 - [x] G4.1 Kéo thả icon pinned để sắp xếp; lưu một lần khi kết thúc; hủy thao tác không đổi thứ tự và không vô tình mở app.
 - [x] G4.2 Cung cấp thao tác bàn phím/menu để đổi thứ tự, thay thế cho kéo thả.
 - [x] G4.3 Tooltip thống nhất, có delay, không đè popup và không bị cắt ngoài cửa sổ native.
-- [ ] G4.4 Middle-click mở phiên mới khi app hỗ trợ; ứng dụng single-instance giữ hành vi riêng, không hứa luôn tạo cửa sổ mới.
+- [x] G4.4 Middle-click mở phiên mới khi app hỗ trợ; ứng dụng single-instance giữ hành vi riêng, không hứa luôn tạo cửa sổ mới.
 - [x] G4.5 Menu chuột phải hiển thị cửa sổ cùng app, chọn active và đóng từng cửa sổ.
-- [ ] G4.6 Đọc và chạy Desktop Actions được khai báo thay vì tự đoán cờ new-window/incognito; ẩn hành động không có.
+- [x] G4.6 Đọc và chạy Desktop Actions được khai báo thay vì tự đoán cờ new-window/incognito; ẩn hành động không có.
 - [ ] G4.7 Tách kích thước icon, chiều cao Dock và khoảng cách; giới hạn giá trị để không cắt animation hay indicator.
 - [ ] G4.8 Chiều rộng Dock theo nội dung nhưng không vượt work area; chọn overflow cuộn hoặc nút mở thêm và kiểm thử với nhiều app.
 - [ ] G4.9 Giảm/tắt animation, tôn trọng prefers-reduced-motion; magnification và bounce không làm thay đổi hit target thất thường.
