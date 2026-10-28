@@ -2578,36 +2578,12 @@ if __name__ == '__main__':
         click('Tìm ứng dụng')
         entry = find('Tìm ứng dụng', 'entry')
         assert len(entry) == 1, 'Search field not accessible'
-        editable = entry[0].get_editable_text_iface()
-        if editable:
-            editable.set_text_contents('deskmorph smoke')
-        else:
-            assert entry[0].get_component_iface().grab_focus(), 'Cannot focus the native search field'
-            time.sleep(0.3)
-            active_info = subprocess.check_output(['xprop', '-root', '_NET_ACTIVE_WINDOW'], text=True)
-            active_xid = re.search(r'0x[0-9a-fA-F]+', active_info).group(0)
-            active_pid = subprocess.check_output(['xprop', '-id', active_xid, '_NET_WM_PID'], text=True)
-            assert int(active_pid.split('=')[1].strip()) == app.get_process_id(), 'Keyboard focus left isolated test app'
-            x11 = ctypes.CDLL('libX11.so.6')
-            xtst = ctypes.CDLL('libXtst.so.6')
-            x11.XOpenDisplay.restype = ctypes.c_void_p
-            x11.XOpenDisplay.argtypes = [ctypes.c_char_p]
-            x11.XKeysymToKeycode.argtypes = [ctypes.c_void_p, ctypes.c_ulong]
-            x11.XKeysymToKeycode.restype = ctypes.c_uint
-            x11.XFlush.argtypes = [ctypes.c_void_p]
-            x11.XCloseDisplay.argtypes = [ctypes.c_void_p]
-            xtst.XTestFakeKeyEvent.argtypes = [ctypes.c_void_p, ctypes.c_uint, ctypes.c_int, ctypes.c_ulong]
-            display = x11.XOpenDisplay(None)
-            assert display, 'Cannot connect to X11 for native keyboard test'
-            try:
-                for char in 'deskmorph smoke':
-                    code = x11.XKeysymToKeycode(display, ord(char))
-                    assert code, f'No key mapping for {char}'
-                    xtst.XTestFakeKeyEvent(display, code, 1, 0)
-                    xtst.XTestFakeKeyEvent(display, code, 0, 0)
-                x11.XFlush(display)
-            finally:
-                x11.XCloseDisplay(display)
+        # AT-SPI EditableText can alter WebKit's DOM value without dispatching
+        # React's input event. Always type through the guarded native helper.
+        focus_studio('DeskMorph Context Menu')
+        assert entry[0].get_component_iface().grab_focus(), 'Cannot focus the native search field'
+        native_keys(value='deskmorph smoke')
+        assert Atspi.Text.get_text(entry[0].get_text_iface(), 0, -1) == 'deskmorph smoke'
         wait_until(lambda: bool(find('Mở DeskMorph Smoke Fixture')), 'Fixture not found in installed apps')
         path = Path(TEST_CONFIG) / 'com.ducthanhdev.deskmorph/config.json'
         snapshot = json.loads(path.read_text())

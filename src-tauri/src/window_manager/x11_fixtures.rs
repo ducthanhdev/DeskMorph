@@ -83,4 +83,47 @@ fn isolated_adapter_child() {
         }
         _ => panic!("unknown scenario: {scenario}"),
     }
+    // Exercise the public contract too, so native adapter details cannot leak
+    // string errors or lose the operation while the raw helpers still pass.
+    let adapter: &dyn WindowManager = &X11;
+    let expected_code = match scenario.as_str() {
+        "failed" => Some("xprop_failed"),
+        "missing" => Some("xprop_unavailable"),
+        "unsupported" => Some("window_manager_unsupported"),
+        "malformed" => Some("window_list_invalid"),
+        _ => None,
+    };
+    if let Some(code) = expected_code {
+        let error = adapter.list().unwrap_err();
+        assert_eq!(error.code, code);
+        assert_eq!(error.context.backend, "x11");
+        assert_eq!(error.context.operation, "list");
+        assert!(error.context.target.is_none());
+    }
+    if scenario == "empty" {
+        assert!(adapter.list().unwrap().is_empty());
+        let caps = adapter.capabilities().unwrap();
+        assert!(caps.enumerate && caps.activate && caps.close);
+        for input in ["", "0", "0x0", "0x100000000", "bad identifier", "wayland:token"] {
+            let id = WindowId::from(input.to_string());
+            for (operation, result) in [("activate", adapter.activate(&id)), ("close", adapter.close(&id)), ("force_kill", adapter.force_kill(&id))] {
+                let error = result.unwrap_err();
+                assert_eq!(error.code, "window_target_invalid", "{input} / {operation}");
+                assert_eq!(error.context.operation, operation);
+                assert_eq!(error.context.target.as_ref(), Some(&id));
+            }
+        }
+        let stale = WindowId::from("0x12".to_string());
+        assert_eq!(adapter.close(&stale).unwrap_err().code, "window_target_missing");
+    }
+    if scenario == "unsupported-action" {
+        let id = WindowId::from("0x12".to_string());
+        for result in [adapter.activate(&id), adapter.close(&id)] {
+            let error = result.unwrap_err();
+            assert_eq!(error.code, "window_action_unsupported");
+            assert_eq!(error.context.backend, "x11");
+            assert_eq!(error.context.target.as_ref(), Some(&id));
+        }
+    }
+
 }

@@ -16,64 +16,12 @@ mod popup;
 mod config;
 use serde::{Deserialize, Serialize};
 use std::fs;
-use std::os::raw::{c_char, c_int, c_long, c_uint, c_ulong, c_void};
 use std::process::Command;
 use std::sync::Mutex;
 use sysinfo::System;
 use tauri::{AppHandle, Manager};
+use window_manager::{OpenWindow, WindowError, WindowId};
 
-
-#[repr(C)]
-#[derive(Copy, Clone)]
-struct XClientMessageEvent {
-    type_: c_int,
-    serial: c_ulong,
-    send_event: c_int,
-    display: *mut c_void,
-    window: c_ulong,
-    message_type: c_ulong,
-    format: c_int,
-    data: [c_long; 5],
-}
-
-#[repr(C)]
-#[derive(Copy, Clone)]
-union XEvent {
-    type_: c_int,
-    xclient: XClientMessageEvent,
-    pad: [c_long; 24],
-}
-
-#[link(name = "X11")]
-extern "C" {
-    fn XOpenDisplay(display_name: *const c_char) -> *mut c_void;
-    fn XDefaultRootWindow(display: *mut c_void) -> c_ulong;
-    fn XInternAtom(
-        display: *mut c_void,
-        atom_name: *const c_char,
-        only_if_exists: c_int,
-    ) -> c_ulong;
-    fn XSendEvent(
-        display: *mut c_void,
-        w: c_ulong,
-        propagate: c_int,
-        event_mask: c_long,
-        event_send: *mut XEvent,
-    ) -> c_int;
-    fn XQueryPointer(
-        display: *mut c_void,
-        w: c_ulong,
-        root_return: *mut c_ulong,
-        child_return: *mut c_ulong,
-        root_x_return: *mut c_int,
-        root_y_return: *mut c_int,
-        win_x_return: *mut c_int,
-        win_y_return: *mut c_int,
-        mask_return: *mut c_uint,
-    ) -> c_int;
-    fn XFlush(display: *mut c_void) -> c_int;
-    fn XCloseDisplay(display: *mut c_void) -> c_int;
-}
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct SystemStats {
@@ -81,16 +29,6 @@ pub struct SystemStats {
     pub ram_used_mb: u64,
     pub ram_total_mb: u64,
     pub ram_percent: f32,
-}
-
-
-
-#[derive(Serialize, Deserialize, Clone, Debug)]
-pub struct OpenWindow {
-    pub id: String,
-    pub class_name: String,
-    pub title: String,
-    pub is_active: bool,
 }
 
 pub struct AppState {
@@ -204,13 +142,13 @@ fn install_app_icon() -> Result<bool, String> {
 }
 
 #[tauri::command]
-fn get_open_windows() -> Result<Vec<OpenWindow>, String> { let _trace = diagnostics::command("get_open_windows"); window_manager::backend()?.list() }
+fn get_open_windows() -> Result<Vec<OpenWindow>, WindowError> { let _trace = diagnostics::command("get_open_windows"); window_manager::backend()?.list() }
 #[tauri::command]
-fn activate_window(window_id: String) -> Result<bool, String> { window_manager::backend()?.activate(window_id) }
+fn activate_window(window_id: WindowId) -> Result<bool, WindowError> { window_manager::backend()?.activate(&window_id) }
 #[tauri::command]
-fn close_window(xid: String) -> Result<bool, String> { window_manager::backend()?.close(xid) }
+fn close_window(xid: WindowId) -> Result<bool, WindowError> { window_manager::backend()?.close(&xid) }
 #[tauri::command]
-fn force_kill_window(xid: String) -> Result<bool, String> { window_manager::backend()?.force_kill(xid) }
+fn force_kill_window(xid: WindowId) -> Result<bool, WindowError> { window_manager::backend()?.force_kill(&xid) }
 
 #[tauri::command]
 fn spawn_app(exec_cmd: String) -> Result<bool, String> {

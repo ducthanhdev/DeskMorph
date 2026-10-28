@@ -1,4 +1,5 @@
 //! One popup at a time. A generation prevents old outside-click watchers closing newer popups.
+use crate::window_manager::x11;
 use std::sync::Mutex;
 use gtk::prelude::*;
 use tauri::{AppHandle, Emitter, Manager, PhysicalPosition, PhysicalSize};
@@ -44,7 +45,7 @@ unsafe fn raw_buttons(display: *mut std::ffi::c_void, root: std::os::raw::c_ulon
     let mut bits = [0u8, 1 << 7];
     let mut mask = InputMask { device: 1, length: bits.len() as i32, mask: bits.as_mut_ptr() };
     if XISelectEvents(display, root, &mut mask, 1) != 0 { return None; }
-    super::XFlush(display);
+    x11::XFlush(display);
     Some(opcode)
 }
 
@@ -182,9 +183,9 @@ fn watch_outside(app: AppHandle, label: &'static str, generation: u64, rect: Rec
     // X11 only; focus/escape still work when no pointer connection is available.
     if std::env::var("XDG_SESSION_TYPE").as_deref() != Ok("x11") { return; }
     std::thread::spawn(move || unsafe {
-        let display = super::XOpenDisplay(std::ptr::null());
+        let display = x11::XOpenDisplay(std::ptr::null());
         if display.is_null() { return; }
-        let root = super::XDefaultRootWindow(display);
+        let root = x11::XDefaultRootWindow(display);
         let raw_opcode = raw_buttons(display, root);
         let mut armed = false;
         loop {
@@ -200,7 +201,7 @@ fn watch_outside(app: AppHandle, label: &'static str, generation: u64, rect: Rec
                 }
             }
             let (mut root_return, mut child_return, mut root_x, mut root_y, mut win_x, mut win_y, mut mask) = (0, 0, 0, 0, 0, 0, 0);
-            let ok = super::XQueryPointer(display, root, &mut root_return, &mut child_return, &mut root_x, &mut root_y, &mut win_x, &mut win_y, &mut mask);
+            let ok = x11::XQueryPointer(display, root, &mut root_return, &mut child_return, &mut root_x, &mut root_y, &mut win_x, &mut win_y, &mut mask);
             if ok != 0 {
                 let pressed = mask & 0x700 != 0;
                 if !pressed { armed = true; }
@@ -211,6 +212,6 @@ fn watch_outside(app: AppHandle, label: &'static str, generation: u64, rect: Rec
             }
             std::thread::sleep(std::time::Duration::from_millis(40));
         }
-        super::XCloseDisplay(display);
+        x11::XCloseDisplay(display);
     });
 }

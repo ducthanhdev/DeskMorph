@@ -1,0 +1,56 @@
+{
+  "environment": "Pop!_OS 24.04 / GNOME 46 / X11 / scale 1; isolated custom-protocol debug build",
+  "nativeRustTests": 46,
+  "windowList": {
+    "passed": [
+      "unpinned three-window group; active initial focus, Home/End/arrows and Enter activate exact XID",
+      "open list refreshes title, adds window and removes external close; nearest-row focus survives",
+      "pinned group remains present through app-owned close confirmation and cancel",
+      "one-window pin activates exact XID directly",
+      "right-click menu refreshes renamed, added and externally closed windows while open",
+      "context rows activate exact selected XID and close only the selected window",
+      "external close updates 3 to 1 to 0; empty popup hides and pinned app remains"
+    ],
+    "pid": 1067092,
+    "fixturePid": 1067369,
+    "pinsRestored": true
+  },
+  "forceClose": {
+    "passed": [
+      "force-close requires confirmation",
+      "cancel preserves both owned processes",
+      "force-close disconnects exact fixture X client and both client windows",
+      "spoofed PID does not kill the separate sentinel",
+      "pre-existing managed windows remain"
+    ],
+    "pid": 1067092,
+    "fixturePid": 1080360,
+    "sentinelPid": 1080359
+  },
+  "popup": {
+    "passed": [
+      "launcher Escape",
+      "calendar/audio replace each other with one active popup",
+      "focus loss dismisses without stealing selected Studio focus",
+      "outside click dismisses and retains selected focus",
+      "five rapid launcher/calendar/audio cycles without orphaned popup or overlapping tooltip",
+      "Escape after rapid replacement"
+    ],
+    "pid": 1082107,
+    "completedRounds": 3
+  },
+  "missingTool": {
+    "passed": [
+      "missing xprop reaches Studio capability status",
+      "Dock and launcher remain available"
+    ],
+    "pid": 1090299,
+    "inputSent": false
+  },
+  "fixtureCleanupVerifiedExited": [
+    1067369,
+    1080119,
+    1080360,
+    1080359
+  ]
+}

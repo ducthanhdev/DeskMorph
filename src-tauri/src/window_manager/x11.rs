@@ -1,11 +1,58 @@
-use super::super::*;
+use super::{Capabilities, OpenWindow, WindowError, WindowId, WindowManager};
+use std::os::raw::{c_char, c_int, c_long, c_uint, c_ulong, c_void};
+use std::process::Command;
 
-#[derive(Clone, Copy, Debug, Default, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct Capabilities {
-    pub enumerate: bool,
-    pub activate: bool,
-    pub close: bool,
+
+#[repr(C)]
+#[derive(Copy, Clone)]
+struct XClientMessageEvent {
+    type_: c_int,
+    serial: c_ulong,
+    send_event: c_int,
+    display: *mut c_void,
+    window: c_ulong,
+    message_type: c_ulong,
+    format: c_int,
+    data: [c_long; 5],
+}
+
+#[repr(C)]
+#[derive(Copy, Clone)]
+union XEvent {
+    type_: c_int,
+    xclient: XClientMessageEvent,
+    pad: [c_long; 24],
+}
+
+#[link(name = "X11")]
+extern "C" {
+    pub(crate) fn XOpenDisplay(display_name: *const c_char) -> *mut c_void;
+    pub(crate) fn XDefaultRootWindow(display: *mut c_void) -> c_ulong;
+    fn XInternAtom(
+        display: *mut c_void,
+        atom_name: *const c_char,
+        only_if_exists: c_int,
+    ) -> c_ulong;
+    fn XSendEvent(
+        display: *mut c_void,
+        w: c_ulong,
+        propagate: c_int,
+        event_mask: c_long,
+        event_send: *mut XEvent,
+    ) -> c_int;
+    pub(crate) fn XQueryPointer(
+        display: *mut c_void,
+        w: c_ulong,
+        root_return: *mut c_ulong,
+        child_return: *mut c_ulong,
+        root_x_return: *mut c_int,
+        root_y_return: *mut c_int,
+        win_x_return: *mut c_int,
+        win_y_return: *mut c_int,
+        mask_return: *mut c_uint,
+    ) -> c_int;
+    pub(crate) fn XFlush(display: *mut c_void) -> c_int;
+    pub(crate) fn XCloseDisplay(display: *mut c_void) -> c_int;
 }
 
 fn advertised(properties: &str, atom: &str) -> bool {
@@ -25,7 +72,7 @@ fn parse_capabilities(properties: &str) -> Capabilities {
 }
 
 /// Query the current WM, rather than treating DISPLAY/tool existence as proof.
-pub fn capabilities() -> Result<Capabilities, String> {
+fn capabilities() -> Result<Capabilities, String> {
     xprop(&["-root", "_NET_CLIENT_LIST", "_NET_SUPPORTED"])
         .map(|properties| parse_capabilities(&properties))
 }
@@ -46,11 +93,11 @@ fn parse_xid(xid: &str) -> Result<u64, String> {
         .strip_prefix("0x")
         .or_else(|| clean.strip_prefix("0X"))
     {
-        u64::from_str_radix(stripped, 16).map_err(|e| format!("Invalid hex XID '{xid}': {e}"))
+        u64::from_str_radix(stripped, 16).map_err(|e| format!("window_target_invalid: Invalid hex XID '{xid}': {e}"))
     } else if let Ok(val) = clean.parse::<u64>() {
         Ok(val)
     } else {
-        u64::from_str_radix(clean, 16).map_err(|e| format!("Invalid XID '{xid}': {e}"))
+        u64::from_str_radix(clean, 16).map_err(|e| format!("window_target_invalid: Invalid XID '{xid}': {e}"))
     }
 }
 
@@ -83,7 +130,7 @@ fn action_target(xid: &str) -> Result<u64, String> {
     Ok(id)
 }
 
-pub fn activate_window(window_id: String) -> Result<bool, String> {
+fn activate_window(window_id: String) -> Result<bool, String> {
     require_action("_NET_ACTIVE_WINDOW")?;
     let wid = action_target(&window_id)?;
 
@@ -119,7 +166,7 @@ pub fn activate_window(window_id: String) -> Result<bool, String> {
     Ok(true)
 }
 
-pub fn close_window(xid: String) -> Result<bool, String> {
+fn close_window(xid: String) -> Result<bool, String> {
     require_action("_NET_CLOSE_WINDOW")?;
     let wid = action_target(&xid)?;
 
@@ -155,7 +202,7 @@ pub fn close_window(xid: String) -> Result<bool, String> {
     Ok(true)
 }
 
-pub fn force_kill_window(xid: String) -> Result<bool, String> {
+fn force_kill_window(xid: String) -> Result<bool, String> {
     let wid = action_target(&xid)?;
     // _NET_WM_PID is supplied by the client and is not an authority to SIGKILL a
     // process. Let the X server resolve resource ownership, in a child process
@@ -263,13 +310,13 @@ fn parse_window(wid: &str, info: &str, active: Option<u64>, own_pid: u32) -> Opt
         .unwrap_or_else(|| class_name.clone());
     let id = parse_xid(wid).ok()?;
     Some(OpenWindow {
-        id: format!("0x{id:x}"),
+        id: WindowId::from(format!("0x{id:x}")),
         class_name,
         title,
         is_active: active == Some(id),
     })
 }
-pub fn list() -> Result<Vec<OpenWindow>, String> {
+fn list() -> Result<Vec<OpenWindow>, String> {
     let active = xprop(&["-root", "_NET_ACTIVE_WINDOW"])?;
     let active = active
         .split_once('#')
@@ -296,6 +343,27 @@ pub fn list() -> Result<Vec<OpenWindow>, String> {
     }
     Ok(windows)
 }
+/// X11 owns XID parsing, EWMH probes and native requests. The common interface
+/// only passes opaque IDs and receives structured errors.
+pub struct X11;
+impl WindowManager for X11 {
+    fn capabilities(&self) -> Result<Capabilities, WindowError> {
+        capabilities().map_err(|e| WindowError::adapter("x11", "capabilities", None, e))
+    }
+    fn list(&self) -> Result<Vec<OpenWindow>, WindowError> {
+        list().map_err(|e| WindowError::adapter("x11", "list", None, e))
+    }
+    fn activate(&self, id: &WindowId) -> Result<bool, WindowError> {
+        activate_window(id.as_str().into()).map_err(|e| WindowError::adapter("x11", "activate", Some(id), e))
+    }
+    fn close(&self, id: &WindowId) -> Result<bool, WindowError> {
+        close_window(id.as_str().into()).map_err(|e| WindowError::adapter("x11", "close", Some(id), e))
+    }
+    fn force_kill(&self, id: &WindowId) -> Result<bool, WindowError> {
+        force_kill_window(id.as_str().into()).map_err(|e| WindowError::adapter("x11", "force_kill", Some(id), e))
+    }
+}
+
 #[cfg(test)]
 #[path = "x11_fixtures.rs"]
 mod fixtures;

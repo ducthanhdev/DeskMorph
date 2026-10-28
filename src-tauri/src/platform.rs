@@ -6,7 +6,7 @@ pub struct PlatformInfo {
     session: String,
     desktop: String,
     window_management: bool,
-    windows: crate::window_manager::x11::Capabilities,
+    windows: crate::window_manager::Capabilities,
     wallpaper: bool,
     workspaces: bool,
     force_quit: bool,
@@ -36,19 +36,13 @@ pub fn executable_available(name: &str) -> bool {
 pub fn get_platform_info(app: AppHandle) -> Result<PlatformInfo, String> {
     let session = std::env::var("XDG_SESSION_TYPE").unwrap_or_else(|_| "unknown".into());
     let desktop = std::env::var("XDG_CURRENT_DESKTOP").unwrap_or_else(|_| "unknown".into());
-    let probe = if session != "x11" {
-        Err("window_backend_unsupported: Quản lý cửa sổ hiện yêu cầu X11; chưa hỗ trợ cửa sổ Wayland native.".into())
-    } else if std::env::var_os("DISPLAY").is_none() {
-        Err("x11_display_missing: Phiên X11 chưa cung cấp DISPLAY.".into())
-    } else {
-        crate::window_manager::x11::capabilities()
-    };
+    let probe = crate::window_manager::backend().and_then(|backend| backend.capabilities());
     let windows = probe.as_ref().copied().unwrap_or_default();
     let window_management = windows.enumerate;
     let wallpaper = crate::wallpaper::available();
     let mut reasons = Vec::new();
     match probe {
-        Err(error) => reasons.push(error),
+        Err(error) => reasons.push(error.to_string()),
         Ok(caps) => {
             if !caps.enumerate {
                 reasons.push("window_enumeration_unsupported: Window manager không cung cấp _NET_CLIENT_LIST.".into());

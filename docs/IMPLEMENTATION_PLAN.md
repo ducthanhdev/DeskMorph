@@ -57,7 +57,7 @@ Tiêu chí: thay đổi từ bất kỳ cửa sổ nào phản ánh ở các c�
 Phụ thuộc G1. Module dự kiến: platform/capabilities, window-manager/x11, popup coordinator, geometry.
 
 - [x] G2.1 Phát hiện session và desktop; thay nhãn X11 hardcode bằng kết quả thực; capability mô tả enumerate/activate/close/workspaces/wallpaper.
-- [ ] G2.2 Tách X11 khỏi logic chung bằng interface list/activate/close; định nghĩa ID và lỗi nhất quán để bổ sung adapter sau.
+- [x] G2.2 Tách X11 khỏi logic chung bằng interface list/activate/close; định nghĩa ID và lỗi nhất quán để bổ sung adapter sau.
 - [x] G2.3 Kiểm tra xprop/X11 display và trạng thái exit; thông báo thiếu công cụ, không trả danh sách rỗng như thành công khi lệnh thất bại.
 - [x] G2.4 Popup coordinator quản lý duy nhất một popup mở; đóng popup cũ trước khi mở mới; xử lý mở nhanh, focus loss và thread theo dõi click cũ.
 - [x] G2.5 Hoàn thiện auto-hide: giữ hiện khi popup mở, timer ẩn được hủy đúng lúc, trigger cạnh màn hình đáng tin cậy, tắt Dock đóng popup liên quan.
