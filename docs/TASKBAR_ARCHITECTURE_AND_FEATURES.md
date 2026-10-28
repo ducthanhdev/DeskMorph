@@ -1,3 +1,5 @@
+> Tài liệu tham khảo lịch sử về so sánh Dock/taskbar. Trạng thái code hiện tại xem [ARCHITECTURE.md](ARCHITECTURE.md); mức hoàn thành phải đối chiếu [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) và [PROGRESS.md](PROGRESS.md). Các mô tả/đề xuất bên dưới không phải bằng chứng đã triển khai hay kiểm thử.
+
 # TÀI LIỆU PHÂN TÍCH VÀ ĐẶC TẢ TÍNH NĂNG TASKBAR & DOCK HỆ THỐNG
 *(So sánh chi tiết Windows, macOS, Linux và Lộ trình phát triển DeskMorph)*
 

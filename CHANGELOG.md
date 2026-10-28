@@ -1,0 +1,18 @@
+# Changelog
+
+## Unreleased — development 0.1.0
+
+- Thêm native config store có schema/revision, migration, recovery, cập nhật serialized, import/export/reset review và undo.
+- Tách X11 window backend, popup coordinator, monitor geometry, single-instance và đăng ký autostart/menu entry.
+- Thêm catalogue GIO, launcher/search tiếng Việt, icon theme, desktop actions, pin/reorder và nhóm cửa sổ.
+- Sửa vòng đời catalogue monitor/theme invalidation và timer polling khi ẩn/hiện; bổ sung regression fixtures XDG/locale/visibility/launch, D-Bus riêng và polling cleanup.
+- Phát hiện capability cửa sổ từ EWMH, xử lý xprop/property lỗi rõ ràng; thêm ACK/deadline/cleanup single-instance, exit code startup lỗi và dừng topology/clock khi không cần.
+- Tách Studio thành các panel, preview dùng chung tokens, presets, vi/en và reduced motion.
+- Thêm thư viện hình nền giới hạn tài nguyên, cache thumbnail, filter/favorites, GNOME shuffle/scheduler.
+- Thêm popup audio/media với pactl subscription, MPRIS player selection/capabilities, artwork cục bộ và cleanup.
+- Thêm pin/mạng qua UPower/NetworkManager, popup CPU/RAM, lối mở Downloads và trạng thái thiếu system monitor/Trash handler.
+- Bổ sung unit/native test harness và workflow CI. Thu hẹp WebView CSP/asset/IPC, bỏ plugin opener và font remote; đã kiểm tra thumbnail render thật và force-close đúng X client với PID giả.
+- Sửa bỏ sót click ngoài ngắn bằng XInput2 (thêm libxi-dev), cấp focus nội dung sau GTK map và xử lý Escape ở GTK toplevel. Thêm stress ba vòng popup, fixture force-close và ảnh Studio thật trong README; còn tiếp tục kiểm tra ma trận focus/auto-hide.
+- Gắn generation cho visibility của audio/media/system; đối chiếu con trỏ native khi tự ẩn và tránh panic tooltip chưa map. Chuỗi native top/bottom, popup stress, audio/media, thumbnail, close/force-close và exit/relaunch đã qua trên GNOME/X11 tham chiếu.
+
+Chưa phát hành: còn các cổng chất lượng G0–G9 trong kế hoạch, đặc biệt Wayland, mixed DPI/hotplug, sleep/resume, global shortcuts, cài sạch và nâng cấp. Không coi mục Unreleased là tuyên bố mọi chức năng đã đạt chuẩn phát hành.
