@@ -28,7 +28,7 @@ Hiện trạng từ source: React 19, TypeScript, Tauri 2, Rust; quản lý cử
 - [x] G0.3 Kiểm thử gom nhóm: 0/1/nhiều cửa sổ, pinned/unpinned, active, đổi tiêu đề, đóng từ bên ngoài, hộp thoại xác nhận đóng.
 - [x] G0.4 Kiểm thử popup: Escape, bấm ngoài, chuyển focus, dock trên/dưới, bật/tắt tự ẩn, mở liên tiếp menu/lịch/danh sách.
 - [x] G0.5 Lập bảng khả năng ban đầu theo desktop; hiển thị thiếu hỗ trợ rõ ràng, không suy diễn XWayland là hỗ trợ cửa sổ Wayland native.
-- [ ] G0.6 Ghi số liệu nền: thời gian mở app, số lượt polling, CPU/RAM lúc rảnh; dùng để so sánh tối ưu sau này.
+- [x] G0.6 Ghi số liệu nền: thời gian mở app, số lượt polling, CPU/RAM lúc rảnh; dùng để so sánh tối ưu sau này.
 
 Tiêu chí qua G0: có hướng dẫn tái hiện và kết quả thật; lỗi ảnh hưởng mất cấu hình, đóng sai cửa sổ hoặc không mở được Dock được ưu tiên trước tính năng mới.
 

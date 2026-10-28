@@ -1,0 +1,737 @@
+{
+  "date": "2026-10-29",
+  "sourceRevision": "47fa999",
+  "environment": {
+    "distribution": "Pop!_OS 24.04 LTS",
+    "desktop": "GNOME Shell 46.0",
+    "session": "X11",
+    "kernel": "7.2.6-76070206-generic",
+    "cpu": "12th Gen Intel Core i5-12450HX",
+    "logicalCpus": 12,
+    "gtk": "3.24.41",
+    "webkit": "2.52.6",
+    "monitors": "2 x 1920x1080, scale 1",
+    "binarySha256": "f8dc9651ec756d51b1cc76241c8739f10fd06c5b28d9f40f8b72d2e0fd93c7f4"
+  },
+  "idleRuns": [
+    {
+      "report": {
+        "pid": 616471,
+        "build": "debug/custom-protocol",
+        "traced": false,
+        "startupToAccessibleButtonsSeconds": 1.25,
+        "sampleSeconds": 15.03,
+        "config": {
+          "enabled": true,
+          "autoHide": false,
+          "showApps": true,
+          "showStats": true,
+          "showAudio": true,
+          "showClock": true,
+          "showBattery": false,
+          "showNetwork": false
+        },
+        "cpuPercentOfOneCore": 10.246,
+        "medianPssMiB": 368.32,
+        "peakPssMiB": 376.99,
+        "medianRssMiB": 1213.56,
+        "processCounts": [
+          7
+        ],
+        "managedClientCountAtEnd": 6
+      },
+      "samples": [
+        {
+          "wall": 1793218812.049882,
+          "cpuSeconds": 3.85,
+          "rssKiB": 1246740.0,
+          "pssKiB": 386034,
+          "processes": 7
+        },
+        {
+          "wall": 1793218813.0709486,
+          "cpuSeconds": 3.97,
+          "rssKiB": 1250752.0,
+          "pssKiB": 384695,
+          "processes": 7
+        },
+        {
+          "wall": 1793218814.101901,
+          "cpuSeconds": 4.18,
+          "rssKiB": 1243916.0,
+          "pssKiB": 379411,
+          "processes": 7
+        },
+        {
+          "wall": 1793218815.1331925,
+          "cpuSeconds": 4.2700000000000005,
+          "rssKiB": 1245276.0,
+          "pssKiB": 381060,
+          "processes": 7
+        },
+        {
+          "wall": 1793218816.1628342,
+          "cpuSeconds": 4.36,
+          "rssKiB": 1244424.0,
+          "pssKiB": 378596,
+          "processes": 7
+        },
+        {
+          "wall": 1793218817.1919303,
+          "cpuSeconds": 4.47,
+          "rssKiB": 1249480.0,
+          "pssKiB": 384800,
+          "processes": 7
+        },
+        {
+          "wall": 1793218818.221953,
+          "cpuSeconds": 4.59,
+          "rssKiB": 1246484.0,
+          "pssKiB": 381704,
+          "processes": 7
+        },
+        {
+          "wall": 1793218819.25083,
+          "cpuSeconds": 4.72,
+          "rssKiB": 1239640.0,
+          "pssKiB": 374261,
+          "processes": 7
+        },
+        {
+          "wall": 1793218820.281196,
+          "cpuSeconds": 4.79,
+          "rssKiB": 1238328.0,
+          "pssKiB": 372765,
+          "processes": 7
+        },
+        {
+          "wall": 1793218821.313402,
+          "cpuSeconds": 4.92,
+          "rssKiB": 1241452.0,
+          "pssKiB": 376073,
+          "processes": 7
+        },
+        {
+          "wall": 1793218822.3433757,
+          "cpuSeconds": 4.99,
+          "rssKiB": 1238696.0,
+          "pssKiB": 372735,
+          "processes": 7
+        },
+        {
+          "wall": 1793218823.3726373,
+          "cpuSeconds": 5.14,
+          "rssKiB": 1241376.0,
+          "pssKiB": 375637,
+          "processes": 7
+        },
+        {
+          "wall": 1793218824.4040577,
+          "cpuSeconds": 5.1899999999999995,
+          "rssKiB": 1238964.0,
+          "pssKiB": 372647,
+          "processes": 7
+        },
+        {
+          "wall": 1793218825.433863,
+          "cpuSeconds": 5.29,
+          "rssKiB": 1239296.0,
+          "pssKiB": 372883,
+          "processes": 7
+        },
+        {
+          "wall": 1793218826.4635358,
+          "cpuSeconds": 5.34,
+          "rssKiB": 1239520.0,
+          "pssKiB": 373067,
+          "processes": 7
+        },
+        {
+          "wall": 1793218827.079756,
+          "cpuSeconds": 5.39,
+          "rssKiB": 1244376.0,
+          "pssKiB": 378243,
+          "processes": 7
+        }
+      ]
+    },
+    {
+      "report": {
+        "pid": 622946,
+        "build": "debug/custom-protocol",
+        "traced": false,
+        "startupToAccessibleButtonsSeconds": 1.246,
+        "sampleSeconds": 15.034,
+        "config": {
+          "enabled": true,
+          "autoHide": false,
+          "showApps": true,
+          "showStats": true,
+          "showAudio": true,
+          "showClock": true,
+          "showBattery": false,
+          "showNetwork": false
+        },
+        "cpuPercentOfOneCore": 9.379,
+        "medianPssMiB": 370.13,
+        "peakPssMiB": 377.99,
+        "medianRssMiB": 1218.79,
+        "processCounts": [
+          7
+        ],
+        "managedClientCountAtEnd": 6
+      },
+      "samples": [
+        {
+          "wall": 1793218963.840199,
+          "cpuSeconds": 3.69,
+          "rssKiB": 1251980.0,
+          "pssKiB": 383749,
+          "processes": 7
+        },
+        {
+          "wall": 1793218964.8703377,
+          "cpuSeconds": 3.8,
+          "rssKiB": 1251100.0,
+          "pssKiB": 383185,
+          "processes": 7
+        },
+        {
+          "wall": 1793218965.8997114,
+          "cpuSeconds": 4.0,
+          "rssKiB": 1249324.0,
+          "pssKiB": 380608,
+          "processes": 7
+        },
+        {
+          "wall": 1793218966.9298437,
+          "cpuSeconds": 4.11,
+          "rssKiB": 1251736.0,
+          "pssKiB": 382990,
+          "processes": 7
+        },
+        {
+          "wall": 1793218967.9590251,
+          "cpuSeconds": 4.17,
+          "rssKiB": 1248980.0,
+          "pssKiB": 380002,
+          "processes": 7
+        },
+        {
+          "wall": 1793218968.989296,
+          "cpuSeconds": 4.28,
+          "rssKiB": 1255732.0,
+          "pssKiB": 387059,
+          "processes": 7
+        },
+        {
+          "wall": 1793218970.0093741,
+          "cpuSeconds": 4.37,
+          "rssKiB": 1252304.0,
+          "pssKiB": 383527,
+          "processes": 7
+        },
+        {
+          "wall": 1793218971.0302205,
+          "cpuSeconds": 4.4399999999999995,
+          "rssKiB": 1245504.0,
+          "pssKiB": 376518,
+          "processes": 7
+        },
+        {
+          "wall": 1793218972.0495012,
+          "cpuSeconds": 4.52,
+          "rssKiB": 1243996.0,
+          "pssKiB": 374715,
+          "processes": 7
+        },
+        {
+          "wall": 1793218973.069214,
+          "cpuSeconds": 4.62,
+          "rssKiB": 1247104.0,
+          "pssKiB": 378015,
+          "processes": 7
+        },
+        {
+          "wall": 1793218974.0971444,
+          "cpuSeconds": 4.67,
+          "rssKiB": 1242844.0,
+          "pssKiB": 373503,
+          "processes": 7
+        },
+        {
+          "wall": 1793218975.126097,
+          "cpuSeconds": 4.7700000000000005,
+          "rssKiB": 1245780.0,
+          "pssKiB": 376915,
+          "processes": 7
+        },
+        {
+          "wall": 1793218976.1543782,
+          "cpuSeconds": 4.86,
+          "rssKiB": 1242808.0,
+          "pssKiB": 373553,
+          "processes": 7
+        },
+        {
+          "wall": 1793218977.1835282,
+          "cpuSeconds": 4.96,
+          "rssKiB": 1243412.0,
+          "pssKiB": 373965,
+          "processes": 7
+        },
+        {
+          "wall": 1793218978.2136934,
+          "cpuSeconds": 5.0,
+          "rssKiB": 1243924.0,
+          "pssKiB": 374297,
+          "processes": 7
+        },
+        {
+          "wall": 1793218978.8741324,
+          "cpuSeconds": 5.1,
+          "rssKiB": 1249560.0,
+          "pssKiB": 380233,
+          "processes": 7
+        }
+      ]
+    },
+    {
+      "report": {
+        "pid": 623955,
+        "build": "debug/custom-protocol",
+        "traced": false,
+        "startupToAccessibleButtonsSeconds": 1.345,
+        "sampleSeconds": 15.021,
+        "config": {
+          "enabled": true,
+          "autoHide": false,
+          "showApps": true,
+          "showStats": true,
+          "showAudio": true,
+          "showClock": true,
+          "showBattery": false,
+          "showNetwork": false
+        },
+        "cpuPercentOfOneCore": 9.52,
+        "medianPssMiB": 367.1,
+        "peakPssMiB": 373.62,
+        "medianRssMiB": 1215.27,
+        "processCounts": [
+          7
+        ],
+        "managedClientCountAtEnd": 6
+      },
+      "samples": [
+        {
+          "wall": 1793218984.1288662,
+          "cpuSeconds": 3.9699999999999998,
+          "rssKiB": 1250168.0,
+          "pssKiB": 382063,
+          "processes": 7
+        },
+        {
+          "wall": 1793218985.1496828,
+          "cpuSeconds": 4.09,
+          "rssKiB": 1250456.0,
+          "pssKiB": 382587,
+          "processes": 7
+        },
+        {
+          "wall": 1793218986.1793482,
+          "cpuSeconds": 4.24,
+          "rssKiB": 1246668.0,
+          "pssKiB": 378287,
+          "processes": 7
+        },
+        {
+          "wall": 1793218987.208824,
+          "cpuSeconds": 4.37,
+          "rssKiB": 1246348.0,
+          "pssKiB": 377887,
+          "processes": 7
+        },
+        {
+          "wall": 1793218988.2374773,
+          "cpuSeconds": 4.44,
+          "rssKiB": 1244044.0,
+          "pssKiB": 375679,
+          "processes": 7
+        },
+        {
+          "wall": 1793218989.2661145,
+          "cpuSeconds": 4.53,
+          "rssKiB": 1251024.0,
+          "pssKiB": 381363,
+          "processes": 7
+        },
+        {
+          "wall": 1793218990.294883,
+          "cpuSeconds": 4.61,
+          "rssKiB": 1247936.0,
+          "pssKiB": 379347,
+          "processes": 7
+        },
+        {
+          "wall": 1793218991.3239381,
+          "cpuSeconds": 4.71,
+          "rssKiB": 1242524.0,
+          "pssKiB": 373782,
+          "processes": 7
+        },
+        {
+          "wall": 1793218992.353705,
+          "cpuSeconds": 4.79,
+          "rssKiB": 1241416.0,
+          "pssKiB": 372158,
+          "processes": 7
+        },
+        {
+          "wall": 1793218993.3836744,
+          "cpuSeconds": 4.95,
+          "rssKiB": 1244064.0,
+          "pssKiB": 375118,
+          "processes": 7
+        },
+        {
+          "wall": 1793218994.4136305,
+          "cpuSeconds": 5.0,
+          "rssKiB": 1241012.0,
+          "pssKiB": 372285,
+          "processes": 7
+        },
+        {
+          "wall": 1793218995.4424658,
+          "cpuSeconds": 5.14,
+          "rssKiB": 1244816.0,
+          "pssKiB": 376146,
+          "processes": 7
+        },
+        {
+          "wall": 1793218996.4717827,
+          "cpuSeconds": 5.1899999999999995,
+          "rssKiB": 1242148.0,
+          "pssKiB": 373180,
+          "processes": 7
+        },
+        {
+          "wall": 1793218997.5011394,
+          "cpuSeconds": 5.28,
+          "rssKiB": 1242636.0,
+          "pssKiB": 373566,
+          "processes": 7
+        },
+        {
+          "wall": 1793218998.5305462,
+          "cpuSeconds": 5.34,
+          "rssKiB": 1243148.0,
+          "pssKiB": 373868,
+          "processes": 7
+        },
+        {
+          "wall": 1793218999.1494215,
+          "cpuSeconds": 5.4,
+          "rssKiB": 1248012.0,
+          "pssKiB": 378840,
+          "processes": 7
+        }
+      ]
+    }
+  ],
+  "traceRuns": [
+    {
+      "report": {
+        "pid": 619165,
+        "build": "debug/custom-protocol",
+        "traced": true,
+        "startupToAccessibleButtonsSeconds": 1.525,
+        "sampleSeconds": 15.03,
+        "config": {
+          "enabled": true,
+          "autoHide": false,
+          "showApps": true,
+          "showStats": true,
+          "showAudio": true,
+          "showClock": true,
+          "showBattery": false,
+          "showNetwork": false
+        },
+        "cpuPercentOfOneCore": 13.24,
+        "medianPssMiB": 368.02,
+        "peakPssMiB": 378.67,
+        "medianRssMiB": 1212.19,
+        "processCounts": [
+          7
+        ],
+        "managedClientCountAtEnd": 6,
+        "successfulExecsInSample": {
+          "xprop": 80
+        },
+        "windowListPollsInSample": 10,
+        "windowDetailsQueriesInSample": 60,
+        "windowListPollsPerSecond": 0.664
+      },
+      "samples": [
+        {
+          "wall": 1793218876.255724,
+          "cpuSeconds": 3.91,
+          "rssKiB": 1245072.0,
+          "pssKiB": 382925,
+          "processes": 7
+        },
+        {
+          "wall": 1793218877.2757187,
+          "cpuSeconds": 4.09,
+          "rssKiB": 1243268.0,
+          "pssKiB": 381193,
+          "processes": 7
+        },
+        {
+          "wall": 1793218878.296674,
+          "cpuSeconds": 4.3,
+          "rssKiB": 1243500.0,
+          "pssKiB": 381025,
+          "processes": 7
+        },
+        {
+          "wall": 1793218879.3166828,
+          "cpuSeconds": 4.3500000000000005,
+          "rssKiB": 1244128.0,
+          "pssKiB": 381473,
+          "processes": 7
+        },
+        {
+          "wall": 1793218880.3369062,
+          "cpuSeconds": 4.47,
+          "rssKiB": 1241680.0,
+          "pssKiB": 378501,
+          "processes": 7
+        },
+        {
+          "wall": 1793218881.3669317,
+          "cpuSeconds": 4.6,
+          "rssKiB": 1250796.0,
+          "pssKiB": 387761,
+          "processes": 7
+        },
+        {
+          "wall": 1793218882.3988583,
+          "cpuSeconds": 4.72,
+          "rssKiB": 1245924.0,
+          "pssKiB": 382105,
+          "processes": 7
+        },
+        {
+          "wall": 1793218883.4284687,
+          "cpuSeconds": 4.890000000000001,
+          "rssKiB": 1237660.0,
+          "pssKiB": 373611,
+          "processes": 7
+        },
+        {
+          "wall": 1793218884.4582326,
+          "cpuSeconds": 5.05,
+          "rssKiB": 1237168.0,
+          "pssKiB": 372931,
+          "processes": 7
+        },
+        {
+          "wall": 1793218885.48878,
+          "cpuSeconds": 5.18,
+          "rssKiB": 1239024.0,
+          "pssKiB": 374987,
+          "processes": 7
+        },
+        {
+          "wall": 1793218886.5179927,
+          "cpuSeconds": 5.34,
+          "rssKiB": 1237732.0,
+          "pssKiB": 373015,
+          "processes": 7
+        },
+        {
+          "wall": 1793218887.5483515,
+          "cpuSeconds": 5.49,
+          "rssKiB": 1240884.0,
+          "pssKiB": 376285,
+          "processes": 7
+        },
+        {
+          "wall": 1793218888.5790622,
+          "cpuSeconds": 5.57,
+          "rssKiB": 1238084.0,
+          "pssKiB": 372978,
+          "processes": 7
+        },
+        {
+          "wall": 1793218889.6080647,
+          "cpuSeconds": 5.76,
+          "rssKiB": 1239284.0,
+          "pssKiB": 374246,
+          "processes": 7
+        },
+        {
+          "wall": 1793218890.6396883,
+          "cpuSeconds": 5.82,
+          "rssKiB": 1239644.0,
+          "pssKiB": 374194,
+          "processes": 7
+        },
+        {
+          "wall": 1793218891.2859192,
+          "cpuSeconds": 5.9,
+          "rssKiB": 1242468.0,
+          "pssKiB": 377430,
+          "processes": 7
+        }
+      ]
+    },
+    {
+      "report": {
+        "pid": 629594,
+        "build": "debug/custom-protocol",
+        "traced": true,
+        "startupToAccessibleButtonsSeconds": 2.288,
+        "sampleSeconds": 15.029,
+        "config": {
+          "enabled": true,
+          "autoHide": false,
+          "showApps": true,
+          "showStats": true,
+          "showAudio": true,
+          "showClock": true,
+          "showBattery": false,
+          "showNetwork": false
+        },
+        "cpuPercentOfOneCore": 12.975,
+        "medianPssMiB": 369.76,
+        "peakPssMiB": 375.82,
+        "medianRssMiB": 1219.43,
+        "processCounts": [
+          7
+        ],
+        "managedClientCountAtEnd": 6,
+        "successfulExecsInSample": {
+          "xprop": 80
+        },
+        "windowListPollsInSample": 10,
+        "windowDetailsQueriesInSample": 60,
+        "windowListPollsPerSecond": 0.664
+      },
+      "samples": [
+        {
+          "wall": 1793219128.1378684,
+          "cpuSeconds": 5.77,
+          "rssKiB": 1248792.0,
+          "pssKiB": 380307,
+          "processes": 7
+        },
+        {
+          "wall": 1793219129.160025,
+          "cpuSeconds": 5.9399999999999995,
+          "rssKiB": 1251184.0,
+          "pssKiB": 382600,
+          "processes": 7
+        },
+        {
+          "wall": 1793219130.1896386,
+          "cpuSeconds": 6.2,
+          "rssKiB": 1250648.0,
+          "pssKiB": 381611,
+          "processes": 7
+        },
+        {
+          "wall": 1793219131.233914,
+          "cpuSeconds": 6.27,
+          "rssKiB": 1251212.0,
+          "pssKiB": 382221,
+          "processes": 7
+        },
+        {
+          "wall": 1793219132.2637825,
+          "cpuSeconds": 6.45,
+          "rssKiB": 1249684.0,
+          "pssKiB": 380629,
+          "processes": 7
+        },
+        {
+          "wall": 1793219133.292475,
+          "cpuSeconds": 6.61,
+          "rssKiB": 1253792.0,
+          "pssKiB": 384839,
+          "processes": 7
+        },
+        {
+          "wall": 1793219134.3209383,
+          "cpuSeconds": 6.7299999999999995,
+          "rssKiB": 1252188.0,
+          "pssKiB": 383311,
+          "processes": 7
+        },
+        {
+          "wall": 1793219135.3504703,
+          "cpuSeconds": 6.92,
+          "rssKiB": 1248604.0,
+          "pssKiB": 378532,
+          "processes": 7
+        },
+        {
+          "wall": 1793219136.379564,
+          "cpuSeconds": 7.07,
+          "rssKiB": 1247432.0,
+          "pssKiB": 377416,
+          "processes": 7
+        },
+        {
+          "wall": 1793219137.4104207,
+          "cpuSeconds": 7.22,
+          "rssKiB": 1248320.0,
+          "pssKiB": 378152,
+          "processes": 7
+        },
+        {
+          "wall": 1793219138.4296918,
+          "cpuSeconds": 7.34,
+          "rssKiB": 1246104.0,
+          "pssKiB": 375652,
+          "processes": 7
+        },
+        {
+          "wall": 1793219139.4495609,
+          "cpuSeconds": 7.43,
+          "rssKiB": 1248416.0,
+          "pssKiB": 378172,
+          "processes": 7
+        },
+        {
+          "wall": 1793219140.4693332,
+          "cpuSeconds": 7.47,
+          "rssKiB": 1245684.0,
+          "pssKiB": 374938,
+          "processes": 7
+        },
+        {
+          "wall": 1793219141.4883883,
+          "cpuSeconds": 7.58,
+          "rssKiB": 1245936.0,
+          "pssKiB": 375474,
+          "processes": 7
+        },
+        {
+          "wall": 1793219142.5188422,
+          "cpuSeconds": 7.65,
+          "rssKiB": 1246764.0,
+          "pssKiB": 376459,
+          "processes": 7
+        },
+        {
+          "wall": 1793219143.166982,
+          "cpuSeconds": 7.72,
+          "rssKiB": 1248816.0,
+          "pssKiB": 378734,
+          "processes": 7
+        }
+      ]
+    }
+  ]
+}

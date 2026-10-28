@@ -89,6 +89,8 @@ if __name__ == '__main__':
     parser.add_argument('--mapping-fixture', action='store_true')
     parser.add_argument('--internal-fixture', action='store_true')
     parser.add_argument('--internal-smoke', action='store_true')
+    parser.add_argument('--performance-smoke', action='store_true')
+    parser.add_argument('--performance-trace', action='store_true')
     parser.add_argument('--mapping-smoke', action='store_true')
     parser.add_argument('--window-list-smoke', action='store_true')
     parser.add_argument('--reorder-smoke', action='store_true')
@@ -100,10 +102,11 @@ if __name__ == '__main__':
     parser.add_argument('--environment', action='store_true')
     parser.add_argument('--platform-tool-missing', action='store_true', help='Read-only startup check with an empty PATH in the isolated app')
     args = parser.parse_args()
+    if args.performance_trace: args.performance_smoke = True
     if args.audio_tool_missing: args.audio_unavailable = True
     if args.force_close_smoke: args.launcher_smoke = True
     if args.popup_smoke: args.restart = True
-    if args.window_list_smoke or args.reorder_smoke or args.tooltip_smoke or args.launch_smoke or args.overflow_smoke or args.layout_smoke or args.indicator_smoke or args.mapping_smoke or args.internal_smoke: args.restart = True
+    if args.window_list_smoke or args.reorder_smoke or args.tooltip_smoke or args.launch_smoke or args.overflow_smoke or args.layout_smoke or args.indicator_smoke or args.mapping_smoke or args.internal_smoke or args.performance_smoke: args.restart = True
     if args.platform_tool_missing: args.restart = True
     if args.scheduler_smoke: args.wallpaper_smoke = True
     if args.environment:
@@ -295,8 +298,12 @@ if __name__ == '__main__':
             env['PATH'] = str(empty_path)
         if args.system_unavailable: env['DBUS_SYSTEM_BUS_ADDRESS'] = 'unix:path=/tmp/deskmorph-nonexistent-system-bus'
         binary = Path(__file__).resolve().parents[1] / 'src-tauri/target/agent/debug/deskmorph'
+        command = [str(binary)]
+        if args.performance_trace:
+            command = ['strace', '-f', '-qq', '-ttt', '-e', 'trace=execve', '-o', str(test_root / 'performance-execve.log'), str(binary)]
+        startup_started = time.monotonic()
         with (test_root / 'runtime.log').open('a') as log:
-            process = subprocess.Popen([str(binary)], env=env, stdout=log, stderr=log, start_new_session=True)
+            process = subprocess.Popen(command, env=env, stdout=log, stderr=log, start_new_session=True)
         for _ in range(50):
             time.sleep(0.2)
             if process.poll() is not None:
@@ -310,6 +317,7 @@ if __name__ == '__main__':
         else:
             raise RuntimeError('Timed out waiting for test app UI')
     app = test_app()
+    startup_ready_seconds = time.monotonic() - startup_started if args.restart else None
     if args.platform_tool_missing:
         observed = ''
         for _ in range(50):
@@ -667,6 +675,16 @@ if __name__ == '__main__':
     if args.layout_smoke:
         from dock_layout_smoke import run
         run(app, TEST_CONFIG, click, focus_studio, native_keys, native_click_node, require_unlocked_desktop, assert_pointer_over_test_app)
+    if args.performance_smoke:
+        from performance_smoke import run
+        try:
+            run(app, TEST_CONFIG, startup_ready_seconds, args.performance_trace)
+        finally:
+            if args.performance_trace:
+                assert test_app().get_process_id() == app.get_process_id()
+                os.kill(app.get_process_id(), signal.SIGTERM)
+                process.wait(timeout=5)
+                app = start_isolated_app()
     if args.internal_smoke:
         from dock_internal_smoke import run
         run(app, TEST_CONFIG, click, focus_studio, native_keys, native_click_node, owned_input_pids)
@@ -2700,4 +2718,4 @@ if __name__ == '__main__':
         rect = frame.get_component_iface().get_extents(Atspi.CoordType.SCREEN)
         pixbuf = Gdk.pixbuf_get_from_window(Gdk.get_default_root_window(), rect.x, rect.y, rect.width, rect.height)
         pixbuf.savev(args.screenshot, 'png', [], [])
-    inspect(app)
+    if not args.performance_smoke or args.inspect: inspect(app)
