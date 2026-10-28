@@ -59,7 +59,7 @@ async function updateConfig(patch: Partial<TaskbarConfig>) {
   try { accept(await invoke<ConfigSnapshot>("patch_config", { patch })); return true; }
   catch (error) { report(error); return false; }
 }
-export async function mutatePin(action: "add" | "remove" | "toggleEnabled" | "move", id: string, pin?: PinnedApp, target?: number) {
+export async function mutatePin(action: "add" | "remove" | "toggleEnabled" | "move" | "setClasses", id: string, pin?: PinnedApp | Pick<PinnedApp, "matchClasses">, target?: number) {
   if (!state.ready) { report("Cấu hình chưa tải xong; hãy thử lại"); return false; }
   try {
     accept(await invoke<ConfigSnapshot>("mutate_pin", { action, id, pin: pin ?? null, target: target ?? null }));

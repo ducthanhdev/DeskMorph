@@ -11,7 +11,7 @@ const window = (id, class_name, is_active = false) => ({ id, class_name, title: 
 
 test('all matching windows belong to one pinned app, including the active window', () => {
   const result = groupWindows([window('1', 'Google-Chrome'), window('2', 'google-chrome', true)], [
-    { id: 'chrome', matchClasses: ['chrome'] },
+    { id: 'chrome', matchClasses: ['chrome', 'google-chrome'] },
     { id: 'overlapping-rule', matchClasses: ['google-chrome'] },
   ]);
   assert.deepEqual(result.pinnedItems.map(g => g.windows.map(w => w.id)), [['1', '2'], []]);
@@ -30,4 +30,19 @@ test('empty lists and removing a pin preserve the remaining windows', () => {
   assert.deepEqual(groupWindows([], []).unpinnedGroups, []);
   assert.equal(groupWindows([], [{ id: 'idle', matchClasses: ['files'] }]).pinnedItems[0].windows.length, 0);
   assert.deepEqual(groupWindows([window('1', 'chrome'), window('2', 'chrome')], []).unpinnedGroups[0].map(w => w.id), ['1', '2']);
+});
+
+
+test('substring collisions never steal unknown classes; explicit mappings transfer all instances', () => {
+  const windows = [window('a', 'DecodeTool', true), window('b', 'decodetool'), window('c', 'ProfilesManager')];
+  const pins = [{ id: 'code', matchClasses: ['code'] }, { id: 'files', matchClasses: ['files'] }];
+  assert.deepEqual(groupWindows(windows, pins).pinnedItems.map(g => g.windows), [[], []]);
+  assert.deepEqual(groupWindows(windows, pins).unpinnedGroups.map(g => g.map(w => w.id)), [['a', 'b'], ['c']]);
+  pins[0].matchClasses.push('decodetool');
+  const mapped = groupWindows(windows, pins);
+  assert.deepEqual(mapped.pinnedItems[0].windows.map(w => w.id), ['a', 'b']);
+  assert.equal(mapped.pinnedItems[0].windows[0].is_active, true);
+  assert.deepEqual(mapped.unpinnedGroups.map(g => g.map(w => w.id)), [['c']]);
+  pins[0].matchClasses = [];
+  assert.equal(groupWindows(windows, pins).unpinnedGroups.length, 2);
 });

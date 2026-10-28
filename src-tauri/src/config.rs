@@ -216,6 +216,24 @@ impl ConfigStore {
         let mut pins = self.snapshot.config["pinnedApps"].as_array().unwrap().clone();
         let index = pins.iter().position(|p| p["id"].as_str() == Some(id));
         match action {
+            "setClasses" => {
+                let i = index.ok_or_else(|| ConfigError::new("pin_missing", "Không tìm thấy ứng dụng ghim"))?;
+                let classes = pin.as_ref().and_then(|p| p["matchClasses"].as_array())
+                    .ok_or_else(|| ConfigError::new("invalid_pin", "Thiếu danh sách WM_CLASS"))?;
+                let mut normalized = Vec::new();
+                for class in classes {
+                    let class = class.as_str().filter(|s| !s.trim().is_empty() && s.len() <= 256 && !s.chars().any(char::is_control))
+                        .ok_or_else(|| ConfigError::new("invalid_pin", "WM_CLASS không hợp lệ"))?.trim().to_lowercase();
+                    if !normalized.contains(&class) { normalized.push(class); }
+                }
+                if normalized.len() > 64 || classes.len() > 64 { return Err(ConfigError::new("invalid_pin", "Tối đa 64 WM_CLASS")); }
+                for (other_index, other) in pins.iter().enumerate() {
+                    if other_index != i && other["matchClasses"].as_array().unwrap().iter().any(|c| normalized.contains(&c.as_str().unwrap().to_lowercase())) {
+                        return Err(ConfigError::new("pin_class_conflict", format!("WM_CLASS đã thuộc ứng dụng ghim: {}", other["name"].as_str().unwrap())));
+                    }
+                }
+                pins[i]["matchClasses"] = json!(normalized);
+            }
             "remove" => pins.retain(|p| p["id"].as_str() != Some(id)),
             "add" => {
                 let pin = pin.filter(|p| validate_pin(p) && p["id"].as_str() == Some(id))
@@ -515,6 +533,24 @@ mod tests {
         assert!(store.snapshot.warning.is_some());
         assert_eq!(fs::read(&path).unwrap(), bytes);
         assert_eq!(fs::read_dir(path.parent().unwrap()).unwrap().count(), 2);
+        fs::remove_dir_all(path.parent().unwrap()).unwrap();
+    }
+    #[test]
+    fn class_mapping_is_atomic_validated_and_persistent() {
+        let path = path();
+        let mut store = ConfigStore::load(path.clone()).unwrap();
+        let original = store.snapshot.config.clone();
+        store.pin("setClasses", "code", Some(json!({"matchClasses":[" DecodeTool ","decodetool"]})), None).unwrap();
+        let pin = store.snapshot.config["pinnedApps"].as_array().unwrap().iter().find(|p| p["id"] == "code").unwrap();
+        assert_eq!(pin["matchClasses"], json!(["decodetool"]));
+        assert_eq!(pin["command"], original["pinnedApps"].as_array().unwrap().iter().find(|p| p["id"] == "code").unwrap()["command"]);
+        let saved = store.snapshot.config.clone();
+        for (id, classes) in [("files", json!(["DECodetool"])), ("code", json!([" "])), ("code", json!(["bad\nclass"])), ("missing", json!([])), ("code", json!(vec!["x"; 65]))] {
+            assert!(store.pin("setClasses", id, Some(json!({"matchClasses":classes})), None).is_err());
+            assert_eq!(store.snapshot.config, saved);
+        }
+        assert_eq!(ConfigStore::load(path.clone()).unwrap().snapshot.config, saved);
+        store.pin("setClasses", "code", Some(json!({"matchClasses":[]})), None).unwrap();
         fs::remove_dir_all(path.parent().unwrap()).unwrap();
     }
     #[test]

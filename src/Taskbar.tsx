@@ -11,7 +11,7 @@ import { useDockTooltip } from "./hooks/useDockTooltip";
 import { usePlatform } from "./hooks/usePlatform";
 import { usePolling } from "./hooks/usePolling";
 import { useClock } from "./hooks/useClock";
-import { groupWindows } from "./windowGroups";
+import { groupWindows, matchesWindowClass } from "./windowGroups";
 import { listen } from "@tauri-apps/api/event";
 import {
   SystemStats,
@@ -180,7 +180,7 @@ export const Taskbar: React.FC = () => {
       activePinned.forEach((app) => {
         if (next.has(app.id)) {
           const hasOpenWin = openWindows.some((w) =>
-            app.matchClasses.some((cls) => w.class_name.toLowerCase().includes(cls.toLowerCase()))
+            matchesWindowClass(app.matchClasses, w.class_name)
           );
           if (hasOpenWin) {
             next.delete(app.id);
@@ -589,7 +589,7 @@ export const Taskbar: React.FC = () => {
     if (target >= 0 && targetId !== drag.id) void movePin(drag.id, target);
   };
 
-  const selectWindows = async (e: React.MouseEvent, windows: OpenWindow[], appName: string) => {
+  const selectWindows = async (e: React.MouseEvent, windows: OpenWindow[], appName: string, appId?: string) => {
     if (windows.length === 1) {
       await handleActivateWindow(windows[0].id);
       return;
@@ -601,7 +601,7 @@ export const Taskbar: React.FC = () => {
     try {
       await invoke("show_dock_context_menu", {
         iconCenterX: Math.round(rect.left + rect.width / 2),
-        menuData: { mode: "windows", appName, windows },
+        menuData: { mode: "windows", appName, windows, appId, isPinned: Boolean(appId) },
       });
     } catch (err) {
       setContextMenuVisible(false);
@@ -748,7 +748,7 @@ export const Taskbar: React.FC = () => {
                   onClick={(e) => {
                     if (Date.now() < suppressClickUntil.current) return;
                     if (window) {
-                      void selectWindows(e, windows, pinned.name);
+                      void selectWindows(e, windows, pinned.name, pinned.id);
                     } else {
                       handleLaunchApp(pinned.id, installed ? `desktop:${installed.id}` : pinned.command);
                     }

@@ -43,6 +43,8 @@ Lần đầu Cargo cần tải dependencies. Cổng Vite mặc định là 1420.
 
 Kéo icon đã ghim lên icon khác để đổi thứ tự; thả ngoài Dock hoặc Escape để hủy. Bạn cũng có thể focus icon rồi dùng Ctrl+Shift+←/→, hoặc chọn Sang trái/Sang phải trong menu chuột phải. Thứ tự được lưu khi thả và giữ sau restart.
 
+Nếu cửa sổ không được nhận vào pin, mở Studio → Ứng dụng → Ghép lớp cửa sổ tại pin đó. Đọc các lớp đang mở hoặc nhập một WM_CLASS đầy đủ mỗi dòng rồi Lưu; xóa hết để bỏ ghép. So khớp không phân biệt hoa thường và không dùng chuỗi con (`code` không nhận `DecodeTool`). Mapping chỉ đổi cách gom cửa sổ, giữ nguyên lệnh mở và desktop ID; không đoán lệnh cho cửa sổ không xác định. Lớp đã thuộc pin khác phải được bỏ ở pin đó trước. Cấu hình cũ vẫn được giữ; alias từng dựa vào chuỗi con cần bổ sung WM_CLASS đầy đủ.
+
 Trong Hệ thống, bạn có thể bật phím tắt launcher như `Ctrl+Super+K`. Cú pháp dùng Ctrl/Alt/Shift/Super và chữ ASCII, số, F1–F12 hoặc Space; không nhận phím trần hay chỉ Shift. `Ctrl+Alt+F1–F12` bị từ chối vì có thể chuyển virtual console. Khi có xung đột, phím đã chọn được lưu nhưng báo chưa hoạt động; đổi phím hoặc thử lại sau khi giải phóng tổ hợp. Tắt Dock tạm ngừng đăng ký; mở lại Dock khôi phục lựa chọn. Wayland hiện chưa hỗ trợ.
 
 ## Build và cài thủ công

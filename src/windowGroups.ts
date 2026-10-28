@@ -1,10 +1,14 @@
 import type { OpenWindow, PinnedApp } from "./types";
 
+export function matchesWindowClass(classes: string[], windowClass: string) {
+  return classes.some((cls) => cls.toLowerCase() === windowClass.toLowerCase());
+}
+
 export function groupWindows(openWindows: OpenWindow[], pinnedApps: PinnedApp[]) {
   const matched = new Set<string>();
   const pinnedItems = pinnedApps.map((pinned) => {
     const windows = openWindows.filter((w) => !matched.has(w.id) &&
-      pinned.matchClasses.some((cls) => w.class_name.toLowerCase().includes(cls.toLowerCase())));
+      matchesWindowClass(pinned.matchClasses, w.class_name));
     windows.forEach((w) => matched.add(w.id));
     return { pinned, windows };
   });

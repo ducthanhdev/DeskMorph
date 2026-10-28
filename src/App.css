@@ -1820,3 +1820,9 @@ button:focus-visible { outline: 2px solid #48b9c7; outline-offset: -2px; }
 .system-popup section p { margin: 7px 0; }
 .system-popup small { color: #cbd5e1; line-height: 1.5; }
 .system-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+
+.class-mapping { flex-basis: 100%; font-size: 13px; }
+.class-mapping summary { cursor: pointer; }
+.class-mapping p { color: var(--text-muted); }
+.class-mapping textarea { display: block; width: 100%; box-sizing: border-box; margin: 8px 0; }
+.class-mapping button, .class-mapping select { margin: 4px 8px 4px 0; }

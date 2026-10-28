@@ -5,15 +5,47 @@ import { useInstalledApps } from "../../hooks/useInstalledApps";
 import { installedForPin, pinFromApp, searchApps } from "../../appSearch";
 import { useI18n } from "../../i18n/useI18n";
 import { AppIcon } from "../AppIcon";
+import type { OpenWindow, PinnedApp } from "../../types";
 import { Card } from "./Controls";
+function ClassMapping({ pin }: { pin: PinnedApp }) {
+  const { mutatePin } = useConfig();
+  const { t } = useI18n();
+  const [draft, setDraft] = useState(pin.matchClasses.join("\n"));
+  const [classes, setClasses] = useState<string[]>([]);
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
+  return <details className="class-mapping"><summary>{t("classMapping")} {pin.name}</summary>
+    <p>{t("classMappingHelp")}</p>
+    <label>{t("classMapping")}<textarea aria-label={`${t("classMapping")} ${pin.name}`} rows={3} value={draft} onChange={(e) => setDraft(e.target.value)} /></label>
+    <button disabled={busy} onClick={async () => {
+      setBusy(true);
+      try {
+        const windows = await invoke<OpenWindow[]>("get_open_windows");
+        setClasses([...new Set(windows.map((w) => w.class_name).filter(Boolean))].sort()); setError("");
+      } catch (e) { setError(errorMessage(e)); }
+      finally { setBusy(false); }
+    }}>{t("readWindowClasses")}</button>
+    {classes.length > 0 && <select aria-label={`${t("runningClasses")} ${pin.name}`} value="" onChange={(e) => {
+      if (e.target.value) setDraft((value) => [...new Set([...value.split("\n").filter(Boolean), e.target.value])].join("\n"));
+    }}><option value="">{t("runningClasses")}</option>{classes.map((cls) => <option key={cls} value={cls}>{cls}</option>)}</select>}
+    <button disabled={busy} onClick={async () => {
+      setBusy(true);
+      try { await mutatePin("setClasses", pin.id, { matchClasses: draft.split("\n").map((s) => s.trim()).filter(Boolean) }); }
+      finally { setBusy(false); }
+    }}>{t("save")}</button>
+    <button disabled={busy} onClick={() => setDraft(pin.matchClasses.join("\n"))}>{t("cancel")}</button>
+    {error && <p role="alert">{error}</p>}
+  </details>;
+}
 export function AppsSettings() {
-  const { config, mutatePin } = useConfig();
+  const { config, mutatePin, error: configError } = useConfig();
   const { apps, loading, error, refresh } = useInstalledApps();
   const { t } = useI18n();
   const [query, setQuery] = useState("");
   const [operationError, setOperationError] = useState("");
   return <>
     <Card title={t("pinnedApps")}>
+      {configError && <p role="alert">{configError}</p>}
       {config.pinnedApps?.map((pin, index) => {
         const app = installedForPin(pin, apps);
         return <div className="studio-app-row" key={pin.id}><AppIcon path={app?.iconPath} size={28} /><span><strong>{pin.name}</strong>{pin.desktopId && !loading && !error && !app && <small>{t("unavailable")}</small>}</span>
@@ -21,6 +53,7 @@ export function AppsSettings() {
           <button aria-label={`${t("moveLeft")} ${pin.name}`} disabled={index === 0} onClick={() => void mutatePin("move", pin.id, undefined, index - 1)}>←</button>
           <button aria-label={`${t("moveRight")} ${pin.name}`} disabled={index === config.pinnedApps!.length - 1} onClick={() => void mutatePin("move", pin.id, undefined, index + 1)}>→</button>
           <button aria-label={`${t("unpin")} ${pin.name}`} onClick={() => void mutatePin("remove", pin.id)}>{t("unpin")}</button>
+          <ClassMapping key={JSON.stringify(pin.matchClasses)} pin={pin} />
         </div>;
       })}
     </Card>
