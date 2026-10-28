@@ -45,9 +45,9 @@ Phụ thuộc G0. Module dự kiến: config/schema, config/store, hooks đồng
 - [ ] G1.7 Dọn timer/listener và async callbacks; xử lý React StrictMode, tránh listener đăng ký xong sau unmount.
 - [ ] G1.8 Chặn polling chồng nhau; chia sẻ snapshot phù hợp; dừng polling UI khi ẩn nhưng vẫn giữ cơ chế cần thiết cho auto-hide và popup.
 - [ ] G1.9 Chuẩn hóa lỗi command: mã, thông điệp, ngữ cảnh; hiện lỗi mở app/đổi hình nền/lưu cấu hình, cho phép thử lại và không báo thành công giả.
-- [ ] G1.10 Sửa trạng thái enabled khi startup, thao tác toggle và restart; backend không tự hiện Dock ngược cấu hình.
-- [ ] G1.11 Xác định đóng Studio: giữ Dock theo lựa chọn, có đường mở lại Studio và nút thoát hẳn dễ tìm; không để tiến trình không thể điều khiển.
-- [ ] G1.12 Ngăn nhiều instance; lần mở tiếp theo chuyển tới instance hiện có và mở Studio theo hành vi đã chọn.
+- [x] G1.10 Sửa trạng thái enabled khi startup, thao tác toggle và restart; backend không tự hiện Dock ngược cấu hình.
+- [x] G1.11 Xác định đóng Studio: giữ Dock theo lựa chọn, có đường mở lại Studio và nút thoát hẳn dễ tìm; không để tiến trình không thể điều khiển.
+- [x] G1.12 Ngăn nhiều instance; lần mở tiếp theo chuyển tới instance hiện có và mở Studio theo hành vi đã chọn.
 - [ ] G1.13 Sửa autostart/desktop entry cho đường dẫn có khoảng trắng; dùng vị trí executable thực tế, báo lỗi ghi file, không dựa vào đường dẫn máy phát triển.
 
 Tiêu chí: thay đổi từ bất kỳ cửa sổ nào phản ánh ở các cửa sổ khác; restart giữ đúng cấu hình; JSON lỗi không làm app crash; không xuất hiện polling/listener trùng sau mở/đóng nhiều lần. Test migration, validation và cập nhật cạnh tranh; kiểm tra startup/autostart thực tế trên môi trường tham chiếu.

@@ -68,6 +68,7 @@ if __name__ == '__main__':
     parser.add_argument('--popup-smoke', action='store_true')
     parser.add_argument('--autohide-smoke', action='store_true')
     parser.add_argument('--shortcut-smoke', action='store_true')
+    parser.add_argument('--lifecycle-smoke', action='store_true')
     parser.add_argument('--studio-smoke', action='store_true')
     parser.add_argument('--config-smoke', action='store_true')
     parser.add_argument('--wallpaper-smoke', action='store_true')
@@ -101,7 +102,7 @@ if __name__ == '__main__':
             raise RuntimeError('Cannot verify GNOME lock state; no native input will be sent')
         if re.search(r'\btrue\b', result.stdout):
             raise RuntimeError('GNOME desktop is locked; unlock it before native UI tests. No input was sent.')
-    input_tests = any((args.action, args.screenshot, args.basic, args.popup_smoke, args.autohide_smoke, args.shortcut_smoke, args.launcher_smoke, args.studio_smoke, args.config_smoke,
+    input_tests = any((args.action, args.screenshot, args.basic, args.popup_smoke, args.autohide_smoke, args.shortcut_smoke, args.lifecycle_smoke, args.launcher_smoke, args.studio_smoke, args.config_smoke,
                        args.wallpaper_smoke, args.scheduler_smoke, args.library_stress, args.audio_smoke, args.media_smoke,
                        args.audio_exit, args.audio_unavailable, args.system_smoke, args.system_unavailable, args.system_open_smoke))
     if input_tests: require_unlocked_desktop()
@@ -510,6 +511,109 @@ if __name__ == '__main__':
         click('Taskbar Studio')
         if json.loads(baseline_path.read_text())['config']['autoHide']:
             click('Tự động ẩn Dock Chạm cạnh màn hình để hiện lại; Dock giữ hiện khi bạn thao tác popup.')
+    if args.lifecycle_smoke:
+        lifecycle_path = Path(TEST_CONFIG) / 'com.ducthanhdev.deskmorph/config.json'
+        lifecycle_config = lambda: json.loads(lifecycle_path.read_text())['config']
+        lifecycle_original = lifecycle_config()
+        lifecycle_passed = []
+        lifecycle_pids = [app.get_process_id()]
+        def wait_lifecycle(predicate, message):
+            deadline = time.monotonic() + 10
+            while time.monotonic() < deadline:
+                if predicate(): return
+                time.sleep(0.1)
+            raise AssertionError(message)
+        def lifecycle_alive(pid):
+            try: return Path(f'/proc/{pid}/stat').read_text().rsplit(')', 1)[1].split()[0] != 'Z'
+            except FileNotFoundError: return False
+        def managed_titles():
+            titles = []
+            for xid in re.findall(r'0x[0-9a-fA-F]+', subprocess.check_output(['xprop', '-root', '_NET_CLIENT_LIST'], text=True)):
+                props = subprocess.run(['xprop', '-id', xid, '_NET_WM_PID', '_NET_WM_NAME'], capture_output=True, text=True).stdout
+                if re.search(r'_NET_WM_PID.*= ' + str(app.get_process_id()) + r'\b', props):
+                    titles.append(props)
+            return titles
+        def title_count(title): return sum(title in props for props in managed_titles())
+        def set_lifecycle(field, value, tab, label):
+            click(tab)
+            if lifecycle_config()[field] != value: click(label)
+            assert lifecycle_config()[field] == value, f'{field} was not persisted'
+        def expect_exit(pid):
+            wait_lifecycle(lambda: not lifecycle_alive(pid), 'Isolated app did not exit normally')
+            try: os.waitpid(pid, os.WNOHANG)
+            except ChildProcessError: pass
+        def fresh_lifecycle():
+            candidate = start_isolated_app()
+            lifecycle_pids.append(candidate.get_process_id())
+            return candidate
+        def quit_lifecycle():
+            focus_studio(); click('Hệ thống')
+            pid = app.get_process_id(); click('Thoát DeskMorph'); expect_exit(pid)
+        try:
+            focus_studio()
+            set_lifecycle('autoHide', False, 'Taskbar Studio', 'Tự động ẩn Dock Chạm cạnh màn hình để hiện lại; Dock giữ hiện khi bạn thao tác popup.')
+            set_lifecycle('keepDockOnClose', True, 'Hệ thống', 'Giữ Dock khi đóng Studio')
+            for enabled in (False, True, False, True):
+                set_lifecycle('enabled', enabled, 'Taskbar Studio', 'Bật Dock')
+                wait_lifecycle(lambda: title_count('DeskMorph Taskbar') == int(enabled), 'Toggle did not update native Dock visibility')
+                old_pid = app.get_process_id()
+                quit_lifecycle(); app = fresh_lifecycle()
+                assert app.get_process_id() != old_pid
+                assert lifecycle_config()['enabled'] == enabled
+                wait_lifecycle(lambda: title_count('DeskMorph Taskbar') == int(enabled), 'Restart did not preserve Dock visibility')
+                # Allow delayed startup/layout callbacks to run before checking again.
+                time.sleep(1.2)
+                assert title_count('DeskMorph Taskbar') == int(enabled), 'Delayed startup reversed enabled state'
+            lifecycle_passed.append('enabled false/true persists across four normal restarts and delayed layout')
+            for repeat in range(3):
+                focus_studio(); close_studio_native()
+                pid = app.get_process_id()
+                assert lifecycle_alive(pid) and title_count('DeskMorph Taskbar') == 1
+                assert title_count('DeskMorph Studio') == 0
+                reopen_studio(); app = test_app()
+                assert app.get_process_id() == pid
+                wait_lifecycle(lambda: title_count('DeskMorph Studio') == 1, 'Forwarding did not reopen Studio')
+            lifecycle_passed.append('closing Studio keeps enabled Dock; relaunch reopens same instance three times')
+            # Concurrent invocations use the same verified profile and must ACK/exit.
+            test_root = Path('/tmp/deskmorph-desktop-test')
+            entry_env = dict(os.environ, DESKMORPH_CONFIG_HOME=TEST_CONFIG,
+                             XDG_DATA_HOME=str(test_root / 'data'), XDG_CACHE_HOME=str(test_root / 'cache'), WEBKIT_DISABLE_DMABUF_RENDERER='1')
+            executable = Path(__file__).resolve().parents[1] / 'src-tauri/target/agent/debug/deskmorph'
+            entrants = [subprocess.Popen([str(executable)], env=entry_env, stdout=subprocess.PIPE, stderr=subprocess.PIPE) for _ in range(4)]
+            try:
+                for entrant in entrants:
+                    out, err = entrant.communicate(timeout=8)
+                    assert entrant.returncode == 0, f'Forwarded instance failed: {err.decode()[-500:]}'
+            finally:
+                for entrant in entrants:
+                    if entrant.poll() is None: entrant.terminate()
+                    entrant.wait(timeout=5)
+            assert test_app().get_process_id() == app.get_process_id()
+            assert title_count('DeskMorph Studio') == 1 and title_count('DeskMorph Taskbar') == 1
+            lifecycle_passed.append('four concurrent launches ACK and exit with one Studio and one Dock')
+            for enabled, keep in ((False, True), (True, False)):
+                focus_studio()
+                set_lifecycle('enabled', enabled, 'Taskbar Studio', 'Bật Dock')
+                set_lifecycle('keepDockOnClose', keep, 'Hệ thống', 'Giữ Dock khi đóng Studio')
+                pid = app.get_process_id(); close_studio_native(); expect_exit(pid)
+                app = fresh_lifecycle()
+            lifecycle_passed.append('closing Studio exits when Dock disabled or keep-Dock option off')
+            set_lifecycle('enabled', True, 'Taskbar Studio', 'Bật Dock')
+            set_lifecycle('keepDockOnClose', True, 'Hệ thống', 'Giữ Dock khi đóng Studio')
+            quit_lifecycle(); app = fresh_lifecycle()
+            lifecycle_passed.append('explicit Quit exits even when keep-Dock option on')
+        finally:
+            try:
+                app = test_app()
+                reopen_studio()
+            except RuntimeError: app = fresh_lifecycle()
+            focus_studio()
+            set_lifecycle('keepDockOnClose', lifecycle_original['keepDockOnClose'], 'Hệ thống', 'Giữ Dock khi đóng Studio')
+            set_lifecycle('enabled', lifecycle_original['enabled'], 'Taskbar Studio', 'Bật Dock')
+            set_lifecycle('autoHide', lifecycle_original['autoHide'], 'Taskbar Studio', 'Tự động ẩn Dock Chạm cạnh màn hình để hiện lại; Dock giữ hiện khi bạn thao tác popup.')
+        report = {'passed': lifecycle_passed, 'pids': lifecycle_pids, 'preferencesRestored': True}
+        Path('/tmp/deskmorph-desktop-test/lifecycle-result.json').write_text(json.dumps(report, indent=2))
+        print(json.dumps(report))
     if args.shortcut_smoke:
         config_path = Path(TEST_CONFIG) / 'com.ducthanhdev.deskmorph/config.json'
         shortcut_config = lambda: json.loads(config_path.read_text())['config']

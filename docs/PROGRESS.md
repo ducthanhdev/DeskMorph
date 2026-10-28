@@ -2,7 +2,7 @@
 
 Mục tiêu giữ nguyên toàn bộ 99 đầu việc trong IMPLEMENTATION_PLAN.md. Chưa đạt cổng hoàn thành toàn dự án. Checkbox chưa đánh dấu không đồng nghĩa chưa có code: nhiều mục đang chờ kiểm thử đủ phạm vi.
 
-Hiện đã đánh dấu 41/99 mục, gồm G3.2–G3.3 bằng fixture môi trường cô lập và G0.5/G2.1/G2.3 qua capability EWMH, kiểm thử lỗi adapter và native startup thiếu xprop. Đã bổ sung G0.4/G2.4/G2.5 qua popup/auto-hide native và G9.6/G9.9 bằng hồi quy policy/asset/force-close và ảnh Studio thật trong README. Các cổng GUI, Wayland và phát hành vẫn chưa hoàn tất.
+Hiện đã đánh dấu 44/99 mục, gồm G3.2–G3.3 bằng fixture môi trường cô lập và G0.5/G2.1/G2.3 qua capability EWMH, kiểm thử lỗi adapter và native startup thiếu xprop. Đã bổ sung G0.4/G2.4/G2.5 qua popup/auto-hide native và G9.6/G9.9 bằng hồi quy policy/asset/force-close và ảnh Studio thật trong README. Các cổng GUI, Wayland và phát hành vẫn chưa hoàn tất.
 
 ## Môi trường tham chiếu đã xác minh
 
@@ -145,3 +145,11 @@ Script cần AT-SPI, Python GI, GTK3 và libXtst. Chỉ gửi phím khi kiểm t
 - Trên source cuối: Rust native `--include-ignored` 41/41; frontend 14/14 và TS/Vite build qua; custom-protocol native build qua; Python compile và diff whitespace qua. CI thêm libxcb1-dev, xvfb/xauth và Xvfb cho Rust grab test; chưa có kết quả GitHub. Native GUI chỉ xác minh GNOME/X11 tham chiếu, chưa chứng minh Wayland, mọi layout, remap, suspend/resume hay compositor khác.
 - Báo cáo /tmp của các lượt 28/10 không còn sau khi môi trường desktop thay đổi; bằng chứng cũ trong tài liệu là lịch sử, không thay cho kết quả build hiện tại.
 - Hồi quy sau sửa focus timestamp: `--popup-smoke` exit 0 trên PID 111574, ba vòng/15 chuỗi launcher-calendar-audio; Escape, thay popup, focus loss, click ngoài và tooltip đều qua. Báo cáo `/tmp/deskmorph-desktop-test/popup-result.json`.
+
+## G1.10–G1.12 — Vòng đời Studio/Dock và single-instance (29/10/2026)
+
+- Thêm `--lifecycle-smoke`, exit 0 trên chuỗi PID 111574 → 120103 → 120586 → 121080 → 121560 → 122438 → 122925 → 123364. Không cần sửa production: hành vi hiện có đã qua native tests mới. Báo cáo `/tmp/deskmorph-desktop-test/lifecycle-result.json`.
+- Bật/tắt Dock theo chuỗi false/true/false/true, mỗi trạng thái qua normal Quit và khởi động tiến trình mới; so cấu hình lưu với managed native Dock count, chờ thêm 1,2 giây để bắt callback startup/layout trễ. Dock không tự hiện ngược lựa chọn.
+- Khi enabled và keepDockOnClose bật, WM_DELETE_WINDOW đóng Studio nhưng giữ Dock/tiến trình. Ba lượt mở executable tiếp theo đều ACK, hiện lại đúng một Studio trong cùng PID. Bốn lệnh mở đồng thời đều exit 0, không tạo thêm Studio/Dock. Unit Unix socket đã qua thêm trường hợp request phân mảnh/stale socket/lock/ACK trong bộ Rust 41/41.
+- Đóng Studio khi Dock tắt (dù keep bật), hoặc keepDockOnClose tắt (dù Dock bật), đều thoát tiến trình. Nút Quit thoát cả khi keep bật. Harness khôi phục enabled/keepDockOnClose/autoHide ban đầu qua UI và chỉ thao tác profile test.
+- G1.10/G1.11/G1.12 được đánh dấu từ phạm vi trên; không coi đây là bằng chứng autostart đăng nhập, suspend/resume hoặc mọi lỗi startup. Python compile và diff check qua. Frontend/native production không đổi so với build đã kiểm thử G8.6.
