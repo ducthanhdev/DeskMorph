@@ -25,4 +25,6 @@
 
 - Thêm native GTK tests cho middle-click pinned/unpinned với multi-instance và single-instance; xác minh Desktop Actions chạy đúng argv và không lưu nút action từ ứng dụng trước.
 
+- Thêm nút cuộn ứng dụng khi Dock vượt work area; giữ widget bên phải, hỗ trợ Tab và cuộn tức thời khi giảm hoạt ảnh. Native test 40 pin bổ sung xác minh mở đúng mục cuối và thu Dock khi giảm pin.
+
 Chưa phát hành: còn các cổng chất lượng G0–G9 trong kế hoạch, đặc biệt Wayland, mixed DPI/hotplug, sleep/resume, Wayland shortcuts portal, cài sạch và nâng cấp. Không coi mục Unreleased là tuyên bố mọi chức năng đã đạt chuẩn phát hành.

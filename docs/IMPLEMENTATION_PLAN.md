@@ -106,7 +106,7 @@ Phụ thuộc G2–G3. Đây là cổng bản xem trước dùng hằng ngày đ
 - [x] G4.5 Menu chuột phải hiển thị cửa sổ cùng app, chọn active và đóng từng cửa sổ.
 - [x] G4.6 Đọc và chạy Desktop Actions được khai báo thay vì tự đoán cờ new-window/incognito; ẩn hành động không có.
 - [ ] G4.7 Tách kích thước icon, chiều cao Dock và khoảng cách; giới hạn giá trị để không cắt animation hay indicator.
-- [ ] G4.8 Chiều rộng Dock theo nội dung nhưng không vượt work area; chọn overflow cuộn hoặc nút mở thêm và kiểm thử với nhiều app.
+- [x] G4.8 Chiều rộng Dock theo nội dung nhưng không vượt work area; chọn overflow cuộn hoặc nút mở thêm và kiểm thử với nhiều app.
 - [ ] G4.9 Giảm/tắt animation, tôn trọng prefers-reduced-motion; magnification và bounce không làm thay đổi hit target thất thường.
 - [ ] G4.10 Kiểm tra running/active/count khi pin đổi, app mở nhiều instance hoặc WM_CLASS không có desktop ID; lưu mapping có kiểm soát khi cần.
 

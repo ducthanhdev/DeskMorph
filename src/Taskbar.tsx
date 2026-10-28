@@ -41,6 +41,8 @@ export const Taskbar: React.FC = () => {
   const [stats, setStats] = useState<SystemStats | null>(null);
   const ramDescription = stats ? `RAM: ${(stats.ram_used_mb / 1024).toFixed(1)} GiB / ${(stats.ram_total_mb / 1024).toFixed(1)} GiB (${stats.ram_percent}%)` : undefined;
   const [openWindows, setOpenWindows] = useState<OpenWindow[]>([]);
+  const appsRef = useRef<HTMLDivElement>(null);
+  const [appsScroll, setAppsScroll] = useState({ overflow: false, back: false, forward: false });
   const [isHovered, setIsHovered] = useState(false);
   const [previewVisible, setPreviewVisible] = useState(true);
   const [launchingAppIds, setLaunchingAppIds] = useState<Set<string>>(new Set());
@@ -526,6 +528,25 @@ export const Taskbar: React.FC = () => {
   const { pinnedItems, unpinnedGroups } = groupWindows(openWindows, activePinned);
 
   useLayoutEffect(() => {
+    const area = appsRef.current;
+    if (!area || !config.showApps) return;
+    const update = () => {
+      const max = area.scrollWidth - area.clientWidth;
+      // Compare against the whole viewport so the arrows cannot keep themselves
+      // visible merely by consuming the space that would otherwise fit the apps.
+      const next = { overflow: area.scrollWidth > (area.parentElement?.clientWidth ?? area.clientWidth) + 1, back: area.scrollLeft > 1, forward: area.scrollLeft < max - 1 };
+      setAppsScroll((previous) => previous.overflow === next.overflow && previous.back === next.back && previous.forward === next.forward ? previous : next);
+    };
+    const observer = new ResizeObserver(update);
+    [area, ...Array.from(area.children)].forEach((element) => observer.observe(element));
+    area.addEventListener("scroll", update, { passive: true });
+    update();
+    return () => { observer.disconnect(); area.removeEventListener("scroll", update); };
+  }, [config.showApps, pinnedItems.length, unpinnedGroups.length]);
+
+  const scrollApps = (direction: number) => appsRef.current?.scrollBy({ left: direction * Math.max(100, appsRef.current.clientWidth * .8), behavior: reducedMotion ? "instant" : "smooth" });
+
+  useLayoutEffect(() => {
     if (!ready || !config.enabled || !dockRef.current) return;
     const root = dockRef.current;
     let timer: ReturnType<typeof setTimeout>;
@@ -658,7 +679,11 @@ export const Taskbar: React.FC = () => {
         </div>
 
         {/* 2. Center Area: Pinned Applications & Open Windows */}
+        <div className="dock-apps-viewport" style={{ display: config.showApps ? undefined : "none" }}>
+          {appsScroll.overflow && <button className="dock-scroll-btn" aria-label={t("scrollAppsLeft")} data-dock-tooltip={t("scrollAppsLeft")} aria-controls="dock-apps" disabled={!appsScroll.back} onClick={() => scrollApps(-1)}><span aria-hidden="true">‹</span></button>}
         <div
+          ref={appsRef}
+          id="dock-apps"
           style={{ display: config.showApps ? undefined : "none" }}
           className={`dock-apps ${isMagnifying ? "is-magnifying" : ""}`}
           onMouseMove={handleDockMouseMove}
@@ -869,6 +894,8 @@ export const Taskbar: React.FC = () => {
           )}
         </div>
 
+          {appsScroll.overflow && <button className="dock-scroll-btn" aria-label={t("scrollAppsRight")} data-dock-tooltip={t("scrollAppsRight")} aria-controls="dock-apps" disabled={!appsScroll.forward} onClick={() => scrollApps(1)}><span aria-hidden="true">›</span></button>}
+        </div>
         {/* 3. Right Area: Live Stats, Wallpaper Shuffle, Clock */}
         <div className="dock-right">
           {config.showStats && <div className="dock-divider" />}

@@ -89,13 +89,14 @@ if __name__ == '__main__':
     parser.add_argument('--reorder-smoke', action='store_true')
     parser.add_argument('--tooltip-smoke', action='store_true')
     parser.add_argument('--launch-smoke', action='store_true')
+    parser.add_argument('--overflow-smoke', action='store_true')
     parser.add_argument('--environment', action='store_true')
     parser.add_argument('--platform-tool-missing', action='store_true', help='Read-only startup check with an empty PATH in the isolated app')
     args = parser.parse_args()
     if args.audio_tool_missing: args.audio_unavailable = True
     if args.force_close_smoke: args.launcher_smoke = True
     if args.popup_smoke: args.restart = True
-    if args.window_list_smoke or args.reorder_smoke or args.tooltip_smoke or args.launch_smoke: args.restart = True
+    if args.window_list_smoke or args.reorder_smoke or args.tooltip_smoke or args.launch_smoke or args.overflow_smoke: args.restart = True
     if args.platform_tool_missing: args.restart = True
     if args.scheduler_smoke: args.wallpaper_smoke = True
     if args.environment:
@@ -109,7 +110,7 @@ if __name__ == '__main__':
             raise RuntimeError('Cannot verify GNOME lock state; no native input will be sent')
         if re.search(r'\btrue\b', result.stdout):
             raise RuntimeError('GNOME desktop is locked; unlock it before native UI tests. No input was sent.')
-    input_tests = any((args.action, args.screenshot, args.basic, args.popup_smoke, args.autohide_smoke, args.shortcut_smoke, args.lifecycle_smoke, args.registration_smoke, args.window_list_smoke, args.reorder_smoke, args.tooltip_smoke, args.launch_smoke, args.launcher_smoke, args.studio_smoke, args.config_smoke,
+    input_tests = any((args.action, args.screenshot, args.basic, args.popup_smoke, args.autohide_smoke, args.shortcut_smoke, args.lifecycle_smoke, args.registration_smoke, args.window_list_smoke, args.reorder_smoke, args.tooltip_smoke, args.launch_smoke, args.overflow_smoke, args.launcher_smoke, args.studio_smoke, args.config_smoke,
                        args.wallpaper_smoke, args.scheduler_smoke, args.library_stress, args.audio_smoke, args.media_smoke,
                        args.audio_exit, args.audio_unavailable, args.system_smoke, args.system_unavailable, args.system_open_smoke))
     if input_tests: require_unlocked_desktop()
@@ -231,6 +232,14 @@ if __name__ == '__main__':
                 f'[Desktop Entry]\nType=Application\nName=DeskMorph Launch {mode}\n'
                 f'Exec=/usr/bin/python3 "{launch_fixture_script}" {mode}\n'
                 f'Icon=utilities-terminal\nStartupWMClass=DeskMorphLaunch{mode.title()}\nCategories=Utility;\n' + actions)
+    if args.overflow_smoke:
+        desktop_dir = Path('/tmp/deskmorph-desktop-test/data/applications')
+        desktop_dir.mkdir(parents=True, exist_ok=True)
+        for index in range(1, 41):
+            (desktop_dir / f'deskmorph-overflow-{index:02}.desktop').write_text(
+                f'[Desktop Entry]\nType=Application\nName=DeskMorph Overflow {index:02}\n'
+                f'Exec=/usr/bin/touch /tmp/deskmorph-desktop-test/overflow-launched-{index:02}\n'
+                f'Icon=utilities-terminal\nStartupWMClass=DeskMorphOverflow{index:02}\nCategories=Utility;\n')
     if args.restart:
         try:
             previous = test_app()
@@ -637,6 +646,111 @@ if __name__ == '__main__':
         click('Taskbar Studio')
         if json.loads(baseline_path.read_text())['config']['autoHide']:
             click('Tự động ẩn Dock Chạm cạnh màn hình để hiện lại; Dock giữ hiện khi bạn thao tác popup.')
+    if args.overflow_smoke:
+        gi.require_version('Gdk', '3.0'); gi.require_version('GdkX11', '3.0')
+        from gi.repository import Gdk, GdkX11
+        overflow_path = Path(TEST_CONFIG) / 'com.ducthanhdev.deskmorph/config.json'
+        overflow_config = lambda: json.loads(overflow_path.read_text())['config']
+        overflow_original = overflow_config()
+        overflow_root = Path('/tmp/deskmorph-desktop-test')
+        markers = [overflow_root / f'overflow-launched-{index:02}' for index in range(1, 41)]
+        assert not any(marker.exists() for marker in markers), 'Do not overwrite existing overflow markers'
+        assert not any(pin.get('desktopId', '').startswith('deskmorph-overflow-') for pin in overflow_original['pinnedApps'])
+        overflow_passed = []
+        def wait_overflow(predicate, message):
+            deadline = time.monotonic() + 10
+            while time.monotonic() < deadline:
+                if predicate(): return
+                time.sleep(0.1)
+            raise AssertionError(message)
+        def overflow_button(name): return next((n for n, _ in descendants(app) if n.get_role_name() == 'button' and n.get_name() == name), None)
+        def fixture_pin(index): return overflow_button(f'DeskMorph Overflow {index:02} • 0 cửa sổ')
+        def overflow_rect(node): return node.get_component_iface().get_extents(Atspi.CoordType.SCREEN)
+        def dock_frame(): return next(n for n, _ in descendants(app) if n.get_role_name() == 'frame' and n.get_name() == 'DeskMorph Taskbar')
+        def import_overflow(config, label):
+            file = overflow_root / ('overflow-' + label + '.json')
+            file.write_text(json.dumps({'schemaVersion': 1, 'config': config}))
+            focus_studio(); click('Hệ thống'); click('Nhập cấu hình'); focus_studio('Select File')
+            native_keys(chord=[0xffe3, ord('l')]); native_keys(value=str(file)); native_keys(chord=[0xff0d])
+            time.sleep(0.8); click('Áp dụng cấu hình đã nhập')
+            wait_overflow(lambda: overflow_config() == config, 'Reviewed overflow import did not persist')
+        def scroll_overflow(direction):
+            name = 'Cuộn ứng dụng sang phải' if direction == 1 else 'Cuộn ứng dụng sang trái'
+            for _ in range(10):
+                node = overflow_button(name)
+                assert node is not None, 'Overflow arrow disappeared'
+                if not node.get_state_set().contains(Atspi.StateType.ENABLED): return
+                focus_studio(); native_click_node(node)
+                time.sleep(0.4)
+            raise AssertionError('Overflow arrow did not reach content boundary')
+        fixture_pins = [dict(id=f'deskmorph-overflow-{index:02}.desktop', desktopId=f'deskmorph-overflow-{index:02}.desktop', name=f'DeskMorph Overflow {index:02}', command=f'desktop:deskmorph-overflow-{index:02}.desktop', matchClasses=[f'DeskMorphOverflow{index:02}'], iconType='custom', enabled=True) for index in range(1, 41)]
+        try:
+            small = dict(overflow_original, enabled=True, autoHide=False, showApps=True, position='top', height=52, iconSize=36, iconSpacing=8, showStats=True, showClock=True, showAudio=True, pinnedApps=overflow_original['pinnedApps'] + fixture_pins[:2])
+            import_overflow(small, 'small')
+            wait_overflow(lambda: fixture_pin(2) is not None, 'Small Dock did not render fixtures')
+            time.sleep(1)
+            small_width = overflow_rect(dock_frame()).width
+            assert overflow_button('Cuộn ứng dụng sang phải') is None, 'Small Dock unexpectedly requires overflow on reference monitor'
+            large = dict(small, pinnedApps=overflow_original['pinnedApps'] + fixture_pins)
+            import_overflow(large, 'large')
+            wait_overflow(lambda: overflow_button('Cuộn ứng dụng sang phải') is not None, 'Overflow has no mouse navigation affordance')
+            dock = overflow_rect(dock_frame())
+            monitor = Gdk.Display.get_default().get_monitor_at_point(dock.x + dock.width // 2, dock.y + dock.height // 2)
+            assert monitor.get_scale_factor() == 1, 'Native overflow pixel test expects reference scale 1'
+            area = monitor.get_workarea()
+            assert dock.width > small_width and dock.width <= area.width - 32
+            assert area.x <= dock.x and dock.x + dock.width <= area.x + area.width and area.y <= dock.y and dock.y + dock.height <= area.y + area.height
+            scroll_overflow(1)
+            last = overflow_rect(fixture_pin(40)); arrow = overflow_rect(overflow_button('Cuộn ứng dụng sang phải'))
+            assert dock.x < last.x and last.x + last.width <= arrow.x and dock.y <= last.y and last.y + last.height <= dock.y + dock.height, 'Final pin is outside its scroll viewport'
+            for name in ('Âm thanh', 'Mở lịch'):
+                widget = overflow_rect(overflow_button(name))
+                assert widget.x >= last.x + last.width and widget.x + widget.width <= dock.x + dock.width, 'Overflow pin overlaps a system widget'
+            focus_studio(); native_click_node(fixture_pin(40))
+            wait_overflow(markers[-1].exists, 'Mouse scroll did not expose the exact final application')
+            assert [i for i, marker in enumerate(markers, 1) if marker.exists()] == [40], 'Overflow click launched the wrong application'
+            overflow_passed.append('40 extra pins grow native Dock up to work area; mouse arrows expose and launch exact final pin without covering widgets')
+            scroll_overflow(-1)
+            focus_studio('DeskMorph Taskbar')
+            assert fixture_pin(1).get_component_iface().grab_focus()
+            time.sleep(0.2)
+            for index in range(2, 41):
+                native_keys(chord=[0xff09])
+                assert fixture_pin(index).get_state_set().contains(Atspi.StateType.FOCUSED), f'Tab skipped overflow fixture {index}'
+            time.sleep(0.7)
+            last = overflow_rect(fixture_pin(40)); arrow = overflow_rect(overflow_button('Cuộn ứng dụng sang phải'))
+            assert last.x + last.width <= arrow.x and last.x > dock.x, 'Keyboard focus did not scroll final pin into view'
+            markers[-1].unlink()
+            native_keys(chord=[0xff0d])
+            wait_overflow(markers[-1].exists, 'Enter did not launch the focused final application')
+            overflow_passed.append('Tab traverses all 40 fixture pins and scrolls final focused application into view; Enter remains usable')
+            clients = re.findall(r'0x[0-9a-fA-F]+', subprocess.check_output(['xprop', '-root', '_NET_CLIENT_LIST'], text=True))
+            xid = next(xid for xid in clients if re.search(r'_NET_WM_PID.*= ' + str(app.get_process_id()) + r'\b', subprocess.check_output(['xprop', '-id', xid, '_NET_WM_PID', '_NET_WM_NAME'], text=True)) and 'DeskMorph Taskbar' in subprocess.check_output(['xprop', '-id', xid, '_NET_WM_NAME'], text=True))
+            native = GdkX11.X11Window.foreign_new_for_display(Gdk.Display.get_default(), int(xid, 16))
+            picture = Gdk.pixbuf_get_from_window(native, 0, 0, dock.width, dock.height)
+            assert picture; picture.savev(str(overflow_root / 'overflow-dock.png'), 'png', [], [])
+            import_overflow(dict(large, position='bottom'), 'bottom')
+            wait_overflow(lambda: overflow_rect(dock_frame()).y > area.y + area.height // 2, 'Overflow Dock did not move to bottom')
+            bottom = overflow_rect(dock_frame())
+            assert bottom.width == dock.width and bottom.x >= area.x and bottom.x + bottom.width <= area.x + area.width and bottom.y + bottom.height <= area.y + area.height
+            scroll_overflow(-1); scroll_overflow(1)
+            last = overflow_rect(fixture_pin(40)); arrow = overflow_rect(overflow_button('Cuộn ứng dụng sang phải'))
+            assert bottom.x < last.x and last.x + last.width <= arrow.x and bottom.y <= last.y and last.y + last.height <= bottom.y + bottom.height
+            markers[-1].unlink(); focus_studio(); native_click_node(fixture_pin(40))
+            wait_overflow(markers[-1].exists, 'Bottom overflow click did not launch exact final pin')
+            picture = Gdk.pixbuf_get_from_window(native, 0, 0, bottom.width, bottom.height)
+            assert picture; picture.savev(str(overflow_root / 'overflow-bottom.png'), 'png', [], [])
+            overflow_passed.append('bottom placement keeps the same work-area width limit and mouse access to final pin')
+            import_overflow(small, 'shrink')
+            wait_overflow(lambda: overflow_button('Cuộn ứng dụng sang phải') is None and overflow_rect(dock_frame()).width < dock.width, 'Removing excess pins did not shrink Dock and remove arrows')
+            overflow_passed.append('removing excess pins shrinks Dock and hides both overflow controls')
+        finally:
+            import_overflow(overflow_original, 'restore')
+            assert overflow_config() == overflow_original, 'Overflow test did not restore original configuration'
+            for marker in markers: marker.unlink(missing_ok=True)
+        report = {'passed': overflow_passed, 'smallWidth': small_width, 'overflowWidth': dock.width, 'workAreaWidth': area.width, 'pid': app.get_process_id(), 'preferencesRestored': True}
+        (overflow_root / 'overflow-result.json').write_text(json.dumps(report, ensure_ascii=False, indent=2))
+        print(json.dumps(report, ensure_ascii=False))
     if args.launch_smoke:
         launch_path = Path(TEST_CONFIG) / 'com.ducthanhdev.deskmorph/config.json'
         launch_config = lambda: json.loads(launch_path.read_text())['config']

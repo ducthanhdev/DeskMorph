@@ -1673,6 +1673,9 @@ button:focus-visible { outline: 2px solid #48b9c7; outline-offset: -2px; }
 .app-launcher p { padding: 10px; font-size: 12px; }
 .app-launcher p[role="alert"] { color: #fda4af; }
 
+.dock-apps-viewport { display: flex; align-items: center; flex: 1; min-width: 0; height: 100%; }
+.dock-scroll-btn { flex-shrink: 0; width: 24px; height: 28px; padding: 0; border: 1px solid #52647e; border-radius: 6px; background: #172235; color: #e2e8f0; font-size: 22px; line-height: 1; cursor: pointer; }
+.dock-scroll-btn:disabled { opacity: .35; cursor: default; }
 .dock-apps { min-width: 0; overflow-x: auto; overflow-y: hidden; justify-content: flex-start; align-items: center; padding: 4px; }
 .dock-pinned-group, .dock-unpinned-group { gap: var(--icon-spacing, 8px); flex-shrink: 0; }
 .running-app-icon-btn { transform-origin: center; }
