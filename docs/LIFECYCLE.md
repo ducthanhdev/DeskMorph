@@ -18,4 +18,24 @@ Harness chỉ khởi động profile test với `DESKMORPH_TRACE_COMMANDS=1`. Tr
 
 Bộ đếm bao phủ get_open_windows, get_system_stats, lần refresh sysinfo thật, get_system_status, dò con trỏ, get_current_wallpaper và trạng thái scheduler. Đây là các nguồn polling UI cần kiểm tra, không phải tổng mọi IPC, event subscription hoặc thread trong ứng dụng. Kết quả nằm ở `/tmp/deskmorph-desktop-test/polling-result.json`.
 
-Frontend tests kiểm tra request pending khi visibility đổi, StrictMode replacement, cleanup/ẩn, retry sau lỗi, listener đăng ký muộn, query visibility cũ và query/exception sau cleanup. Kiểm thử native bổ sung việc tắt widget, tự ẩn/hiện lại bằng cạnh, chia sẻ mẫu CPU/RAM, bốn lần mount/hide popup và Studio ẩn/hiện. Các bài audio/media/popup/auto-hide kiểm tra đường tương tác vẫn hoạt động. G1.7 còn được rà soát riêng cho callback thao tác, launcher và rAF; G7.7/G9.8 vẫn cần kiểm thử service restart và vòng đời dài.
+Frontend tests kiểm tra request pending khi visibility đổi, StrictMode replacement, cleanup/ẩn, retry sau lỗi, listener đăng ký muộn, query visibility cũ và query/exception sau cleanup. Kiểm thử native bổ sung việc tắt widget, tự ẩn/hiện lại bằng cạnh, chia sẻ mẫu CPU/RAM, bốn lần mount/hide popup và Studio ẩn/hiện. Các bài audio/media/popup/auto-hide kiểm tra đường tương tác vẫn hoạt động. Callback thao tác, launcher và rAF có thêm lifetime riêng như phần audit dưới đây; G7.7/G9.8 vẫn cần kiểm thử service restart và vòng đời dài.
+
+
+## Audit callback và cleanup G1.7
+
+| Nguồn công việc | Cơ chế cleanup / bỏ kết quả cũ |
+| --- | --- |
+| config/store | Một connection cho các subscriber của mỗi webview; disposed guard, unlisten nếu đăng ký xong muộn, kiểm tra revision. Mutation cấu hình đã gửi vẫn hoàn tất và phát snapshot authoritative dù view nguồn đã đóng. |
+| useInstalledApps / usePlatform | disposed guard cho kết quả/query/event; loading + pending gom sự kiện; unlisten muộn được dọn. Cache/monitor native được quản lý riêng. |
+| polling / useClock / useSystemStatus / useLiveWindows | Một timer/request slot qua các lần thay effect, AbortSignal cho consumer, bỏ listener visibilitychange; native IPC đang chạy được đợi thay vì giả hủy. |
+| usePopupActive / CalendarFlyout | Subscribe trước query; version event bảo vệ query cũ, disposed guard và unlisten; clock calendar dừng khi popup ẩn. |
+| DockContextMenuStandalone / DockTooltip | Listener data được gỡ; nếu đăng ký xong sau cleanup thì unlisten ngay. Key listener DOM được remove khi effect dừng. |
+| AudioPopup / MediaControls | Listener arrays gỡ khi unmount; visible/generation guard; snapshot đầu sau subscribe; debounce/queued volume chưa gửi bị xóa khi ẩn; refresh không gửi thêm IPC từ consumer đã ẩn. |
+| WallpaperSettings / SystemSettings | Scan cleanup gửi cancel bằng requestId và bỏ callback disposed; thumbnail bỏ kết quả cũ; review import dùng request counter tăng khi cleanup; query autostart có disposed guard. Lệnh apply/config do người dùng gửi được phép hoàn tất ở backend. |
+| Taskbar / useDockTooltip | Hide/preview/launch/width/tooltip timers được clear; tooltip revision loại update cũ. MatchMedia, key/blur/pointer/scroll listener và ResizeObservers được remove/disconnect; magnification rAF bị cancel. |
+| Launcher / WindowList / ContextActions / callback Taskbar | AsyncLifetime cấp AbortSignal theo lần setup effect; cleanup/StrictMode replay abort token cũ. Callback không đóng popup hoặc cập nhật lỗi/focus sau khi token đã bị hủy. Hide truyền opening generation, không đóng popup thay thế. |
+| Focus sau move pin | rAF được AsyncLifetime sở hữu và cancel khi cleanup; kết quả mutate muộn không xếp rAF mới từ token cũ. Trước focus kiểm tra document visible và Dock không auto-hidden. |
+
+`AsyncLifetime` hủy việc quan sát kết quả và các frame chưa chạy; không hủy launch/activate/close/config đã được native chấp nhận. Launcher kiểm tra generation active trước khi nhận thao tác, truyền generation vào hide, bắt lỗi nút Studio; không mở Studio từ completion đã bị hủy hoặc hide của generation cũ. Context menu giữ mở nếu mutation trả false.
+
+`asyncLifetime.test.mjs` dùng Promise bị giữ lại để thử completion sau StrictMode cleanup, popup thế hệ mới, giá trị false, consumer đã disposed và rAF đang đợi. Độ trễ được tạo ở unit test, không tuyên bố đã inject delay vào GIO/IPC native. Native launcher/multi-instance/reorder/restart/window-list và chuỗi popup kiểm tra tích hợp trên GNOME/X11; vòng đời nhiều giờ, suspend và restart service vẫn thuộc G9.8/G7.7.

@@ -76,7 +76,7 @@ export function AudioPopup({ generation }: { generation?: number }) {
     }
   };
   const refresh = async () => {
-    if (changing.current) return;
+    if (!active.current || changing.current) return;
     try { const result = await invoke<Snapshot>("get_audio_snapshot"); if (active.current && !pending.current && !changing.current) receive(result); }
     catch (e) { if (active.current) failure(e); }
   };

@@ -11,10 +11,12 @@ import { AudioPopup } from "./components/AudioPopup";
 import { AppLauncher } from "./components/AppLauncher";
 import { WindowList } from "./components/WindowList";
 import { AppIcon } from "./components/AppIcon";
+import { useAsyncLifetime } from "./hooks/useAsyncLifetime";
 import { useLiveWindows } from "./hooks/useLiveWindows";
 import type { DockContextMenuState, PinnedApp } from "./types";
 
 function ContextActions({ menu }: { menu: DockContextMenuState }) {
+  const lifetime = useAsyncLifetime();
   const { platform } = usePlatform();
   const { t } = useI18n();
   const { config, mutatePin, error: configError } = useConfig();
@@ -30,10 +32,11 @@ function ContextActions({ menu }: { menu: DockContextMenuState }) {
   useEffect(() => { root.current?.querySelector<HTMLButtonElement>("button:not(:disabled)")?.focus(); }, []);
   const perform = async (task: () => Promise<unknown>, close = true) => {
     if (busy) return;
+    const signal = lifetime.capture();
     setBusy(true); setError(null);
-    try { await task(); if (close) await hide(); }
-    catch (e) { setError(errorMessage(e)); }
-    finally { setBusy(false); }
+    try { const result = await task(); if (close && result !== false && !signal.aborted) await hide(); }
+    catch (e) { if (!signal.aborted) setError(errorMessage(e)); }
+    finally { if (!signal.aborted) setBusy(false); }
   };
   const togglePin = async () => {
     const id = menu.appId || menu.desktopId;
@@ -43,7 +46,8 @@ function ContextActions({ menu }: { menu: DockContextMenuState }) {
       command: menu.desktopId ? `desktop:${menu.desktopId}` : menu.command || id,
       matchClasses: menu.matchClasses || [id], iconType: "custom", enabled: true,
     };
-    if (await mutatePin(menu.isPinned ? "remove" : "add", id, pin)) await hide();
+    const signal = lifetime.capture();
+    if (await mutatePin(menu.isPinned ? "remove" : "add", id, pin) && !signal.aborted) await hide();
   };
   return <section ref={root} className="context-actions" aria-label={`${t("details")} ${menu.appName}`} onContextMenu={(e) => e.preventDefault()}
     onKeyDown={(e) => {
@@ -95,7 +99,7 @@ export const DockContextMenuStandalone = () => {
   if (!menu) return null;
   if (menu.mode === "system") return <SystemPopup key={menu.popupGeneration} generation={menu.popupGeneration} />;
   if (menu.mode === "audio") return <AudioPopup key={menu.popupGeneration} generation={menu.popupGeneration} />;
-  if (menu.mode === "launcher") return <AppLauncher key={menu.popupGeneration} />;
+  if (menu.mode === "launcher") return <AppLauncher key={menu.popupGeneration} generation={menu.popupGeneration} />;
   if (menu.mode === "windows") return <WindowList key={menu.popupGeneration} menu={menu} />;
   return <ContextActions key={menu.popupGeneration} menu={menu} />;
 };

@@ -5,9 +5,11 @@ import type { DockContextMenuState } from "../types";
 import { useI18n } from "../i18n/useI18n";
 import { errorMessage } from "../config/store";
 import { usePlatform } from "../hooks/usePlatform";
+import { useAsyncLifetime } from "../hooks/useAsyncLifetime";
 import { useLiveWindows } from "../hooks/useLiveWindows";
 
 export function WindowList({ menu }: { menu: DockContextMenuState }) {
+  const lifetime = useAsyncLifetime();
   const { t, count } = useI18n();
   const { platform } = usePlatform();
   const { windows, refreshError, active } = useLiveWindows(menu);
@@ -40,17 +42,19 @@ export function WindowList({ menu }: { menu: DockContextMenuState }) {
 
   const activate = async (id: string) => {
     if (!platform?.windows.activate) return;
+    const signal = lifetime.capture();
     try {
       await invoke("activate_window", { windowId: id });
-      await hide();
-    } catch (err) { setError(`${t("activateWindowError")}: ${errorMessage(err)}`); }
+      if (!signal.aborted) await hide();
+    } catch (err) { if (!signal.aborted) setError(`${t("activateWindowError")}: ${errorMessage(err)}`); }
   };
   const close = async (id: string) => {
     if (!platform?.windows.close) return;
+    const signal = lifetime.capture();
     setClosing(id); setError("");
     try { await invoke("close_window", { xid: id }); }
-    catch (err) { setError(`${t("closeWindowError")}: ${errorMessage(err)}`); }
-    finally { setClosing(null); }
+    catch (err) { if (!signal.aborted) setError(`${t("closeWindowError")}: ${errorMessage(err)}`); }
+    finally { if (!signal.aborted) setClosing(null); }
   };
   return <section className="window-list" aria-label={`${t("windows")} ${menu.appName}`}
     onKeyDown={(e) => {

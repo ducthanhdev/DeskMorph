@@ -28,6 +28,7 @@ export function MediaControls({ generation }: { generation?: number }) {
     return () => { disposed = true; };
   }, [player?.name, player?.owner, player?.artUrl]);
   const refresh = async (signal?: AbortSignal) => {
+    if (!active.current || signal?.aborted) return;
     try { const values = await invoke<Player[]>("get_media_players"); if (active.current && !signal?.aborted) { setPlayers(values); setError(null); } }
     catch (e) { if (active.current && !signal?.aborted) setError(String(e)); }
   };

@@ -10,6 +10,7 @@ import { AppIcon } from "./components/AppIcon";
 import { useDockTooltip } from "./hooks/useDockTooltip";
 import { usePlatform } from "./hooks/usePlatform";
 import { usePolling } from "./hooks/usePolling";
+import { useAsyncLifetime } from "./hooks/useAsyncLifetime";
 import { useClock } from "./hooks/useClock";
 import { groupWindows, matchesWindowClass } from "./windowGroups";
 import { listen } from "@tauri-apps/api/event";
@@ -34,6 +35,7 @@ import {
 } from "lucide-react";
 
 export const Taskbar: React.FC = () => {
+  const lifetime = useAsyncLifetime();
   const { t, locale, count } = useI18n();
   const { apps: installedApps } = useInstalledApps();
   const { platform } = usePlatform();
@@ -242,6 +244,7 @@ export const Taskbar: React.FC = () => {
   ) => {
     e.preventDefault();
     e.stopPropagation();
+    const signal = lifetime.capture();
 
     // Freeze magnification immediately when opening context menu
     setContextMenuVisible(true);
@@ -262,7 +265,7 @@ export const Taskbar: React.FC = () => {
         },
       });
     } catch (err) {
-      setContextMenuVisible(false);
+      if (!signal.aborted) setContextMenuVisible(false);
       console.error("Failed to show dock context menu", err);
     }
   };
@@ -350,21 +353,24 @@ export const Taskbar: React.FC = () => {
   const handleShuffle = async () => {
     if (shuffleBusy.current) return;
     shuffleBusy.current = true;
-    try { await invoke("shuffle_wallpaper"); setOperationError(null); }
-    catch (error) { setOperationError(String(error)); }
+    const signal = lifetime.capture();
+    try { await invoke("shuffle_wallpaper"); if (!signal.aborted) setOperationError(null); }
+    catch (error) { if (!signal.aborted) setOperationError(String(error)); }
     finally { shuffleBusy.current = false; }
   };
 
   const handleActivateWindow = async (id: string) => {
+    const signal = lifetime.capture();
     try {
       await invoke("activate_window", { windowId: id });
     } catch (err) {
-      setOperationError(String(err));
+      if (!signal.aborted) setOperationError(String(err));
       console.error("Failed to activate window", err);
     }
   };
 
   const handleLaunchApp = async (appId: string, cmd: string) => {
+    const signal = lifetime.capture();
     // 1. Add appId to launchingAppIds to start bouncing
     setLaunchingAppIds((prev) => new Set(prev).add(appId));
 
@@ -386,6 +392,7 @@ export const Taskbar: React.FC = () => {
     try {
       await invoke("launch_app", { command: cmd });
     } catch (err) {
+      if (signal.aborted) return;
       setOperationError(String(err));
       console.error("Failed to launch app", err);
       // Remove bouncing immediately on error
@@ -576,8 +583,11 @@ export const Taskbar: React.FC = () => {
   const movePin = async (id: string, target: number) => {
     if (movingPin.current || pinnedList.findIndex((pin) => pin.id === id) === target) return;
     movingPin.current = true;
+    const signal = lifetime.capture();
     try {
-      if (await mutatePin("move", id, undefined, target)) requestAnimationFrame(() => iconRefs.current.get(id)?.focus());
+      if (await mutatePin("move", id, undefined, target)) lifetime.frame(signal, () => {
+        if (!document.hidden && !dockRef.current?.classList.contains("dock-autohidden")) iconRefs.current.get(id)?.focus();
+      });
     } finally { movingPin.current = false; }
   };
 
@@ -597,6 +607,7 @@ export const Taskbar: React.FC = () => {
   };
 
   const selectWindows = async (e: React.MouseEvent, windows: OpenWindow[], appName: string, appId?: string) => {
+    const signal = lifetime.capture();
     if (windows.length === 1) {
       await handleActivateWindow(windows[0].id);
       return;
@@ -611,7 +622,7 @@ export const Taskbar: React.FC = () => {
         menuData: { mode: "windows", appName, windows, appId, isPinned: Boolean(appId) },
       });
     } catch (err) {
-      setContextMenuVisible(false);
+      if (!signal.aborted) setContextMenuVisible(false);
       console.error("Failed to show window list", err);
     }
   };
@@ -962,8 +973,9 @@ export const Taskbar: React.FC = () => {
           )}
 
           {config.showAudio && <button className="dock-action-btn" aria-label={t("audio")} data-dock-tooltip={t("audio")} onClick={(e) => {
+            const signal = lifetime.capture();
             const rect = e.currentTarget.getBoundingClientRect();
-            void invoke("show_dock_context_menu", { iconCenterX: Math.round(rect.left + rect.width / 2), menuData: { mode: "audio", appName: t("audio") } }).catch((error) => setOperationError(String(error)));
+            void invoke("show_dock_context_menu", { iconCenterX: Math.round(rect.left + rect.width / 2), menuData: { mode: "audio", appName: t("audio") } }).catch((error) => { if (!signal.aborted) setOperationError(String(error)); });
           }}><Volume2 size={16} /></button>}
 
           <SystemWidgets enabled={!isHidden} onError={setOperationError} />

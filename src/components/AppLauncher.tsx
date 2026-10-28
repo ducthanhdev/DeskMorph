@@ -6,9 +6,15 @@ import { useConfig, errorMessage } from "../config/store";
 import { installedForPin, pinFromApp, searchApps } from "../appSearch";
 import type { InstalledApp } from "../types";
 import { useI18n } from "../i18n/useI18n";
+import { useAsyncLifetime } from "../hooks/useAsyncLifetime";
+import { completePopupAction } from "../hooks/asyncLifetime";
+import { usePopupActive } from "../hooks/usePopupActive";
 import { AppIcon } from "./AppIcon";
 
-export function AppLauncher() {
+export function AppLauncher({ generation }: { generation?: number }) {
+  const lifetime = useAsyncLifetime();
+  const active = usePopupActive(generation);
+  const close = () => generation === undefined ? Promise.resolve(false) : invoke<boolean>("hide_dock_context_menu", { generation });
   const { t, count } = useI18n();
   const { apps, loading, error, refresh } = useInstalledApps();
   const { config, mutatePin, error: configError } = useConfig();
@@ -25,13 +31,13 @@ export function AppLauncher() {
   useEffect(() => { input.current?.focus(); }, []);
   useEffect(() => { if (results[current]) rows.current.get(results[current].id)?.scrollIntoView({ block: "nearest" }); }, [current, query, apps]);
   const launch = async (app?: InstalledApp) => {
-    if (!app || launchLock.current) return;
+    if (!app || launchLock.current || !active) return;
+    const signal = lifetime.capture();
     launchLock.current = true; setLaunching(app.id); setLaunchError(null);
     try {
-      await invoke("launch_installed_app", { id: app.id, action: null });
-      await invoke("hide_dock_context_menu");
-    } catch (e) { setLaunchError(errorMessage(e)); }
-    finally { launchLock.current = false; setLaunching(null); }
+      await completePopupAction(() => invoke("launch_installed_app", { id: app.id, action: null }), close, signal);
+    } catch (e) { if (!signal.aborted) setLaunchError(errorMessage(e)); }
+    finally { launchLock.current = false; if (!signal.aborted) setLaunching(null); }
   };
   return <section className="app-launcher" aria-label={t("searchApps")} onKeyDown={(e) => {
     if (e.key === "ArrowDown" || e.key === "ArrowUp") {
@@ -63,6 +69,11 @@ export function AppLauncher() {
       })}
     </div>
     <footer><span>{count("app", allMatches.length)}{allMatches.length > 60 ? ` • ${t("firstResults")}` : ""}</span>
-      <button onClick={async () => { await invoke("hide_dock_context_menu"); await invoke("show_studio"); }}><Settings size={14} /> Studio</button></footer>
+      <button onClick={async () => {
+        if (!active) return;
+        const signal = lifetime.capture();
+        try { if (await close() && !signal.aborted) await invoke("show_studio"); }
+        catch (e) { if (!signal.aborted) setLaunchError(errorMessage(e)); }
+      }}><Settings size={14} /> Studio</button></footer>
   </section>;
 }
