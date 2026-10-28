@@ -159,8 +159,12 @@ fn show_dock_context_menu(app: AppHandle, icon_center_x: i32, menu_data: serde_j
     popup::show(&app, "dock-context-menu", icon_center_x, width, height, Some(menu_data))
 }
 #[tauri::command]
-fn hide_dock_context_menu(app: AppHandle) -> Result<bool, String> {
-    popup::hide(&app, "dock-context-menu", None)
+fn hide_dock_context_menu(app: AppHandle, generation: Option<u64>) -> Result<bool, String> {
+    popup::hide(&app, "dock-context-menu", generation)
+}
+#[tauri::command]
+fn is_context_popup_active(app: AppHandle, generation: u64) -> bool {
+    popup::active_generation(&app, "dock-context-menu") == Some(generation)
 }
 #[tauri::command]
 fn toggle_calendar_flyout(app: AppHandle, anchor_x: i32, anchor_y: i32) -> Result<bool, String> {
@@ -365,6 +369,7 @@ fn run_app() -> Result<(), String> {
             tooltip::set_dock_tooltip,
             show_dock_context_menu,
             hide_dock_context_menu,
+            is_context_popup_active,
             toggle_calendar_flyout,
             hide_calendar_flyout,
             get_calendar_visibility

@@ -17,4 +17,6 @@
 
 - Thêm phím tắt launcher X11 tùy chỉnh, mặc định tắt; checked XCB grabs với trạng thái xung đột/thử lại, pause theo Dock, giải phóng khi thoát và focus bằng timestamp phím. Thêm libxcb1-dev và kiểm thử native đăng ký/xung đột cùng GUI xuyên ứng dụng. CI dùng Xvfb cho native grab test; chưa chạy workflow trên GitHub.
 
+- Đồng bộ trực tiếp danh sách cửa sổ và menu chuột phải khi title/active/thêm/bớt thay đổi; dừng poll khi popup ẩn và truyền generation cho callback đóng. Giữ lựa chọn theo XID, chuyển focus sang hàng kế bên khi cửa sổ mất, bổ sung native fixture cho bàn phím và pinned/unpinned 0/1/nhiều cửa sổ.
+
 Chưa phát hành: còn các cổng chất lượng G0–G9 trong kế hoạch, đặc biệt Wayland, mixed DPI/hotplug, sleep/resume, Wayland shortcuts portal, cài sạch và nâng cấp. Không coi mục Unreleased là tuyên bố mọi chức năng đã đạt chuẩn phát hành.

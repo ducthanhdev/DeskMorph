@@ -25,7 +25,7 @@ Hiện trạng từ source: React 19, TypeScript, Tauri 2, Rust; quản lý cử
 
 - [x] G0.1 Ghi nhận distro, desktop/version, X11/Wayland, kiến trúc CPU, màn hình và scale của máy kiểm thử; phân biệt môi trường thực tế với môi trường dự kiến hỗ trợ.
 - [x] G0.2 Chạy build frontend và cargo check; ghi cách khởi động Tauri, các công cụ như xprop/gsettings và phụ thuộc native cần có.
-- [ ] G0.3 Kiểm thử gom nhóm: 0/1/nhiều cửa sổ, pinned/unpinned, active, đổi tiêu đề, đóng từ bên ngoài, hộp thoại xác nhận đóng.
+- [x] G0.3 Kiểm thử gom nhóm: 0/1/nhiều cửa sổ, pinned/unpinned, active, đổi tiêu đề, đóng từ bên ngoài, hộp thoại xác nhận đóng.
 - [x] G0.4 Kiểm thử popup: Escape, bấm ngoài, chuyển focus, dock trên/dưới, bật/tắt tự ẩn, mở liên tiếp menu/lịch/danh sách.
 - [x] G0.5 Lập bảng khả năng ban đầu theo desktop; hiển thị thiếu hỗ trợ rõ ràng, không suy diễn XWayland là hỗ trợ cửa sổ Wayland native.
 - [ ] G0.6 Ghi số liệu nền: thời gian mở app, số lượt polling, CPU/RAM lúc rảnh; dùng để so sánh tối ưu sau này.
@@ -61,8 +61,8 @@ Phụ thuộc G1. Module dự kiến: platform/capabilities, window-manager/x11,
 - [x] G2.3 Kiểm tra xprop/X11 display và trạng thái exit; thông báo thiếu công cụ, không trả danh sách rỗng như thành công khi lệnh thất bại.
 - [x] G2.4 Popup coordinator quản lý duy nhất một popup mở; đóng popup cũ trước khi mở mới; xử lý mở nhanh, focus loss và thread theo dõi click cũ.
 - [x] G2.5 Hoàn thiện auto-hide: giữ hiện khi popup mở, timer ẩn được hủy đúng lúc, trigger cạnh màn hình đáng tin cậy, tắt Dock đóng popup liên quan.
-- [ ] G2.6 Danh sách cửa sổ cập nhật tiêu đề/active/thêm/bớt; giữ cửa sổ đang chờ xác nhận đóng; close không dùng force kill thay thế tự động.
-- [ ] G2.7 Điều hướng danh sách bằng mũi tên, Home/End, Enter, Escape; focus ban đầu và focus khi hàng biến mất hợp lý.
+- [x] G2.6 Danh sách cửa sổ cập nhật tiêu đề/active/thêm/bớt; giữ cửa sổ đang chờ xác nhận đóng; close không dùng force kill thay thế tự động.
+- [x] G2.7 Điều hướng danh sách bằng mũi tên, Home/End, Enter, Escape; focus ban đầu và focus khi hàng biến mất hợp lý.
 - [ ] G2.8 Đóng bằng Escape/bấm ngoài có hành vi nhất quán; trả focus về nguồn mở khi phù hợp, không giành focus sau khi người dùng đã chọn app khác.
 - [ ] G2.9 Chuẩn hóa tọa độ logical/physical, monitor origin và work area; tính vị trí từ kích thước Dock thực, clamp popup vào màn hình.
 - [ ] G2.10 Kiểm tra Dock trên/dưới, monitor bên trái có tọa độ âm, scale 100/125/150/200%, màn hình hỗn hợp DPI và đổi độ phân giải.
@@ -71,7 +71,7 @@ Phụ thuộc G1. Module dự kiến: platform/capabilities, window-manager/x11,
 
 Tiêu chí: không bị cắt popup, không đóng nhầm, không popup mồ côi; danh sách và Dock cùng phản ánh trạng thái. Test thuần cho geometry/grouping, kiểm thử desktop cho focus/outside-click/DPI và hotplug nếu có thiết bị.
 
-G0.5/G2.1/G2.3: [CAPABILITIES.md](CAPABILITIES.md) ghi ma trận ban đầu và bằng chứng. Capability cửa sổ đọc EWMH hiện tại, tách enumerate/activate/close, không suy từ DISPLAY/tool existence; action kiểm tra lại hỗ trợ. Fixture lỗi xprop và native startup PATH rỗng đã qua; hồi quy focus/close/force-close của artifact mới vẫn thuộc các mục chưa đánh dấu.
+G0.5/G2.1/G2.3: [CAPABILITIES.md](CAPABILITIES.md) ghi ma trận ban đầu và bằng chứng. Capability cửa sổ đọc EWMH hiện tại, tách enumerate/activate/close, không suy từ DISPLAY/tool existence; action kiểm tra lại hỗ trợ. Fixture lỗi xprop và native startup PATH rỗng đã qua; hồi quy native focus/close/force-close đã qua trên desktop tham chiếu; danh sách động và bàn phím có thêm bằng chứng G0.3/G2.6/G2.7/G4.5 trong PROGRESS.md. Các desktop/DPI/hotplug còn thiếu vẫn ở mục chưa đánh dấu.
 
 ## 6. G3 — Danh mục ứng dụng, tìm kiếm và icon
 
@@ -103,7 +103,7 @@ Phụ thuộc G2–G3. Đây là cổng bản xem trước dùng hằng ngày đ
 - [ ] G4.2 Cung cấp thao tác bàn phím/menu để đổi thứ tự, thay thế cho kéo thả.
 - [ ] G4.3 Tooltip thống nhất, có delay, không đè popup và không bị cắt ngoài cửa sổ native.
 - [ ] G4.4 Middle-click mở phiên mới khi app hỗ trợ; ứng dụng single-instance giữ hành vi riêng, không hứa luôn tạo cửa sổ mới.
-- [ ] G4.5 Menu chuột phải hiển thị cửa sổ cùng app, chọn active và đóng từng cửa sổ.
+- [x] G4.5 Menu chuột phải hiển thị cửa sổ cùng app, chọn active và đóng từng cửa sổ.
 - [ ] G4.6 Đọc và chạy Desktop Actions được khai báo thay vì tự đoán cờ new-window/incognito; ẩn hành động không có.
 - [ ] G4.7 Tách kích thước icon, chiều cao Dock và khoảng cách; giới hạn giá trị để không cắt animation hay indicator.
 - [ ] G4.8 Chiều rộng Dock theo nội dung nhưng không vượt work area; chọn overflow cuộn hoặc nút mở thêm và kiểm thử với nhiều app.

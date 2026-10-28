@@ -84,12 +84,15 @@ if __name__ == '__main__':
     parser.add_argument('--audio-smoke', action='store_true')
     parser.add_argument('--library-stress', action='store_true')
     parser.add_argument('--fixture', action='store_true')
+    parser.add_argument('--window-fixture', action='store_true')
+    parser.add_argument('--window-list-smoke', action='store_true')
     parser.add_argument('--environment', action='store_true')
     parser.add_argument('--platform-tool-missing', action='store_true', help='Read-only startup check with an empty PATH in the isolated app')
     args = parser.parse_args()
     if args.audio_tool_missing: args.audio_unavailable = True
     if args.force_close_smoke: args.launcher_smoke = True
     if args.popup_smoke: args.restart = True
+    if args.window_list_smoke: args.restart = True
     if args.platform_tool_missing: args.restart = True
     if args.scheduler_smoke: args.wallpaper_smoke = True
     if args.environment:
@@ -103,10 +106,59 @@ if __name__ == '__main__':
             raise RuntimeError('Cannot verify GNOME lock state; no native input will be sent')
         if re.search(r'\btrue\b', result.stdout):
             raise RuntimeError('GNOME desktop is locked; unlock it before native UI tests. No input was sent.')
-    input_tests = any((args.action, args.screenshot, args.basic, args.popup_smoke, args.autohide_smoke, args.shortcut_smoke, args.lifecycle_smoke, args.registration_smoke, args.launcher_smoke, args.studio_smoke, args.config_smoke,
+    input_tests = any((args.action, args.screenshot, args.basic, args.popup_smoke, args.autohide_smoke, args.shortcut_smoke, args.lifecycle_smoke, args.registration_smoke, args.window_list_smoke, args.launcher_smoke, args.studio_smoke, args.config_smoke,
                        args.wallpaper_smoke, args.scheduler_smoke, args.library_stress, args.audio_smoke, args.media_smoke,
                        args.audio_exit, args.audio_unavailable, args.system_smoke, args.system_unavailable, args.system_open_smoke))
     if input_tests: require_unlocked_desktop()
+    if args.window_fixture:
+        gi.require_version('Gtk', '3.0')
+        gi.require_version('GdkX11', '3.0')
+        from gi.repository import Gtk, GLib, GdkX11
+        import sys
+        fixture_windows = {}
+        def new_fixture_window(index):
+            assert 1 <= index <= 8 and index not in fixture_windows
+            window = Gtk.Window(title=f'DeskMorph Window Test {index}')
+            window.set_wmclass('deskmorph-window-fixture', 'DeskMorphWindowFixture')
+            window.set_default_size(320, 180)
+            window.set_focus_on_map(False)
+            window.add(Gtk.Label(label=f'Cửa sổ kiểm thử {index}'))
+            if index == 1:
+                def confirm(window, event):
+                    dialog = Gtk.MessageDialog(transient_for=window, modal=True, buttons=Gtk.ButtonsType.OK_CANCEL, text='Xác nhận đóng cửa sổ fixture')
+                    dialog.set_title('DeskMorph Window Confirm')
+                    dialog.connect('response', lambda d, response: (d.destroy(), window.destroy() if response == Gtk.ResponseType.OK else None))
+                    dialog.show_all()
+                    return True
+                window.connect('delete-event', confirm)
+            window.connect('destroy', lambda current: fixture_windows.pop(index, None))
+            fixture_windows[index] = window
+            window.show_all()
+        def fixture_reply():
+            print(json.dumps({str(index): {'xid': hex(GdkX11.X11Window.get_xid(window.get_window())), 'title': window.get_title()} for index, window in fixture_windows.items()}), flush=True)
+        for index in (1, 2, 3): new_fixture_window(index)
+        fixture_reply()
+        os.set_blocking(sys.stdin.fileno(), False)
+        fixture_buffer = bytearray()
+        def fixture_commands():
+            try: chunk = os.read(sys.stdin.fileno(), 4096)
+            except BlockingIOError: return True
+            if not chunk: Gtk.main_quit(); return False
+            fixture_buffer.extend(chunk)
+            assert len(fixture_buffer) <= 8192
+            while b'\n' in fixture_buffer:
+                line, _, remainder = fixture_buffer.partition(b'\n'); fixture_buffer[:] = remainder
+                request = json.loads(line)
+                index = request['index']
+                if request['action'] == 'add': new_fixture_window(index)
+                elif request['action'] == 'close': fixture_windows[index].destroy()
+                elif request['action'] == 'title': fixture_windows[index].set_title(request['title'])
+                else: raise AssertionError('Unknown fixture action')
+                fixture_reply()
+            return True
+        GLib.timeout_add(50, fixture_commands)
+        Gtk.main()
+        raise SystemExit(0)
     if args.fixture:
         gi.require_version('Gtk', '3.0')
         from gi.repository import Gtk
@@ -139,6 +191,13 @@ if __name__ == '__main__':
             '[Desktop Entry]\nType=Application\nName=DeskMorph Smoke Fixture\n'
             f'Exec=/usr/bin/python3 "{script}" --fixture\n'
             'Icon=utilities-terminal\nStartupWMClass=DeskMorphSmokeFixture\nCategories=Utility;\n')
+    if args.window_list_smoke:
+        desktop_dir = Path('/tmp/deskmorph-desktop-test/data/applications')
+        desktop_dir.mkdir(parents=True, exist_ok=True)
+        (desktop_dir / 'deskmorph-window-fixture.desktop').write_text(
+            '[Desktop Entry]\nType=Application\nName=DeskMorph Window Fixture\n'
+            f'Exec=/usr/bin/python3 "{Path(__file__).resolve()}" --window-fixture\n'
+            'Icon=utilities-terminal\nStartupWMClass=DeskMorphWindowFixture\nCategories=Utility;\n')
     if args.restart:
         try:
             previous = test_app()
@@ -517,6 +576,173 @@ if __name__ == '__main__':
         click('Taskbar Studio')
         if json.loads(baseline_path.read_text())['config']['autoHide']:
             click('Tự động ẩn Dock Chạm cạnh màn hình để hiện lại; Dock giữ hiện khi bạn thao tác popup.')
+    if args.window_list_smoke:
+        import select
+        fixture = None
+        window_passed = []
+        config_path = Path(TEST_CONFIG) / 'com.ducthanhdev.deskmorph/config.json'
+        window_config = lambda: json.loads(config_path.read_text())['config']
+        original_pins = window_config()['pinnedApps']
+        window_original_enabled = window_config()['enabled']
+        window_original_auto = window_config()['autoHide']
+        assert not any(pin.get('desktopId') == 'deskmorph-window-fixture.desktop' for pin in original_pins), 'Window fixture must start unpinned'
+        def wait_windows(predicate, message):
+            deadline = time.monotonic() + 10
+            while time.monotonic() < deadline:
+                if predicate(): return
+                time.sleep(0.1)
+            focused = [(n.get_role_name(), n.get_name()) for n, _ in descendants(app) if n.get_state_set().contains(Atspi.StateType.FOCUSED)]
+            rows = [n.get_name() for n, _ in descendants(app) if n.get_role_name() == 'button' and 'Window' in n.get_name()]
+            raise AssertionError(message + f'; focus={focused}; rows={rows}; native=' + subprocess.check_output(['xprop', '-root', '_NET_ACTIVE_WINDOW'], text=True))
+        def fixture_response():
+            assert select.select([fixture.stdout], [], [], 5)[0], 'Fixture did not acknowledge command'
+            line = fixture.stdout.readline()
+            assert line, 'Fixture exited without replying'
+            return json.loads(line)
+        def fixture_command(action, index, **kwargs):
+            fixture.stdin.write(json.dumps(dict(action=action, index=index, **kwargs)) + '\n'); fixture.stdin.flush()
+            return fixture_response()
+        def managed_fixture():
+            return set(re.findall(r'0x[0-9a-fA-F]+', subprocess.check_output(['xprop', '-root', '_NET_CLIENT_LIST'], text=True)))
+        def row_button(title):
+            return next((node for node, _ in descendants(app) if node.get_role_name() == 'button' and node.get_name().startswith(title)), None)
+        def row_focused(title):
+            node = row_button(title)
+            return bool(node and node.get_state_set().contains(Atspi.StateType.FOCUSED))
+        def popup_xid():
+            for xid in managed_fixture():
+                props = subprocess.run(['xprop', '-id', xid, '_NET_WM_PID', '_NET_WM_NAME'], capture_output=True, text=True).stdout
+                if 'DeskMorph Context Menu' in props and re.search(r'_NET_WM_PID.*= ' + str(app.get_process_id()) + r'\b', props): return xid
+            return None
+        def popup_visible(): return popup_xid() is not None
+        def group_button(count):
+            pinned = any(pin.get('desktopId') == 'deskmorph-window-fixture.desktop' for pin in window_config()['pinnedApps'])
+            name = 'DeskMorph Window Fixture' if pinned else 'DeskMorphWindowFixture'
+            return f'{name} • {count} cửa sổ'
+        def open_windows(count):
+            wait_windows(lambda: any(n.get_name() == group_button(count) for n, _ in descendants(app)), 'Dock did not reconcile fixture group count')
+            node = next(n for n, _ in descendants(app) if n.get_name() == group_button(count))
+            native_click_node(node)
+            wait_windows(lambda: popup_visible() and row_button('DeskMorph Window Test 1') is not None, 'Window list did not open')
+            wait_windows(lambda: popup_xid() is not None and popup_xid() in subprocess.check_output(['xprop', '-root', '_NET_ACTIVE_WINDOW'], text=True), 'Opened window list did not receive native focus')
+            wait_windows(lambda: any(n.get_role_name() == 'button' and n.get_name().startswith('DeskMorph Window') and n.get_state_set().contains(Atspi.StateType.FOCUSED) for n, _ in descendants(app)), 'Opened list did not focus a window row')
+        def fixture_app():
+            desktop = Atspi.get_desktop(0)
+            return next((desktop.get_child_at_index(i) for i in range(desktop.get_child_count()) if desktop.get_child_at_index(i).get_process_id() == fixture.pid), None)
+        try:
+            focus_studio(); click('Taskbar Studio')
+            if not window_original_enabled: click('Bật Dock')
+            if window_original_auto: click('Tự động ẩn Dock Chạm cạnh màn hình để hiện lại; Dock giữ hiện khi bạn thao tác popup.')
+            fixture_env = dict(os.environ, DESKMORPH_CONFIG_HOME=TEST_CONFIG)
+            fixture = subprocess.Popen(['/usr/bin/python3', str(Path(__file__).resolve()), '--window-fixture'], env=fixture_env,
+                                       stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, bufsize=1)
+            fixture_state = fixture_response()
+            assert fixture.poll() is None, 'Window fixture exited before environment verification'
+            assert b'DESKMORPH_CONFIG_HOME=' + TEST_CONFIG.encode() in Path(f'/proc/{fixture.pid}/environ').read_bytes().split(b'\0'), 'Ready window fixture did not retain its isolated profile'
+            owned_input_pids.add(fixture.pid)
+            assert len(fixture_state) == 3
+            wait_windows(lambda: all(v['xid'] in managed_fixture() for v in fixture_state.values()), 'Fixture windows were not managed')
+            focus_studio('DeskMorph Window Test 3', fixture.pid)
+            time.sleep(1.8)  # Dock snapshot includes the active fixture before opening the list.
+            open_windows(3)
+            wait_windows(lambda: row_focused('DeskMorph Window Test 3'), 'Initial keyboard focus did not select the active window')
+            for keysym, title in ((0xff50, 'DeskMorph Window Test 1'), (0xff57, 'DeskMorph Window Test 3'), (0xff52, 'DeskMorph Window Test 2'), (0xff54, 'DeskMorph Window Test 3')):
+                native_keys(chord=[keysym])
+                wait_windows(lambda: row_focused(title), f'Window list navigation failed for {hex(keysym)}')
+            native_keys(chord=[0xff52]); native_keys(chord=[0xff0d])
+            wait_windows(lambda: fixture_state['2']['xid'] in subprocess.check_output(['xprop', '-root', '_NET_ACTIVE_WINDOW'], text=True), 'Enter did not activate the exact selected XID')
+            wait_windows(lambda: not popup_visible(), 'Activation did not hide window list')
+            window_passed.append('unpinned three-window group; active initial focus, Home/End/arrows and Enter activate exact XID')
+            open_windows(3)
+            fixture_state = fixture_command('title', 2, title='DeskMorph Window Renamed 2')
+            wait_windows(lambda: row_button('DeskMorph Window Renamed 2') is not None and row_button('DeskMorph Window Test 2') is None, 'Renamed window did not update in open popup')
+            native_keys(chord=[0xff50]); native_keys(chord=[0xff54])
+            wait_windows(lambda: row_focused('DeskMorph Window Renamed 2'), 'Renamed row did not preserve keyboard identity')
+            fixture_state = fixture_command('close', 2)
+            wait_windows(lambda: row_button('DeskMorph Window Renamed 2') is None and row_focused('DeskMorph Window Test 3'), 'Removing selected middle row did not focus the next surviving row')
+            fixture_state = fixture_command('add', 4)
+            wait_windows(lambda: row_button('DeskMorph Window Test 4') is not None, 'New window did not appear in already open list')
+            native_keys(chord=[0xff57])
+            wait_windows(lambda: row_focused('DeskMorph Window Test 4'), 'End did not reach newly added row')
+            native_keys(chord=[0xff1b]); wait_windows(lambda: not popup_visible(), 'Escape did not dismiss window list')
+            window_passed.append('open list refreshes title, adds window and removes external close; nearest-row focus survives')
+            # Pin via the real context menu, then repeat native group operations.
+            focus_studio()
+            group_node = next(n for n, _ in descendants(app) if n.get_name() == group_button(3))
+            native_click_node(group_node, button=3)
+            click('Ghim')
+            wait_windows(lambda: any(pin.get('desktopId') == 'deskmorph-window-fixture.desktop' for pin in window_config()['pinnedApps']), 'Pinning fixture group failed')
+            open_windows(3)
+            click('Đóng DeskMorph Window Test 1')
+            wait_windows(lambda: fixture_app() is not None and any(n.get_name() == 'DeskMorph Window Confirm' for n, _ in descendants(fixture_app())), 'App close confirmation did not open')
+            assert fixture_state['1']['xid'] in managed_fixture(), 'Close request removed window before app confirmed'
+            candidate = fixture_app()
+            cancel = next(n for n, _ in descendants(candidate) if n.get_name() in ('Cancel', 'Hủy') and n.get_action_iface())
+            require_unlocked_desktop(); assert cancel.get_action_iface().do_action(0)
+            time.sleep(0.4)
+            assert fixture_state['1']['xid'] in managed_fixture(), 'Cancel did not preserve window'
+            focus_studio(); open_windows(3)
+            assert row_button('DeskMorph Window Test 1'), 'Cancelled-close window disappeared from list'
+            window_passed.append('pinned group remains present through app-owned close confirmation and cancel')
+            fixture_command('close', 3); fixture_command('close', 4)
+            wait_windows(lambda: row_button('DeskMorph Window Test 3') is None and row_button('DeskMorph Window Test 4') is None, 'List did not reconcile one remaining window')
+            native_keys(chord=[0xff1b]); wait_windows(lambda: not popup_visible(), 'Escape did not dismiss one-window list')
+            focus_studio()
+            node = next(n for n, _ in descendants(app) if n.get_name() == group_button(1))
+            native_click_node(node)
+            wait_windows(lambda: fixture_state['1']['xid'] in subprocess.check_output(['xprop', '-root', '_NET_ACTIVE_WINDOW'], text=True), 'Single-window pin did not activate its exact XID')
+            assert not popup_visible(), 'Single-window activation unexpectedly opened a list'
+            window_passed.append('one-window pin activates exact XID directly')
+            fixture_command('add', 5)
+            wait_windows(lambda: any(n.get_name() == group_button(2) for n, _ in descendants(app)), 'Second window did not update pinned group')
+            focus_studio()
+            node = next(n for n, _ in descendants(app) if n.get_name() == group_button(2))
+            native_click_node(node, button=3)
+            wait_windows(lambda: row_button('DeskMorph Window Test 5') is not None, 'Context menu did not list fixture windows')
+            context_state = fixture_command('title', 5, title='DeskMorph Context Renamed 5')
+            wait_windows(lambda: row_button('DeskMorph Context Renamed 5') is not None and row_button('DeskMorph Window Test 5') is None, 'Context menu did not refresh title')
+            fixture_command('add', 6)
+            wait_windows(lambda: row_button('DeskMorph Window Test 6') is not None, 'Context menu did not add a new window')
+            fixture_command('close', 6)
+            wait_windows(lambda: row_button('DeskMorph Window Test 6') is None, 'Context menu retained externally closed window')
+            window_passed.append('right-click menu refreshes renamed, added and externally closed windows while open')
+            click('DeskMorph Context Renamed 5')
+            wait_windows(lambda: context_state['5']['xid'] in subprocess.check_output(['xprop', '-root', '_NET_ACTIVE_WINDOW'], text=True), 'Context row did not activate exact selected XID')
+            wait_windows(lambda: not popup_visible(), 'Context activation did not dismiss popup')
+            focus_studio()
+            node = next(n for n, _ in descendants(app) if n.get_name() == group_button(2))
+            native_click_node(node, button=3)
+            click('Đóng DeskMorph Context Renamed 5')
+            wait_windows(lambda: context_state['5']['xid'] not in managed_fixture(), 'Context close did not remove exact target window')
+            assert fixture_state['1']['xid'] in managed_fixture(), 'Context close removed a different window'
+            window_passed.append('context rows activate exact selected XID and close only the selected window')
+            fixture_command('add', 7)
+            focus_studio(); open_windows(2)
+            fixture_command('close', 7)
+            wait_windows(lambda: row_button('DeskMorph Window Test 7') is None, 'Window list retained the last extra fixture')
+            fixture_command('close', 1)
+            wait_windows(lambda: not popup_visible(), 'Last external close did not dismiss empty list')
+            wait_windows(lambda: any(n.get_name() == group_button(0) for n, _ in descendants(app)), 'Pinned app did not remain with zero windows')
+            window_passed.append('external close updates 3 to 1 to 0; empty popup hides and pinned app remains')
+        finally:
+            if fixture:
+                owned_input_pids.discard(fixture.pid)
+                if fixture.poll() is None: fixture.terminate()
+                fixture.communicate(timeout=5)
+            focus_studio()
+            # Removing the test-only pin keeps every pre-existing pin and order.
+            if any(pin.get('desktopId') == 'deskmorph-window-fixture.desktop' for pin in window_config()['pinnedApps']):
+                wait_windows(lambda: any(n.get_name() == group_button(0) for n, _ in descendants(app)), 'Test-only pin did not reach zero windows for cleanup')
+                node = next(n for n, _ in descendants(app) if n.get_name() == group_button(0))
+                native_click_node(node, button=3); click('Bỏ ghim')
+            assert window_config()['pinnedApps'] == original_pins, 'Window test changed original pins'
+            wait_windows(lambda: not any(n.get_name() in ('DeskMorph Window Fixture • 0 cửa sổ', 'DeskMorphWindowFixture • 0 cửa sổ') for n, _ in descendants(app)), 'Unpinned group did not disappear at zero windows')
+            click('Taskbar Studio')
+            if window_config()['autoHide'] != window_original_auto: click('Tự động ẩn Dock Chạm cạnh màn hình để hiện lại; Dock giữ hiện khi bạn thao tác popup.')
+            if window_config()['enabled'] != window_original_enabled: click('Bật Dock')
+        report = {'passed': window_passed, 'pid': app.get_process_id(), 'fixturePid': fixture.pid, 'pinsRestored': True}
+        Path('/tmp/deskmorph-desktop-test/window-list-result.json').write_text(json.dumps(report, indent=2))
+        print(json.dumps(report))
     if args.registration_smoke:
         from gi.repository import Gio
         import shutil

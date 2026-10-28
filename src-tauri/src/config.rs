@@ -253,7 +253,7 @@ pub fn publish(app: &AppHandle, snapshot: &Snapshot, previous: Option<&Value>) -
     super::layout::configure(app, c).map_err(|e| ConfigError::new("layout_config", e))?;
     let apply = (|| -> Result<()> {
         if c["enabled"] == false && changed("enabled") {
-            super::hide_dock_context_menu(app.clone()).map_err(|e| ConfigError::new("popup_hide", e))?;
+            super::hide_dock_context_menu(app.clone(), None).map_err(|e| ConfigError::new("popup_hide", e))?;
             super::hide_calendar_flyout(app.clone()).map_err(|e| ConfigError::new("popup_hide", e))?;
         }
         let window = app.get_webview_window("taskbar").ok_or_else(|| ConfigError::new("window_missing", "Không tìm thấy Dock"))?;

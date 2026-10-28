@@ -11,6 +11,7 @@ import { AudioPopup } from "./components/AudioPopup";
 import { AppLauncher } from "./components/AppLauncher";
 import { WindowList } from "./components/WindowList";
 import { AppIcon } from "./components/AppIcon";
+import { useLiveWindows } from "./hooks/useLiveWindows";
 import type { DockContextMenuState, PinnedApp } from "./types";
 
 function ContextActions({ menu }: { menu: DockContextMenuState }) {
@@ -19,12 +20,13 @@ function ContextActions({ menu }: { menu: DockContextMenuState }) {
   const { config, mutatePin, error: configError } = useConfig();
   const { apps } = useInstalledApps();
   const installed = apps.find((app) => app.id === menu.desktopId);
+  const { windows, refreshError } = useLiveWindows(menu);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [confirmKill, setConfirmKill] = useState(false);
   const root = useRef<HTMLElement>(null);
   const pinIndex = config.pinnedApps?.findIndex((pin) => pin.id === menu.appId) ?? -1;
-  const hide = () => invoke("hide_dock_context_menu");
+  const hide = () => invoke("hide_dock_context_menu", { generation: menu.popupGeneration });
   useEffect(() => { root.current?.querySelector<HTMLButtonElement>("button:not(:disabled)")?.focus(); }, []);
   const perform = async (task: () => Promise<unknown>, close = true) => {
     if (busy) return;
@@ -53,7 +55,7 @@ function ContextActions({ menu }: { menu: DockContextMenuState }) {
       buttons[next]?.focus();
     }}>
     <header><AppIcon path={menu.iconPath} /><strong>{menu.appName}</strong></header>
-    {(error || configError) && <p role="alert">{error || configError}</p>}
+    {(error || configError || refreshError) && <p role="alert">{error || configError || `${t("refreshWindowsError")}: ${refreshError}`}</p>}
     {(menu.command || installed) && <button disabled={busy} onClick={() => void perform(() => installed ? invoke("launch_installed_app", { id: installed.id, action: null }) : invoke("spawn_app", { execCmd: menu.command }))}><Plus size={16} /> {t("newLaunch")}</button>}
     <button disabled={busy || (!menu.isPinned && !menu.desktopId)} onClick={() => void togglePin()}>{menu.isPinned ? <PinOff size={16} /> : <Pin size={16} />}{menu.isPinned ? t("unpin") : t("pin")}</button>
     {menu.isPinned && pinIndex >= 0 && <div className="context-reorder">
@@ -61,13 +63,13 @@ function ContextActions({ menu }: { menu: DockContextMenuState }) {
       <button disabled={busy || pinIndex === (config.pinnedApps?.length || 0) - 1} onClick={() => void perform(() => mutatePin("move", menu.appId!, undefined, pinIndex + 1))}>{t("moveRight")} <ArrowRight size={14} /></button>
     </div>}
     {installed?.actions.map((action) => <button key={action.id} disabled={busy} onClick={() => void perform(() => invoke("launch_installed_app", { id: installed.id, action: action.id }))}><Plus size={16} />{action.name}</button>)}
-    {Boolean(menu.windows?.length) && <div className="context-window-items" aria-label={t("windows")}>
-      {menu.windows!.map((window) => <div key={window.id} className={`context-window-row ${window.is_active ? "is-active" : ""}`}>
+    {Boolean(windows.length) && <div className="context-window-items" aria-label={t("windows")}>
+      {windows.map((window) => <div key={window.id} className={`context-window-row ${window.is_active ? "is-active" : ""}`}>
         <button disabled={busy || !platform?.windows.activate} title={platform?.windows.activate ? window.title : t("activateUnavailable")} onClick={() => void perform(() => invoke("activate_window", { windowId: window.id }))}>{window.title}</button>
         <button disabled={busy || !platform?.windows.close} title={platform?.windows.close ? t("close") : t("closeUnavailable")} aria-label={`${t("close")} ${window.title}`} onClick={() => void perform(() => invoke("close_window", { xid: window.id }))}><X size={14} /></button>
       </div>)}
     </div>}
-    {menu.windowId && <>
+    {menu.windowId && windows.some((window) => window.id === menu.windowId) && <>
       <button className="context-danger" title={platform?.forceQuit ? undefined : t("forceUnavailable")} disabled={busy || !platform?.forceQuit} onClick={() => setConfirmKill(true)}><Flame size={16} /> {t("forceQuit")}</button>
       {confirmKill && <div className="context-confirm" role="alert">
         <p>{t("forceWarning")}</p>
