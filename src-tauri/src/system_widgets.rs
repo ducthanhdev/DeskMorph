@@ -64,6 +64,7 @@ fn read() -> Status {
 }
 #[tauri::command]
 pub async fn get_system_status(app: AppHandle) -> Result<Status, String> {
+    let _trace = crate::diagnostics::command("get_system_status");
     let cache = app.state::<SystemStatusState>().0.clone();
     tauri::async_runtime::spawn_blocking(move || {
         let mut cache = cache.lock().map_err(|e| e.to_string())?;

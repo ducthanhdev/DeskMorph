@@ -60,7 +60,8 @@ export const Taskbar: React.FC = () => {
   const rafId = useRef<number | null>(null);
 
   const { config, ready, error: configError, mutatePin } = useConfig();
-  const now = useClock(ready && config.enabled && config.showClock);
+  const isHidden = Boolean(config.autoHide && !isHovered && !previewVisible && !contextMenuVisible && !popupVisible);
+  const now = useClock(ready && config.enabled && config.showClock && !isHidden);
   const outsideSince = useRef<number | null>(null);
   // Native resize can remove the edge trigger without a DOM mouseleave, or
   // synthesize an enter at stale coordinates. Reconcile with global X11
@@ -68,7 +69,11 @@ export const Taskbar: React.FC = () => {
   usePolling(async (signal) => {
     const inside = await invoke<boolean>("is_pointer_over_dock");
     if (signal.aborted) return;
-    if (inside) { outsideSince.current = null; setIsHovered(true); }
+    if (inside) {
+      outsideSince.current = null;
+      if (hideTimer.current) { clearTimeout(hideTimer.current); hideTimer.current = null; }
+      setIsHovered(true);
+    }
     else {
       outsideSince.current ??= performance.now();
       if (performance.now() - outsideSince.current >= 500) setIsHovered(false);
@@ -161,11 +166,11 @@ export const Taskbar: React.FC = () => {
       const wins = await invoke<OpenWindow[]>("get_open_windows");
       if (!signal.aborted) { setOpenWindows(wins); setOperationError(null); }
     } catch (e) { if (!signal.aborted) setOperationError(String(e)); }
-  }, 1500, ready && config.enabled && config.showApps && Boolean(platform?.windowManagement));
+  }, 1500, ready && config.enabled && !isHidden && config.showApps && Boolean(platform?.windowManagement));
   usePolling(async (signal) => {
     const res = await invoke<SystemStats>("get_system_stats");
     if (!signal.aborted) setStats(res);
-  }, 2000, ready && config.enabled && config.showStats);
+  }, 2000, ready && config.enabled && !isHidden && config.showStats);
 
 
   // Auto-cancel bouncing as soon as the app window appears in openWindows
@@ -206,7 +211,6 @@ export const Taskbar: React.FC = () => {
   }, []);
 
   const { height: currentHeight, iconSize: btnSize, maxScale, hitWidth, hitHeight } = dockMetrics(config);
-  const isHidden = Boolean(config.autoHide && !isHovered && !previewVisible && !contextMenuVisible && !popupVisible);
 
   // Sync window physical size when hidden state changes
   useEffect(() => {
@@ -317,6 +321,7 @@ export const Taskbar: React.FC = () => {
   };
 
   const handleMouseEnter = () => {
+    outsideSince.current = null;
     if (hideTimer.current) {
       clearTimeout(hideTimer.current);
       hideTimer.current = null;
@@ -333,7 +338,9 @@ export const Taskbar: React.FC = () => {
 
   const handleMouseLeave = () => {
     if (config.autoHide) {
+      if (hideTimer.current) clearTimeout(hideTimer.current);
       hideTimer.current = setTimeout(() => {
+        hideTimer.current = null;
         setIsHovered(false);
       }, 500);
     }
@@ -959,7 +966,7 @@ export const Taskbar: React.FC = () => {
             void invoke("show_dock_context_menu", { iconCenterX: Math.round(rect.left + rect.width / 2), menuData: { mode: "audio", appName: t("audio") } }).catch((error) => setOperationError(String(error)));
           }}><Volume2 size={16} /></button>}
 
-          <SystemWidgets onError={setOperationError} />
+          <SystemWidgets enabled={!isHidden} onError={setOperationError} />
 
           {/* Clock & Date */}
           {config.showClock && (

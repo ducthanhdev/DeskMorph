@@ -95,6 +95,7 @@ pub fn set_dock_content_width(app: AppHandle, width: u32) -> Result<bool, String
 }
 #[tauri::command]
 pub fn is_pointer_over_dock(app: AppHandle) -> Result<bool, String> {
+    let _trace = crate::diagnostics::command("is_pointer_over_dock");
     if std::env::var("XDG_SESSION_TYPE").as_deref() != Ok("x11") {
         return Err("Global pointer position requires X11".into());
     }

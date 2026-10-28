@@ -1,3 +1,4 @@
+mod diagnostics;
 mod shortcuts;
 mod system_widgets;
 mod media;
@@ -103,10 +104,12 @@ pub struct SystemSampler {
 
 #[tauri::command]
 fn get_system_stats(state: tauri::State<AppState>) -> Result<SystemStats, String> {
+    let _trace = diagnostics::command("get_system_stats");
     let mut sampler = state.sys.lock().map_err(|e| e.to_string())?;
     if let Some((at, stats)) = &sampler.last {
         if at.elapsed() < std::time::Duration::from_secs(2) { return Ok(stats.clone()); }
     }
+    let _sample_trace = diagnostics::command("sample_system_stats");
     let sys = &mut sampler.sys;
     sys.refresh_cpu_all();
     sys.refresh_memory();
@@ -137,7 +140,7 @@ fn get_system_stats(state: tauri::State<AppState>) -> Result<SystemStats, String
 }
 
 #[tauri::command]
-fn get_current_wallpaper() -> Result<String, String> { wallpaper::current_wallpaper() }
+fn get_current_wallpaper() -> Result<String, String> { let _trace = diagnostics::command("get_current_wallpaper"); wallpaper::current_wallpaper() }
 #[tauri::command]
 async fn set_wallpaper(app: AppHandle, path: String) -> Result<bool, String> {
     let library = app.state::<wallpaper::WallpaperState>().0.clone();
@@ -201,7 +204,7 @@ fn install_app_icon() -> Result<bool, String> {
 }
 
 #[tauri::command]
-fn get_open_windows() -> Result<Vec<OpenWindow>, String> { window_manager::backend()?.list() }
+fn get_open_windows() -> Result<Vec<OpenWindow>, String> { let _trace = diagnostics::command("get_open_windows"); window_manager::backend()?.list() }
 #[tauri::command]
 fn activate_window(window_id: String) -> Result<bool, String> { window_manager::backend()?.activate(window_id) }
 #[tauri::command]

@@ -1,0 +1,90 @@
+{
+  "pid": 692581,
+  "observations": [
+    {
+      "phase": "Dock visible, Studio apps tab",
+      "seconds": 4.7,
+      "counts": {
+        "get_system_stats": 3,
+        "sample_system_stats": 3,
+        "get_open_windows": 3
+      }
+    },
+    {
+      "phase": "App list widget disabled",
+      "seconds": 4.7,
+      "counts": {
+        "get_system_stats": 3,
+        "sample_system_stats": 3
+      }
+    },
+    {
+      "phase": "Dock auto-hidden, pointer trigger remains live",
+      "seconds": 4.7,
+      "counts": {
+        "is_pointer_over_dock": 18
+      }
+    },
+    {
+      "phase": "Edge reveal resumes one Dock poll loop",
+      "seconds": 4.7,
+      "counts": {
+        "get_open_windows": 3,
+        "is_pointer_over_dock": 18,
+        "get_system_stats": 2,
+        "sample_system_stats": 2
+      }
+    },
+    {
+      "phase": "System popup plus Dock",
+      "seconds": 4.7,
+      "counts": {
+        "get_open_windows": 3,
+        "get_system_stats": 5,
+        "sample_system_stats": 3,
+        "get_system_status": 1
+      }
+    },
+    {
+      "phase": "Four closed system popups leave no polling consumers",
+      "seconds": 4.7,
+      "counts": {
+        "get_open_windows": 3,
+        "get_system_stats": 2,
+        "sample_system_stats": 2
+      }
+    },
+    {
+      "phase": "Studio wallpaper visible",
+      "seconds": 4.7,
+      "counts": {
+        "get_open_windows": 3,
+        "get_wallpaper_schedule_status": 2,
+        "get_system_stats": 2,
+        "sample_system_stats": 2,
+        "get_current_wallpaper": 1
+      }
+    },
+    {
+      "phase": "Studio natively hidden, Dock remains visible",
+      "seconds": 4.7,
+      "counts": {
+        "get_open_windows": 3,
+        "get_system_stats": 2,
+        "sample_system_stats": 2
+      }
+    },
+    {
+      "phase": "Studio shown again retains one wallpaper poll loop",
+      "seconds": 4.7,
+      "counts": {
+        "get_open_windows": 3,
+        "get_wallpaper_schedule_status": 3,
+        "get_system_stats": 3,
+        "sample_system_stats": 3,
+        "get_current_wallpaper": 2
+      }
+    }
+  ],
+  "configRestored": true
+}

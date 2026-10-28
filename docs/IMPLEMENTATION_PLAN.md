@@ -43,7 +43,7 @@ Phụ thuộc G0. Module dự kiến: config/schema, config/store, hooks đồng
 - [x] G1.5 Đồng bộ Studio/Dock/popup khi ghim, bỏ ghim, đổi giao diện; cửa sổ mở sau nhận snapshot hiện tại và cập nhật không gây vòng lặp events.
 - [x] G1.6 Lưu an toàn bằng file tạm và thay thế; cấu hình lỗi được bảo toàn để khôi phục, không âm thầm xóa tùy chỉnh.
 - [ ] G1.7 Dọn timer/listener và async callbacks; xử lý React StrictMode, tránh listener đăng ký xong sau unmount.
-- [ ] G1.8 Chặn polling chồng nhau; chia sẻ snapshot phù hợp; dừng polling UI khi ẩn nhưng vẫn giữ cơ chế cần thiết cho auto-hide và popup.
+- [x] G1.8 Chặn polling chồng nhau; chia sẻ snapshot phù hợp; dừng polling UI khi ẩn nhưng vẫn giữ cơ chế cần thiết cho auto-hide và popup.
 - [ ] G1.9 Chuẩn hóa lỗi command: mã, thông điệp, ngữ cảnh; hiện lỗi mở app/đổi hình nền/lưu cấu hình, cho phép thử lại và không báo thành công giả.
 - [x] G1.10 Sửa trạng thái enabled khi startup, thao tác toggle và restart; backend không tự hiện Dock ngược cấu hình.
 - [x] G1.11 Xác định đóng Studio: giữ Dock theo lựa chọn, có đường mở lại Studio và nút thoát hẳn dễ tìm; không để tiến trình không thể điều khiển.

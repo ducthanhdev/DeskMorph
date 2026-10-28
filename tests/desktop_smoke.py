@@ -90,6 +90,7 @@ if __name__ == '__main__':
     parser.add_argument('--internal-fixture', action='store_true')
     parser.add_argument('--internal-smoke', action='store_true')
     parser.add_argument('--performance-smoke', action='store_true')
+    parser.add_argument('--polling-smoke', action='store_true')
     parser.add_argument('--performance-trace', action='store_true')
     parser.add_argument('--mapping-smoke', action='store_true')
     parser.add_argument('--window-list-smoke', action='store_true')
@@ -106,7 +107,7 @@ if __name__ == '__main__':
     if args.audio_tool_missing: args.audio_unavailable = True
     if args.force_close_smoke: args.launcher_smoke = True
     if args.popup_smoke: args.restart = True
-    if args.window_list_smoke or args.reorder_smoke or args.tooltip_smoke or args.launch_smoke or args.overflow_smoke or args.layout_smoke or args.indicator_smoke or args.mapping_smoke or args.internal_smoke or args.performance_smoke: args.restart = True
+    if args.window_list_smoke or args.reorder_smoke or args.tooltip_smoke or args.launch_smoke or args.overflow_smoke or args.layout_smoke or args.indicator_smoke or args.mapping_smoke or args.internal_smoke or args.performance_smoke or args.polling_smoke: args.restart = True
     if args.platform_tool_missing: args.restart = True
     if args.scheduler_smoke: args.wallpaper_smoke = True
     if args.environment:
@@ -120,7 +121,7 @@ if __name__ == '__main__':
             raise RuntimeError('Cannot verify GNOME lock state; no native input will be sent')
         if re.search(r'\btrue\b', result.stdout):
             raise RuntimeError('GNOME desktop is locked; unlock it before native UI tests. No input was sent.')
-    input_tests = any((args.action, args.screenshot, args.basic, args.popup_smoke, args.autohide_smoke, args.shortcut_smoke, args.lifecycle_smoke, args.registration_smoke, args.window_list_smoke, args.reorder_smoke, args.tooltip_smoke, args.launch_smoke, args.overflow_smoke, args.layout_smoke, args.indicator_smoke, args.mapping_smoke, args.internal_smoke, args.launcher_smoke, args.studio_smoke, args.config_smoke,
+    input_tests = any((args.action, args.screenshot, args.basic, args.popup_smoke, args.autohide_smoke, args.shortcut_smoke, args.lifecycle_smoke, args.registration_smoke, args.window_list_smoke, args.reorder_smoke, args.tooltip_smoke, args.launch_smoke, args.overflow_smoke, args.layout_smoke, args.indicator_smoke, args.mapping_smoke, args.internal_smoke, args.polling_smoke, args.launcher_smoke, args.studio_smoke, args.config_smoke,
                        args.wallpaper_smoke, args.scheduler_smoke, args.library_stress, args.audio_smoke, args.media_smoke,
                        args.audio_exit, args.audio_unavailable, args.system_smoke, args.system_unavailable, args.system_open_smoke))
     if input_tests: require_unlocked_desktop()
@@ -290,6 +291,7 @@ if __name__ == '__main__':
                 (safe_apps / fixture_entry.name).write_bytes(fixture_entry.read_bytes())
             (safe_apps / 'deskmorph-stress-noop.desktop').write_text('[Desktop Entry]\nType=Application\nName=DeskMorph Stress Noop\nExec=/bin/true\n')
             env['XDG_DATA_HOME'] = str(safe_data)
+        if args.polling_smoke: env['DESKMORPH_TRACE_COMMANDS'] = '1'
         if args.audio_unavailable: env['PULSE_SERVER'] = 'unix:/tmp/deskmorph-nonexistent-audio-service'
         if args.audio_tool_missing or args.platform_tool_missing:
             empty_path = test_root / 'empty-tool-path'
@@ -675,6 +677,15 @@ if __name__ == '__main__':
     if args.layout_smoke:
         from dock_layout_smoke import run
         run(app, TEST_CONFIG, click, focus_studio, native_keys, native_click_node, require_unlocked_desktop, assert_pointer_over_test_app)
+    if args.polling_smoke:
+        from polling_smoke import run
+        try:
+            run(app, TEST_CONFIG, click, focus_studio, native_keys, native_click_node, require_unlocked_desktop, assert_pointer_over_test_app, close_studio_native, reopen_studio)
+        finally:
+            assert test_app().get_process_id() == app.get_process_id()
+            os.kill(app.get_process_id(), signal.SIGTERM)
+            process.wait(timeout=5)
+            app = start_isolated_app()
     if args.performance_smoke:
         from performance_smoke import run
         try:

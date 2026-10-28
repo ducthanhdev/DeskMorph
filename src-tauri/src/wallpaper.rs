@@ -366,6 +366,7 @@ pub fn apply_manual(app: &AppHandle, library: &Library, path: &str) -> Result<bo
 }
 #[tauri::command]
 pub fn get_wallpaper_schedule_status(state: tauri::State<WallpaperState>) -> Result<ScheduleStatus, String> {
+    let _trace = crate::diagnostics::command("get_wallpaper_schedule_status");
     state.0.scheduler.status.lock().map(|status| status.clone()).map_err(|e| e.to_string())
 }
 pub fn start_scheduler(app: &AppHandle) {

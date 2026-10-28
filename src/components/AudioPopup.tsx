@@ -1,7 +1,7 @@
-import type { PopupVisibility } from "../types";
 import { useEffect, useRef, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
+import { usePopupActive } from "../hooks/usePopupActive";
 import { MediaControls } from "./MediaControls";
 import { useI18n } from "../i18n/useI18n";
 
@@ -17,7 +17,10 @@ export function AudioPopup({ generation }: { generation?: number }) {
   const [busy, setBusy] = useState(false);
   const [draft, setDraft] = useState<number | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-  const active = useRef(true);
+  const visible = usePopupActive(generation);
+  const [subscribed, setSubscribed] = useState(false);
+  const active = useRef(false);
+  active.current = visible;
   const pending = useRef(false);
   const changing = useRef(false);
   const queuedVolume = useRef<{ sink: string; value: number } | null>(null);
@@ -26,7 +29,6 @@ export function AudioPopup({ generation }: { generation?: number }) {
   const receive = (value: Snapshot) => { setSnapshot(value); setError(null); };
   const failure = (e: unknown) => { setError(typeof e === "object" && e && "code" in e ? String(e.code) : String(e)); };
   useEffect(() => {
-    active.current = true;
     const stops: (() => void)[] = [];
     let disposed = false;
     const subscribe = async () => {
@@ -35,23 +37,26 @@ export function AudioPopup({ generation }: { generation?: number }) {
           if (disposed || !active.current || pending.current || changing.current) return;
           if ("Ok" in payload) receive(payload.Ok); else failure(payload.Err);
         }),
-        listen<PopupVisibility>("deskmorph:context-visibility-generation", ({ payload }) => { if (payload.generation !== generation) return;
-          if (!payload.visible) { active.current = false; clearTimeout(timer.current); pending.current = false; queuedVolume.current = null; }
-        }),
       ]);
       for (const registration of registrations) {
         if (registration.status === "fulfilled") { if (disposed) registration.value(); else stops.push(registration.value); }
         else if (!disposed) failure(registration.reason);
       }
-      if (!disposed) {
-        try { const value = await invoke<Snapshot>("get_audio_snapshot"); if (!disposed && active.current) receive(value); }
-        catch (e) { if (!disposed && active.current) failure(e); }
-      }
+      if (!disposed) setSubscribed(registrations.every((result) => result.status === "fulfilled"));
     };
-    void subscribe().catch(failure);
+    void subscribe().catch((e) => { if (!disposed) failure(e); });
     root.current?.querySelector<HTMLButtonElement>("button")?.focus();
     return () => { disposed = true; active.current = false; clearTimeout(timer.current); stops.forEach((stop) => stop()); };
   }, []);
+  useEffect(() => {
+    if (!visible) { clearTimeout(timer.current); pending.current = false; queuedVolume.current = null; return; }
+    if (!subscribed) return;
+    let disposed = false;
+    void invoke<Snapshot>("get_audio_snapshot")
+      .then((value) => { if (!disposed && active.current) receive(value); })
+      .catch((e) => { if (!disposed && active.current) failure(e); });
+    return () => { disposed = true; };
+  }, [visible, subscribed]);
   const change = async (sink: string, operation: string, value?: number, muted?: boolean) => {
     if (!active.current) return;
     if (changing.current) {

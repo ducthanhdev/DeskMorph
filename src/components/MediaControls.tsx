@@ -1,7 +1,7 @@
-import type { PopupVisibility } from "../types";
 import { useEffect, useRef, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
+import { usePopupActive } from "../hooks/usePopupActive";
 import { useI18n } from "../i18n/useI18n";
 type Player = { name: string; owner: string; identity: string; title: string; artists: string[]; artUrl: string; status: string; canPlay: boolean; canPause: boolean; canNext: boolean; canPrevious: boolean };
 export function MediaControls({ generation }: { generation?: number }) {
@@ -12,7 +12,10 @@ export function MediaControls({ generation }: { generation?: number }) {
   const [artwork, setArtwork] = useState<string | null>(null);
   const [artworkError, setArtworkError] = useState(false);
   const [busy, setBusy] = useState(false);
-  const active = useRef(true);
+  const visible = usePopupActive(generation);
+  const [subscribed, setSubscribed] = useState(false);
+  const active = useRef(false);
+  active.current = visible;
   const changing = useRef(false);
   const player = players.find((player) => `${player.name}:${player.owner}` === selection) ?? players[0];
   useEffect(() => {
@@ -24,26 +27,31 @@ export function MediaControls({ generation }: { generation?: number }) {
     }
     return () => { disposed = true; };
   }, [player?.name, player?.owner, player?.artUrl]);
-  const refresh = async () => {
-    try { const values = await invoke<Player[]>("get_media_players"); if (active.current) { setPlayers(values); setError(null); } }
-    catch (e) { if (active.current) setError(String(e)); }
+  const refresh = async (signal?: AbortSignal) => {
+    try { const values = await invoke<Player[]>("get_media_players"); if (active.current && !signal?.aborted) { setPlayers(values); setError(null); } }
+    catch (e) { if (active.current && !signal?.aborted) setError(String(e)); }
   };
   useEffect(() => {
-    active.current = true; let disposed = false; const stops: (() => void)[] = [];
+    let disposed = false; const stops: (() => void)[] = [];
     const start = async () => {
       const results = await Promise.allSettled([
         listen<{ Ok: Player[] } | { Err: string }>("deskmorph:media", ({ payload }) => {
           if (disposed || !active.current) return;
           if ("Ok" in payload) { setPlayers(payload.Ok); setError(null); } else setError(payload.Err);
         }),
-        listen<PopupVisibility>("deskmorph:context-visibility-generation", ({ payload }) => { if (payload.generation !== generation) return; if (!payload.visible) active.current = false; }),
       ]);
       for (const result of results) { if (result.status === "fulfilled") { if (disposed) result.value(); else stops.push(result.value); } else if (!disposed) setError(String(result.reason)); }
-      if (!disposed) await refresh();
+      if (!disposed) setSubscribed(results.every((result) => result.status === "fulfilled"));
     };
     void start();
     return () => { disposed = true; active.current = false; stops.forEach((stop) => stop()); };
   }, []);
+  useEffect(() => {
+    if (!visible || !subscribed) return;
+    const controller = new AbortController();
+    void refresh(controller.signal);
+    return () => controller.abort();
+  }, [visible, subscribed]);
   const control = async (action: string) => {
     if (!player || changing.current || !active.current) return;
     changing.current = true; setBusy(true); setError(null);

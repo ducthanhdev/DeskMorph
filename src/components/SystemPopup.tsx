@@ -1,10 +1,9 @@
-import type { PopupVisibility } from "../types";
 import { useEffect, useRef, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { useI18n } from "../i18n/useI18n";
 import { usePolling } from "../hooks/usePolling";
 import { useSystemStatus } from "../hooks/useSystemStatus";
-import { listen } from "@tauri-apps/api/event";
+import { usePopupActive } from "../hooks/usePopupActive";
 import type { SystemStats } from "../types";
 import type { MessageKey } from "../i18n/messages";
 const stateKeys: Record<string, MessageKey> = {
@@ -14,8 +13,9 @@ const stateKeys: Record<string, MessageKey> = {
 };
 export function SystemPopup({ generation }: { generation?: number }) {
   const { t, locale } = useI18n();
-  const [visible, setVisible] = useState(true);
-  const active = useRef(true);
+  const visible = usePopupActive(generation);
+  const active = useRef(false);
+  active.current = visible;
   const { status, error: statusError } = useSystemStatus(visible);
   const [stats, setStats] = useState<SystemStats | null>(null);
   const [statsError, setStatsError] = useState<string | null>(null);
@@ -25,11 +25,8 @@ export function SystemPopup({ generation }: { generation?: number }) {
   const root = useRef<HTMLElement>(null);
   const describe = (key: string) => t(stateKeys[key] || "unknown");
   useEffect(() => {
-    let disposed = false; let stop: (() => void) | undefined;
-    active.current = true;
-    void listen<PopupVisibility>("deskmorph:context-visibility-generation", ({ payload }) => { if (payload.generation !== generation) return; if (!disposed && !payload.visible) { active.current = false; setVisible(false); } }).then((unlisten) => { if (disposed) unlisten(); else stop = unlisten; }).catch((e) => { if (!disposed) setError(String(e)); });
     root.current?.querySelector<HTMLButtonElement>("button")?.focus();
-    return () => { disposed = true; active.current = false; stop?.(); };
+    return () => { active.current = false; };
   }, []);
   usePolling(async (signal) => {
     try { const value = await invoke<SystemStats>("get_system_stats"); if (!signal.aborted) { setStats(value); setStatsError(null); } }
