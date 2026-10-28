@@ -48,7 +48,7 @@ Phụ thuộc G0. Module dự kiến: config/schema, config/store, hooks đồng
 - [x] G1.10 Sửa trạng thái enabled khi startup, thao tác toggle và restart; backend không tự hiện Dock ngược cấu hình.
 - [x] G1.11 Xác định đóng Studio: giữ Dock theo lựa chọn, có đường mở lại Studio và nút thoát hẳn dễ tìm; không để tiến trình không thể điều khiển.
 - [x] G1.12 Ngăn nhiều instance; lần mở tiếp theo chuyển tới instance hiện có và mở Studio theo hành vi đã chọn.
-- [ ] G1.13 Sửa autostart/desktop entry cho đường dẫn có khoảng trắng; dùng vị trí executable thực tế, báo lỗi ghi file, không dựa vào đường dẫn máy phát triển.
+- [x] G1.13 Sửa autostart/desktop entry cho đường dẫn có khoảng trắng; dùng vị trí executable thực tế, báo lỗi ghi file, không dựa vào đường dẫn máy phát triển.
 
 Tiêu chí: thay đổi từ bất kỳ cửa sổ nào phản ánh ở các cửa sổ khác; restart giữ đúng cấu hình; JSON lỗi không làm app crash; không xuất hiện polling/listener trùng sau mở/đóng nhiều lần. Test migration, validation và cập nhật cạnh tranh; kiểm tra startup/autostart thực tế trên môi trường tham chiếu.
 

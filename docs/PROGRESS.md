@@ -2,7 +2,7 @@
 
 Mục tiêu giữ nguyên toàn bộ 99 đầu việc trong IMPLEMENTATION_PLAN.md. Chưa đạt cổng hoàn thành toàn dự án. Checkbox chưa đánh dấu không đồng nghĩa chưa có code: nhiều mục đang chờ kiểm thử đủ phạm vi.
 
-Hiện đã đánh dấu 44/99 mục, gồm G3.2–G3.3 bằng fixture môi trường cô lập và G0.5/G2.1/G2.3 qua capability EWMH, kiểm thử lỗi adapter và native startup thiếu xprop. Đã bổ sung G0.4/G2.4/G2.5 qua popup/auto-hide native và G9.6/G9.9 bằng hồi quy policy/asset/force-close và ảnh Studio thật trong README. Các cổng GUI, Wayland và phát hành vẫn chưa hoàn tất.
+Hiện đã đánh dấu 45/99 mục, gồm G3.2–G3.3 bằng fixture môi trường cô lập và G0.5/G2.1/G2.3 qua capability EWMH, kiểm thử lỗi adapter và native startup thiếu xprop. Đã bổ sung G0.4/G2.4/G2.5 qua popup/auto-hide native và G9.6/G9.9 bằng hồi quy policy/asset/force-close và ảnh Studio thật trong README. Các cổng GUI, Wayland và phát hành vẫn chưa hoàn tất.
 
 ## Môi trường tham chiếu đã xác minh
 
@@ -153,3 +153,11 @@ Script cần AT-SPI, Python GI, GTK3 và libXtst. Chỉ gửi phím khi kiểm t
 - Khi enabled và keepDockOnClose bật, WM_DELETE_WINDOW đóng Studio nhưng giữ Dock/tiến trình. Ba lượt mở executable tiếp theo đều ACK, hiện lại đúng một Studio trong cùng PID. Bốn lệnh mở đồng thời đều exit 0, không tạo thêm Studio/Dock. Unit Unix socket đã qua thêm trường hợp request phân mảnh/stale socket/lock/ACK trong bộ Rust 41/41.
 - Đóng Studio khi Dock tắt (dù keep bật), hoặc keepDockOnClose tắt (dù Dock bật), đều thoát tiến trình. Nút Quit thoát cả khi keep bật. Harness khôi phục enabled/keepDockOnClose/autoHide ban đầu qua UI và chỉ thao tác profile test.
 - G1.10/G1.11/G1.12 được đánh dấu từ phạm vi trên; không coi đây là bằng chứng autostart đăng nhập, suspend/resume hoặc mọi lỗi startup. Python compile và diff check qua. Frontend/native production không đổi so với build đã kiểm thử G8.6.
+
+## G1.13 — Đăng ký menu/autostart bằng executable thực tế (29/10/2026)
+
+- `--registration-smoke` exit 0: PID 134799 chạy bản hardlink native binary ở thư mục `registration space " 100% $fixture`, tên executable giữ `deskmorph`. UI tạo cả menu entry và autostart entry trong profile tạm. GIO parse được hai file, menu entry mở lại Studio cùng PID; autostart entry mở tiến trình mới PID 135401 đúng executable này. Báo cáo `/tmp/deskmorph-desktop-test/registration-result.json`.
+- Native test xác minh lại checkbox autostart sau restart, tắt xóa entry. Biến đường dẫn đích thành directory gây lỗi ghi cho từng command; UI hiện `os error 21` và autostart không tự báo enabled. Xóa lỗi bằng thao tác thành công giữa hai ca để không dùng nhầm thông báo cũ. Finally phục hồi entry có sẵn trong profile test và mở lại binary bình thường PID 136019.
+- Unit GIO trong bộ Rust 41/41 cũng launch script ở path chứa khoảng trắng, dấu nháy, phần trăm, backslash và ký tự shell; không thực thi shell interpolation. Không sửa production ở bước này. Python compile và diff check qua.
+- Hai lượt harness đầu chưa đạt: đổi basename executable làm AT-SPI đổi tên app nên readiness không nhận diện; đã giữ basename và đưa ký tự đặc biệt vào tên thư mục. Chỉ dọn PID 127888 sau xác minh exact test env/executable bằng pidfd. Helper startup nay terminate/wait Popen của chính nó nếu readiness timeout. Lượt tiếp dùng tên role AT-SPI `alert` quá chặt; đã kiểm tra nội dung lỗi IO thật. Không coi hai lượt đó là bằng chứng pass.
+- G1.13 hoàn tất trong phạm vi tạo/launch entry, executable path và lỗi ghi. Chưa chạy đăng xuất/đăng nhập hay boot thật; autostart entry được launch thủ công bằng GIO. Cài sạch/nâng cấp và phiên desktop khác vẫn pending.

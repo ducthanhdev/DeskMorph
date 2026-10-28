@@ -69,6 +69,7 @@ if __name__ == '__main__':
     parser.add_argument('--autohide-smoke', action='store_true')
     parser.add_argument('--shortcut-smoke', action='store_true')
     parser.add_argument('--lifecycle-smoke', action='store_true')
+    parser.add_argument('--registration-smoke', action='store_true')
     parser.add_argument('--studio-smoke', action='store_true')
     parser.add_argument('--config-smoke', action='store_true')
     parser.add_argument('--wallpaper-smoke', action='store_true')
@@ -102,7 +103,7 @@ if __name__ == '__main__':
             raise RuntimeError('Cannot verify GNOME lock state; no native input will be sent')
         if re.search(r'\btrue\b', result.stdout):
             raise RuntimeError('GNOME desktop is locked; unlock it before native UI tests. No input was sent.')
-    input_tests = any((args.action, args.screenshot, args.basic, args.popup_smoke, args.autohide_smoke, args.shortcut_smoke, args.lifecycle_smoke, args.launcher_smoke, args.studio_smoke, args.config_smoke,
+    input_tests = any((args.action, args.screenshot, args.basic, args.popup_smoke, args.autohide_smoke, args.shortcut_smoke, args.lifecycle_smoke, args.registration_smoke, args.launcher_smoke, args.studio_smoke, args.config_smoke,
                        args.wallpaper_smoke, args.scheduler_smoke, args.library_stress, args.audio_smoke, args.media_smoke,
                        args.audio_exit, args.audio_unavailable, args.system_smoke, args.system_unavailable, args.system_open_smoke))
     if input_tests: require_unlocked_desktop()
@@ -272,12 +273,13 @@ if __name__ == '__main__':
         binary = Path(__file__).resolve().parents[1] / 'src-tauri/target/agent/debug/deskmorph'
         subprocess.run([str(binary)], env=env, timeout=5, check=True, capture_output=True)
         time.sleep(0.7)
-    def start_isolated_app():
+    def start_isolated_app(binary_override=None):
         require_unlocked_desktop()
         test_root = Path('/tmp/deskmorph-desktop-test')
         env = dict(os.environ, DESKMORPH_CONFIG_HOME=TEST_CONFIG, XDG_DATA_HOME=str(test_root / 'data'),
                    XDG_CACHE_HOME=str(test_root / 'cache'), WEBKIT_DISABLE_DMABUF_RENDERER='1')
         binary = Path(__file__).resolve().parents[1] / 'src-tauri/target/agent/debug/deskmorph'
+        if binary_override is not None: binary = binary_override
         with (test_root / 'runtime.log').open('a') as log:
             launched = subprocess.Popen([str(binary)], env=env, stdout=log, stderr=log, start_new_session=True)
         deadline = time.monotonic() + 12
@@ -288,6 +290,10 @@ if __name__ == '__main__':
                 candidate = test_app()
                 if candidate.get_process_id() == launched.pid and any(n.get_role_name() == 'button' for n, _ in descendants(candidate)): return candidate
             except RuntimeError: pass
+        # This Popen belongs to this helper even if AT-SPI never exposed it.
+        # Do not leave an unrecognized fixture running after a readiness failure.
+        if launched.poll() is None: launched.terminate()
+        launched.wait(timeout=5)
         raise AssertionError('Fresh isolated app did not become accessible')
     def close_studio_native():
         require_unlocked_desktop()
@@ -511,6 +517,124 @@ if __name__ == '__main__':
         click('Taskbar Studio')
         if json.loads(baseline_path.read_text())['config']['autoHide']:
             click('Tự động ẩn Dock Chạm cạnh màn hình để hiện lại; Dock giữ hiện khi bạn thao tác popup.')
+    if args.registration_smoke:
+        from gi.repository import Gio
+        import shutil
+        test_root = Path('/tmp/deskmorph-desktop-test')
+        menu_file = test_root / 'data/applications/deskmorph.desktop'
+        autostart_file = Path(TEST_CONFIG) / 'autostart/deskmorph.desktop'
+        targets = (menu_file, autostart_file)
+        saved_entries = {p: (p.read_bytes(), p.stat().st_mode & 0o777) if p.is_file() else None for p in targets}
+        assert all(not p.exists() or p.is_file() for p in targets), 'Registration targets must be absent or regular test files'
+        registration_binary = test_root / 'registration space " 100% $fixture' / 'deskmorph'
+        registration_binary.parent.mkdir(exist_ok=True)
+        assert not registration_binary.exists(), 'Do not overwrite an existing binary fixture'
+        source_binary = Path(__file__).resolve().parents[1] / 'src-tauri/target/agent/debug/deskmorph'
+        try: os.link(source_binary, registration_binary)
+        except OSError: shutil.copy2(source_binary, registration_binary)
+        registration_passed = []
+        registration_pids = []
+        def wait_registration(predicate, message):
+            deadline = time.monotonic() + 12
+            while time.monotonic() < deadline:
+                if predicate(): return
+                time.sleep(0.1)
+            raise AssertionError(message)
+        def registered_alert():
+            # WebKit/AT-SPI may expose a DOM role=alert as a paragraph.
+            # Check the actual IO failure text, not a platform role spelling.
+            for node, _ in descendants(app):
+                text = node.get_name() or ''
+                interface = node.get_text_iface()
+                if interface: text += Atspi.Text.get_text(interface, 0, -1)
+                if 'os error 21' in text: return True
+            return False
+        def autostart_checked():
+            checkbox = next(n for n, _ in descendants(app) if n.get_name() == 'Khởi động cùng hệ thống' and n.get_role_name() == 'check box')
+            return checkbox.get_state_set().contains(Atspi.StateType.CHECKED)
+        def exit_registration():
+            focus_studio(); click('Hệ thống'); pid = app.get_process_id(); click('Thoát DeskMorph')
+            def stopped():
+                try: return Path(f'/proc/{pid}/stat').read_text().rsplit(')', 1)[1].split()[0] == 'Z'
+                except FileNotFoundError: return True
+            wait_registration(stopped, 'Registration test instance did not exit')
+            try: os.waitpid(pid, os.WNOHANG)
+            except ChildProcessError: pass
+        try:
+            exit_registration()
+            app = start_isolated_app(registration_binary)
+            registration_pids.append(app.get_process_id())
+            assert os.readlink(f'/proc/{app.get_process_id()}/exe') == str(registration_binary), 'Fixture must run at the path being registered'
+            focus_studio(); click('Hệ thống')
+            if autostart_checked(): click('Khởi động cùng hệ thống')
+            click('Đăng ký vào menu ứng dụng')
+            click('Khởi động cùng hệ thống')
+            assert autostart_checked()
+            for entry_path in targets:
+                entry = Gio.DesktopAppInfo.new_from_filename(str(entry_path))
+                assert entry is not None, 'GIO could not parse installed desktop entry'
+                assert '100%%' in entry_path.read_text() and 'space' in entry_path.read_text()
+            assert 'X-GNOME-Autostart-enabled=true' in autostart_file.read_text()
+            registration_passed.append('UI installs menu/autostart entries for actual executable path containing spaces, quotes, percent and dollar')
+            # Start via each generated entry through GIO, not a shell or copied argv.
+            # Temporarily set only app-owned profile variables inherited by GIO children.
+            launch_vars = dict(DESKMORPH_CONFIG_HOME=TEST_CONFIG, XDG_DATA_HOME=str(test_root / 'data'), XDG_CACHE_HOME=str(test_root / 'cache'))
+            previous_vars = {key: os.environ.get(key) for key in launch_vars}
+            os.environ.update(launch_vars)
+            try:
+                pid = app.get_process_id()
+                close_studio_native()
+                Gio.DesktopAppInfo.new_from_filename(str(menu_file)).launch([], None)
+                time.sleep(1)
+                app = test_app()
+                assert app.get_process_id() == pid
+                focus_studio()
+                registration_passed.append('installed menu entry launches quoted binary and reopens existing Studio')
+                exit_registration()
+                Gio.DesktopAppInfo.new_from_filename(str(autostart_file)).launch([], None)
+                def registered_app_ready():
+                    try: return any(n.get_role_name() == 'button' for n, _ in descendants(test_app()))
+                    except RuntimeError: return False
+                wait_registration(registered_app_ready, 'Generated autostart entry did not launch isolated app')
+                app = test_app(); registration_pids.append(app.get_process_id())
+                assert app.get_process_id() != pid
+                assert os.readlink(f'/proc/{app.get_process_id()}/exe') == str(registration_binary)
+                registration_passed.append('generated autostart entry launches fresh app through GIO (manual launch, not desktop login)')
+            finally:
+                for key, value in previous_vars.items():
+                    if value is None: os.environ.pop(key, None)
+                    else: os.environ[key] = value
+            focus_studio(); click('Hệ thống')
+            assert autostart_checked(), 'Autostart registration was not detected after restart'
+            click('Khởi động cùng hệ thống')
+            assert not autostart_file.exists() and not autostart_checked()
+            registration_passed.append('autostart detection survives restart and disabling removes entry')
+            for entry_path, label in ((autostart_file, 'Khởi động cùng hệ thống'), (menu_file, 'Đăng ký vào menu ứng dụng')):
+                click('Đăng ký vào menu ứng dụng')
+                wait_registration(lambda: not registered_alert(), 'Successful registration did not clear previous error')
+                if entry_path.exists(): entry_path.unlink()
+                entry_path.mkdir()
+                try:
+                    click(label)
+                    wait_registration(registered_alert, 'Write failure did not appear as UI alert')
+                    assert entry_path.is_dir(), 'Failed registration replaced fixture unexpectedly'
+                    if entry_path == autostart_file: assert not autostart_checked(), 'Failed write falsely enabled autostart'
+                finally: entry_path.rmdir()
+            registration_passed.append('menu/autostart write failures reach UI; failed enable does not report enabled')
+        finally:
+            try:
+                app = test_app(); exit_registration()
+            except RuntimeError: pass
+            for entry_path, original in saved_entries.items():
+                if entry_path.is_dir(): entry_path.rmdir()
+                if original:
+                    entry_path.write_bytes(original[0]); entry_path.chmod(original[1])
+                elif entry_path.exists(): entry_path.unlink()
+            registration_binary.unlink(missing_ok=True)
+            app = start_isolated_app()
+        report = {'passed': registration_passed, 'pids': registration_pids, 'entriesRestored': True}
+        (test_root / 'registration-result.json').write_text(json.dumps(report, indent=2))
+        print(json.dumps(report))
     if args.lifecycle_smoke:
         lifecycle_path = Path(TEST_CONFIG) / 'com.ducthanhdev.deskmorph/config.json'
         lifecycle_config = lambda: json.loads(lifecycle_path.read_text())['config']
