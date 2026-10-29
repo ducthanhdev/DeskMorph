@@ -43,15 +43,34 @@ fn network_from(dict: &VariantDict) -> Result<Network, String> {
     Ok(Network { kind: kind.into(), state: state.into(), connectivity: connectivity.into() })
 }
 const MONITORS: &[&str] = &["org.gnome.SystemMonitor.desktop", "gnome-system-monitor.desktop", "org.gnome.Usage.desktop", "org.kde.plasma-systemmonitor.desktop", "plasma-systemmonitor.desktop", "ksysguard.desktop"];
-fn monitor_id() -> Option<String> {
+fn monitor_ids() -> Vec<String> {
     let apps = gio::AppInfo::all();
-    MONITORS.iter().find(|id| apps.iter().any(|app| app.id().is_some_and(|name| name == **id) && app.should_show())).map(|id| id.to_string())
+    MONITORS.iter().filter(|id| apps.iter().any(|app| app.id().is_some_and(|name| name == **id) && app.should_show())).map(|id| id.to_string()).collect()
+}
+fn open_monitor() -> Result<(), String> {
+    let ids = monitor_ids();
+    if ids.is_empty() { return Err("system_monitor_missing".into()); }
+    let mut failures = Vec::new();
+    for id in ids {
+        match crate::applications::launch_installed_app(id.clone(), None) {
+            Ok(true) => return Ok(()),
+            Ok(false) => failures.push(format!("{id}: launch not accepted")),
+            Err(error) => failures.push(format!("{id}: {error}")),
+        }
+    }
+    Err(format!("system_monitor_launch_failed: {}", failures.join("; ")))
 }
 fn folder_app() -> Option<gio::AppInfo> {
     let file_manager = |app: &gio::AppInfo| app.should_show() && app.downcast_ref::<gio::DesktopAppInfo>().and_then(|app| app.categories()).is_some_and(|categories| categories.split(';').any(|category| category == "FileManager"));
     if let Some(app) = gio::AppInfo::default_for_type("inode/directory", false).filter(file_manager) { return Some(app); }
     let mut apps: Vec<_> = gio::AppInfo::all().into_iter().filter(file_manager).collect();
     apps.sort_by_key(|app| app.id()); apps.into_iter().next()
+}
+fn trash_app() -> Option<gio::AppInfo> {
+    // GIO may retain a MIME default whose desktop entry is explicitly Hidden.
+    // NoDisplay handlers are valid; Hidden entries must not enable an action.
+    gio::AppInfo::default_for_uri_scheme("trash").filter(|app| app.supports_uris()
+        && !app.downcast_ref::<gio::DesktopAppInfo>().is_some_and(|desktop| desktop.is_hidden()))
 }
 fn read() -> Status {
     let (battery, network) = match gio::bus_get_sync(gio::BusType::System, gio::Cancellable::NONE) {
@@ -60,7 +79,7 @@ fn read() -> Status {
     };
     let (battery, battery_error) = match battery { Ok(value) => (value, None), Err(_) => (None, Some("battery_service_unavailable".into())) };
     let (network, network_error) = match network { Ok(value) => (Some(value), None), Err(_) => (None, Some("network_service_unavailable".into())) };
-    Status { battery, battery_error, network, network_error, monitor_id: monitor_id(), folder_available: folder_app().is_some(), trash_available: gio::AppInfo::default_for_uri_scheme("trash").is_some() }
+    Status { battery, battery_error, network, network_error, monitor_id: monitor_ids().into_iter().next(), folder_available: folder_app().is_some(), trash_available: trash_app().is_some() }
 }
 #[tauri::command]
 pub async fn get_system_status(app: AppHandle) -> Result<Status, String> {
@@ -78,26 +97,21 @@ fn open_location(location: &str) -> Result<(), String> {
             let path = glib::user_special_dir(glib::UserDirectory::Downloads).unwrap_or_else(|| glib::home_dir().join("Downloads"));
             if !path.is_dir() { return Err("downloads_missing".into()); }
             let app = folder_app().ok_or("file_manager_missing")?;
-            if app.id().as_deref() == Some("com.system76.CosmicFiles.desktop") {
-                // COSMIC Files 1.11 accepts native paths; its %U entry can ignore unsupported URIs.
-                let mut child = std::process::Command::new(app.executable()).arg(&path).spawn().map_err(|e| format!("system_open_failed: {e}"))?;
-                std::thread::spawn(move || { let _ = child.wait(); });
-                Ok(())
-            } else {
-                app.launch(&[gio::File::for_path(path)], gio::AppLaunchContext::NONE).map_err(|e| format!("system_open_failed: {e}"))
-            }
+            // Launch a native GFile through the entry, preserving wrappers,
+            // quoted executable paths and flags instead of rebuilding argv.
+            app.launch(&[gio::File::for_path(path)], gio::AppLaunchContext::NONE).map_err(|e| format!("system_open_failed: {e}"))
         },
         "trash" => {
-            if gio::AppInfo::default_for_uri_scheme("trash").is_none() { return Err("trash_unsupported".into()); }
-            gio::AppInfo::launch_default_for_uri("trash:///", gio::AppLaunchContext::NONE).map_err(|e| format!("system_open_failed: {e}"))
+            let app = trash_app().ok_or("trash_unsupported")?;
+            app.launch_uris(&["trash:///"], gio::AppLaunchContext::NONE).map_err(|e| format!("system_open_failed: {e}"))
         },
-        "monitor" => {
-            let id = monitor_id().ok_or("system_monitor_missing")?;
-            crate::applications::launch_installed_app(id, None)?; Ok(())
-        },
+        "monitor" => open_monitor(),
         _ => Err("system_location_invalid".into()),
     }
 }
+#[cfg(test)]
+#[path = "system_widgets_fixtures.rs"]
+mod fixtures;
 #[tauri::command]
 pub async fn open_system_location(location: String) -> Result<(), String> {
     tauri::async_runtime::spawn_blocking(move || open_location(&location)).await.map_err(|e| e.to_string())?

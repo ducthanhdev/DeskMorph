@@ -12,6 +12,10 @@ const stateKeys: Record<string, MessageKey> = {
   wifi: "networkWifi", wired: "networkWired", other: "networkOther", disconnected: "networkDisconnected", asleep: "networkAsleep", disconnecting: "networkDisconnecting", connecting: "networkConnecting", local: "networkLocal", site: "networkSite", global: "networkGlobal",
   none: "connectivityNone", portal: "connectivityPortal", limited: "connectivityLimited", full: "connectivityFull",
 };
+const openErrorKeys: Partial<Record<string, MessageKey>> = {
+  downloads_missing: "downloadsMissing", file_manager_missing: "fileManagerMissing",
+  trash_unsupported: "trashUnavailable", system_monitor_missing: "systemMonitorMissing",
+};
 export function SystemPopup({ generation }: { generation?: number }) {
   const { t, locale } = useI18n();
   const visible = usePopupActive(generation);
@@ -37,7 +41,12 @@ export function SystemPopup({ generation }: { generation?: number }) {
     if (!active.current || changing.current) return;
     changing.current = true; setBusy(true); setError(null);
     try { await invoke("open_system_location", { location }); }
-    catch (e) { if (active.current) setError(e instanceof CommandError && e.code === "downloads_missing" ? t("downloadsMissing") : `${t("systemOpenError")} (${String(e)})`); }
+    catch (e) {
+      if (active.current) {
+        const key = e instanceof CommandError ? openErrorKeys[e.code] : undefined;
+        setError(key ? t(key) : `${t("systemOpenError")} (${String(e)})`);
+      }
+    }
     finally { changing.current = false; if (active.current) setBusy(false); }
   };
   return <section className="audio-popup system-popup" ref={root} aria-label={t("systemTools")}>

@@ -1,0 +1,81 @@
+{
+  "passed": [
+    "detected primary launch rejected by GIO, fallback desktop ID opens owned GTK window",
+    "XDG Downloads path and desktop argv preserved with spaces and literal shell characters",
+    "missing Downloads does not launch or create directory; click after restore retries successfully",
+    "Trash URI goes to private desktop handler; fixture trash contents preserved",
+    "missing monitor, file manager and Trash handler disable actions and explain why"
+  ],
+  "testPids": [
+    2026982,
+    2027782
+  ],
+  "fixturePids": [
+    2027462,
+    2027573,
+    2027642,
+    2027730
+  ],
+  "downloadsArgv": [
+    "--profile",
+    "two words",
+    "/tmp/deskmorph-desktop-test/system-locations-liw4jn1r/Downloaded files ; $(touch never)"
+  ],
+  "trashArgv": [
+    "trash:///"
+  ],
+  "monitorWindow": {
+    "argv": [],
+    "pid": 2027462,
+    "xid": "0x4800003"
+  },
+  "scope": "Controlled desktop receivers through real IPC/GIO; not certification of third-party monitor packages or a production Trash browser.",
+  "normalPid": 2028171,
+  "preferencesRestored": true,
+  "fixturesRemoved": true,
+  "environment": "Pop!_OS 24.04, GNOME 46, X11, scale 1; isolated custom-protocol debug build",
+  "rustTestsPassed": 63,
+  "frontendTestsPassed": 36,
+  "builds": [
+    "TypeScript/Vite",
+    "offline custom-protocol"
+  ],
+  "isolatedGioScenarios": 12,
+  "realFileManager": {
+    "passed": [
+      "Downloads opens through identified file manager",
+      "Trash availability reflects URI handler",
+      "new Downloads window cleaned without closing older windows"
+    ],
+    "pid": 2028171
+  },
+  "systemRegression": {
+    "passed": [
+      "battery widget matches UPower aggregate",
+      "widget preferences persist and restore",
+      "CPU/RAM popup values units and interval",
+      "network kind matches NetworkManager with probe explanation",
+      "system monitor availability matches installed apps"
+    ],
+    "pid": 2028171
+  },
+  "cleanup": {
+    "allReportedTestAndReceiverProcessesExited": {
+      "2026982": true,
+      "2027782": true,
+      "2027462": true,
+      "2027573": true,
+      "2027642": true,
+      "2027730": true
+    },
+    "remainingOwnedReceivers": [],
+    "normalProfileVerified": true,
+    "privateMimeConfigAndReceiverEnvAbsent": true
+  },
+  "limits": [
+    "GIO accepted dispatch is not downstream process-lifetime proof.",
+    "Third-party monitor package runtime and production Trash browser remain unverified.",
+    "Reference desktop has no validated Trash URI handler; action remains unsupported there.",
+    "Earlier failed harness attempts and product Hidden-handler failure are not counted as pass."
+  ]
+}

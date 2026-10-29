@@ -18,7 +18,7 @@ Dock tùy biến cho Linux, xây bằng React 19, TypeScript và Tauri 2/Rust. M
 | Audio | `pactl` JSON + PulseAudio hoặc PipeWire PulseAudio; native test bằng null sink |
 | Media | MPRIS trên session bus; hai fixture players đã qua test; ảnh bìa chỉ nhận file cục bộ |
 | Pin/mạng | UPower display aggregate và NetworkManager; có trạng thái thiếu service |
-| Downloads | XDG user directories; adapter COSMIC Files đã kiểm thử trên máy tham chiếu |
+| Downloads | XDG user directories qua native GFile/GIO; đã kiểm thử với COSMIC Files trên máy tham chiếu |
 | Phím tắt launcher X11 | Tùy chỉnh, mặc định tắt; phát hiện xung đột, thử lại và tắt trong Hệ thống |
 | Thùng rác | Chỉ bật khi desktop có URI handler; chưa khả dụng trên máy tham chiếu |
 | Wayland native / KDE / COSMIC session | Chưa được xác minh; không công bố hỗ trợ window management native |

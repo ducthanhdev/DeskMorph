@@ -84,7 +84,7 @@ Artwork chỉ nhận file URI cục bộ, giới hạn 8 MB/16 MP, resize 160 px
 
 `system_widgets.rs` đọc UPower display device (aggregate) và NetworkManager qua system bus, timeout từng call, cache chung 5 giây cho Dock/popup. Không tự tạo time estimate khi UPower trả 0. Network state và connectivity probe được trình bày riêng. `get_system_stats` có sampler/cache chung 2 giây, tránh refresh CPU cạnh tranh giữa Dock/preview/popup; RAM hiển thị GiB.
 
-System monitor chỉ chọn desktop ID đã nhận diện và tắt nút khi thiếu app. Downloads theo XDG user directories, từ chối thư mục không tồn tại, chọn app category FileManager thay vì giả định mọi default inode/directory đều là file manager. COSMIC Files dùng argv native path đã kiểm thử. Trash chỉ bật khi có URI handler; máy tham chiếu hiện unsupported.
+System monitor chọn desktop ID đã nhận diện, thử entry kế tiếp khi GIO từ chối launch và tắt nút khi thiếu app. Downloads theo XDG user directories, từ chối thư mục không tồn tại, chọn app category FileManager thay vì giả định mọi default inode/directory đều là file manager. Truyền native GFile qua GIO để giữ quoted executable/wrappers/flags; COSMIC Files thật đã qua hồi quy với đường này. Trash chỉ bật khi có handler hỗ trợ URI và không Hidden (NoDisplay hợp lệ), dispatch tới chính handler đã kiểm; máy tham chiếu hiện unsupported. Xem [SYSTEM_TOOLS.md](SYSTEM_TOOLS.md).
 
 ## Phím tắt launcher
 

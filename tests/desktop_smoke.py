@@ -88,6 +88,7 @@ if __name__ == '__main__':
     parser.add_argument('--scheduler-smoke', action='store_true')
     parser.add_argument('--scheduler-recovery-smoke', action='store_true')
     parser.add_argument('--system-open-smoke', action='store_true')
+    parser.add_argument('--system-locations-smoke', action='store_true')
     parser.add_argument('--system-unavailable', action='store_true')
     parser.add_argument('--system-smoke', action='store_true')
     parser.add_argument('--audio-exit', action='store_true')
@@ -139,7 +140,7 @@ if __name__ == '__main__':
             raise RuntimeError('GNOME desktop is locked; unlock it before native UI tests. No input was sent.')
     input_tests = any((args.clock_smoke, args.icon_render_smoke, args.launcher_keyboard_smoke, args.missing_app_smoke, args.pinning_smoke, args.pin_identity_smoke, args.catalogue_refresh_smoke, args.exports_smoke, args.action, args.screenshot, args.basic, args.popup_smoke, args.focus_smoke, args.autohide_smoke, args.shortcut_smoke, args.lifecycle_smoke, args.registration_smoke, args.window_list_smoke, args.reorder_smoke, args.tooltip_smoke, args.launch_smoke, args.overflow_smoke, args.layout_smoke, args.indicator_smoke, args.mapping_smoke, args.internal_smoke, args.polling_smoke, args.launcher_smoke, args.studio_smoke, args.config_smoke, args.command_errors_smoke,
                        args.wallpaper_smoke, args.scheduler_smoke, args.library_stress, args.audio_smoke, args.media_smoke,
-                       args.audio_exit, args.audio_unavailable, args.system_smoke, args.system_unavailable, args.system_open_smoke))
+                       args.audio_exit, args.audio_unavailable, args.system_smoke, args.system_unavailable, args.system_open_smoke, args.system_locations_smoke))
     if input_tests or args.geometry_smoke: require_unlocked_desktop()
     if args.window_fixture or args.indicator_fixture or args.mapping_fixture or args.internal_fixture:
         if args.indicator_fixture or args.mapping_fixture or args.internal_fixture: assert os.environ.get('DESKMORPH_CONFIG_HOME') == TEST_CONFIG
@@ -701,6 +702,9 @@ if __name__ == '__main__':
         print(json.dumps(report))
     if args.clock_smoke:
         from clock_smoke import run
+        app = run(app, TEST_CONFIG, click, focus_studio, native_keys, test_app, start_isolated_app, lambda current: globals().__setitem__('app', current))
+    if args.system_locations_smoke:
+        from system_locations_smoke import run
         app = run(app, TEST_CONFIG, click, focus_studio, native_keys, test_app, start_isolated_app, lambda current: globals().__setitem__('app', current))
     if args.icon_render_smoke:
         from icon_render_smoke import run
@@ -2099,7 +2103,10 @@ if __name__ == '__main__':
         trash_button = next(n for n, _ in descendants(app) if n.get_name() == 'Mở Thùng rác' and n.get_role_name() == 'button')
         gi.require_version('Gio', '2.0')
         from gi.repository import Gio
-        assert trash_button.get_state_set().contains(Atspi.StateType.ENABLED) == (Gio.AppInfo.get_default_for_uri_scheme('trash') is not None), 'Trash button does not match desktop capability'
+        trash_handler = Gio.AppInfo.get_default_for_uri_scheme('trash')
+        trash_available = bool(trash_handler and trash_handler.supports_uris() and
+                               not (isinstance(trash_handler, Gio.DesktopAppInfo) and trash_handler.get_is_hidden()))
+        assert trash_button.get_state_set().contains(Atspi.StateType.ENABLED) == trash_available, 'Trash button does not match desktop capability'
         click('Mở Downloads')
         deadline = time.monotonic() + 15
         while time.monotonic() < deadline:
