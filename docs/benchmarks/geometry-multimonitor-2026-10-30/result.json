@@ -1,0 +1,45 @@
+{
+  "date": "2026-10-30",
+  "command": "desktop_smoke.py --geometry-smoke; host topology eDP-1-1 + HDMI-0",
+  "monitors": [
+    "HDMI-0",
+    "eDP-1-1"
+  ],
+  "scale": 1,
+  "observationCount": 16,
+  "workAreas": [
+    [
+      0,
+      0,
+      1920,
+      1080
+    ],
+    [
+      1920,
+      32,
+      1680,
+      1018
+    ]
+  ],
+  "positions": [
+    "bottom",
+    "top"
+  ],
+  "modes": [
+    "Mở lịch",
+    "Tiện ích hệ thống",
+    "Tìm ứng dụng",
+    "Âm thanh"
+  ],
+  "checks": [
+    "two real X11 monitors selected independently",
+    "top and bottom Dock placement",
+    "popup clamp at both edges",
+    "HDMI-0 1680x1050 resolution geometry and restore"
+  ],
+  "limits": [
+    "scale was 1 on both monitors; fractional mixed DPI not tested",
+    "Mutter/NVIDIA clamped attempted negative-origin arrangement to x=0",
+    "hot-unplug and fallback were not performed"
+  ]
+}

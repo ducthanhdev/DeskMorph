@@ -779,3 +779,9 @@ Script cần AT-SPI, Python GI, GTK3 và libXtst. Chỉ gửi phím khi kiểm t
 - Tổng hợp đủ các nhánh yêu cầu: `.deb` Ubuntu/Pop!_OS 24.04 amd64; dpkg root cô lập cài predecessor `0.0.9` khác payload rồi nâng cấp/reinstall/remove/purge giữ config; icon/desktop entry/action và native help qua; packaged binary chạy với HOME mới trên GNOME Wayland lab; autostart/menu entry của executable thực tế đã qua G1.13.
 - Chốt G9.11 trong phạm vi `isolated clean account/machine lab`. Không tuyên bố đã chạy apt trên máy vật lý sạch, dependency của distro khác hoặc login boot thật; các giới hạn này ghi trong [PACKAGING](PACKAGING.md) và checklist release. Tổng 94/99.
 - Đánh giá file: giữ `deb_package_smoke.py --prior-package`, JSON migration và JSON clean-account; không commit predecessor `.deb`, binary hay profile tạm.
+
+## G2.10/G2.11 — Hai monitor thật và đổi độ phân giải (30/10/2026)
+
+- Native X11 hiện có eDP-1-1 và HDMI-0. Geometry smoke chạy 16 ca: chọn từng monitor, Dock top/bottom, popup clamp trái/phải; sau đó đổi HDMI-0 sang 1680x1050, chạy lại và trap khôi phục 1920x1080. [Bản tóm tắt](benchmarks/geometry-multimonitor-2026-10-30/result.json).
+- Thử đặt monitor âm bằng `xrandr --pos -1920x0` nhưng Mutter/NVIDIA kẹp topology về origin 0; không tính thành bằng chứng negative-origin. Cả hai monitor scale1 nên chưa đạt mixed DPI 125/150/200%; hot-unplug/fallback thật vẫn chưa chạy. G2.10/G2.11 giữ mở.
+- Đánh giá file: giữ JSON nhỏ gồm topology, số ca, mode và giới hạn; không giữ ảnh/log hoặc thay đổi cấu hình host sau trap restore.
