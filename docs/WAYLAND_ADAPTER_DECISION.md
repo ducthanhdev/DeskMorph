@@ -16,7 +16,7 @@ Prototype chạy trên compositor headless riêng, output 1280×720 scale 1, hai
 | --- | --- |
 | Dock placement / auto-hide | Giữ unsupported trên GNOME Wayland. Không gọi `set_position` rồi báo thành công như X11. |
 | Enumerate / activate / close | Giữ unsupported trong backend sản phẩm. Prototype Shell là experimental, chỉ hỗ trợ fixture trong lab. |
-| Launcher shortcut | G8.7 tiếp tục mở: portal của lab thiếu interface, CLI launcher đã qua cold/warm/search/Escape trên Wayland lab; desktop shortcut/activation token thực chưa chứng minh. |
+| Launcher shortcut | G8.7 chốt fallback GNOME46 qua media-keys thật: custom shortcut cold/warm/focus/search/Escape và gỡ binding qua. Portal lab thiếu interface; truyền activation token từ portal chưa được chứng nhận. |
 | Wallpaper | Kiểm độc lập G6.9; roundtrip GSettings không chứng minh ảnh render hoặc mọi desktop adapter. |
 | KDE / COSMIC / GNOME phiên bản khác | Chưa kiểm chứng; không kế thừa kết luận hoặc API GNOME 46. |
 

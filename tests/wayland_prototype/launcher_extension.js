@@ -2,6 +2,7 @@
 import Base from './base_extension.js';
 import Clutter from 'gi://Clutter';
 import GLib from 'gi://GLib';
+import Meta from 'gi://Meta';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 export default class LauncherLab extends Base {
     enable() {
@@ -20,6 +21,17 @@ export default class LauncherLab extends Base {
     Dispatch(token, payload) {
         if (token !== this._token) throw new Error('Invalid lab token');
         const command = JSON.parse(payload);
+        if (command.op === 'bindingAvailable') {
+            const action = global.display.grab_accelerator('<Control><Super>k', Meta.KeyBindingFlags.NONE);
+            if (action) global.display.ungrab_accelerator(action);
+            return JSON.stringify({available: action !== 0});
+        }
+        if (command.op === 'shortcut') {
+            // One fixed safe chord, only on the owned headless compositor.
+            for (const code of [29, 125, 37]) this._keyboard.notify_key(GLib.get_monotonic_time(), code, Clutter.KeyState.PRESSED);
+            for (const code of [37, 125, 29]) this._keyboard.notify_key(GLib.get_monotonic_time(), code, Clutter.KeyState.RELEASED);
+            return super.Dispatch(token, '{"op":"state"}');
+        }
         if (command.op === 'prepare') {
             Main.overview.hide();
             return super.Dispatch(token, '{"op":"state"}');

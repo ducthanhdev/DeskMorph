@@ -2,7 +2,7 @@
 
 DeskMorph hiện đăng ký phím tắt launcher trực tiếp trên X11. Trên Wayland, ô đăng ký trong Studio bị vô hiệu hóa. Kết quả lab GNOME Shell 46 / Mutter 46.2 với xdg-desktop-portal 1.18.4 và GTK backend 1.15.1: interface `org.freedesktop.portal.GlobalShortcuts` không được xuất. Máy lab không cài backend portal GNOME. Đây là giới hạn của bộ backend được đo, không phải kết luận cho mọi phiên GNOME. [Bằng chứng portal và protocol](WAYLAND_RESEARCH.md).
 
-Executable hỗ trợ `--launcher` để mở cửa sổ **DeskMorph Launcher** của cùng profile, kể cả khi Dock tắt. Trên Wayland đây là cửa sổ thông thường có titlebar, xuất hiện trong trình chuyển cửa sổ; compositor quyết định vị trí và focus. Lệnh không có đối số vẫn mở Studio. Hướng dẫn này chưa chứng minh một custom shortcut thực sự hoạt động; G8.7 vẫn mở.
+Executable hỗ trợ `--launcher` để mở cửa sổ **DeskMorph Launcher** của cùng profile, kể cả khi Dock tắt. Trên Wayland đây là cửa sổ thông thường có titlebar, xuất hiện trong trình chuyển cửa sổ; compositor quyết định vị trí và focus. Lệnh không có đối số vẫn mở Studio. Custom shortcut GNOME 46 đã được kiểm qua backend media-keys thật trong lab Wayland riêng; phạm vi và giới hạn nằm bên dưới.
 
 ## GNOME: tạo phím mở launcher
 
@@ -30,6 +30,15 @@ Nếu dùng profile riêng, thêm `DESKMORPH_CONFIG_HOME` với đường dẫn 
 
 ## Phạm vi đã xác minh và phần còn mở
 
-Đường Settings và ý nghĩa Name/Command/Shortcut được đối chiếu với tài liệu GNOME cài tại `/usr/share/help/C/gnome-help/keyboard-shortcuts-set.page`. Schema `org.gnome.settings-daemon.plugins.media-keys` có `custom-keybindings`; schema relocatable `org.gnome.settings-daemon.plugins.media-keys.custom-keybinding` có `name`, `command`, `binding`. Không ghi các key này vào desktop của người dùng để kiểm tài liệu. Các bước tạo/gỡ qua giao diện chưa được chạy trên phiên Wayland.
+Đường Settings và ý nghĩa Name/Command/Shortcut được đối chiếu với tài liệu GNOME cài tại `/usr/share/help/C/gnome-help/keyboard-shortcuts-set.page`. Schema `org.gnome.settings-daemon.plugins.media-keys` có `custom-keybindings`; schema relocatable `org.gnome.settings-daemon.plugins.media-keys.custom-keybinding` có `name`, `command`, `binding`. Không ghi các key này vào desktop của người dùng để kiểm tài liệu. Các bước tạo/gỡ qua giao diện chưa được chạy; schema/backend thật đã được kiểm bằng custom binding trong lab Wayland riêng.
 
-Single-instance forwarding của executable đã có Rust socket/ACK tests và native X11 lifecycle tests. Những bằng chứng đó không chứng minh activation trên Wayland hoặc một custom shortcut thực sự nhận tổ hợp phím. Lệnh chuyên dụng đã qua [native GNOME 46 Wayland lab](benchmarks/wayland-launcher-command-2026-10-29.json): cold/warm, tìm kiếm bằng phím thật sau activation rõ ràng của lab, Escape, Dock tắt, titlebar Close và lệnh mặc định mở Studio. Lượt cuối GNOME không tự cấp focus cho cold hoặc warm; harness chủ động activate cửa sổ đúng PID trước khi gõ. Backend nhận XDG_ACTIVATION_TOKEN/DESKTOP_STARTUP_ID và chuyển token theo request, nhưng đường token desktop thực chưa kiểm chứng. Còn activation token theo compositor, tổ hợp xung đột, desktop gán/gỡ phím và cleanup của phím thực. G8.7 **chưa chốt**.
+Single-instance forwarding của executable đã có Rust socket/ACK tests và native X11 lifecycle tests. Những bằng chứng đó không chứng minh activation trên Wayland hoặc một custom shortcut thực sự nhận tổ hợp phím. Lệnh chuyên dụng đã qua [native GNOME 46 Wayland lab](benchmarks/wayland-launcher-command-2026-10-29.json): cold/warm, tìm kiếm bằng phím thật sau activation rõ ràng của lab, Escape, Dock tắt, titlebar Close và lệnh mặc định mở Studio. Lượt cuối GNOME không tự cấp focus cho cold hoặc warm; harness chủ động activate cửa sổ đúng PID trước khi gõ. Backend nhận XDG_ACTIVATION_TOKEN/DESKTOP_STARTUP_ID và chuyển token theo request, nhưng đường token desktop thực chưa kiểm chứng. Đường token theo compositor vẫn chưa chứng nhận; xem bằng chứng phím thực bên dưới.
+
+
+## Phím GNOME thực đã kiểm — G8.7
+
+[Báo cáo](benchmarks/wayland-custom-shortcut-2026-10-29.json) dùng GNOME Shell46.0/Mutter46.2, gsd-media-keys thật và custom-keybinding schema trong settings riêng. Ctrl+Super+K từ cửa sổ GTK khác mở launcher cold/warm, tự nhận focus, gõ tìm kiếm bằng phím thật và Escape; không cần explicit activation của extension lab cho launcher. Tổ hợp trùng bị Mutter từ chối; gỡ binding giải phóng phím và không chạy command nữa. Bốn lượt hoàn chỉnh qua, không tác động shortcut desktop chính.
+
+Wrapper của test chỉ ghi PID và boolean token trước khi exec lệnh --launcher; không tạo token hoặc activate cửa sổ. XDG_ACTIVATION_TOKEN/DESKTOP_STARTUP_ID đều vắng ở lượt cuối, nên không coi đây là test portal token. Đã kiểm đường schema/backend GNOME, chưa thao tác GNOME Settings GUI; menu hướng dẫn dựa trên Help/schema của GNOME46. Không áp kết quả sang KDE/COSMIC hoặc GNOME khác.
+
+G8.7 chốt theo nhánh hướng dẫn gán phím desktop khi portal thiếu. Chạy lại bằng `/usr/bin/python3 tests/wayland_lab.py --shortcut-test --output /tmp/deskmorph-wayland-shortcut/results.json`. Đăng ký trực tiếp Wayland và GlobalShortcuts portal trong DeskMorph vẫn chưa được triển khai; native window management/Dock Wayland còn theo [quyết định adapter](WAYLAND_ADAPTER_DECISION.md).

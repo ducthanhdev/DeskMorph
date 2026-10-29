@@ -2,7 +2,7 @@
 
 Mục tiêu giữ nguyên toàn bộ 99 đầu việc trong IMPLEMENTATION_PLAN.md. Chưa đạt cổng hoàn thành toàn dự án. Checkbox chưa đánh dấu không đồng nghĩa chưa có code: nhiều mục đang chờ kiểm thử đủ phạm vi.
 
-Hiện đã đánh dấu 88/99 mục, gồm G3.2–G3.3 bằng fixture môi trường cô lập và G0.5/G2.1/G2.3 qua capability EWMH, kiểm thử lỗi adapter và native startup thiếu xprop. Đã bổ sung G0.4/G2.4/G2.5 qua popup/auto-hide native và G9.6/G9.9 bằng hồi quy policy/asset/force-close và ảnh Studio thật trong README. Các cổng GUI, Wayland và phát hành vẫn chưa hoàn tất.
+Hiện đã đánh dấu 89/99 mục, gồm G3.2–G3.3 bằng fixture môi trường cô lập và G0.5/G2.1/G2.3 qua capability EWMH, kiểm thử lỗi adapter và native startup thiếu xprop. Đã bổ sung G0.4/G2.4/G2.5 qua popup/auto-hide native và G9.6/G9.9 bằng hồi quy policy/asset/force-close và ảnh Studio thật trong README. Các cổng GUI, Wayland và phát hành vẫn chưa hoàn tất.
 
 ## Môi trường tham chiếu đã xác minh
 
@@ -587,3 +587,12 @@ Script cần AT-SPI, Python GI, GTK3 và libXtst. Chỉ gửi phím khi kiểm t
 - Private accessibility daemon/registry để đọc UI; không dùng host AT-SPI. Lượt đầu registry distro đòi systemd riêng nên thất bại; đã tạo bus/registry lab. Harness từng nhầm editable/text interface và phát hiện race startup/focus thật; sửa và chạy đủ lượt hoàn chỉnh. Mọi process lab đã dọn.
 - [Hồi quy X11 vi/en](benchmarks/launcher-command-x11-regression-2026-10-29.json) qua Dock auto-hide entry, Tab/reverse, Enter/Escape/reopen launcher/audio/system/calendar, hide sau blur. Frontend 54 pass, Rust 66 pass/4 ignored; socket test ngoài sandbox 2/2 qua; TS/Vite/custom-protocol build qua. Hướng dẫn và UI vi/en đổi sang --launcher, ghi đúng giới hạn activation.
 - G8.7 vẫn mở; tổng 88/99 không đổi. Cần kiểm phím desktop gán/gỡ/xung đột và activation token thật trên Wayland trước khi chốt.
+
+
+## G8.7 — Phím custom GNOME Wayland thật qua gsd-media-keys (29/10/2026)
+
+- [Bằng chứng cuối](benchmarks/wayland-custom-shortcut-2026-10-29.json) GNOME Shell 46.0/Mutter46.2: portal vẫn không xuất GlobalShortcuts. Gán Name/Command/Binding qua schema custom-keybinding của GNOME trong keyfile riêng, chạy gsd-media-keys thật. Extension lab chỉ tạo Ctrl+Super+K từ virtual keyboard riêng và quan sát exact PID; không gọi trực tiếp command để thay cho phím.
+- Cold/warm đều bắt đầu từ GTK native fixture khác đang focus. Media-keys chạy wrapper ghi PID và sự hiện diện token (không lưu token), rồi exec binary --launcher. Launcher tự nhận native focus, 16 phím Z tới renderer search tạo empty state; Escape ẩn. Warm command chuyển về PID cold, không tạo instance thứ hai. Không dùng explicit lab activation cho launcher; chỉ background fixture được activate trước khi bấm shortcut.
+- Lượt cuối kiểm Mutter từ chối duplicate grab khi custom binding đang đăng ký; gỡ path khỏi custom-keybindings giải phóng accelerator và bấm lại không thêm invocation. Bốn lượt hoàn chỉnh liên tiếp qua; hai lượt cuối có thêm kiểm duplicate/release, lượt cuối ghi phiên bản daemon và checksum source/binary. Các child app/media-keys/background/compositor/helper đã được dọn, không ghi settings hoặc gửi phím vào desktop host.
+- XDG_ACTIVATION_TOKEN và DESKTOP_STARTUP_ID đều không hiện diện ở hai invocation của lượt cuối. Bằng chứng là focus/input thực tế trên stack này, không phải chứng nhận truyền token từ portal hay mọi compositor. Gán/gỡ dùng schema/backend thật; màn hình GNOME Settings chưa được thao tác để kiểm bố cục UI. Hướng dẫn menu đã đối chiếu GNOME Help/schema; giới hạn được ghi rõ.
+- Chốt G8.7 đúng nhánh fallback desktop khi portal thiếu; giữ backend đăng ký trực tiếp Wayland tắt và không tuyên bố đã triển khai portal. Tổng 89/99. Frontend 54/54, TS/Vite/native custom-protocol build, Python compile và diff check qua; backend sản phẩm không đổi trong phần test này, hướng dẫn vi/en cập nhật theo kết quả.

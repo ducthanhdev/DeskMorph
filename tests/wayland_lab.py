@@ -1,8 +1,9 @@
 #!/usr/bin/python3
 """GNOME headless capability probe on a private bus, runtime and settings tree.
 
-No input injection, host display, Shell unsafe mode or host settings changes.
-This probes the compositor; it does not certify DeskMorph's Wayland UI.
+Default mode does not inject input. Opt-in prototype/launcher/shortcut modes
+use virtual input only inside the owned compositor. Never uses the host display,
+Shell unsafe mode or host settings. Each report states the measured UI scope.
 """
 import argparse
 import ctypes as C
@@ -109,7 +110,7 @@ def session(root):
         '--virtual-monitor=1280x720', '--wayland-display=' + SOCKET])
 
 
-def probe(root, metadata, launcher=False):
+def probe(root, metadata, launcher=False, shortcut=False):
     assert owned(metadata['gnomePid'], root)
     assert Path(f'/proc/{metadata["gnomePid"]}/exe').resolve().name == 'gnome-shell'
     bus = connection(metadata['busAddress'])
@@ -129,7 +130,7 @@ def probe(root, metadata, launcher=False):
         except GLib.Error as error:
             result['probes'][key] = dict(error=str(error))
     result['packages'] = subprocess.run(['dpkg-query', '-W', 'gnome-shell', 'libmutter-14-0',
-        'xdg-desktop-portal', 'xdg-desktop-portal-gnome', 'xdg-desktop-portal-gtk'],
+        'gnome-settings-daemon', 'xdg-desktop-portal', 'xdg-desktop-portal-gnome', 'xdg-desktop-portal-gtk'],
         capture_output=True, text=True, check=False).stdout.splitlines()
     result['portalBackends'] = {p.name: p.read_text() for p in sorted(Path('/usr/share/xdg-desktop-portal/portals').glob('*.portal'))}
     # GSettings is the proposed GNOME wallpaper API. This only verifies the lab's
@@ -182,7 +183,8 @@ def probe(root, metadata, launcher=False):
                     time.sleep(.1)
                 registry = subprocess.Popen(['/usr/libexec/at-spi2-registryd'], env=env, stdout=log, stderr=log)
                 with (root / 'launcher-probe.log').open('w') as output:
-                    subprocess.run(['/usr/bin/python3', str(Path(__file__).with_name('wayland_launcher_probe.py'))], env=env, stdout=output, stderr=output, timeout=120, check=True)
+                    worker = 'wayland_shortcut_probe.py' if shortcut else 'wayland_launcher_probe.py'
+                    subprocess.run(['/usr/bin/python3', str(Path(__file__).with_name(worker))], env=env, stdout=output, stderr=output, timeout=120, check=True)
             finally:
                 for child in (registry, a11y):
                     if child and child.poll() is None:
@@ -198,7 +200,8 @@ def probe(root, metadata, launcher=False):
     return result
 
 
-def run(output, prototype=False, launcher=False):
+def run(output, prototype=False, launcher=False, shortcut=False):
+    launcher = launcher or shortcut
     # Reap private D-Bus service grandchildren as well as the direct supervisor.
     libc = C.CDLL(None)
     assert libc.prctl(36, 1, 0, 0, 0) == 0, 'Cannot establish child subreaper'
@@ -242,7 +245,7 @@ def run(output, prototype=False, launcher=False):
                     except GLib.Error: pass
                 time.sleep(.1)
             else: raise AssertionError('Owned compositor readiness timed out')
-            result = probe(root, metadata, launcher)
+            result = probe(root, metadata, launcher, shortcut)
             result.update(kind='GNOME headless launcher probe' if launcher else 'GNOME headless extension prototype' if prototype else 'GNOME headless capability probe', hostDisplayUsed=False, inputInjected=prototype or launcher, hostInputInjected=False,
                 unsafeModeEnabled=False, privateSettings=True, elapsedSeconds=round(time.monotonic() - started, 3))
         finally:
@@ -281,7 +284,7 @@ def run(output, prototype=False, launcher=False):
             output.with_suffix('.log').write_text(log)
             if (root / 'fixture.log').exists():
                 output.with_suffix('.fixture.log').write_text((root / 'fixture.log').read_text())
-            for name in ('launcher-probe', 'deskmorph-launcher', 'accessibility'):
+            for name in ('launcher-probe', 'deskmorph-launcher', 'accessibility', 'media-keys', 'shortcut-background'):
                 if (root / (name + '.log')).exists(): output.with_suffix('.' + name + '.log').write_text((root / (name + '.log')).read_text())
             assert not any(active(pid) for pid in pids), 'Owned lab process did not exit'
             if result:
@@ -301,7 +304,8 @@ if __name__ == '__main__':
     parser.add_argument('--session', type=Path, help=argparse.SUPPRESS)
     parser.add_argument('--prototype', action='store_true', help='Run lab-only GNOME extension and native window prototype')
     parser.add_argument('--launcher-test', action='store_true', help='Exercise the actual DeskMorph CLI launcher on private Wayland')
+    parser.add_argument('--shortcut-test', action='store_true', help='Exercise GNOME custom shortcut through private gsd-media-keys')
     args = parser.parse_args()
     if args.session: session(args.session)
-    elif args.output: run(args.output.resolve(), args.prototype, args.launcher_test)
+    elif args.output: run(args.output.resolve(), args.prototype, args.launcher_test, args.shortcut_test)
     else: parser.error('--output is required')
