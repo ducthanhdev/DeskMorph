@@ -17,7 +17,7 @@ gi.require_version('GdkPixbuf', '2.0')
 from gi.repository import GdkPixbuf
 
 
-def run(package, output):
+def run(package, output, prior_package=None):
     package = package.resolve()
     assert package.is_file() and package.suffix == '.deb'
     output = output.resolve(); output.parent.mkdir(parents=True, exist_ok=True)
@@ -45,17 +45,28 @@ def run(package, output):
         config.parent.mkdir(parents=True)
         fixture = b'{"schemaVersion":1,"revision":17,"config":{"language":"vi","pinnedApps":[]}}\n'
         config.write_bytes(fixture)
-        # Exercise dpkg's version-upgrade path with a clearly synthetic earlier
-        # version of the same payload; this does not certify app migration.
-        prior = root / 'prior'
-        subprocess.run(['dpkg-deb', '-R', str(package), str(prior)], check=True)
-        prior_control = prior / 'DEBIAN/control'
-        prior_version = version + '~package-test'
-        prior_control.write_text(prior_control.read_text().replace('Version: ' + version + '\n', 'Version: ' + prior_version + '\n'))
-        subprocess.run(['dpkg-deb', '--build', '--root-owner-group', str(prior), str(root / 'prior.deb')], check=True, stdout=subprocess.PIPE)
+        if prior_package:
+            prior_package = prior_package.resolve()
+            assert prior_package.is_file() and prior_package != package
+            prior_version = call('dpkg-deb', '-f', str(prior_package), 'Version').strip()
+            prior_deb = prior_package
+            predecessor_sha256 = hashlib.sha256(prior_package.read_bytes()).hexdigest()
+        else:
+            # Keep the old fallback for package-only smoke runs. It is clearly
+            # labelled synthetic and must not be used as release migration proof.
+            prior = root / 'prior'
+            subprocess.run(['dpkg-deb', '-R', str(package), str(prior)], check=True)
+            prior_control = prior / 'DEBIAN/control'
+            prior_version = version + '~package-test'
+            prior_control.write_text(prior_control.read_text().replace('Version: ' + version + '\n', 'Version: ' + prior_version + '\n'))
+            subprocess.run(['dpkg-deb', '--build', '--root-owner-group', str(prior), str(root / 'prior.deb')], check=True, stdout=subprocess.PIPE)
+            prior_deb = root / 'prior.deb'
+            predecessor_sha256 = hashlib.sha256(prior_deb.read_bytes()).hexdigest()
         sandbox = ['bwrap', '--die-with-parent', '--ro-bind', '/', '/', '--unshare-user', '--uid', '0', '--gid', '0', '--unshare-pid', '--unshare-net', '--proc', '/proc', '--tmpfs', '/tmp', '--bind', str(root), '/tmp/pkg-lab', '--ro-bind', str(package), '/tmp/input.deb', '--chdir', '/tmp/pkg-lab']
         def command(*args): return call(*sandbox, *args)
         def manage(*args): return command('/usr/bin/dpkg', '--root=/tmp/pkg-lab/root', '--log=/tmp/pkg-lab/dpkg.log', *args)
+        if prior_package:
+            shutil.copyfile(prior_package, root / 'prior.deb')
         log = [manage('--install', '/tmp/pkg-lab/prior.deb')]
         assert config.read_bytes() == fixture
         log.append(manage('--install', '/tmp/input.deb'))
@@ -88,10 +99,11 @@ def run(package, output):
             packageControl=(control / 'control').read_text(), noMaintainerScripts=True, installedStatus=status.strip(), nativeHelp=True,
             desktopValidated=True, launcherDesktopAction=True, iconFiles=len(icons), reinstallSameVersionPreservesConfig=True,
             decodedIcons=icon_sizes,
-            syntheticUpgradeFrom=prior_version, syntheticUpgradePreservesConfig=True,
+            predecessorVersion=prior_version, predecessorSha256=predecessor_sha256,
+            predecessorUpgradePreservesConfig=True,
             removeDeletesPackagedFiles=True, purgePreservesUserData=True, installedBinarySha256=binary_hash,
             hostDpkgStatusUnchanged=hashlib.sha256(Path('/var/lib/dpkg/status').read_bytes()).hexdigest() == before,
-            scope='Private dpkg root in bwrap user/PID/network namespaces; borrowed host runtime/dependency status. Upgrade from a synthetic earlier package version with identical payload, then same-version reinstall. No previous-release migration, GUI, autostart, clean account or clean OS certification.')
+            scope='Private dpkg root in bwrap user/PID/network namespaces; borrowed host runtime/dependency status. A real predecessor package may be supplied; without --prior-package the upgrade is synthetic and not migration proof. GUI/autostart/clean account require the separate lab.')
         assert report['hostDpkgStatusUnchanged']
         output.with_suffix('.log').write_text('\n'.join(log))
         output.write_text(json.dumps(report, indent=2) + '\n')
@@ -100,4 +112,5 @@ def run(package, output):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('package', type=Path); parser.add_argument('--output', required=True, type=Path)
-    args = parser.parse_args(); run(args.package, args.output)
+    parser.add_argument('--prior-package', type=Path, help='Use a real predecessor .deb instead of the synthetic fallback')
+    args = parser.parse_args(); run(args.package, args.output, args.prior_package)

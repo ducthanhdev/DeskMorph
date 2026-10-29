@@ -767,3 +767,9 @@ Script cần AT-SPI, Python GI, GTK3 và libXtst. Chỉ gửi phím khi kiểm t
 - `desktop_smoke.py --lifecycle-smoke` chạy qua bốn lần bật/tắt Dock và restart, ba lần đóng/mở Studio cùng instance, bốn launch đồng thời chỉ giữ một instance, các nhánh Quit/keep-Dock và phục hồi preference. [Kết quả](benchmarks/lifecycle-smoke-2026-10-30/result.json), `preferencesRestored=true` và mọi PID test đã dọn.
 - Đây chỉ là phần lifecycle GNOME X11 đã chứng minh; G9.8 vẫn mở vì chưa có sleep/resume thật, service restart tổng thể, hotplug màn hình và soak dài hạn. Không dùng ca này để đánh dấu G9.8.
 - Đánh giá file: giữ JSON nhỏ gồm passed/pids/restore; không giữ log hoặc profile tạm.
+
+## G9.11 — Migration từ artifact tiền nhiệm khác payload (30/10/2026)
+
+- Dựng binary tiền nhiệm thật từ commit `06677de`, tạo `.deb` version `0.0.9` có SHA256 `f331bf210da71a83762f1b7a41ae538ec109069e9db3b71608b2ba69aba89d10`; payload khác binary 0.1.0. Mở rộng `deb_package_smoke.py --prior-package` để cài predecessor → nâng cấp → reinstall → remove/purge trong dpkg root bwrap riêng.
+- [Bằng chứng](benchmarks/deb-real-migration-2026-10-30/result.json): config giữ nguyên qua nâng cấp/reinstall/remove/purge; desktop-file/icon/help/dependency và host dpkg status đều qua. G9.11 vẫn mở vì chưa cài package bằng apt trên account/máy sạch thật và chưa kiểm autostart sau đăng nhập.
+- Đánh giá file: giữ tùy chọn `--prior-package` vì tái sử dụng cho migration thật; giữ JSON gọn có version/SHA256/payload khác và kết quả. Không commit predecessor `.deb`, binary, log hay build tree `/tmp`.

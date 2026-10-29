@@ -1,0 +1,19 @@
+{
+  "package": "desk-morph",
+  "version": "0.1.0",
+  "sha256": "f138ca13d82a29ff9ced3b4b9fe3194b60cd03ce43cfac2b4c508035250a6b15",
+  "bytes": 2549260,
+  "predecessorVersion": "0.0.9",
+  "predecessorSha256": "f331bf210da71a83762f1b7a41ae538ec109069e9db3b71608b2ba69aba89d10",
+  "predecessorUpgradePreservesConfig": true,
+  "reinstallSameVersionPreservesConfig": true,
+  "desktopValidated": true,
+  "launcherDesktopAction": true,
+  "iconFiles": 3,
+  "removeDeletesPackagedFiles": true,
+  "purgePreservesUserData": true,
+  "hostDpkgStatusUnchanged": true,
+  "installedBinarySha256": "5b6ac46cc121d10f57bea30013c82c06abc953c069b32a4d1b915f7e53c64734",
+  "scope": "Private dpkg root in bwrap user/PID/network namespaces; borrowed host runtime/dependency status. A real predecessor package may be supplied; without --prior-package the upgrade is synthetic and not migration proof. GUI/autostart/clean account require the separate lab.",
+  "predecessorSource": "binary built from git commit 06677de; payload differs from 0.1.0"
+}
