@@ -10,14 +10,15 @@ import { useI18n } from "../../i18n/useI18n";
 import type { SystemStats } from "../../types";
 import { SystemWidgets } from "../SystemWidgets";
 import { AppIcon } from "../AppIcon";
+import { useClock } from "../../hooks/useClock";
+import { formatClock } from "../../dateTime";
 export function DockPreview() {
   const { config } = useConfig();
   const { apps } = useInstalledApps();
   const { t, locale } = useI18n();
   const { iconSize } = dockMetrics(config);
-  const [now, setNow] = useState(new Date());
+  const now = useClock(config.showClock);
   const [stats, setStats] = useState<SystemStats | null>(null);
-  usePolling(async () => setNow(new Date()), 1000, config.showClock);
   usePolling(async (signal) => {
     const snapshot = await invoke<SystemStats>("get_system_stats");
     if (!signal.aborted) setStats(snapshot);
@@ -32,7 +33,7 @@ export function DockPreview() {
           {config.showShuffle && <Shuffle size={14} />}
           {config.showAudio && <Volume2 size={16} />}
           <SystemWidgets preview />
-          {config.showClock && <div className="clock-section"><time className="clock-time">{new Intl.DateTimeFormat(locale, { hour: "2-digit", minute: "2-digit", second: config.clockSeconds ? "2-digit" : undefined, hour12: !config.clock24 }).format(now)}</time><span className="clock-date">{new Intl.DateTimeFormat(locale, { weekday: "short", month: "short", day: "numeric" }).format(now)}</span></div>}
+          {config.showClock && <div className="clock-section"><time className="clock-time" dateTime={now.toISOString()}>{formatClock(now, locale, config)}</time><time className="clock-date" dateTime={now.toISOString()}>{new Intl.DateTimeFormat(locale, { weekday: "short", month: "short", day: "numeric" }).format(now)}</time></div>}
         </div>
       </div>
     </div>

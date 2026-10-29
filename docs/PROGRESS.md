@@ -2,7 +2,7 @@
 
 Mục tiêu giữ nguyên toàn bộ 99 đầu việc trong IMPLEMENTATION_PLAN.md. Chưa đạt cổng hoàn thành toàn dự án. Checkbox chưa đánh dấu không đồng nghĩa chưa có code: nhiều mục đang chờ kiểm thử đủ phạm vi.
 
-Hiện đã đánh dấu 78/99 mục, gồm G3.2–G3.3 bằng fixture môi trường cô lập và G0.5/G2.1/G2.3 qua capability EWMH, kiểm thử lỗi adapter và native startup thiếu xprop. Đã bổ sung G0.4/G2.4/G2.5 qua popup/auto-hide native và G9.6/G9.9 bằng hồi quy policy/asset/force-close và ảnh Studio thật trong README. Các cổng GUI, Wayland và phát hành vẫn chưa hoàn tất.
+Hiện đã đánh dấu 79/99 mục, gồm G3.2–G3.3 bằng fixture môi trường cô lập và G0.5/G2.1/G2.3 qua capability EWMH, kiểm thử lỗi adapter và native startup thiếu xprop. Đã bổ sung G0.4/G2.4/G2.5 qua popup/auto-hide native và G9.6/G9.9 bằng hồi quy policy/asset/force-close và ảnh Studio thật trong README. Các cổng GUI, Wayland và phát hành vẫn chưa hoàn tất.
 
 ## Môi trường tham chiếu đã xác minh
 
@@ -406,3 +406,12 @@ Script cần AT-SPI, Python GI, GTK3 và libXtst. Chỉ gửi phím khi kiểm t
 - Test component WallpaperSettings thật với adapter React/IPC có kiểm soát: đổi root hủy đúng request ID; completion/finally cũ không thay scan/loading mới; render chỉ ảnh mới, lỗi có retry request mới; unmount gửi cancel và bỏ completion. Lượt đầu thiếu Fragment export trong JSX test adapter, đã sửa và chạy lại xanh; không coi đó là lỗi product. Không tuyên bố adapter mô phỏng chứng minh IPC timing trên desktop chậm.
 - Full Rust 59/59 gồm ignored, frontend 33/33, TypeScript/Vite và offline custom-protocol build qua. Native --restart --library-stress --wallpaper-smoke exit 0 app 1949769: thư viện 5.001 file có notice giới hạn 5.000, trang 24 ảnh, next/previous đúng; first-page 0,933 giây là một quan sát, không phải performance budget. Hồi quy pixels thumbnail/favorite/filter/shuffle/light-dark và hai external changes cũng qua.
 - Finally library/favorites/recursive/wallpaper khôi phục; /proc ngoài sandbox xác minh PID cũ 1896337 đã thoát, PID mới đúng profile không timing env, lịch tắt, fixture folders không còn trong config, hai URI Sonoma-dark.jpg. [Hợp đồng](WALLPAPER.md), [bản ghi](benchmarks/wallpaper-scan-2026-10-29.json). G6.2 đánh dấu, tổng 78/99; G6.7 sleep thật và G6.9 adapter ngoài GNOME vẫn mở.
+
+
+## G5.7 — Đồng hồ 12/24 giờ, giây và ngày theo locale (29/10/2026)
+
+- Thêm dateTime.ts dùng chung cho Dock, preview, calendar và timestamp lịch hình nền. Dùng hourCycle h23/h12 rõ ràng thay hour12 để nửa đêm 24 giờ luôn 00, tránh locale chọn h24/24:xx; thời gian lịch nay cũng tôn trọng hai cấu hình đồng hồ. Định dạng ngày/tháng vẫn qua Intl với vi-VN/en-US và múi giờ local của hệ thống. Không thêm cấu hình timezone hay thay giờ máy.
+- Preview dùng cùng useClock với Dock/calendar, có abort/visibility rules của hook chung. Ngày và giờ preview/calendar dùng time/dateTime; nút lịch Dock giữ tên mở lịch và có aria-describedby tới hai giá trị thực. Native lượt đầu cho thấy span ngày preview không được xuất qua AT-SPI WebKit; thay time semantics và chạy lại đủ ma trận. Bỏ override font size riêng của preview time để giữ clock-time/clock-date như Dock.
+- Hai test formatter mới chứng minh vi/en: 00 ở midnight, 12 ở noon, 23:59/11:59 cùng SA/CH/AM/PM, bật/tắt giây, timestamp date order và ranh giới ngày/năm. Frontend cuối 35/35; TS/Vite và offline custom-protocol build qua. Rust implementation không đổi, giữ bằng chứng 59/59 tại G6.2.
+- Native --clock-smoke exit 0: PID 1977550 qua cả 8 tổ hợp locale × 12/24 × seconds trên Dock description, preview và calendar với thời gian host thực; kiểm localized date ở cả ba. Restart 1979345 giữ English/12-hour/no seconds và render đúng cả ba bề mặt. Cuối khôi phục config nguyên bytes, normal PID 1979774; /proc ngoài sandbox xác minh hai PID test đã thoát và normal không giữ timing env.
+- [Bản ghi](benchmarks/clock-locale-2026-10-29.json). G5.7 đánh dấu, tổng 79/99. Midnight/noon/year rollover là Date fixture, không tuyên bố đã đổi giờ máy hay đi qua thời điểm đó trên desktop thật. G5.8 toàn bộ chuỗi/lỗi và G5.9 accessibility đầy đủ vẫn mở.

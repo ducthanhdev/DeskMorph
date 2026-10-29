@@ -12,6 +12,7 @@ import { usePlatform } from "./hooks/usePlatform";
 import { usePolling } from "./hooks/usePolling";
 import { useAsyncLifetime } from "./hooks/useAsyncLifetime";
 import { useClock } from "./hooks/useClock";
+import { formatClock } from "./dateTime";
 import { groupWindows, matchesWindowClass } from "./windowGroups";
 import { listen } from "@tauri-apps/api/event";
 import {
@@ -84,7 +85,7 @@ export const Taskbar: React.FC = () => {
       if (performance.now() - outsideSince.current >= 500) setIsHovered(false);
     }
   }, 250, ready && config.enabled && config.autoHide && platform?.session === "x11" && !popupVisible);
-  const time = now.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit", second: config.clockSeconds ? "2-digit" : undefined, hour12: !config.clock24 });
+  const time = formatClock(now, locale, config);
   const date = now.toLocaleDateString(locale, { weekday: "short", month: "short", day: "numeric" });
   const dockRef = useRef<HTMLDivElement>(null);
   const pointerDrag = useRef<{ id: string; pointerId: number; x: number; y: number; started: boolean; cancelled: boolean } | null>(null);
@@ -1002,6 +1003,7 @@ export const Taskbar: React.FC = () => {
             <button
               type="button"
               aria-label={t("calendar")}
+              aria-describedby="dock-clock-time dock-clock-date"
               className="taskbar-section clock-section interactive-widget"
               onClick={async (e) => {
                 e.stopPropagation();
@@ -1016,8 +1018,8 @@ export const Taskbar: React.FC = () => {
               }}
               data-dock-tooltip={t("calendar")}
             >
-              <span className="clock-time">{time}</span>
-              <span className="clock-date">{date}</span>
+              <span id="dock-clock-time" className="clock-time">{time}</span>
+              <span id="dock-clock-date" className="clock-date">{date}</span>
             </button>
           )}
         </div>

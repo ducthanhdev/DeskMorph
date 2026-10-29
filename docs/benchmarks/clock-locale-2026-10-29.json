@@ -1,0 +1,107 @@
+{
+  "passed": [
+    "8 live combinations on Dock, preview and calendar",
+    "localized dates on three surfaces",
+    "English 12-hour clock without seconds persists across restart"
+  ],
+  "observations": [
+    {
+      "language": "vi",
+      "clock24": true,
+      "clockSeconds": true,
+      "dockDescription": "12:09:15 Th 5, 29 thg 10",
+      "previewClock": "12:09:15",
+      "calendarClock": "12:09:15"
+    },
+    {
+      "language": "vi",
+      "clock24": true,
+      "clockSeconds": false,
+      "dockDescription": "12:09 Th 5, 29 thg 10",
+      "previewClock": "12:09",
+      "calendarClock": "12:09"
+    },
+    {
+      "language": "vi",
+      "clock24": false,
+      "clockSeconds": true,
+      "dockDescription": "12:09:21 CH Th 5, 29 thg 10",
+      "previewClock": "12:09:21 CH",
+      "calendarClock": "12:09:22 CH"
+    },
+    {
+      "language": "vi",
+      "clock24": false,
+      "clockSeconds": false,
+      "dockDescription": "12:09 CH Th 5, 29 thg 10",
+      "previewClock": "12:09 CH",
+      "calendarClock": "12:09 CH"
+    },
+    {
+      "language": "en",
+      "clock24": true,
+      "clockSeconds": true,
+      "dockDescription": "12:09:29 Thu, Oct 29",
+      "previewClock": "12:09:30",
+      "calendarClock": "12:09:30"
+    },
+    {
+      "language": "en",
+      "clock24": true,
+      "clockSeconds": false,
+      "dockDescription": "12:09 Thu, Oct 29",
+      "previewClock": "12:09",
+      "calendarClock": "12:09"
+    },
+    {
+      "language": "en",
+      "clock24": false,
+      "clockSeconds": true,
+      "dockDescription": "12:09:36 PM Thu, Oct 29",
+      "previewClock": "12:09:37 PM",
+      "calendarClock": "12:09:37 PM"
+    },
+    {
+      "language": "en",
+      "clock24": false,
+      "clockSeconds": false,
+      "dockDescription": "12:09 PM Thu, Oct 29",
+      "previewClock": "12:09 PM",
+      "calendarClock": "12:09 PM"
+    }
+  ],
+  "afterRestart": {
+    "language": "en",
+    "clock24": false,
+    "clockSeconds": false,
+    "dockDescription": "12:09 PM Thu, Oct 29",
+    "previewClock": "12:09 PM",
+    "calendarClock": "12:09 PM"
+  },
+  "testPids": [
+    1977550,
+    1979345
+  ],
+  "scope": "Actual host time; midnight/noon/year rollover use deterministic formatter tests. Host clock unchanged.",
+  "normalPid": 1979774,
+  "preferencesRestored": true,
+  "environment": "Pop!_OS 24.04, GNOME 46, X11, scale 1; isolated custom-protocol debug build",
+  "frontendTestsPassed": 35,
+  "builds": [
+    "TypeScript/Vite",
+    "offline Tauri custom-protocol"
+  ],
+  "rust": "Unchanged implementation; 59/59 at G6.2",
+  "cleanup": {
+    "testProcessesExited": {
+      "1977550": true,
+      "1979345": true
+    },
+    "normalProfileVerified": true,
+    "timingEnvAbsent": true
+  },
+  "limitations": [
+    "Midnight/noon/year rollover use injected Date values in formatter tests, not a changed host clock.",
+    "This does not certify all UI strings or accessibility; G5.8/G5.9 remain open."
+  ]
+}

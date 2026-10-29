@@ -6,6 +6,7 @@ import { usePlatform } from "../../hooks/usePlatform";
 import { usePolling } from "../../hooks/usePolling";
 import { useI18n } from "../../i18n/useI18n";
 import { Card, Toggle } from "./Controls";
+import { formatClock, formatClockDateTime } from "../../dateTime";
 interface Image { path: string; filename: string; folder: string; format: string }
 interface Scan { images: Image[]; issues: { path: string; message: string }[]; limited: boolean }
 interface ScheduleStatus { enabled: boolean; running: boolean; nextRunUnixMs: number | null; lastRunUnixMs: number | null; lastPath: string | null; lastError: string | null }
@@ -96,9 +97,9 @@ export function WallpaperSettings() {
     <section className="wallpaper-schedule" aria-label={t("schedule")}>
       <Toggle label={t("schedule")} help={t("scheduleHelp")} disabled={!platform?.wallpaper} value={config.wallpaperScheduleEnabled} onChange={(wallpaperScheduleEnabled) => updateConfig({ wallpaperScheduleEnabled })} />
       <label className="settings-field">{t("interval")}<select aria-label={t("interval")} value={config.wallpaperIntervalMinutes} onChange={(e) => void updateConfig({ wallpaperIntervalMinutes: Number(e.target.value) })}>{[...new Set([1, 5, 15, 30, 60, config.wallpaperIntervalMinutes])].sort((a,b) => a-b).map((minutes) => <option key={minutes} value={minutes}>{minutes} {t("minutes")}</option>)}</select></label>
-      {config.wallpaperScheduleEnabled && schedule?.nextRunUnixMs && <p className="settings-help" role="status">{t("nextWallpaper")}: {new Intl.DateTimeFormat(locale, { hour: "2-digit", minute: "2-digit", second: "2-digit" }).format(schedule.nextRunUnixMs)}</p>}
+      {config.wallpaperScheduleEnabled && schedule?.nextRunUnixMs && <p className="settings-help" role="status">{t("nextWallpaper")}: {formatClock(schedule.nextRunUnixMs, locale, config)}</p>}
       {schedule?.running && <p role="status">{t("changingWallpaper")}</p>}
-      {schedule?.lastRunUnixMs && <p className="settings-help">{t("lastWallpaperAttempt")}: {new Intl.DateTimeFormat(locale, { dateStyle: "short", timeStyle: "medium" }).format(schedule.lastRunUnixMs)}</p>}
+      {schedule?.lastRunUnixMs && <p className="settings-help">{t("lastWallpaperAttempt")}: {formatClockDateTime(schedule.lastRunUnixMs, locale, config)}</p>}
       {schedule?.lastError && <p role="alert">{t("scheduleError")}: {schedule.lastError}</p>}
     </section>
     {current && <p className="settings-help">{t("currentWallpaper")}: <span className="wallpaper-folder-path">{current}</span></p>}

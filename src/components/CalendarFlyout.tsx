@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { invoke } from "../ipc";
 import { listen } from "@tauri-apps/api/event";
 import { useClock } from "../hooks/useClock";
+import { formatClock } from "../dateTime";
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Clock } from "lucide-react";
 
 export const CalendarFlyout: React.FC = () => {
@@ -14,7 +15,7 @@ export const CalendarFlyout: React.FC = () => {
   const today = useClock(visible);
   const [viewDate, setViewDate] = useState<Date>(new Date());
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const liveTime = today.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit", second: config.clockSeconds ? "2-digit" : undefined, hour12: !config.clock24 });
+  const liveTime = formatClock(today, locale, config);
 
   useEffect(() => {
     let disposed = false;
@@ -114,11 +115,11 @@ export const CalendarFlyout: React.FC = () => {
         <div className="calendar-live-banner">
           <div className="calendar-live-date">
             <CalendarIcon size={13} className="banner-icon" />
-            <span>{formatFullDate(today)}</span>
+            <time dateTime={today.toISOString()}>{formatFullDate(today)}</time>
           </div>
           <div className="calendar-live-clock">
             <Clock size={13} className="banner-icon" />
-            <span className="live-clock-time">{liveTime}</span>
+            <time className="live-clock-time" dateTime={today.toISOString()}>{liveTime}</time>
           </div>
         </div>
 
