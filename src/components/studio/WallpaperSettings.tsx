@@ -20,6 +20,7 @@ export function WallpaperSettings() {
   const { t, locale, text } = useI18n();
   const { platform, error: platformError } = usePlatform();
   const removalFocus = useRemovalFocus();
+  const libraryFocus = useRemovalFocus("button[data-library-focus]:not(:disabled)", true, "button[data-library-page]:not(:disabled)");
   const [folder, setFolder] = useState("");
   const [scan, setScan] = useState<Scan>({ images: [], issues: [], limited: false });
   const [current, setCurrent] = useState("");
@@ -108,8 +109,9 @@ export function WallpaperSettings() {
       {schedule?.lastError && <p role="alert">{t("scheduleError")}: <ErrorText error={schedule.lastError} /></p>}
     </section>
     {current && <p className="settings-help">{t("currentWallpaper")}: <span className="wallpaper-folder-path">{current}</span></p>}
+    <div ref={libraryFocus.root} onFocusCapture={libraryFocus.onFocusCapture}>
     <div className="wallpaper-filters">
-      <input aria-label={t("searchWallpapers")} placeholder={t("searchWallpapers")} value={query} onChange={(e) => { setQuery(e.target.value); setPage(0); }} />
+      <input ref={libraryFocus.fallback} aria-label={t("searchWallpapers")} placeholder={t("searchWallpapers")} value={query} onChange={(e) => { setQuery(e.target.value); setPage(0); }} />
       <select aria-label={t("filterFolder")} value={filterFolder} onChange={(e) => { setFilterFolder(e.target.value); setPage(0); }}><option value="">{t("allFolders")}</option>{[...new Set(scan.images.map((image) => image.folder))].sort().map((path) => <option key={path} value={path}>{path}</option>)}</select>
       <select aria-label={t("format")} value={format} onChange={(e) => { setFormat(e.target.value); setPage(0); }}><option value="">{t("allFormats")}</option>{[...new Set(scan.images.map((image) => image.format))].sort().map((value) => <option key={value} value={value}>{value.toUpperCase()}</option>)}</select>
       <Toggle label={t("favoritesOnly")} value={favoritesOnly} onChange={(value) => { setFavoritesOnly(value); setPage(0); }} />
@@ -126,9 +128,10 @@ export function WallpaperSettings() {
           {thumbnails[image.path]?.thumbnail ? <img className="wallpaper-thumb-img" loading="lazy" src={convertFileSrc(thumbnails[image.path].thumbnail!)} alt="" onError={() => setThumbnails((previous) => ({ ...previous, [image.path]: { path: image.path, thumbnail: null, error: "unavailable" } }))} /> : <div className="wallpaper-thumb-placeholder">{thumbnails[image.path]?.error ? t("thumbnailError") : t("loading")}</div>}
           <span className="wallpaper-name">{image.filename}</span>
         </button>
-        <button className="wallpaper-favorite" aria-label={`${t("favorite")} ${image.filename}`} aria-pressed={favorites.has(image.path)} onClick={() => void updateConfig({ wallpaperFavorites: favorites.has(image.path) ? config.wallpaperFavorites.filter((path) => path !== image.path) : [...config.wallpaperFavorites, image.path] })}>{favorites.has(image.path) ? "★" : "☆"}</button>
+        <button data-library-focus className="wallpaper-favorite" aria-label={`${t("favorite")} ${image.filename}`} aria-pressed={favorites.has(image.path)} onClick={() => void updateConfig({ wallpaperFavorites: favorites.has(image.path) ? config.wallpaperFavorites.filter((path) => path !== image.path) : [...config.wallpaperFavorites, image.path] })}>{favorites.has(image.path) ? "★" : "☆"}</button>
       </article>)}</div>
-      <div className="settings-inline"><button disabled={currentPage === 0} onClick={() => setPage(currentPage - 1)}>{t("previousPage")}</button><button disabled={currentPage >= pages - 1} onClick={() => setPage(currentPage + 1)}>{t("nextPage")}</button></div>
+      <div className="settings-inline"><button data-library-focus data-library-page disabled={currentPage === 0} onClick={() => setPage(currentPage - 1)}>{t("previousPage")}</button><button data-library-focus data-library-page disabled={currentPage >= pages - 1} onClick={() => setPage(currentPage + 1)}>{t("nextPage")}</button></div>
     </>}
+    </div>
   </Card></div>;
 }

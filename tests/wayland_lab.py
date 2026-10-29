@@ -102,6 +102,8 @@ def session(root):
         'XDG_SESSION_TYPE', 'XDG_CURRENT_DESKTOP']}
     if os.environ.get('DESKMORPH_PROTOTYPE_TOKEN'):
         values['DESKMORPH_PROTOTYPE_TOKEN'] = os.environ['DESKMORPH_PROTOTYPE_TOKEN']
+    if os.environ.get('DESKMORPH_WALLPAPER_TEST'):
+        values['DESKMORPH_WALLPAPER_TEST'] = '1'
     if os.environ.get('DESKMORPH_SNAP_GUI_TEST'):
         values['DESKMORPH_SNAP_GUI_TEST'] = '1'
     if os.environ.get('DESKMORPH_SNAP_TEST'):
@@ -191,7 +193,7 @@ def probe(root, metadata, launcher=False, shortcut=False):
                     time.sleep(.1)
                 registry = subprocess.Popen(['/usr/libexec/at-spi2-registryd'], env=env, stdout=log, stderr=log)
                 with (root / 'launcher-probe.log').open('w') as output:
-                    worker = 'wayland_shortcut_probe.py' if shortcut else 'wayland_launcher_probe.py'
+                    worker = 'wallpaper_keyboard_probe.py' if env.get('DESKMORPH_WALLPAPER_TEST') else 'wayland_shortcut_probe.py' if shortcut else 'wayland_launcher_probe.py'
                     subprocess.run(['/usr/bin/python3', str(Path(__file__).with_name(worker))], env=env, stdout=output, stderr=output, timeout=120, check=True)
             finally:
                 for child in (registry, a11y):
@@ -208,9 +210,9 @@ def probe(root, metadata, launcher=False, shortcut=False):
     return result
 
 
-def run(output, prototype=False, launcher=False, shortcut=False, binary=None, terminal=False, snap=False, snap_gui=False):
+def run(output, prototype=False, launcher=False, shortcut=False, binary=None, terminal=False, snap=False, snap_gui=False, wallpaper=False):
     snap = snap or snap_gui
-    launcher = launcher or shortcut or terminal or snap
+    launcher = launcher or shortcut or terminal or snap or wallpaper
     # Reap private D-Bus service grandchildren as well as the direct supervisor.
     libc = C.CDLL(None)
     assert libc.prctl(36, 1, 0, 0, 0) == 0, 'Cannot establish child subreaper'
@@ -224,6 +226,8 @@ def run(output, prototype=False, launcher=False, shortcut=False, binary=None, te
             GDK_BACKEND='wayland', WAYLAND_DISPLAY=SOCKET, LIBGL_ALWAYS_SOFTWARE='1')
         for key in ['DISPLAY', 'AT_SPI_BUS_ADDRESS', 'SESSION_MANAGER', 'DESKTOP_STARTUP_ID', 'XDG_SESSION_ID']:
             env.pop(key, None)
+        if wallpaper:
+            env['DESKMORPH_WALLPAPER_TEST'] = '1'
         if snap:
             env['DESKMORPH_SNAP_TEST'] = '1'
         socket_path = root / 'runtime' / SOCKET
@@ -343,17 +347,20 @@ if __name__ == '__main__':
     parser.add_argument('--prototype', action='store_true', help='Run lab-only GNOME extension and native window prototype')
     parser.add_argument('--launcher-test', action='store_true', help='Exercise the actual DeskMorph CLI launcher on private Wayland')
     parser.add_argument('--shortcut-test', action='store_true', help='Exercise GNOME custom shortcut through private gsd-media-keys')
+    parser.add_argument('--wallpaper-test', action='store_true', help='Native Studio wallpaper keyboard/focus checks in private lab')
     parser.add_argument('--snap-gui-test', action='store_true', help='Map installed Chromium Snap on the private compositor using an owned runtime socket')
     parser.add_argument('--snap-test', action='store_true', help='Launch installed Chromium Snap headless with an isolated profile through DeskMorph UI')
     parser.add_argument('--terminal-test', action='store_true', help='Launch a real terminal from the actual launcher in the private lab')
     parser.add_argument('--binary', type=Path, help='Use this executable for the launcher UI probe')
     args = parser.parse_args()
+    if args.wallpaper_test and (args.shortcut_test or args.terminal_test or args.snap_test or args.snap_gui_test):
+        parser.error('--wallpaper-test requires its own run')
     if (args.snap_test or args.snap_gui_test) and (args.shortcut_test or args.terminal_test):
         parser.error('--snap-test cannot be combined with shortcut or terminal modes')
     if args.terminal_test and args.shortcut_test:
         parser.error('--terminal-test cannot be combined with --shortcut-test')
-    if args.binary and (not (args.launcher_test or args.terminal_test or args.snap_test or args.snap_gui_test) or args.shortcut_test):
+    if args.binary and (not (args.launcher_test or args.terminal_test or args.snap_test or args.snap_gui_test or args.wallpaper_test) or args.shortcut_test):
         parser.error('--binary requires a launcher, terminal, or Snap mode and cannot be combined with --shortcut-test')
     if args.session: session(args.session)
-    elif args.output: run(args.output.resolve(), args.prototype, args.launcher_test, args.shortcut_test, args.binary, args.terminal_test, args.snap_test, args.snap_gui_test)
+    elif args.output: run(args.output.resolve(), args.prototype, args.launcher_test, args.shortcut_test, args.binary, args.terminal_test, args.snap_test, args.snap_gui_test, args.wallpaper_test)
     else: parser.error('--output is required')

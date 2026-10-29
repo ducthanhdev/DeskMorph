@@ -14,7 +14,7 @@ test('focused removals choose same-index/previous/fallback and never steal focus
   const output = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.ESNext } }).outputText;
   const { useRemovalFocus } = await import('data:text/javascript;base64,' + Buffer.from(output).toString('base64'));
   const body = {}; let focus = null;
-  globalThis.document = { body, activeElement: body };
+  globalThis.document = { body, activeElement: body, hasFocus: () => true };
   const button = name => ({ name, isConnected: true, focus() { focus = name; document.activeElement = this; } });
   let buttons = [button('first'), button('second'), button('third')];
   const render = () => { slot = 0; return useRemovalFocus(); };
@@ -33,6 +33,26 @@ test('focused removals choose same-index/previous/fallback and never steal focus
     buttons = [button('async remove')]; hook.onFocusCapture({ target: buttons[0] });
     buttons[0].isConnected = false; buttons = []; document.activeElement = button('another control');
     focus = null; render(); effect(); assert.equal(focus, null);
+    // Pagination can retain its node but become disabled on the last page.
+    const disabled = button('next page'); disabled.matches = () => true;
+    buttons = [button('previous page'), disabled];
+    slot = 0; hook = useRemovalFocus('button[data-library-focus]:not(:disabled)', true);
+    hook.onFocusCapture({ target: disabled }); buttons.pop();
+    document.activeElement = body; slot = 0;
+    useRemovalFocus('button[data-library-focus]:not(:disabled)', true); effect();
+    assert.equal(focus, 'previous page');
+    // Some engines leave activeElement pointing at the newly disabled button.
+    buttons = [button('previous page'), disabled];
+    hook.onFocusCapture({ target: disabled }); buttons.pop();
+    document.activeElement = disabled; slot = 0;
+    useRemovalFocus('button[data-library-focus]:not(:disabled)', true); effect();
+    assert.equal(document.activeElement.name, 'previous page');
+    // Native blur must win even if a delayed render disables our origin.
+    buttons = [disabled]; hook.onFocusCapture({ target: disabled }); buttons = [];
+    document.activeElement = body; document.hasFocus = () => false; focus = null;
+    slot = 0; useRemovalFocus('button[data-library-focus]:not(:disabled)', true); effect();
+    assert.equal(focus, null); document.hasFocus = () => true;
+    focus = null;
     // Ordinary render/reorder must leave the connected focused control alone.
     buttons = [button('connected')]; hook.onFocusCapture({ target: buttons[0] });
     document.activeElement = body; render(); effect(); assert.equal(focus, null);
