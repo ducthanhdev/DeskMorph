@@ -43,3 +43,16 @@ launchCommandForPin được dùng cho click/middle-click/menu của pin. Menu �
 ```
 
 Ca native dùng hai pin với executable/script có khoảng trắng và argv nhiều từ/ký tự shell literal. Một pin legacy resolve metadata bằng StartupWMClass nhưng phải giữ lệnh riêng; pin còn lại có desktopId trái với command và phải mở đúng desktop entry. Cả click/middle-click/menu đều kiểm argv thực thi; restart kiểm nguyên danh sách pin/lệnh. [Bản ghi](benchmarks/pin-identity-2026-10-29.json).
+
+
+## Ghim theo desktop identity
+
+Một desktopId chỉ có một pin, kể cả các bản ghi có id pin khác nhau hoặc lưu identity dưới dạng desktop:ID / ID.desktop. Backend serialize thao tác và kiểm identity tại add, không chỉ dựa vào trạng thái UI. Add lặp enable pin hiện có, giữ tên/order/lệnh/id đã tùy chỉnh. Patch/import mới trùng identity bị từ chối; không ghi config một phần.
+
+Load/migration dữ liệu từ bản cũ gộp duplicate explicit identity, giữ bản đầu và bật nếu có bản đang bật. Native giữ bytes gốc và recovery copy kèm warning; localStorage legacy vẫn được giữ. Không gộp theo WM_CLASS hay lệnh custom phỏng đoán. Không thay tên/metadata pin legacy bằng tên từ catalogue khi re-enable.
+
+```sh
+/usr/bin/python3 tests/desktop_smoke.py --pinning-smoke --pin-identity-smoke
+```
+
+Ca native bao phủ duplicate recovery/re-enable/unpin/re-pin/Dock launch/restart, khôi phục config và chỉ xóa recovery có đúng bytes fixture. [Bản ghi](benchmarks/pinning-2026-10-29.json).

@@ -44,6 +44,33 @@ fn validate_pin(v: &Value) -> bool {
         && (v.get("color").is_none() || valid_color(&v["color"]))
         && (v.get("enabled").is_none() || v["enabled"].is_boolean())
 }
+// Match the explicit identities understood by the frontend. Legacy argv stays
+// opaque here: WM_CLASS/executable guesses must never merge unrelated pins.
+fn pin_desktop_id(pin: &Value) -> Option<&str> {
+    if let Some(id) = pin["desktopId"].as_str() { return Some(id); }
+    let command = pin["command"].as_str()?.trim();
+    if let Some(id) = command.strip_prefix("desktop:") { return Some(id); }
+    (command.ends_with(".desktop") && !command.chars().any(|c| c.is_whitespace() || c == '/')).then_some(command)
+}
+
+// Older versions allowed different pin IDs for one desktop identity. Preserve
+// the first pin's order/metadata and keep it enabled if any duplicate was enabled.
+// A recovery copy/localStorage keeps the original document for load/migration.
+fn repair_duplicate_desktop_pins(value: &Value) -> Option<Value> {
+    let pins = value.as_array()?;
+    let mut ids = std::collections::HashSet::new();
+    if pins.len() > 256 || !pins.iter().all(|p| validate_pin(p) && ids.insert(p["id"].as_str().unwrap())) { return None; }
+    let mut unique: Vec<Value> = Vec::new();
+    let mut repaired = false;
+    for pin in pins {
+        if let Some(index) = pin_desktop_id(pin).and_then(|id| unique.iter().position(|other| pin_desktop_id(other) == Some(id))) {
+            repaired = true;
+            if pin["enabled"].as_bool() != Some(false) { unique[index]["enabled"] = json!(true); }
+        } else { unique.push(pin.clone()); }
+    }
+    repaired.then(|| json!(unique))
+}
+
 fn valid_field(key: &str, v: &Value) -> bool {
     match key {
         "launcherShortcut" => v.is_null() || v.as_str().is_some_and(super::shortcuts::valid),
@@ -77,7 +104,9 @@ fn valid_field(key: &str, v: &Value) -> bool {
         "accentColor" => valid_color(v),
         "pinnedApps" => v.as_array().is_some_and(|a| {
             let mut ids = std::collections::HashSet::new();
-            a.len() <= 256 && a.iter().all(|p| validate_pin(p) && ids.insert(p["id"].as_str().unwrap()))
+            let mut desktops = std::collections::HashSet::new();
+            a.len() <= 256 && a.iter().all(|p| validate_pin(p) && ids.insert(p["id"].as_str().unwrap())
+                && pin_desktop_id(p).is_none_or(|id| desktops.insert(id)))
         }),
         _ => false,
     }
@@ -89,6 +118,13 @@ fn apply_fields(base: &Value, patch: &Value, strict: bool) -> Result<(Value, boo
     let mut next = base.clone();
     let mut repaired = false;
     for (key, value) in object {
+        if !strict && key == "pinnedApps" {
+            if let Some(pins) = repair_duplicate_desktop_pins(value) {
+                next[key] = pins;
+                repaired = true;
+                continue;
+            }
+        }
         if !valid_field(key, value) {
             if strict { return Err(ConfigError::new("invalid_config", format!("Giá trị cấu hình không hợp lệ: {key}"))); }
             repaired = true;
@@ -149,7 +185,7 @@ impl ConfigStore {
                     .unwrap_or_else(|_| (defaults(), true));
                 if repaired {
                     store.backup(&bytes)?;
-                    snapshot.warning = Some("Một số trường cấu hình không hợp lệ đã dùng giá trị mặc định; bản gốc được giữ trong file recovery.".into());
+                    snapshot.warning = Some("Một số trường cấu hình được sửa hoặc dùng giá trị mặc định; bản gốc được giữ trong file recovery.".into());
                 }
                 snapshot.config = config;
                 snapshot.schema_version = VERSION;
@@ -182,7 +218,7 @@ impl ConfigStore {
                 match apply_fields(&defaults(), &legacy, false) {
                     Ok((config, repaired)) => {
                         next.config = config;
-                        if repaired { next.warning = Some("Đã chuyển cấu hình cũ; trường không hợp lệ dùng giá trị mặc định. Bản gốc vẫn còn trong localStorage.".into()); }
+                        if repaired { next.warning = Some("Đã chuyển cấu hình cũ; trường trùng được gộp, trường không hợp lệ dùng giá trị mặc định. Bản gốc vẫn còn trong localStorage.".into()); }
                     }
                     Err(_) => next.warning = Some("Không đọc được cấu hình cũ; bản gốc vẫn còn trong localStorage.".into()),
                 }
@@ -240,7 +276,14 @@ impl ConfigStore {
             "add" => {
                 let pin = pin.filter(|p| validate_pin(p) && p["id"].as_str() == Some(id))
                     .ok_or_else(|| ConfigError::new("invalid_pin", "Ứng dụng ghim không hợp lệ"))?;
-                if let Some(i) = index { pins[i]["enabled"] = json!(true); } else { pins.push(pin); }
+                if let Some(i) = index {
+                    if pin_desktop_id(&pins[i]) != pin_desktop_id(&pin) {
+                        return Err(ConfigError::new("pin_identity_conflict", "ID ghim đã thuộc ứng dụng khác"));
+                    }
+                    pins[i]["enabled"] = json!(true);
+                } else if let Some(i) = pin_desktop_id(&pin).and_then(|desktop| pins.iter().position(|p| pin_desktop_id(p) == Some(desktop))) {
+                    pins[i]["enabled"] = json!(true);
+                } else { pins.push(pin); }
             }
             "toggleEnabled" => {
                 let i = index.ok_or_else(|| ConfigError::new("pin_missing", "Không tìm thấy ứng dụng ghim"))?;
@@ -580,6 +623,52 @@ mod tests {
         }
         assert_eq!(ConfigStore::load(path.clone()).unwrap().snapshot.config, saved);
         store.pin("setClasses", "code", Some(json!({"matchClasses":[]})), None).unwrap();
+        fs::remove_dir_all(path.parent().unwrap()).unwrap();
+    }
+    #[test]
+    fn desktop_pin_identity_is_unique_across_add_import_and_restart() {
+        let path = path();
+        let mut store = ConfigStore::load(path.clone()).unwrap();
+        let old = json!({"id":"legacy", "name":"My legacy name", "command":"desktop:sample.desktop", "matchClasses":["sample"], "iconType":"custom", "enabled":false});
+        let fresh = json!({"id":"sample.desktop", "desktopId":"sample.desktop", "name":"Catalogue name", "command":"desktop:sample.desktop", "matchClasses":["sample"], "iconType":"custom", "enabled":true});
+        store.initialize(Some(json!({"pinnedApps":[old.clone()]}))).unwrap();
+        store.pin("add", "sample.desktop", Some(fresh.clone()), None).unwrap();
+        let mut enabled = old.clone(); enabled["enabled"] = json!(true);
+        assert_eq!(store.snapshot.config["pinnedApps"], json!([enabled.clone()]));
+        store.pin("add", "sample.desktop", Some(fresh.clone()), None).unwrap();
+        assert_eq!(store.snapshot.config["pinnedApps"], json!([enabled.clone()]));
+        assert_eq!(ConfigStore::load(path.clone()).unwrap().snapshot.config["pinnedApps"], json!([enabled.clone()]));
+        let before = store.snapshot.clone();
+        assert!(store.patch(json!({"pinnedApps":[enabled.clone(), fresh.clone()]})).is_err());
+        assert!(read_document(&json!({"schemaVersion":1,"config":{"pinnedApps":[enabled.clone(),fresh]}})).is_err());
+        let conflict = json!({"id":"legacy", "desktopId":"other.desktop", "name":"Other", "command":"desktop:other.desktop", "matchClasses":[], "iconType":"custom"});
+        assert_eq!(store.pin("add", "legacy", Some(conflict), None).unwrap_err().code, "pin_identity_conflict");
+        assert_eq!(store.snapshot.config, before.config);
+        assert_eq!(store.snapshot.revision, before.revision);
+        store.pin("remove", "legacy", None, None).unwrap();
+        assert_eq!(store.snapshot.config["pinnedApps"], json!([]));
+        fs::remove_dir_all(path.parent().unwrap()).unwrap();
+    }
+    #[test]
+    fn duplicate_desktop_pin_migration_keeps_order_metadata_and_original_document() {
+        let path = path();
+        let mut store = ConfigStore::load(path.clone()).unwrap();
+        let first = json!({"id":"old", "name":"Keep me", "command":"sample.desktop", "matchClasses":[], "iconType":"custom", "enabled":false});
+        let duplicate = json!({"id":"new", "desktopId":"sample.desktop", "name":"Duplicate", "command":"desktop:sample.desktop", "matchClasses":[], "iconType":"custom"});
+        let custom = json!({"id":"custom", "name":"Custom profile", "command":"editor --profile work", "matchClasses":[], "iconType":"custom"});
+        let original = json!({"pinnedApps":[first.clone(), custom.clone(), duplicate]});
+        let migrated = store.initialize(Some(original.clone())).unwrap();
+        let mut expected = first; expected["enabled"] = json!(true);
+        assert_eq!(migrated.config["pinnedApps"], json!([expected.clone(), custom.clone()]));
+        assert!(migrated.warning.is_some());
+        let disk = Snapshot { schema_version:1, revision:42, config:original, warning:None };
+        let bytes = serde_json::to_vec(&disk).unwrap(); fs::write(&path, &bytes).unwrap();
+        let loaded = ConfigStore::load(path.clone()).unwrap();
+        assert_eq!(loaded.snapshot.config["pinnedApps"], json!([expected, custom]));
+        assert_eq!(loaded.snapshot.revision, 42);
+        assert!(loaded.snapshot.warning.is_some());
+        assert_eq!(fs::read(&path).unwrap(), bytes);
+        assert!(fs::read_dir(path.parent().unwrap()).unwrap().filter_map(|e| e.ok()).any(|e| e.path().to_string_lossy().ends_with(".recovery.json") && fs::read(e.path()).unwrap() == bytes));
         fs::remove_dir_all(path.parent().unwrap()).unwrap();
     }
     #[test]

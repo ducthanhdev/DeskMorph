@@ -1,0 +1,83 @@
+{
+  "initialPid": 1787772,
+  "firstRestartPid": 1788316,
+  "secondRestartPid": 1788848,
+  "passed": [
+    "duplicate old desktop identities repaired with recovery copy; pin re-enables original ID/name",
+    "Dock launches re-enabled desktop pin",
+    "unpin removes old ID; re-pin creates one canonical desktop ID and launches from Dock",
+    "both legacy and canonical pins survive restart with one launcher pin action"
+  ],
+  "recoveryOriginalVerified": true,
+  "scope": "Owned desktop fixture and isolated config only",
+  "normalPid": 1789168,
+  "preferencesRestored": true,
+  "fixturesRemoved": true,
+  "date": "2026-10-29",
+  "task": "G3.10",
+  "rustTests": {
+    "passed": 53,
+    "failed": 0,
+    "ignored": 0
+  },
+  "customProtocolBuild": "passed",
+  "legacyRegression": {
+    "initialPid": 1789432,
+    "restartPid": 1790317,
+    "observations": [
+      {
+        "mode": "legacy",
+        "action": "left",
+        "argv": [
+          "legacy-legacy",
+          "two words",
+          "literal ; $(touch never)"
+        ]
+      },
+      {
+        "mode": "legacy",
+        "action": "middle",
+        "argv": [
+          "legacy-legacy",
+          "two words",
+          "literal ; $(touch never)"
+        ]
+      },
+      {
+        "mode": "legacy",
+        "action": "context",
+        "argv": [
+          "legacy-legacy",
+          "two words",
+          "literal ; $(touch never)"
+        ]
+      },
+      {
+        "mode": "desktop",
+        "action": "left",
+        "argv": [
+          "desktop-desktop"
+        ]
+      },
+      {
+        "mode": "desktop",
+        "action": "middle",
+        "argv": [
+          "desktop-desktop"
+        ]
+      },
+      {
+        "mode": "desktop",
+        "action": "context",
+        "argv": [
+          "desktop-desktop"
+        ]
+      }
+    ],
+    "pinsPreservedAfterRestart": true,
+    "scope": "Owned native command/desktop fixtures, no existing user app launch",
+    "normalPid": 1790543,
+    "preferencesRestored": true,
+    "fixturesRemoved": true
+  }
+}

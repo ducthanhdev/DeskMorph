@@ -2,7 +2,7 @@
 
 Mục tiêu giữ nguyên toàn bộ 99 đầu việc trong IMPLEMENTATION_PLAN.md. Chưa đạt cổng hoàn thành toàn dự án. Checkbox chưa đánh dấu không đồng nghĩa chưa có code: nhiều mục đang chờ kiểm thử đủ phạm vi.
 
-Hiện đã đánh dấu 70/99 mục, gồm G3.2–G3.3 bằng fixture môi trường cô lập và G0.5/G2.1/G2.3 qua capability EWMH, kiểm thử lỗi adapter và native startup thiếu xprop. Đã bổ sung G0.4/G2.4/G2.5 qua popup/auto-hide native và G9.6/G9.9 bằng hồi quy policy/asset/force-close và ảnh Studio thật trong README. Các cổng GUI, Wayland và phát hành vẫn chưa hoàn tất.
+Hiện đã đánh dấu 71/99 mục, gồm G3.2–G3.3 bằng fixture môi trường cô lập và G0.5/G2.1/G2.3 qua capability EWMH, kiểm thử lỗi adapter và native startup thiếu xprop. Đã bổ sung G0.4/G2.4/G2.5 qua popup/auto-hide native và G9.6/G9.9 bằng hồi quy policy/asset/force-close và ảnh Studio thật trong README. Các cổng GUI, Wayland và phát hành vẫn chưa hoàn tất.
 
 ## Môi trường tham chiếu đã xác minh
 
@@ -350,3 +350,12 @@ Script cần AT-SPI, Python GI, GTK3 và libXtst. Chỉ gửi phím khi kiểm t
 - Frontend 27/27 (hai ca mới kiểm missing desktop identity, ambiguity, path và argv legacy), TS/Vite/custom-protocol build qua. Không thay Rust implementation ở phần này nên giữ bằng chứng 51/51 của lượt G3.6.
 - Native --pin-identity-smoke exit 0 app 1753967: cả legacy và explicit desktop pin được catalogue nhận là đã ghim; 6 lượt left/middle/context chạy đúng argv. Legacy giữ hai từ và literal ; $(touch never); explicit desktop ID thắng command trái ngược. Restart 1754867 giữ nguyên pin/command; finally khôi phục cấu hình, xóa fixture, normal 1755108.
 - Hồi quy --launch-smoke exit 0 app 1757435: multi/single giữ đúng số activation/native windows qua unpinned/pinned middle click; hai Desktop Actions nhận compose/two words và private; menu app không action không giữ nút cũ. Preferences restored=true; /proc xác minh mọi process trong report đã thoát. [Hợp đồng](APPLICATION_CATALOGUE.md), [bản ghi](benchmarks/pin-identity-2026-10-29.json). G3.5 đánh dấu, tổng 70/99; chống duplicate desktop pin G3.10 và tập packaged app G3.4 vẫn chưa chốt.
+
+
+## G3.10 — Một pin cho mỗi desktop ID (29/10/2026)
+
+- Backend từng chỉ kiểm id pin nên hai ID riêng có thể ghim cùng một desktop entry. ConfigStore::pin(add) nay kiểm cả explicit desktopId, desktop:ID và bare ID.desktop, enable pin đang có thay vì tạo bản sao. Giữ tên/lệnh/order/id đầu tiên. Request dùng lại một pin ID cho desktop identity khác bị pin_identity_conflict, không sửa config/revision. Legacy argv/WM_CLASS mơ hồ không bị tự gộp.
+- Patch/import mới từ chối danh sách trùng desktop identity. Load/migration cấu hình cũ có pin ID riêng nhưng chung desktop ID thì gộp giữ bản đầu, bật nếu bất kỳ bản nào đang bật; không xóa pin custom khác. Native load giữ nguyên bytes gốc cùng recovery copy và warning; migration giữ localStorage gốc. Hai test mới bao phủ repeat add, alias ID, disabled enable, conflict/atomic failure, import, restart, migration/order/metadata/recovery.
+- Full Rust 53/53 gồm ignored và custom-protocol build qua. Native --pinning-smoke --pin-identity-smoke exit 0: app 1787772, restart 1788316/1788848, gộp cấu hình test trùng có recovery đúng bytes, launcher re-enable giữ custom name/id, unpin xóa id cũ, re-pin tạo một pin canonical, cả hai kiểu mở từ Dock đúng marker và giữ sau restart. Finally phục hồi config và xóa đúng fixture/recovery thuộc test.
+- Hồi quy legacy app 1789432/restart 1790317 vẫn qua 6 lượt argv/desktop left-middle-context; normal app cuối 1790543, preferencesRestored/fixturesRemoved=true. Hai lần harness trước chưa đạt vì chỉ xét role button, bỏ sót toggle button của nút ghim; AT-SPI chứng minh entry/result đã có, sửa bộ lọc và lượt cuối qua. Không coi hai lượt đó là đạt.
+- Frontend production không đổi ở G3.10 (27/27 và TS/Vite ở G3.5). Python compile/diff check qua. [Bản ghi](benchmarks/pinning-2026-10-29.json). G3.10 đánh dấu, tổng 71/99. G3.13 trạng thái ứng dụng đã gỡ vẫn chưa chốt.

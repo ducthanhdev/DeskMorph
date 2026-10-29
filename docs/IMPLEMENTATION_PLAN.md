@@ -86,7 +86,7 @@ Phụ thuộc G1–G2. Thử parser và launch desktop entry trước khi xây l
 - [ ] G3.7 Bấm logo Dock mở launcher; có ô tìm kiếm, empty/loading/error state, đóng ngoài/Escape qua popup coordinator.
 - [x] G3.8 Xếp hạng exact/prefix/substring trên tên, từ khóa và tên không dấu; kết quả ổn định, giới hạn số render.
 - [ ] G3.9 Điều hướng bàn phím, Enter mở, trạng thái đang khởi chạy và báo lỗi; tránh mở lặp do nhiều lần Enter.
-- [ ] G3.10 Ghim/bỏ ghim trực tiếp từ kết quả; cùng desktop ID không tạo nhiều pin; mở từ Dock dùng cơ chế launch thống nhất.
+- [x] G3.10 Ghim/bỏ ghim trực tiếp từ kết quả; cùng desktop ID không tạo nhiều pin; mở từ Dock dùng cơ chế launch thống nhất.
 - [ ] G3.11 Resolve icon: đường dẫn tuyệt đối, icon theme hiện tại, inheritance/hicolor và fallback; kiểm soát kích thước/cache và định dạng SVG/PNG.
 - [ ] G3.12 Dùng icon thật cho Dock, launcher, danh sách cửa sổ khi nhận diện được; icon dự phòng cho app không xác định.
 - [ ] G3.13 App bị gỡ có trạng thái không khả dụng và thao tác bỏ ghim; không tự xóa pin khi lỗi quét tạm thời.
