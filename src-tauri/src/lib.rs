@@ -173,8 +173,15 @@ fn launch_app(command: String) -> Result<bool, String> {
 }
 
 #[tauri::command]
-fn show_app_launcher(app: AppHandle) -> Result<bool, String> {
-    popup::show(&app, "dock-context-menu", 150, 500, 580, Some(serde_json::json!({"mode":"launcher","appName":"Ứng dụng"})))
+fn show_app_launcher(app: AppHandle, icon_center_x: Option<i32>) -> Result<bool, String> {
+    let anchor = match icon_center_x {
+        Some(anchor) => anchor,
+        None => {
+            let dock = app.get_webview_window("taskbar").ok_or("Không tìm thấy Dock")?;
+            (f64::from(dock.outer_size().map_err(|e| e.to_string())?.width) / dock.scale_factor().map_err(|e| e.to_string())? / 2.).round() as i32
+        }
+    };
+    popup::show(&app, "dock-context-menu", anchor, 500, 580, Some(serde_json::json!({"mode":"launcher","appName":"Ứng dụng"})))
 }
 
 #[tauri::command]
@@ -239,6 +246,11 @@ fn run_app() -> Result<(), String> {
             Ok(())
         })
         .on_window_event(|window, event| {
+            if window.label() == "taskbar" {
+                if let tauri::WindowEvent::Resized(size) = event {
+                    if let Err(error) = layout::settle_size(window.app_handle(), size) { eprintln!("dock_geometry_settle: {error}"); }
+                }
+            }
             if let tauri::WindowEvent::CloseRequested { api, .. } = event {
                 if window.label() == "main" {
                     let keep = window.app_handle().state::<config::ConfigState>().0.lock()

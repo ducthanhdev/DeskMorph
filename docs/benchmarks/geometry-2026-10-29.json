@@ -1,0 +1,673 @@
+{
+  "date": "2026-10-29",
+  "environment": "Pop!_OS 24.04 / GNOME 46 / X11",
+  "geometry": {
+    "pid": 1394612,
+    "scale": 1,
+    "monitors": [
+      "HDMI-0",
+      "eDP-1-1"
+    ],
+    "observations": [
+      {
+        "monitor": "HDMI-0",
+        "workArea": [
+          1920,
+          32,
+          1920,
+          1048
+        ],
+        "position": "top",
+        "dock": [
+          2458,
+          48,
+          843,
+          52
+        ],
+        "mode": "Tìm ứng dụng",
+        "anchorX": 2494.0,
+        "popup": [
+          2244,
+          114,
+          500,
+          580
+        ]
+      },
+      {
+        "monitor": "HDMI-0",
+        "workArea": [
+          1920,
+          32,
+          1920,
+          1048
+        ],
+        "position": "top",
+        "dock": [
+          2458,
+          48,
+          843,
+          52
+        ],
+        "mode": "Âm thanh",
+        "anchorX": 3130.5,
+        "popup": [
+          2950,
+          114,
+          360,
+          540
+        ]
+      },
+      {
+        "monitor": "HDMI-0",
+        "workArea": [
+          1920,
+          32,
+          1920,
+          1048
+        ],
+        "position": "top",
+        "dock": [
+          2458,
+          48,
+          843,
+          52
+        ],
+        "mode": "Tiện ích hệ thống",
+        "anchorX": 3178.5,
+        "popup": [
+          2988,
+          114,
+          380,
+          620
+        ]
+      },
+      {
+        "monitor": "HDMI-0",
+        "workArea": [
+          1920,
+          32,
+          1920,
+          1048
+        ],
+        "position": "top",
+        "dock": [
+          2458,
+          48,
+          843,
+          52
+        ],
+        "mode": "Mở lịch",
+        "anchorX": 3244.0,
+        "popup": [
+          3084,
+          114,
+          320,
+          340
+        ]
+      },
+      {
+        "monitor": "HDMI-0",
+        "workArea": [
+          1920,
+          32,
+          1920,
+          1048
+        ],
+        "position": "bottom",
+        "dock": [
+          1936,
+          1012,
+          1888,
+          52
+        ],
+        "mode": "Tìm ứng dụng",
+        "anchorX": 1972.0,
+        "popup": [
+          1930,
+          418,
+          500,
+          580
+        ]
+      },
+      {
+        "monitor": "HDMI-0",
+        "workArea": [
+          1920,
+          32,
+          1920,
+          1048
+        ],
+        "position": "bottom",
+        "dock": [
+          1936,
+          1012,
+          1888,
+          52
+        ],
+        "mode": "Âm thanh",
+        "anchorX": 3653.5,
+        "popup": [
+          3470,
+          458,
+          360,
+          540
+        ]
+      },
+      {
+        "monitor": "HDMI-0",
+        "workArea": [
+          1920,
+          32,
+          1920,
+          1048
+        ],
+        "position": "bottom",
+        "dock": [
+          1936,
+          1012,
+          1888,
+          52
+        ],
+        "mode": "Tiện ích hệ thống",
+        "anchorX": 3701.5,
+        "popup": [
+          3450,
+          378,
+          380,
+          620
+        ]
+      },
+      {
+        "monitor": "HDMI-0",
+        "workArea": [
+          1920,
+          32,
+          1920,
+          1048
+        ],
+        "position": "bottom",
+        "dock": [
+          1936,
+          1012,
+          1888,
+          52
+        ],
+        "mode": "Mở lịch",
+        "anchorX": 3767.0,
+        "popup": [
+          3510,
+          658,
+          320,
+          340
+        ]
+      },
+      {
+        "monitor": "eDP-1-1",
+        "workArea": [
+          0,
+          0,
+          1920,
+          1080
+        ],
+        "position": "top",
+        "dock": [
+          538,
+          16,
+          843,
+          52
+        ],
+        "mode": "Tìm ứng dụng",
+        "anchorX": 574.0,
+        "popup": [
+          324,
+          82,
+          500,
+          580
+        ]
+      },
+      {
+        "monitor": "eDP-1-1",
+        "workArea": [
+          0,
+          0,
+          1920,
+          1080
+        ],
+        "position": "top",
+        "dock": [
+          538,
+          16,
+          843,
+          52
+        ],
+        "mode": "Âm thanh",
+        "anchorX": 1210.5,
+        "popup": [
+          1030,
+          82,
+          360,
+          540
+        ]
+      },
+      {
+        "monitor": "eDP-1-1",
+        "workArea": [
+          0,
+          0,
+          1920,
+          1080
+        ],
+        "position": "top",
+        "dock": [
+          538,
+          16,
+          843,
+          52
+        ],
+        "mode": "Tiện ích hệ thống",
+        "anchorX": 1258.5,
+        "popup": [
+          1068,
+          82,
+          380,
+          620
+        ]
+      },
+      {
+        "monitor": "eDP-1-1",
+        "workArea": [
+          0,
+          0,
+          1920,
+          1080
+        ],
+        "position": "top",
+        "dock": [
+          538,
+          16,
+          843,
+          52
+        ],
+        "mode": "Mở lịch",
+        "anchorX": 1324.0,
+        "popup": [
+          1164,
+          82,
+          320,
+          340
+        ]
+      },
+      {
+        "monitor": "eDP-1-1",
+        "workArea": [
+          0,
+          0,
+          1920,
+          1080
+        ],
+        "position": "bottom",
+        "dock": [
+          16,
+          1012,
+          1888,
+          52
+        ],
+        "mode": "Tìm ứng dụng",
+        "anchorX": 52.0,
+        "popup": [
+          10,
+          418,
+          500,
+          580
+        ]
+      },
+      {
+        "monitor": "eDP-1-1",
+        "workArea": [
+          0,
+          0,
+          1920,
+          1080
+        ],
+        "position": "bottom",
+        "dock": [
+          16,
+          1012,
+          1888,
+          52
+        ],
+        "mode": "Âm thanh",
+        "anchorX": 1733.5,
+        "popup": [
+          1550,
+          458,
+          360,
+          540
+        ]
+      },
+      {
+        "monitor": "eDP-1-1",
+        "workArea": [
+          0,
+          0,
+          1920,
+          1080
+        ],
+        "position": "bottom",
+        "dock": [
+          16,
+          1012,
+          1888,
+          52
+        ],
+        "mode": "Tiện ích hệ thống",
+        "anchorX": 1781.5,
+        "popup": [
+          1530,
+          378,
+          380,
+          620
+        ]
+      },
+      {
+        "monitor": "eDP-1-1",
+        "workArea": [
+          0,
+          0,
+          1920,
+          1080
+        ],
+        "position": "bottom",
+        "dock": [
+          16,
+          1012,
+          1888,
+          52
+        ],
+        "mode": "Mở lịch",
+        "anchorX": 1847.0,
+        "popup": [
+          1590,
+          658,
+          320,
+          340
+        ]
+      }
+    ]
+  },
+  "autoHide": {
+    "passed": [
+      "top: hide, edge reveal, calendar/audio keep visible, Escape and disable",
+      "bottom: hide, edge reveal, calendar/audio keep visible, Escape and disable"
+    ],
+    "pid": 1394612,
+    "preferencesRestored": true
+  },
+  "focusRegression": {
+    "pid": 1394612,
+    "fixturePid": 1401374,
+    "nativeContentFocusDelayMs": 0,
+    "liveUnfocusedCallbacksSkipped": 26,
+    "inactiveCallbacksSkipped": 0,
+    "passed": [
+      "Tìm ứng dụng: keyboard Enter / Escape returns exact Dock XID and Enter reopens same source without helper refocus",
+      "Âm thanh: keyboard Enter / Escape returns exact Dock XID and Enter reopens same source without helper refocus",
+      "Tiện ích hệ thống: keyboard Enter / Escape returns exact Dock XID and Enter reopens same source without helper refocus",
+      "Mở lịch: keyboard Enter / Escape returns exact Dock XID and Enter reopens same source without helper refocus",
+      "four popup modes: real outside click retains selected Studio XID across delayed callbacks",
+      "audio/system scoped Close buttons return Dock keyboard focus and Enter reopens original source",
+      "four popup modes: selecting owned external GTK window dismisses and retains exact external XID",
+      "window list Escape returns source and Enter reopens; activating second row keeps exact external target focus",
+      "right-click context menu Escape returns exact source Dock XID",
+      "launcher global shortcut from external GTK window: Escape returns exact original external XID",
+      "shortcut popup: external user selection wins over original source, without delayed restore"
+    ]
+  },
+  "tooltipRegressionBeforeWidthSettle": {
+    "passed": [
+      "top: launcher/pin/clock/widgets share delay, native focus, work-area bounds and empty input region; long text pixels fit",
+      "top: launcher/calendar/audio suppress pending and new tooltips while open",
+      "bottom: launcher/pin/clock/widgets share delay, native focus, work-area bounds and empty input region; long text pixels fit",
+      "bottom: launcher/calendar/audio suppress pending and new tooltips while open"
+    ],
+    "timings": [
+      {
+        "text": "Tìm ứng dụng",
+        "position": "top",
+        "seconds": 0.595,
+        "rect": [
+          2292,
+          114,
+          250,
+          44
+        ]
+      },
+      {
+        "text": "Mở lịch",
+        "position": "top",
+        "seconds": 0.562,
+        "rect": [
+          3196,
+          114,
+          250,
+          44
+        ]
+      },
+      {
+        "text": "DeskMorph Tooltip — tên ứng dụng rất dài để kiểm t",
+        "position": "top",
+        "seconds": 0.584,
+        "rect": [
+          2618,
+          114,
+          250,
+          44
+        ]
+      },
+      {
+        "text": "Âm thanh",
+        "position": "top",
+        "seconds": 0.572,
+        "rect": [
+          2973,
+          114,
+          250,
+          44
+        ]
+      },
+      {
+        "text": "Tiện ích hệ thống",
+        "position": "top",
+        "seconds": 0.571,
+        "rect": [
+          3130,
+          114,
+          250,
+          44
+        ]
+      },
+      {
+        "text": "CPU:",
+        "position": "top",
+        "seconds": 0.574,
+        "rect": [
+          2830,
+          114,
+          250,
+          44
+        ]
+      },
+      {
+        "text": "RAM:",
+        "position": "top",
+        "seconds": 0.57,
+        "rect": [
+          2830,
+          114,
+          250,
+          44
+        ]
+      },
+      {
+        "text": "Đổi hình nền ngẫu nhiên",
+        "position": "top",
+        "seconds": 0.565,
+        "rect": [
+          2920,
+          114,
+          250,
+          44
+        ]
+      },
+      {
+        "text": "Pin 79%",
+        "position": "top",
+        "seconds": 0.573,
+        "rect": [
+          3034,
+          114,
+          250,
+          44
+        ]
+      },
+      {
+        "text": "Mạng",
+        "position": "top",
+        "seconds": 0.573,
+        "rect": [
+          3088,
+          114,
+          250,
+          44
+        ]
+      },
+      {
+        "text": "Tìm ứng dụng",
+        "position": "bottom",
+        "seconds": 0.551,
+        "rect": [
+          2292,
+          954,
+          250,
+          44
+        ]
+      },
+      {
+        "text": "Mở lịch",
+        "position": "bottom",
+        "seconds": 0.561,
+        "rect": [
+          3196,
+          954,
+          250,
+          44
+        ]
+      },
+      {
+        "text": "DeskMorph Tooltip — tên ứng dụng rất dài để kiểm t",
+        "position": "bottom",
+        "seconds": 0.569,
+        "rect": [
+          2618,
+          954,
+          250,
+          44
+        ]
+      },
+      {
+        "text": "Âm thanh",
+        "position": "bottom",
+        "seconds": 0.564,
+        "rect": [
+          2973,
+          954,
+          250,
+          44
+        ]
+      },
+      {
+        "text": "Tiện ích hệ thống",
+        "position": "bottom",
+        "seconds": 0.561,
+        "rect": [
+          3130,
+          954,
+          250,
+          44
+        ]
+      },
+      {
+        "text": "CPU:",
+        "position": "bottom",
+        "seconds": 0.571,
+        "rect": [
+          2830,
+          954,
+          250,
+          44
+        ]
+      },
+      {
+        "text": "RAM:",
+        "position": "bottom",
+        "seconds": 0.568,
+        "rect": [
+          2830,
+          954,
+          250,
+          44
+        ]
+      },
+      {
+        "text": "Đổi hình nền ngẫu nhiên",
+        "position": "bottom",
+        "seconds": 0.574,
+        "rect": [
+          2920,
+          954,
+          250,
+          44
+        ]
+      },
+      {
+        "text": "Pin 79%",
+        "position": "bottom",
+        "seconds": 0.574,
+        "rect": [
+          3034,
+          954,
+          250,
+          44
+        ]
+      },
+      {
+        "text": "Mạng",
+        "position": "bottom",
+        "seconds": 0.566,
+        "rect": [
+          3088,
+          954,
+          250,
+          44
+        ]
+      }
+    ],
+    "pid": 1336043,
+    "preferencesRestored": true
+  },
+  "frontendTestsPassed": 25,
+  "nativeTestsPassedIncludingIgnored": 48,
+  "configRestored": true,
+  "fixtureExited": true,
+  "nativeScaleVerified": 1,
+  "mathScalesVerified": [
+    1,
+    1.25,
+    1.5,
+    2
+  ],
+  "limitations": [
+    "Mixed DPI and negative monitor origins verified by math tests only, not native desktop.",
+    "Hotplug and resolution changes remain separate gates."
+  ]
+}

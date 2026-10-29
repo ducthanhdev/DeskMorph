@@ -8,6 +8,7 @@ pub struct Preferences {
     height: u32,
     top: bool,
     hidden: bool,
+    pending_position: Option<geometry::Rect>,
 }
 impl Default for Preferences {
     fn default() -> Self {
@@ -17,6 +18,7 @@ impl Default for Preferences {
             height: 52,
             top: false,
             hidden: false,
+            pending_position: None,
         }
     }
 }
@@ -67,6 +69,11 @@ pub fn apply(app: &AppHandle) -> Result<bool, String> {
         hidden,
         p.width,
     );
+    // GTK/WM can constrain a cross-monitor move using the old wide allocation.
+    // Once the requested size is acknowledged, correct position once. A newer
+    // apply replaces this target; no timer or unbounded configure loop is used.
+    let width_changes = window.outer_size().map_err(|e| e.to_string())?.width != rect.width;
+    app.state::<LayoutState>().0.lock().map_err(|e| e.to_string())?.pending_position = width_changes.then_some(rect);
     window
         .set_min_size(Some(PhysicalSize::new(1, 1)))
         .map_err(|e| e.to_string())?;
@@ -77,6 +84,21 @@ pub fn apply(app: &AppHandle) -> Result<bool, String> {
         .set_position(PhysicalPosition::new(rect.x, rect.y))
         .map_err(|e| e.to_string())?;
     Ok(true)
+}
+pub fn settle_size(app: &AppHandle, size: &PhysicalSize<u32>) -> Result<(), String> {
+    if crate::popup::is_active(app, "dock-context-menu") || crate::popup::is_active(app, "calendar-flyout") { return Ok(()); }
+    let target = {
+        let state = app.state::<LayoutState>();
+        let mut p = state.0.lock().map_err(|e| e.to_string())?;
+        if !p.pending_position.is_some_and(|rect| rect.width == size.width && rect.height == size.height) { return Ok(()); }
+        p.pending_position.take().unwrap()
+    };
+    let window = app.get_webview_window("taskbar").ok_or("Không tìm thấy Dock")?;
+    let position = window.outer_position().map_err(|e| e.to_string())?;
+    if position.x != target.x || position.y != target.y {
+        window.set_position(PhysicalPosition::new(target.x, target.y)).map_err(|e| e.to_string())?;
+    }
+    Ok(())
 }
 #[tauri::command]
 pub fn set_dock_content_width(app: AppHandle, width: u32) -> Result<bool, String> {

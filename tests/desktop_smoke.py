@@ -68,6 +68,7 @@ if __name__ == '__main__':
     parser.add_argument('--popup-smoke', action='store_true')
     parser.add_argument('--focus-smoke', action='store_true')
     parser.add_argument('--focus-delay', action='store_true', help='Delay native popup content callback by 500 ms in debug build')
+    parser.add_argument('--geometry-smoke', action='store_true')
     parser.add_argument('--autohide-smoke', action='store_true')
     parser.add_argument('--shortcut-smoke', action='store_true')
     parser.add_argument('--lifecycle-smoke', action='store_true')
@@ -111,6 +112,7 @@ if __name__ == '__main__':
     if args.audio_tool_missing: args.audio_unavailable = True
     if args.force_close_smoke: args.launcher_smoke = True
     if args.popup_smoke or args.focus_smoke: args.restart = True
+    if args.geometry_smoke: args.restart = True
     if args.window_list_smoke or args.reorder_smoke or args.tooltip_smoke or args.launch_smoke or args.overflow_smoke or args.layout_smoke or args.indicator_smoke or args.mapping_smoke or args.internal_smoke or args.performance_smoke or args.polling_smoke: args.restart = True
     if args.platform_tool_missing: args.restart = True
     if args.scheduler_smoke: args.wallpaper_smoke = True
@@ -128,7 +130,7 @@ if __name__ == '__main__':
     input_tests = any((args.action, args.screenshot, args.basic, args.popup_smoke, args.focus_smoke, args.autohide_smoke, args.shortcut_smoke, args.lifecycle_smoke, args.registration_smoke, args.window_list_smoke, args.reorder_smoke, args.tooltip_smoke, args.launch_smoke, args.overflow_smoke, args.layout_smoke, args.indicator_smoke, args.mapping_smoke, args.internal_smoke, args.polling_smoke, args.launcher_smoke, args.studio_smoke, args.config_smoke, args.command_errors_smoke,
                        args.wallpaper_smoke, args.scheduler_smoke, args.library_stress, args.audio_smoke, args.media_smoke,
                        args.audio_exit, args.audio_unavailable, args.system_smoke, args.system_unavailable, args.system_open_smoke))
-    if input_tests: require_unlocked_desktop()
+    if input_tests or args.geometry_smoke: require_unlocked_desktop()
     if args.window_fixture or args.indicator_fixture or args.mapping_fixture or args.internal_fixture:
         if args.indicator_fixture or args.mapping_fixture or args.internal_fixture: assert os.environ.get('DESKMORPH_CONFIG_HOME') == TEST_CONFIG
         gi.require_version('Gtk', '3.0')
@@ -694,6 +696,9 @@ if __name__ == '__main__':
     if args.layout_smoke:
         from dock_layout_smoke import run
         run(app, TEST_CONFIG, click, focus_studio, native_keys, native_click_node, require_unlocked_desktop, assert_pointer_over_test_app)
+    if args.geometry_smoke:
+        from geometry_smoke import run
+        run(app, TEST_CONFIG, click, focus_studio, native_keys)
     if args.polling_smoke:
         from polling_smoke import run
         try:

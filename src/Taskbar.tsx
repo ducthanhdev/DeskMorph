@@ -687,7 +687,10 @@ export const Taskbar: React.FC = () => {
           <button
             type="button"
             aria-label={t("searchApps")}
-            onClick={() => void invoke("show_app_launcher").catch(console.error)}
+            onClick={(event) => {
+              const rect = event.currentTarget.getBoundingClientRect();
+              void invoke("show_app_launcher", { iconCenterX: Math.round(rect.left + rect.width / 2) }).catch(console.error);
+            }}
             className="dock-launcher-btn"
             data-dock-tooltip={t("searchApps")}
             onContextMenu={(e) => e.preventDefault()}

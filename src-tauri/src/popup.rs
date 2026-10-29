@@ -128,6 +128,7 @@ pub fn show(app: &AppHandle, label: &'static str, anchor: i32, width: u32, heigh
     let size = dock.outer_size().map_err(|e| e.to_string())?;
     let dock_rect = Rect { x: position.x, y: position.y, width: size.width, height: size.height };
     let top = position.y < area.y + area.height as i32 / 2;
+    let anchor = geometry::anchor_x(dock_rect, anchor, dock.scale_factor().map_err(|e| e.to_string())?);
     let rect = geometry::popup_rect(area, dock_rect, scale, anchor, width, height, top);
     if let Some((old, _)) = c.active.take() {
         if let Some(window) = app.get_webview_window(old) { window.hide().map_err(|e| e.to_string())?; }
