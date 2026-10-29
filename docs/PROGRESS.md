@@ -791,3 +791,12 @@ Script cần AT-SPI, Python GI, GTK3 và libXtst. Chỉ gửi phím khi kiểm t
 - Chạy Orca với preferences riêng `/tmp` và speech tắt, đồng thời `desktop_smoke.py --studio-tab-smoke`; smoke qua. Orca log ghi nhận document DeskMorph, focus manager, cập nhật braille và đường tạo speech cho control có role/name. [Bản tóm tắt](benchmarks/orca-accessibility-2026-10-30/result.json).
 - Đây chứng minh event AT-SPI/Orca được xử lý, không chứng minh âm thanh vì speech cố ý tắt; screen reader động đầy đủ, popup/actions và contrast toàn ứng dụng vẫn cần kiểm thêm. G5.9 vẫn mở, tổng 94/99.
 - Lượt popup keyboard chạy cùng Orca bị focus interference và không tính; chỉ lượt Studio tab hoàn chỉnh được giữ. Đánh giá file: giữ JSON đếm event và scope; không commit log Orca 9k dòng hay preferences.
+
+
+## G2.10 — Geometry native GTK scale 200% (30/10/2026)
+
+- Chạy `GDK_SCALE=2 GDK_DPI_SCALE=0.5 DESKMORPH_EXPECT_SCALE=2 python3 tests/desktop_smoke.py --geometry-smoke`: exit 0, 16 ca trên HDMI-0 và eDP-1-1, Dock top/bottom, bốn popup, clamp trái/phải và chiều cao bị giới hạn bởi workarea. [Bằng chứng](benchmarks/geometry-scale2-2026-10-30/result.json).
+- Harness chuyển tọa độ GDK/AT-SPI logical sang physical pixel, scale margin/gap/kích thước và kiểm popup được giới hạn trong màn hình. Các lượt fail lúc chỉnh harness không được tính là kết quả đạt.
+- Hồi quy với cùng harness ở scale 1, PID 791055: 16 ca qua, exit 0; Python compile và diff check qua.
+- Đây là application GTK scale 2 trên X11, không đổi scale compositor; chưa chứng minh scale 125/150%, mixed DPI, negative-origin, hoặc khả năng dùng toàn bộ nội dung trong popup thấp. G2.10 vẫn mở, tổng 94/99.
+- Đánh giá file: giữ harness tái sử dụng và JSON rectangle nhỏ để tái lập phép đo ở scale 1/2; không commit log/profile/binary.

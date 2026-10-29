@@ -1,0 +1,410 @@
+{
+  "pid": 786134,
+  "scale": 2.0,
+  "monitors": [
+    "HDMI-0",
+    "eDP-1-1"
+  ],
+  "observations": [
+    {
+      "monitor": "HDMI-0",
+      "workArea": [
+        1920,
+        0,
+        1920,
+        1080
+      ],
+      "position": "top",
+      "dock": [
+        1952,
+        32,
+        1856,
+        104
+      ],
+      "mode": "Tìm ứng dụng",
+      "anchorX": 1988.0,
+      "popup": [
+        1940,
+        20,
+        1000,
+        1040
+      ]
+    },
+    {
+      "monitor": "HDMI-0",
+      "workArea": [
+        1920,
+        0,
+        1920,
+        1080
+      ],
+      "position": "top",
+      "dock": [
+        1952,
+        32,
+        1856,
+        104
+      ],
+      "mode": "Âm thanh",
+      "anchorX": 3584.0,
+      "popup": [
+        3100,
+        20,
+        720,
+        1040
+      ]
+    },
+    {
+      "monitor": "HDMI-0",
+      "workArea": [
+        1920,
+        0,
+        1920,
+        1080
+      ],
+      "position": "top",
+      "dock": [
+        1952,
+        32,
+        1856,
+        104
+      ],
+      "mode": "Tiện ích hệ thống",
+      "anchorX": 3632.0,
+      "popup": [
+        3060,
+        20,
+        760,
+        1040
+      ]
+    },
+    {
+      "monitor": "HDMI-0",
+      "workArea": [
+        1920,
+        0,
+        1920,
+        1080
+      ],
+      "position": "top",
+      "dock": [
+        1952,
+        32,
+        1856,
+        104
+      ],
+      "mode": "Mở lịch",
+      "anchorX": 3724.0,
+      "popup": [
+        3180,
+        164,
+        640,
+        680
+      ]
+    },
+    {
+      "monitor": "HDMI-0",
+      "workArea": [
+        1920,
+        0,
+        1920,
+        1080
+      ],
+      "position": "bottom",
+      "dock": [
+        1952,
+        944,
+        1856,
+        104
+      ],
+      "mode": "Tìm ứng dụng",
+      "anchorX": 1988.0,
+      "popup": [
+        1940,
+        20,
+        1000,
+        1040
+      ]
+    },
+    {
+      "monitor": "HDMI-0",
+      "workArea": [
+        1920,
+        0,
+        1920,
+        1080
+      ],
+      "position": "bottom",
+      "dock": [
+        1952,
+        944,
+        1856,
+        104
+      ],
+      "mode": "Âm thanh",
+      "anchorX": 3584.0,
+      "popup": [
+        3100,
+        20,
+        720,
+        1040
+      ]
+    },
+    {
+      "monitor": "HDMI-0",
+      "workArea": [
+        1920,
+        0,
+        1920,
+        1080
+      ],
+      "position": "bottom",
+      "dock": [
+        1952,
+        944,
+        1856,
+        104
+      ],
+      "mode": "Tiện ích hệ thống",
+      "anchorX": 3632.0,
+      "popup": [
+        3060,
+        20,
+        760,
+        1040
+      ]
+    },
+    {
+      "monitor": "HDMI-0",
+      "workArea": [
+        1920,
+        0,
+        1920,
+        1080
+      ],
+      "position": "bottom",
+      "dock": [
+        1952,
+        944,
+        1856,
+        104
+      ],
+      "mode": "Mở lịch",
+      "anchorX": 3724.0,
+      "popup": [
+        3180,
+        236,
+        640,
+        680
+      ]
+    },
+    {
+      "monitor": "eDP-1-1",
+      "workArea": [
+        0,
+        32,
+        1920,
+        1048
+      ],
+      "position": "top",
+      "dock": [
+        32,
+        64,
+        1856,
+        104
+      ],
+      "mode": "Tìm ứng dụng",
+      "anchorX": 68.0,
+      "popup": [
+        20,
+        52,
+        1000,
+        1008
+      ]
+    },
+    {
+      "monitor": "eDP-1-1",
+      "workArea": [
+        0,
+        32,
+        1920,
+        1048
+      ],
+      "position": "top",
+      "dock": [
+        32,
+        64,
+        1856,
+        104
+      ],
+      "mode": "Âm thanh",
+      "anchorX": 1664.0,
+      "popup": [
+        1180,
+        52,
+        720,
+        1008
+      ]
+    },
+    {
+      "monitor": "eDP-1-1",
+      "workArea": [
+        0,
+        32,
+        1920,
+        1048
+      ],
+      "position": "top",
+      "dock": [
+        32,
+        64,
+        1856,
+        104
+      ],
+      "mode": "Tiện ích hệ thống",
+      "anchorX": 1712.0,
+      "popup": [
+        1140,
+        52,
+        760,
+        1008
+      ]
+    },
+    {
+      "monitor": "eDP-1-1",
+      "workArea": [
+        0,
+        32,
+        1920,
+        1048
+      ],
+      "position": "top",
+      "dock": [
+        32,
+        64,
+        1856,
+        104
+      ],
+      "mode": "Mở lịch",
+      "anchorX": 1804.0,
+      "popup": [
+        1260,
+        196,
+        640,
+        680
+      ]
+    },
+    {
+      "monitor": "eDP-1-1",
+      "workArea": [
+        0,
+        32,
+        1920,
+        1048
+      ],
+      "position": "bottom",
+      "dock": [
+        32,
+        944,
+        1856,
+        104
+      ],
+      "mode": "Tìm ứng dụng",
+      "anchorX": 68.0,
+      "popup": [
+        20,
+        52,
+        1000,
+        1008
+      ]
+    },
+    {
+      "monitor": "eDP-1-1",
+      "workArea": [
+        0,
+        32,
+        1920,
+        1048
+      ],
+      "position": "bottom",
+      "dock": [
+        32,
+        944,
+        1856,
+        104
+      ],
+      "mode": "Âm thanh",
+      "anchorX": 1664.0,
+      "popup": [
+        1180,
+        52,
+        720,
+        1008
+      ]
+    },
+    {
+      "monitor": "eDP-1-1",
+      "workArea": [
+        0,
+        32,
+        1920,
+        1048
+      ],
+      "position": "bottom",
+      "dock": [
+        32,
+        944,
+        1856,
+        104
+      ],
+      "mode": "Tiện ích hệ thống",
+      "anchorX": 1712.0,
+      "popup": [
+        1140,
+        52,
+        760,
+        1008
+      ]
+    },
+    {
+      "monitor": "eDP-1-1",
+      "workArea": [
+        0,
+        32,
+        1920,
+        1048
+      ],
+      "position": "bottom",
+      "dock": [
+        32,
+        944,
+        1856,
+        104
+      ],
+      "mode": "Mở lịch",
+      "anchorX": 1804.0,
+      "popup": [
+        1260,
+        236,
+        640,
+        680
+      ]
+    }
+  ],
+  "date": "2026-10-30",
+  "command": "GDK_SCALE=2 GDK_DPI_SCALE=0.5 DESKMORPH_EXPECT_SCALE=2 python3 tests/desktop_smoke.py --geometry-smoke",
+  "passed": true,
+  "limits": [
+    "GTK application scale 2 on X11; desktop compositor settings unchanged",
+    "Not evidence for fractional or mixed DPI, negative origin, or physical hotplug",
+    "Geometry bounds only; content usability at constrained popup height remains outside this check"
+  ],
+  "binarySha256": "2056069554afffa8d3b698fc3d06d9ceab0e7773c8f0cf83d8dc85feb5630274",
+  "referenceScaleRegression": {
+    "command": "python3 tests/desktop_smoke.py --geometry-smoke",
+    "pid": 791055,
+    "scale": 1,
+    "observationCount": 16,
+    "exitCode": 0
+  }
+}
