@@ -1,0 +1,679 @@
+{
+  "date": "2026-10-30",
+  "command": "desktop_smoke.py --studio-tab-smoke --popup-keyboard-smoke --dock-keyboard-smoke --calendar-keyboard-smoke --contrast-native-smoke",
+  "reports": {
+    "studio-tab-result.json": {
+      "pid": 2961495,
+      "tabs": [
+        {
+          "disclosure": null,
+          "tab": "Taskbar Studio",
+          "sequence": [
+            [
+              "button",
+              "Taskbar Studio"
+            ],
+            [
+              "button",
+              "Ứng dụng"
+            ],
+            [
+              "button",
+              "Giao diện"
+            ],
+            [
+              "button",
+              "Hình nền"
+            ],
+            [
+              "button",
+              "Hệ thống"
+            ],
+            [
+              "button",
+              "Thử hiệu ứng mở ứng dụng"
+            ],
+            [
+              "check box",
+              "Bật Dock"
+            ],
+            [
+              "button",
+              "Điều khiển Dock bằng bàn phím"
+            ],
+            [
+              "combo box",
+              "Vị trí"
+            ],
+            [
+              "combo box",
+              "Màn hình đặt Dock"
+            ],
+            [
+              "slider",
+              "Chiều cao Dock"
+            ],
+            [
+              "slider",
+              "Kích thước icon"
+            ],
+            [
+              "slider",
+              "Khoảng cách icon"
+            ],
+            [
+              "check box",
+              "Tự động ẩn Dock Chạm cạnh màn hình để hiện lại; Dock giữ hiện khi bạn thao tác popup."
+            ],
+            [
+              "check box",
+              "Ứng dụng trên Dock"
+            ],
+            [
+              "check box",
+              "Hiện pin trên Dock"
+            ],
+            [
+              "check box",
+              "Hiện mạng trên Dock"
+            ],
+            [
+              "check box",
+              "Nút tiện ích hệ thống"
+            ],
+            [
+              "check box",
+              "Âm thanh"
+            ],
+            [
+              "check box",
+              "Đồng hồ"
+            ],
+            [
+              "check box",
+              "CPU và RAM"
+            ],
+            [
+              "check box",
+              "Nút đổi hình nền"
+            ],
+            [
+              "check box",
+              "Định dạng 24 giờ"
+            ],
+            [
+              "check box",
+              "Hiện giây"
+            ]
+          ],
+          "disabledSkipped": [
+            [
+              "button",
+              "Khôi phục giao diện lúc mở Studio"
+            ]
+          ],
+          "reverseMatches": true
+        }
+      ]
+    },
+    "popup-keyboard-matrix-result.json": {
+      "runs": [
+        {
+          "pid": 4031307,
+          "language": "vi",
+          "missingAudio": false,
+          "initialAudioCloseFocused": true,
+          "audio": {
+            "sequence": [
+              [
+                "button",
+                "Đóng"
+              ],
+              [
+                "radio button",
+                "Built-in Audio Analog Stereo"
+              ],
+              [
+                "slider",
+                "Âm lượng"
+              ],
+              [
+                "check box",
+                "Tắt tiếng"
+              ],
+              [
+                "radio button",
+                "DeskMorph_Keyboard_B"
+              ],
+              [
+                "button",
+                "Bài trước"
+              ],
+              [
+                "button",
+                "Tạm dừng"
+              ]
+            ],
+            "disabledSkipped": [
+              [
+                "button",
+                "Bài tiếp"
+              ]
+            ],
+            "reverseMatches": true,
+            "closeSeededForTraversal": true
+          },
+          "mediaKeyboard": {
+            "spaceSelects": true,
+            "enterPausePlay": true,
+            "targetOnly": true,
+            "focusSurvivesState": true
+          },
+          "removedPlayerFocusClose": true,
+          "initialSystemCloseFocused": true,
+          "system": {
+            "sequence": [
+              [
+                "button",
+                "Đóng"
+              ],
+              [
+                "button",
+                "Mở Downloads"
+              ]
+            ],
+            "disabledSkipped": [
+              [
+                "button",
+                "Mở Thùng rác"
+              ],
+              [
+                "button",
+                "Mở giám sát hệ thống"
+              ]
+            ],
+            "reverseMatches": true,
+            "closeSeededForTraversal": true
+          },
+          "configUnchanged": true,
+          "fixturePids": [
+            4031566,
+            4031571
+          ],
+          "fixturesExited": true,
+          "scope": "Native X11 current audio/system state, radio groups use checked Tab stop; only owned MPRIS receives Space/Enter media actions. No audio writes or system app launches; no screen reader certification."
+        },
+        {
+          "pid": 4032317,
+          "language": "en",
+          "missingAudio": false,
+          "initialAudioCloseFocused": true,
+          "audio": {
+            "sequence": [
+              [
+                "button",
+                "Close"
+              ],
+              [
+                "radio button",
+                "Built-in Audio Analog Stereo"
+              ],
+              [
+                "slider",
+                "Volume"
+              ],
+              [
+                "check box",
+                "Mute"
+              ],
+              [
+                "radio button",
+                "DeskMorph_Keyboard_B"
+              ],
+              [
+                "button",
+                "Previous"
+              ],
+              [
+                "button",
+                "Pause"
+              ]
+            ],
+            "disabledSkipped": [
+              [
+                "button",
+                "Next"
+              ]
+            ],
+            "reverseMatches": true,
+            "closeSeededForTraversal": true
+          },
+          "mediaKeyboard": {
+            "spaceSelects": true,
+            "enterPausePlay": true,
+            "targetOnly": true,
+            "focusSurvivesState": true
+          },
+          "removedPlayerFocusClose": true,
+          "initialSystemCloseFocused": true,
+          "system": {
+            "sequence": [
+              [
+                "button",
+                "Close"
+              ],
+              [
+                "button",
+                "Open Downloads"
+              ]
+            ],
+            "disabledSkipped": [
+              [
+                "button",
+                "Open Trash"
+              ],
+              [
+                "button",
+                "Open system monitor"
+              ]
+            ],
+            "reverseMatches": true,
+            "closeSeededForTraversal": true
+          },
+          "configUnchanged": true,
+          "fixturePids": [
+            4032547,
+            4032551
+          ],
+          "fixturesExited": true,
+          "scope": "Native X11 current audio/system state, radio groups use checked Tab stop; only owned MPRIS receives Space/Enter media actions. No audio writes or system app launches; no screen reader certification."
+        },
+        {
+          "pid": 4033298,
+          "language": "vi",
+          "missingAudio": true,
+          "initialAudioCloseFocused": true,
+          "audio": {
+            "sequence": [
+              [
+                "button",
+                "Đóng"
+              ],
+              [
+                "button",
+                "Chi tiết"
+              ],
+              [
+                "button",
+                "Thử lại"
+              ],
+              [
+                "radio button",
+                "DeskMorph_Keyboard_B"
+              ],
+              [
+                "button",
+                "Bài trước"
+              ],
+              [
+                "button",
+                "Tạm dừng"
+              ]
+            ],
+            "disabledSkipped": [
+              [
+                "button",
+                "Bài tiếp"
+              ]
+            ],
+            "reverseMatches": true,
+            "closeSeededForTraversal": true
+          },
+          "audioErrorKeyboard": {
+            "enterDetails": true,
+            "spaceCollapses": true,
+            "enterRetryKeepsFocus": true
+          },
+          "mediaKeyboard": {
+            "spaceSelects": true,
+            "enterPausePlay": true,
+            "targetOnly": true,
+            "focusSurvivesState": true
+          },
+          "removedPlayerFocusClose": true,
+          "initialSystemCloseFocused": true,
+          "system": {
+            "sequence": [
+              [
+                "button",
+                "Đóng"
+              ],
+              [
+                "button",
+                "Mở Downloads"
+              ]
+            ],
+            "disabledSkipped": [
+              [
+                "button",
+                "Mở Thùng rác"
+              ],
+              [
+                "button",
+                "Mở giám sát hệ thống"
+              ]
+            ],
+            "reverseMatches": true,
+            "closeSeededForTraversal": true
+          },
+          "configUnchanged": true,
+          "fixturePids": [
+            4033489,
+            4033493
+          ],
+          "fixturesExited": true,
+          "scope": "Native X11 current audio/system state, radio groups use checked Tab stop; only owned MPRIS receives Space/Enter media actions. No audio writes or system app launches; no screen reader certification."
+        },
+        {
+          "pid": 4034371,
+          "language": "en",
+          "missingAudio": true,
+          "initialAudioCloseFocused": true,
+          "audio": {
+            "sequence": [
+              [
+                "button",
+                "Close"
+              ],
+              [
+                "button",
+                "Details"
+              ],
+              [
+                "button",
+                "Retry"
+              ],
+              [
+                "radio button",
+                "DeskMorph_Keyboard_B"
+              ],
+              [
+                "button",
+                "Previous"
+              ],
+              [
+                "button",
+                "Pause"
+              ]
+            ],
+            "disabledSkipped": [
+              [
+                "button",
+                "Next"
+              ]
+            ],
+            "reverseMatches": true,
+            "closeSeededForTraversal": true
+          },
+          "audioErrorKeyboard": {
+            "enterDetails": true,
+            "spaceCollapses": true,
+            "enterRetryKeepsFocus": true
+          },
+          "mediaKeyboard": {
+            "spaceSelects": true,
+            "enterPausePlay": true,
+            "targetOnly": true,
+            "focusSurvivesState": true
+          },
+          "removedPlayerFocusClose": true,
+          "initialSystemCloseFocused": true,
+          "system": {
+            "sequence": [
+              [
+                "button",
+                "Close"
+              ],
+              [
+                "button",
+                "Open Downloads"
+              ]
+            ],
+            "disabledSkipped": [
+              [
+                "button",
+                "Open Trash"
+              ],
+              [
+                "button",
+                "Open system monitor"
+              ]
+            ],
+            "reverseMatches": true,
+            "closeSeededForTraversal": true
+          },
+          "configUnchanged": true,
+          "fixturePids": [
+            4034583,
+            4034598
+          ],
+          "fixturesExited": true,
+          "scope": "Native X11 current audio/system state, radio groups use checked Tab stop; only owned MPRIS receives Space/Enter media actions. No audio writes or system app launches; no screen reader certification."
+        }
+      ]
+    },
+    "dock-keyboard-result.json": {
+      "runs": [
+        {
+          "language": "vi",
+          "pid": 4035705,
+          "sequence": [
+            "Tìm ứng dụng",
+            "Google Chrome • 2 cửa sổ",
+            "VS Code / IDE • 0 cửa sổ",
+            "Terminal • 0 cửa sổ",
+            "Tệp tin (Files) • 0 cửa sổ",
+            "Cài đặt (Settings) • 0 cửa sổ",
+            "DeskMorph Smoke Fixture • 0 cửa sổ",
+            "Deskmorph • 2 cửa sổ",
+            "com.microsoft.VSCode • 1 cửa sổ",
+            "TelegramDesktop • 1 cửa sổ",
+            "Âm thanh",
+            "Tiện ích hệ thống",
+            "Mở lịch"
+          ],
+          "popupSources": [
+            "Tìm ứng dụng",
+            "Âm thanh",
+            "Tiện ích hệ thống",
+            "Mở lịch"
+          ],
+          "hiddenEntry": true,
+          "heldAfterPreview": true,
+          "escapeRestores": true,
+          "enterReopens": true,
+          "hidesAfterBlur": true,
+          "reverseMatches": true
+        },
+        {
+          "language": "en",
+          "pid": 4037772,
+          "sequence": [
+            "Search applications",
+            "Google Chrome • 2 windows",
+            "VS Code / IDE • 0 windows",
+            "Terminal • 0 windows",
+            "Files • 0 windows",
+            "Settings • 0 windows",
+            "DeskMorph Smoke Fixture • 0 windows",
+            "Deskmorph • 2 windows",
+            "com.microsoft.VSCode • 1 window",
+            "TelegramDesktop • 1 window",
+            "Audio",
+            "System utilities",
+            "Open calendar"
+          ],
+          "popupSources": [
+            "Search applications",
+            "Audio",
+            "System utilities",
+            "Open calendar"
+          ],
+          "hiddenEntry": true,
+          "heldAfterPreview": true,
+          "escapeRestores": true,
+          "enterReopens": true,
+          "hidesAfterBlur": true,
+          "reverseMatches": true
+        }
+      ]
+    },
+    "calendar-keyboard-result.json": {
+      "pid": 2652171,
+      "navigation": [
+        {
+          "key": "right",
+          "before": "Thứ Năm, 29 tháng 10, 2026",
+          "after": "Thứ Sáu, 30 tháng 10, 2026"
+        },
+        {
+          "key": "left",
+          "before": "Thứ Sáu, 30 tháng 10, 2026",
+          "after": "Thứ Năm, 29 tháng 10, 2026"
+        },
+        {
+          "key": "down",
+          "before": "Thứ Năm, 29 tháng 10, 2026",
+          "after": "Thứ Năm, 5 tháng 11, 2026"
+        },
+        {
+          "key": "up",
+          "before": "Thứ Năm, 5 tháng 11, 2026",
+          "after": "Thứ Năm, 29 tháng 10, 2026"
+        },
+        {
+          "key": "next month",
+          "before": "Thứ Năm, 29 tháng 10, 2026",
+          "after": "Chủ Nhật, 29 tháng 11, 2026"
+        },
+        {
+          "key": "previous month",
+          "before": "Chủ Nhật, 29 tháng 11, 2026",
+          "after": "Thứ Năm, 29 tháng 10, 2026"
+        },
+        {
+          "key": "Monday",
+          "before": "Thứ Năm, 29 tháng 10, 2026",
+          "after": "Thứ Hai, 26 tháng 10, 2026"
+        },
+        {
+          "key": "Sunday",
+          "before": "Thứ Hai, 26 tháng 10, 2026",
+          "after": "Chủ Nhật, 1 tháng 11, 2026"
+        },
+        {
+          "key": "next year",
+          "before": "Chủ Nhật, 1 tháng 11, 2026",
+          "after": "Thứ Hai, 1 tháng 11, 2027"
+        }
+      ]
+    },
+    "contrast-native-result.json": {
+      "runs": [
+        {
+          "pid": 4040139,
+          "observations": [
+            {
+              "control": "clock",
+              "rect": [
+                3227,
+                1021,
+                79,
+                34
+              ],
+              "backingPixels": 1932,
+              "expectedRGB": [
+                23,
+                34,
+                53
+              ],
+              "screenshot": "/tmp/deskmorph-desktop-test/contrast-native-0.2-clock.png"
+            },
+            {
+              "control": "stats",
+              "rect": [
+                2950,
+                1017,
+                117,
+                20
+              ],
+              "backingPixels": 1576,
+              "expectedRGB": [
+                23,
+                34,
+                53
+              ],
+              "screenshot": "/tmp/deskmorph-desktop-test/contrast-native-0.2-stats.png"
+            }
+          ],
+          "configUnchanged": true,
+          "inputSent": false,
+          "scope": "Actual X11 Dock root pixels for opaque information backing in enabled isolated profile, tolerance 1/channel; no claim of font raster contrast or full app coverage"
+        },
+        {
+          "pid": 4040517,
+          "observations": [
+            {
+              "control": "clock",
+              "rect": [
+                3227,
+                1021,
+                79,
+                34
+              ],
+              "backingPixels": 1917,
+              "expectedRGB": [
+                23,
+                34,
+                53
+              ],
+              "screenshot": "/tmp/deskmorph-desktop-test/contrast-native-1-clock.png"
+            },
+            {
+              "control": "stats",
+              "rect": [
+                2950,
+                1017,
+                117,
+                20
+              ],
+              "backingPixels": 1534,
+              "expectedRGB": [
+                23,
+                34,
+                53
+              ],
+              "screenshot": "/tmp/deskmorph-desktop-test/contrast-native-1-stats.png"
+            }
+          ],
+          "configUnchanged": true,
+          "inputSent": false,
+          "scope": "Actual X11 Dock root pixels for opaque information backing in enabled isolated profile, tolerance 1/channel; no claim of font raster contrast or full app coverage"
+        }
+      ]
+    }
+  },
+  "scope": "GNOME X11 reference desktop; native AT-SPI/keyboard/pixel lab; no host config changes claimed",
+  "checks": [
+    "studio tabs and disclosure Tab traversal",
+    "vi/en popup keyboard traversal and disabled controls",
+    "Dock keyboard traversal and reverse traversal",
+    "calendar keyboard navigation",
+    "native contrast observations"
+  ],
+  "limits": [
+    "AT-SPI tree and key assertions do not prove a screen reader spoke every announcement",
+    "does not cover every dynamic action, global shortcut, or all image/icon/gradient contrast",
+    "sleep/resume and other desktops are outside this run"
+  ]
+}

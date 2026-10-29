@@ -744,3 +744,9 @@ Script cần AT-SPI, Python GI, GTK3 và libXtst. Chỉ gửi phím khi kiểm t
 - [Checklist phát hành](RELEASE_CHECKLIST.md) ghi version `0.1.0`, artifact `.deb`, SHA256/size, build/package smoke, GUI packaged, giới hạn môi trường và các cổng chưa đạt. Quyết định là **không phát hành/không publish**; không ký hoặc upload artifact development.
 - Quyết định này hoàn tất yêu cầu có kết quả và quyết định sau kiểm thử, không biến build thành tuyên bố release. G9.11, G2.10/G2.11, G5.9, G6.7, G6.9 và G9.8 vẫn mở. Tổng 92/99.
 - Đánh giá file: giữ checklist vì là artifact quyết định release; không commit binary hoặc log package.
+
+## G5.9 — Audit native keyboard/focus và contrast mở rộng (30/10/2026)
+
+- Lượt cuối `desktop_smoke.py --studio-tab-smoke --popup-keyboard-smoke --dock-keyboard-smoke --calendar-keyboard-smoke --contrast-native-smoke` chạy trong GNOME X11 lab; Studio năm tab/disclosure, popup vi/en và control disabled, Dock traversal xuôi/ngược, lịch và native contrast đều qua. [Bản tóm tắt](benchmarks/accessibility-audit-2026-10-30/results.json).
+- Không nâng phạm vi thành đạt toàn G5.9: AT-SPI/key assertions chưa chứng minh screen reader đã đọc mọi announcement; dynamic actions, global shortcut, toàn bộ icon/gradient/artwork contrast vẫn cần audit. G5.9 vẫn mở, tổng 92/99.
+- Đánh giá file: giữ một JSON tóm tắt có command, scope và giới hạn; không commit toàn bộ cây AT-SPI, log hoặc ảnh trùng.
