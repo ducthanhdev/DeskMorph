@@ -44,6 +44,10 @@ def run():
     if os.environ.get('DESKMORPH_TERMINAL_TEST'):
         from terminal_launch_probe import TerminalProbe
         terminal_probe = TerminalProbe(root, env)
+    snap_probe = None
+    if os.environ.get('DESKMORPH_SNAP_TEST'):
+        from snap_launch_probe import SnapProbe
+        snap_probe = SnapProbe(root, env)
     process = None; menu_pid = None
     try:
         wait(lambda: dispatch(op='prepare'), 'Lab Shell did not initialize')
@@ -60,6 +64,12 @@ def run():
         wait(lambda: any(w['focused'] and w['title'] == 'DeskMorph Launcher' for w in dispatch(op='state')['windows']), 'Lab explicit activation did not focus launcher')
         assert all(w['clientType'] == 0 for w in state['windows']), state
         assert not any(w['title'] == 'DeskMorph Studio' for w in state['windows']), 'Cold launcher also mapped Studio'
+        snap_result = snap_probe.run(app, descendants, wait) if snap_probe else None
+        if snap_probe:
+            subprocess.run([str(binary), '--launcher'], env=env, check=True, timeout=8)
+            popup = wait(lambda: next((w for w in dispatch(op='state')['windows'] if w['title'] == 'DeskMorph Launcher'), None), 'Launcher did not reopen after Snap launch')
+            dispatch(op='activate', id=popup['id'], pid=process.pid)
+            wait(lambda: any(w['focused'] and w['title'] == 'DeskMorph Launcher' for w in dispatch(op='state')['windows']), 'Launcher not focused after Snap launch')
         terminal_result = None
         if terminal_probe:
             terminal_result = terminal_probe.run(app, descendants, wait, dispatch, process.pid)
@@ -109,6 +119,7 @@ def run():
         assert forwarded_studio.returncode == 0
         wait(lambda: any(w['title'] == 'DeskMorph Studio' for w in dispatch(op='state')['windows']), 'Default command no longer opens Studio')
         report = dict(appPid=first_pid, disabledDockAppPid=process.pid, disabledDockColdStart=True, disabledConfigUnchanged=True, windowManagerCloseHides=True, defaultCommandOpensStudio=True, coldStartLauncher=True, studioHidden=True, nativeWayland=True, searchEmptyState=True, nativeEscape=True, warmForwardAck=True, automaticColdFocus=automatic_cold_focus, automaticWarmFocus=automatic_warm_focus, explicitLabActivationForInput=True, scope='Direct CLI on private GNOME46 Wayland. Native input tested after explicit lab activation. No real custom keybinding or desktop activation token yet; automatic focus is not asserted.')
+        if snap_result: report['snapLaunch'] = snap_result
         if terminal_result: report['terminalLaunch'] = terminal_result
         report['binarySha256'] = hashlib.sha256(binary.read_bytes()).hexdigest()
         desktop = binary.parent.parent / 'share/applications/DeskMorph.desktop'
@@ -134,6 +145,7 @@ def run():
             report['packagedMenuAppPid'] = menu_pid
             report['packagedDesktopEntryGioLaunch'] = True
             report['packagedLauncherDesktopActionGioLaunch'] = True
+        if snap_probe: snap_probe.close()
         (root / 'launcher-result.json').write_text(json.dumps(report, indent=2) + '\n')
     except Exception:
         try:
@@ -143,6 +155,7 @@ def run():
         except Exception as error: print('DIAGNOSTIC', repr(error), flush=True)
         raise
     finally:
+        if snap_probe: snap_probe.close()
         if terminal_probe: terminal_probe.close()
         if menu_pid:
             try:

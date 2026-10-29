@@ -105,3 +105,6 @@ Ca GTK chạy subprocess với IconTheme tùy chỉnh riêng (không đổi them
 
 
 Kiểm terminal thật (29/10/2026): `/usr/bin/python3 tests/wayland_lab.py --terminal-test --output /tmp/deskmorph-terminal-launch/results.json` chạy trên GNOME Wayland riêng, tạo desktop entry Terminal=true và kích nút Mở của launcher DeskMorph bằng AT-SPI. GIO chọn COSMIC Terminal1.11.0 thật; Python con xác nhận ancestry emulator và cửa sổ Wayland có frame dương. Không có wrapper terminal giả. [Bằng chứng](benchmarks/terminal-launch-2026-10-29.json). G3.4 còn thiếu kiểm runtime ứng dụng đóng gói; export fixture chưa đủ để tuyên bố Flatpak/Snap đã kiểm thực tế.
+
+
+Kiểm Snap runtime thật: `/usr/bin/python3 tests/wayland_lab.py --snap-test --output /tmp/deskmorph-snap-launch/results.json`. [Bằng chứng Chromium156](benchmarks/snap-runtime-launch-2026-10-29.json) đi qua nút Mở launcher/GIO tới `/snap/bin/chromium`, xác minh AppArmor/profile riêng và nội dung trang qua CDP, đóng browser và xóa profile. Entry lab bổ sung headless/profile/loopback-CDP và env user bus/runtime hệ thống để snapd tạo cgroup. Chưa chứng nhận cửa sổ Snap hoặc entry nguyên bản; G3.4 còn mở. Cần python3-websocket để chạy harness; không đổi dependency sản phẩm.
