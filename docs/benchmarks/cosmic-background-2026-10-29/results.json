@@ -91,5 +91,6 @@
     "tests/cosmic_background_probe.py": "9943a15fa93c5916115d20493bd7e25e1c72fa1dbe99c09c620b8d16565e2864",
     "tests/wayland_lab.py": "cce8e3a1e3cce89c7299e85c0b33735734190f11f1a8a334aa2bde67e29e8b8c",
     "tests/wayland_prototype/launcher_extension.js": "e96b0d0a7612c850725066e6aea84e59815592eedfe233761b409175e7b68d8c"
-  }
+  },
+  "isolationCorrection": "Audit tiếp theo phát hiện lượt này chưa đặt XDG_STATE_HOME. cosmic-bg ghi WINIT-0 vào state wallpapers host; không có snapshot trước để khôi phục chính xác. Pixel/config research vẫn có giá trị, nhưng privateSettings không bao hàm state và không chứng minh host state bất biến. Xem ../cosmic-per-output-2026-10-29/results.json cho lượt sửa cô lập và hash state host trước/sau."
 }

@@ -23,3 +23,5 @@ Trước stage, xem `git status`, diff và danh sách file mới; ghi rõ vì sa
 Tài liệu này ghi quyết định kỹ thuật theo yêu cầu người dùng, không tạo bước xin phép bổ sung trước các commit đã được giao.
 
 - Chuẩn bị parser COSMIC: giữ ba Rust regression trong module, kiểm bảo toàn byte/comment/unknown enum và đường dẫn Unicode/escaping, từ chối cấu hình mơ hồ/không hỗ trợ, etag conflict/0600/symlink. Có giá trị bảo vệ dữ liệu người dùng; không thêm script diagnostic hoặc log build vào commit. Chưa coi các test này thay thế runtime/UI hay bảo đảm chống mọi race.
+
+- Per-output COSMIC/state isolation: giữ sửa harness và guard hash một file state host vì phát hiện tác động ngoài lab thật. Giữ JSON5 pha và2 ảnh override/live-update đã xem; ảnh màu trùng chỉ ghi hash/sample. Không commit log/bản upstream tải tạm; ghi URL commit và hash nguồn để đối chiếu. Bằng chứng cũ được đính chính thay vì xóa lịch sử.

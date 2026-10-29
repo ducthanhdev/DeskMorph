@@ -1,0 +1,173 @@
+{
+  "command": "/usr/bin/python3 tests/wayland_lab.py --cosmic-test --output /tmp/deskmorph-cosmic-state/final-ready.json",
+  "cosmicProbe": {
+    "perOutputOverridePixelsVerified": true,
+    "livePerOutputPixelsVerified": true,
+    "sameOnAllStartupPixelsVerified": true,
+    "observedOutput": "WINIT-0",
+    "upstreamCommit": "9520e16758693bc2f6845d52680f236d548edda2",
+    "versions": [
+      "cosmic-bg\t1.11.0~1792526117~24.04~9520e16",
+      "cosmic-comp\t0.1~1792508925~24.04~8cb1802"
+    ],
+    "binarySha256": {
+      "cosmic-comp": "2399b768cc6a4599a6495d0865cf4dc6807cfee2c6e46b3d7466a800f903be5e",
+      "cosmic-bg": "dcfaf79907ef5031fa40799bbd56dd33ee19135c90c3580cf2eb98579894bf3a"
+    },
+    "compositorPid": 3707711,
+    "backgroundPid": 3708292,
+    "privateStateVerified": true,
+    "stateContents": "[\n    (\"WINIT-0\", Path(\"/tmp/deskmorph-wayland-lab-xdujorse/pink.png\")),\n]",
+    "nestedSocket": "wayland-1",
+    "window": {
+      "id": 1,
+      "pid": 3707711,
+      "appId": null,
+      "title": "Smithay",
+      "focused": false,
+      "clientType": 0,
+      "frame": {
+        "x": 0,
+        "y": 32,
+        "width": 1280,
+        "height": 688
+      }
+    },
+    "captures": [
+      {
+        "sha256": "6f960f0955d2ea08261579757f5ec8456b89f6a5c2d8460e88da7f4f1f0ee266",
+        "samples": [
+          [
+            209,
+            55,
+            105
+          ],
+          [
+            209,
+            55,
+            105
+          ],
+          [
+            209,
+            55,
+            105
+          ]
+        ],
+        "phase": "all-startup"
+      },
+      {
+        "sha256": "0c4131c0ae4598f5d920e24ab7b96b4583cccc616e6b140d13f0aa48bb1abc48",
+        "samples": [
+          [
+            52,
+            86,
+            120
+          ],
+          [
+            52,
+            86,
+            120
+          ],
+          [
+            52,
+            86,
+            120
+          ]
+        ],
+        "phase": "all-live-update"
+      },
+      {
+        "sha256": "6e728bd5b1d038f24f1d5ac466a2f9b7ae028c03c449934681243629d3fbd3e4",
+        "samples": [
+          [
+            209,
+            55,
+            105
+          ],
+          [
+            209,
+            55,
+            105
+          ],
+          [
+            209,
+            55,
+            105
+          ]
+        ],
+        "phase": "per-output-override",
+        "attachment": "background-3.png"
+      },
+      {
+        "sha256": "6d6cd010fdc5e60a30ddcee3270156261430eb467de27d95a4c281d27c6112d8",
+        "samples": [
+          [
+            52,
+            86,
+            120
+          ],
+          [
+            52,
+            86,
+            120
+          ],
+          [
+            52,
+            86,
+            120
+          ]
+        ],
+        "phase": "per-output-live-update",
+        "attachment": "background-4.png"
+      },
+      {
+        "sha256": "2484f97f4e43de8ca547144c05bee06bede8320daffa6711bc271dba8a276652",
+        "samples": [
+          [
+            209,
+            55,
+            105
+          ],
+          [
+            209,
+            55,
+            105
+          ],
+          [
+            209,
+            55,
+            105
+          ]
+        ],
+        "phase": "same-on-all-startup"
+      }
+    ],
+    "initialConfigPixelsVerified": true,
+    "liveConfigPixelsVerified": true,
+    "scope": "Actual COSMIC nested winit and cosmic-bg, private config RON path update and outer stage pixels. Research only; no production adapter or general COSMIC desktop support claim."
+  },
+  "outerPackages": [
+    "gnome-settings-daemon\t46.0-1ubuntu1.24.04.1",
+    "gnome-shell\t46.0-0ubuntu6~24.04.16",
+    "libmutter-14-0:amd64\t46.2-1ubuntu0.24.04.18",
+    "xdg-desktop-portal\t1.18.4-1ubuntu2.24.04.3",
+    "xdg-desktop-portal-gnome\t",
+    "xdg-desktop-portal-gtk\t1.15.1-1build2"
+  ],
+  "hostDisplayUsed": false,
+  "hostInputInjected": false,
+  "ownedProcessesExited": true,
+  "ownedPortalMountRemoved": true,
+  "hostCosmicStateUnchanged": true,
+  "hostCosmicStateSha256": "815cc04454b6e8d190d14c1364708ebcbf1ecfb1e67c689c87426872febf7cc1",
+  "sourceSha256": {
+    "tests/wayland_lab.py": "2c150e1c597a4912b3e3fd366dcdf9d507c7bfd4fadc9e13e5d9c90c0549965f",
+    "tests/cosmic_background_probe.py": "cf2175c36a0c6063277b79d54895eae10e1a8cee83730b9e492aa699da94e129",
+    "tests/wayland_prototype/launcher_extension.js": "e96b0d0a7612c850725066e6aea84e59815592eedfe233761b409175e7b68d8c"
+  },
+  "upstreamSourceSha256": {
+    "src/main.rs": "f5f5dc4d378b0bdacaa1f0210e35f18eeb657be25e4f9142bd7348a3c2424d1c",
+    "config/src/lib.rs": "df6d8e8b94f0f7c05713f72275615582a37f19432f4e69be841d2b5b68b3d45f",
+    "config/src/state.rs": "7b9b8b031e0fbf0150fd3aa338f2c710998553067cce41c326f7d28c418ef24a"
+  }
+}

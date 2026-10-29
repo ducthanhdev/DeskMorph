@@ -37,3 +37,6 @@ Icon catalogue trên GNOME/X11 tham chiếu đã qua GTK theme inheritance/hicol
 
 
 COSMIC wallpaper có [nghiên cứu API và pixel](benchmarks/cosmic-background-2026-10-29/results.json) trên compositor lồng commit8cb1802 + cosmic-bg1.11.0: private RON source Path, startup và atomic config update hiển thị đúng. Chưa có adapter sản phẩm hoặc chứng nhận toàn phiên COSMIC; capability vẫn unsupported. KDE chưa có runtime kiểm trên máy.
+
+
+Nghiên cứu COSMIC bổ sung [per-output và state isolation](benchmarks/cosmic-per-output-2026-10-29/results.json): WINIT-0 override/fallback và live update đã kiểm pixel, chưa nối adapter. Đính chính lượt API cũ: thiếu XDG_STATE_HOME nên đã ghi state WINIT-0 host; lượt mới tách state và kiểm hash file host trước/sau. Không còn coi private config/runtime/bus là bằng chứng mọi state host bất biến.

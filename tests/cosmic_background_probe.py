@@ -14,6 +14,7 @@ from gi.repository import Gio, GLib, GdkPixbuf
 def run():
     root = Path(os.environ['DESKMORPH_COMPOSITOR_LAB'])
     assert str(root).startswith('/tmp/deskmorph-wayland-lab-')
+    assert os.environ['XDG_STATE_HOME'] == str(root / 'state')
     assert os.environ['XDG_RUNTIME_DIR'] == str(root / 'runtime') and not os.environ.get('DISPLAY')
     env = dict(os.environ, XDG_CURRENT_DESKTOP='COSMIC', COSMIC_BACKEND='winit')
     metadata = json.loads((root / 'session.json').read_text())
@@ -30,6 +31,12 @@ def run():
             if value: return value
             time.sleep(.1)
         raise AssertionError(message)
+    def extension_ready():
+        try: return dispatch(op='state')
+        except GLib.Error as error:
+            if 'UnknownMethod' in str(error) or 'UnknownObject' in str(error): return None
+            raise
+    wait(extension_ready, 'Owned GNOME lab extension did not become ready')
     config_dir = root / 'config/cosmic/com.system76.CosmicBackground/v1'
     config_dir.mkdir(parents=True)
     images = []
@@ -39,11 +46,12 @@ def run():
         image.fill(color); image.savev(str(path), 'png', [], [])
         images.append(path)
     template = Path('/usr/share/cosmic/com.system76.CosmicBackground/v1/all').read_text().replace('#true', 'true')
-    def set_source(path):
+    def set_source(path, key="all", output="all"):
         document, replacements = re.subn(r'source: Path\("[^\"]*"\)', 'source: Path(' + json.dumps(str(path)) + ')', template)
         assert replacements == 1, 'Installed COSMIC background schema changed'
-        temporary = config_dir / 'all.tmp'
-        temporary.write_text(document); temporary.replace(config_dir / 'all')
+        document = document.replace('output: \"all\"', 'output: ' + json.dumps(output))
+        temporary = config_dir / (key + '.tmp')
+        temporary.write_text(document); temporary.replace(config_dir / key)
     (config_dir / 'same-on-all').write_text('true')
     set_source(images[0])
     children = []
@@ -62,6 +70,8 @@ def run():
             children.append(background)
             time.sleep(3)
             assert background.poll() is None, 'COSMIC background exited'
+            state_file = root / 'state/cosmic/com.system76.CosmicBackground/v1/wallpapers'
+            wait(lambda: state_file.exists(), 'COSMIC did not write private wallpaper state')
             captures = []
             def capture_pixels(expected):
                 capture = Path(dispatch(op='stageScreenshot')['path'])
@@ -77,9 +87,39 @@ def run():
             time.sleep(2)
             live_updated = capture_pixels([52,86,120])
             assert live_updated, 'COSMIC background did not react to config replacement'
-            report = dict(versions=subprocess.check_output(['dpkg-query', '-W', 'cosmic-comp', 'cosmic-bg'], text=True).splitlines(),
+            # Installed winit output identity is observed from the private state,
+            # not inferred from the window title or host monitor configuration.
+            state_text = state_file.read_text()
+            outputs = re.findall(r'\(\s*"([^"\\]+)"\s*,\s*Path\(', state_text)
+            assert outputs == ['WINIT-0'], state_text
+            output = outputs[0]
+            background.terminate(); background.wait(timeout=5)
+            (config_dir / 'same-on-all').write_text('false')
+            (config_dir / 'backgrounds').write_text(json.dumps([output]))
+            set_source(images[0], 'output.' + output, output)
+            background = subprocess.Popen(['cosmic-bg'], env=dict(env, WAYLAND_DISPLAY=socket.name), stdout=log, stderr=log)
+            children.append(background)
+            time.sleep(3)
+            assert background.poll() is None
+            assert capture_pixels([209,55,105]), 'Per-output source did not override blue default'
+            set_source(images[1], 'output.' + output, output)
+            time.sleep(2)
+            assert capture_pixels([52,86,120]), 'Live per-output source update not displayed'
+            background.terminate(); background.wait(timeout=5)
+            set_source(images[0])
+            (config_dir / 'same-on-all').write_text('true')
+            background = subprocess.Popen(['cosmic-bg'], env=dict(env, WAYLAND_DISPLAY=socket.name), stdout=log, stderr=log)
+            children.append(background)
+            time.sleep(3)
+            assert background.poll() is None
+            assert capture_pixels([209,55,105]), 'same-on-all startup did not ignore blue per-output source'
+            report = dict(perOutputOverridePixelsVerified=True, livePerOutputPixelsVerified=True,
+                sameOnAllStartupPixelsVerified=True, observedOutput=output,
+                upstreamCommit='9520e16758693bc2f6845d52680f236d548edda2',
+                versions=subprocess.check_output(['dpkg-query', '-W', 'cosmic-comp', 'cosmic-bg'], text=True).splitlines(),
                 binarySha256={name: hashlib.sha256(Path('/usr/bin/' + name).read_bytes()).hexdigest() for name in ('cosmic-comp', 'cosmic-bg')},
                 compositorPid=compositor.pid, backgroundPid=background.pid,
+                privateStateVerified=state_file.is_file(), stateContents=state_file.read_text(),
                 nestedSocket=socket.name, window=window, captures=captures, initialConfigPixelsVerified=True, liveConfigPixelsVerified=live_updated,
                 scope='Actual COSMIC nested winit and cosmic-bg, private config RON path update and outer stage pixels. Research only; no production adapter or general COSMIC desktop support claim.')
             (root / 'launcher-result.json').write_text(json.dumps(dict(cosmicProbe=report), indent=2))

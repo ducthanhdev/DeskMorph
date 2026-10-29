@@ -50,3 +50,12 @@ Sau Apply/Retry, ca phân biệt key đặt URI sáng về ảnh hồng trong ke
 I/O thử nghiệm yêu cầu file thường (không symlink tại lúc kiểm), có etag; replace dùng etag cũ, không backup, rồi đọc đối chiếu. Regression kiểm external edit bị từ chối mà không mất byte mới, ghi thường giữ mode 0600 và symlink bị từ chối. Đây chưa phải bảo đảm giao dịch chống mọi race: kiểm metadata và đọc file là hai bước, etag phụ thuộc backend/filesystem; thay đổi sau replace có thể trả lỗi dù dữ liệu đã được ghi. Chưa xử lý owner/parent symlink, fallback mặc định, same-on-all/per-output, rollback hoặc xác thực ảnh tại lớp này. Không dùng trực tiếp lên cấu hình người dùng trước khi hoàn tất adapter và ca tích hợp riêng.
 
 Lệnh regression: `cargo test --locked --offline --manifest-path src-tauri/Cargo.toml --target-dir src-tauri/target/agent --lib cosmic_background::tests::`. Giữ ba test nguồn vì bảo vệ nội dung cấu hình, escaping và xung đột ghi; không cần thêm báo cáo JSON hay log sinh ra cho các ca này.
+
+
+### Cấu hình từng màn hình và sửa cô lập state (29/10/2026)
+
+Nguồn [config/src/lib.rs](https://github.com/pop-os/cosmic-bg/blob/9520e16758693bc2f6845d52680f236d548edda2/config/src/lib.rs) đúng commit cosmic-bg đã cài xác định `backgrounds` là danh sách tên output, file `output.<tên>` là Entry tương ứng; `all` là fallback. Khi khởi động với same-on-all=true, danh sách riêng không được nạp. Với false, Entry khớp tên output ưu tiên hơn fallback. Source thực tế còn có Color; Path có thể chỉ thư mục nên không suy mọi Path là ảnh tĩnh hợp lệ.
+
+[Bằng chứng per-output](benchmarks/cosmic-per-output-2026-10-29/results.json) dùng tên WINIT-0 đọc từ state riêng: fallback xanh + entry riêng hồng hiển thị hồng; thay riêng sang xanh hiển thị xanh mà không restart; dừng background, đặt all hồng/same-on-all=true rồi khởi động lại hiển thị hồng dù entry riêng vẫn xanh. Chưa chứng minh live toggle same-on-all, nhiều output hoặc hotplug.
+
+Audit phát hiện lượt COSMIC cũ chưa đặt XDG_STATE_HOME: cosmic-bg đã thêm WINIT-0 trỏ ảnh lab vào file state wallpapers host. Không có snapshot trước nên không tự sửa/xóa state hoặc tuyên bố phục hồi nguyên trạng. Chưa phát hiện thay config wallpaper host; không dùng điều đó để phủ nhận tác động state. Harness nay tạo state riêng, truyền cả vào môi trường D-Bus activation, kiểm cosmic-bg thực sự ghi dưới root lab và so hash riêng file wallpapers host trước/sau. Báo cáo cũ được bổ sung đính chính, không xóa bằng chứng pixel. Lượt mới xác nhận state host không đổi trong thời gian chạy; không đại diện cho mọi file host.

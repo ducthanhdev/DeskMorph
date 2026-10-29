@@ -6,6 +6,7 @@ use virtual input only inside the owned compositor. Never uses the host display,
 Shell unsafe mode or host settings. Each report states the measured UI scope.
 """
 import argparse
+import hashlib
 import ctypes as C
 import json
 import os
@@ -98,7 +99,7 @@ def session(root):
     bus = Gio.bus_get_sync(Gio.BusType.SESSION, None)
     # Activated GTK portal/helper processes must use the same owned socket.
     values = {key: os.environ[key] for key in [MARKER, 'WAYLAND_DISPLAY', 'XDG_RUNTIME_DIR',
-        'XDG_CONFIG_HOME', 'XDG_DATA_HOME', 'XDG_CACHE_HOME', 'GSETTINGS_BACKEND', 'GDK_BACKEND',
+        'XDG_CONFIG_HOME', 'XDG_DATA_HOME', 'XDG_CACHE_HOME', 'XDG_STATE_HOME', 'GSETTINGS_BACKEND', 'GDK_BACKEND',
         'XDG_SESSION_TYPE', 'XDG_CURRENT_DESKTOP']}
     if os.environ.get('DESKMORPH_PROTOTYPE_TOKEN'):
         values['DESKMORPH_PROTOTYPE_TOKEN'] = os.environ['DESKMORPH_PROTOTYPE_TOKEN']
@@ -219,11 +220,16 @@ def run(output, prototype=False, launcher=False, shortcut=False, binary=None, te
     libc = C.CDLL(None)
     assert libc.prctl(36, 1, 0, 0, 0) == 0, 'Cannot establish child subreaper'
     output.parent.mkdir(parents=True, exist_ok=True)
+    host_cosmic_state = Path(os.environ.get('XDG_STATE_HOME') or str(Path.home() / '.local/state')) / 'cosmic/com.system76.CosmicBackground/v1/wallpapers'
+    def host_state_digest():
+        if not host_cosmic_state.exists(): return None
+        return hashlib.sha256(host_cosmic_state.read_bytes()).hexdigest()
+    host_state_before = host_state_digest() if cosmic else None
     with tempfile.TemporaryDirectory(prefix='deskmorph-wayland-lab-') as directory:
         root = Path(directory)
-        for name in ['runtime', 'config', 'data', 'cache']: (root / name).mkdir(mode=0o700)
+        for name in ['runtime', 'config', 'data', 'cache', 'state']: (root / name).mkdir(mode=0o700)
         env = dict(os.environ, **{MARKER: str(root)}, XDG_RUNTIME_DIR=str(root / 'runtime'),
-            XDG_CONFIG_HOME=str(root / 'config'), XDG_DATA_HOME=str(root / 'data'), XDG_CACHE_HOME=str(root / 'cache'),
+            XDG_STATE_HOME=str(root / 'state'), XDG_CONFIG_HOME=str(root / 'config'), XDG_DATA_HOME=str(root / 'data'), XDG_CACHE_HOME=str(root / 'cache'),
             XDG_SESSION_TYPE='wayland', XDG_CURRENT_DESKTOP='GNOME', GSETTINGS_BACKEND='keyfile',
             GDK_BACKEND='wayland', WAYLAND_DISPLAY=SOCKET, LIBGL_ALWAYS_SOFTWARE='1')
         for key in ['DISPLAY', 'AT_SPI_BUS_ADDRESS', 'SESSION_MANAGER', 'DESKTOP_STARTUP_ID', 'XDG_SESSION_ID']:
@@ -347,6 +353,12 @@ def run(output, prototype=False, launcher=False, shortcut=False, binary=None, te
                         assert endpoint.stat().st_uid == os.getuid()
                         endpoint.unlink()
                 if result: result['ownedWaylandSocketRemoved'] = True
+            if cosmic:
+                host_state_after = host_state_digest()
+                assert host_state_after == host_state_before, 'Host COSMIC wallpaper state changed during private lab'
+                if result:
+                    result['hostCosmicStateUnchanged'] = True
+                    result['hostCosmicStateSha256'] = host_state_after
             if result:
                 result['ownedChildPids'] = sorted(pids)
                 result['ownedProcessesExited'] = not any(active(pid) for pid in pids)
