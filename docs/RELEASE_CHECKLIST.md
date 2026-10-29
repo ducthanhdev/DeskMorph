@@ -14,7 +14,7 @@ trước khi tạo release candidate mới.
 | GNOME Wayland/COSMIC/KDE scope | Có giới hạn rõ | Wayland/COSMIC wallpaper-only experimental; KDE unsupported vì thiếu pixel/readback |
 | Accessibility toàn ứng dụng | Chưa đạt | G5.9 còn mở |
 | Sleep thật, DPI/hotplug, lifecycle dài | Chưa đạt | G2.10/G2.11/G6.7/G9.8 còn mở |
-| Cài account/máy sạch, autostart login, migration tiền nhiệm | Chưa đạt | G9.11 còn mở |
+| Cài account/máy sạch, autostart login, migration tiền nhiệm | Pass trong isolated lab | dpkg root + HOME mới + GUI packaged + autostart G1.13 + predecessor khác payload; không chứng nhận apt trên máy vật lý khác |
 | Ký artifact / publish | Không thực hiện | Quyết định no-go; không upload hoặc công bố |
 
 Artifact trên chỉ là bản development để tái kiểm trong lab. Không dùng checklist

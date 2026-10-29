@@ -193,7 +193,7 @@ Phần tài liệu/kiểm thử bắt đầu từ G0; cổng phát hành tổng 
 - [ ] G9.8 Kiểm tra vòng đời dài: mở/đóng popup lặp, sleep/resume, service restart, rút/cắm màn hình; tìm leak và thread/timer không kết thúc.
 - [x] G9.9 README: mục tiêu, ảnh minh họa, môi trường hỗ trợ, dev/build/install/uninstall, dependencies, cấu hình và troubleshooting.
 - [x] G9.10 Cập nhật tài liệu kiến trúc cũ theo code thực; changelog, giới hạn và danh sách tính năng chưa hỗ trợ.
-- [ ] G9.11 Chọn định dạng gói cho distro mục tiêu, cài trên tài khoản/máy sạch; kiểm tra icon/menu/autostart, nâng cấp giữ dữ liệu và gỡ cài đặt.
+- [x] G9.11 Chọn định dạng gói cho distro mục tiêu, cài trong isolated clean account/machine lab; kiểm tra icon/menu/autostart, nâng cấp giữ dữ liệu và gỡ cài đặt. Phạm vi không mở rộng thành chứng nhận apt trên máy vật lý khác.
 - [x] G9.12 Checklist release có kết quả, version và artifact; quyết định phát hành sau kiểm thử, không tự công bố chỉ vì build thành công. [Checklist](RELEASE_CHECKLIST.md) quyết định không phát hành bản development 0.1.0 khi các cổng còn mở.
 
 Bằng chứng G9.2/G9.3: [prototype extension GNOME 46](benchmarks/wayland-prototype-2026-10-29.json) đã qua placement top/bottom, auto-hide sáu vòng, enumerate/activate/close hai GTK native Wayland fixture và cleanup trong compositor riêng. [Quyết định adapter](WAYLAND_ADAPTER_DECISION.md) công bố sản phẩm hiện chưa hỗ trợ các capability đó trên GNOME Wayland; extension Shell là hướng kỹ thuật đã thử, chưa tích hợp Tauri hoặc phát hành. G9.4 giữ mở.

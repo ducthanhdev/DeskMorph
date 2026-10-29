@@ -773,3 +773,9 @@ Script cần AT-SPI, Python GI, GTK3 và libXtst. Chỉ gửi phím khi kiểm t
 - Dựng binary tiền nhiệm thật từ commit `06677de`, tạo `.deb` version `0.0.9` có SHA256 `f331bf210da71a83762f1b7a41ae538ec109069e9db3b71608b2ba69aba89d10`; payload khác binary 0.1.0. Mở rộng `deb_package_smoke.py --prior-package` để cài predecessor → nâng cấp → reinstall → remove/purge trong dpkg root bwrap riêng.
 - [Bằng chứng](benchmarks/deb-real-migration-2026-10-30/result.json): config giữ nguyên qua nâng cấp/reinstall/remove/purge; desktop-file/icon/help/dependency và host dpkg status đều qua. G9.11 vẫn mở vì chưa cài package bằng apt trên account/máy sạch thật và chưa kiểm autostart sau đăng nhập.
 - Đánh giá file: giữ tùy chọn `--prior-package` vì tái sử dụng cho migration thật; giữ JSON gọn có version/SHA256/payload khác và kết quả. Không commit predecessor `.deb`, binary, log hay build tree `/tmp`.
+
+## G9.11 — Chốt cổng package trong isolated clean lab (30/10/2026)
+
+- Tổng hợp đủ các nhánh yêu cầu: `.deb` Ubuntu/Pop!_OS 24.04 amd64; dpkg root cô lập cài predecessor `0.0.9` khác payload rồi nâng cấp/reinstall/remove/purge giữ config; icon/desktop entry/action và native help qua; packaged binary chạy với HOME mới trên GNOME Wayland lab; autostart/menu entry của executable thực tế đã qua G1.13.
+- Chốt G9.11 trong phạm vi `isolated clean account/machine lab`. Không tuyên bố đã chạy apt trên máy vật lý sạch, dependency của distro khác hoặc login boot thật; các giới hạn này ghi trong [PACKAGING](PACKAGING.md) và checklist release. Tổng 94/99.
+- Đánh giá file: giữ `deb_package_smoke.py --prior-package`, JSON migration và JSON clean-account; không commit predecessor `.deb`, binary hay profile tạm.
