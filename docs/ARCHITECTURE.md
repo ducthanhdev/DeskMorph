@@ -147,3 +147,8 @@ Thông báo lỗi hiển thị qua `ErrorText`/`i18n/errors.ts` được dịch 
 - `calendarNavigation.ts` tính ngày dân sự cho mũi tên/Home/End/PageUp/PageDown, clamp tháng và leap day. Calendar có một date tab stop, refs để focus sau render và aria-current/pressed.
 - Studio nhập màu bằng mã hex + form Enter; color input WebKit giữ cho pointer vì native Tab không tới input color trên môi trường kiểm thử. Draft theo thay đổi accent từ config, không ghi mỗi ký tự chưa hợp lệ. Disclosure dùng summary button/expanded để bổ sung ngữ nghĩa WebKit thiếu.
 - [Phạm vi accessibility và phần còn mở](ACCESSIBILITY.md). Test native Tab duyệt thứ tự hai chiều và bỏ qua disabled; không tự chứng minh tương phản, trải nghiệm screen reader hay mọi trạng thái UI động.
+
+
+## Wayland: ranh giới prototype và sản phẩm
+
+Sản phẩm giữ capability placement/auto-hide/window management tắt trên GNOME Wayland. `tests/wayland_lab.py --prototype` nạp extension GNOME 46 vào compositor/bus/runtime/settings riêng: actor St thay cho UI Tauri, Meta.Window để enumerate/activate/close hai GTK native fixture. Pointer ảo chỉ thuộc compositor lab. Token và PID/ID fixture hạn chế endpoint thử nghiệm; không coi đây là giao thức production. Disable gỡ actor/timer/endpoint; supervisor dọn toàn bộ lab. G9.2 chứng minh đường Shell extension có thể thực hiện các primitive; [quyết định G9.3](WAYLAND_ADAPTER_DECISION.md) công bố giới hạn và giữ G9.4 mở cho kiểm thử sản phẩm. Không cài extension lab lên desktop thường.

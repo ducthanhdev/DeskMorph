@@ -2,6 +2,9 @@
 
 ## Unreleased — development 0.1.0
 
+- Bổ sung prototype extension GNOME 46 trong compositor Wayland riêng: placement/auto-hide, enumerate/activate/close native fixture, kiểm identity và disable cleanup. Công bố giới hạn: chưa tích hợp adapter Wayland trong sản phẩm.
+- Sửa reconnect media khi session D-Bus restart; ghép owner với GUID bus, xóa controls stale và kiểm thử service PipeWire/Pulse thật trong lab riêng.
+
 - Thêm native config store có schema/revision, migration, recovery, cập nhật serialized, import/export/reset review và undo.
 - Tách X11 window backend, popup coordinator, monitor geometry, single-instance và đăng ký autostart/menu entry.
 - Thêm catalogue GIO, launcher/search tiếng Việt, icon theme, desktop actions, pin/reorder và nhóm cửa sổ.

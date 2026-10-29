@@ -25,6 +25,8 @@ Dock tùy biến cho Linux, xây bằng React 19, TypeScript và Tauri 2/Rust. M
 
 Có COSMIC Files được cài không đồng nghĩa phiên desktop là COSMIC. Máy tham chiếu hiện chạy GNOME/X11. Mixed DPI, hotplug, sleep/resume thực tế và global shortcuts portal trên Wayland còn trong kế hoạch.
 
+Prototype extension GNOME 46 đã thử placement/auto-hide và điều khiển cửa sổ native trong lab riêng; chưa tích hợp vào sản phẩm. Xem [quyết định adapter Wayland](docs/WAYLAND_ADAPTER_DECISION.md).
+
 Xem [ma trận capability và cách phát hiện](docs/CAPABILITIES.md) cho liệt kê/chuyển/đóng cửa sổ, các trường hợp thiếu hỗ trợ và giới hạn Wayland.
 
 ## Dùng trong chế độ phát triển

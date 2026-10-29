@@ -13,6 +13,9 @@ import signal
 import subprocess
 import tempfile
 import time
+import secrets
+import shutil
+import sys
 from gi.repository import Gio, GLib
 
 
@@ -96,6 +99,8 @@ def session(root):
     values = {key: os.environ[key] for key in [MARKER, 'WAYLAND_DISPLAY', 'XDG_RUNTIME_DIR',
         'XDG_CONFIG_HOME', 'XDG_DATA_HOME', 'XDG_CACHE_HOME', 'GSETTINGS_BACKEND', 'GDK_BACKEND',
         'XDG_SESSION_TYPE', 'XDG_CURRENT_DESKTOP']}
+    if os.environ.get('DESKMORPH_PROTOTYPE_TOKEN'):
+        values['DESKMORPH_PROTOTYPE_TOKEN'] = os.environ['DESKMORPH_PROTOTYPE_TOKEN']
     call(bus, 'org.freedesktop.DBus', '/org/freedesktop/DBus', 'org.freedesktop.DBus',
         'UpdateActivationEnvironment', GLib.Variant('(a{ss})', (values,)))
     metadata = dict(values, busAddress=os.environ['DBUS_SESSION_BUS_ADDRESS'], gnomePid=os.getpid())
@@ -134,12 +139,23 @@ def probe(root, metadata):
     def settings(*args):
         return subprocess.check_output(['gsettings', *args], env=env, text=True).strip()
     old = settings('get', 'org.gnome.desktop.background', 'picture-uri')
+    def write_read(value):
+        # The keyfile backend is shared by startup helpers in this private lab.
+        # Wait for their initial settings writes to settle, then require two
+        # consecutive reads; never interpret a successful writer exit as proof.
+        deadline = time.monotonic() + 5
+        while time.monotonic() < deadline:
+            settings('set', 'org.gnome.desktop.background', 'picture-uri', value)
+            time.sleep(.2)
+            if settings('get', 'org.gnome.desktop.background', 'picture-uri') == value:
+                time.sleep(.2)
+                if settings('get', 'org.gnome.desktop.background', 'picture-uri') == value: return
+        raise AssertionError('Private wallpaper settings roundtrip did not settle')
     try:
-        settings('set', 'org.gnome.desktop.background', 'picture-uri', 'file://' + str(root / 'wallpaper-probe.png'))
-        assert settings('get', 'org.gnome.desktop.background', 'picture-uri') == "'file://" + str(root / 'wallpaper-probe.png') + "'"
+        write_read("'file://" + str(root / 'wallpaper-probe.png') + "'")
         result['wallpaperSettingsRoundtrip'] = True
     finally:
-        settings('set', 'org.gnome.desktop.background', 'picture-uri', old)
+        write_read(old)
     pids = {metadata['gnomePid']}
     names = call(bus, 'org.freedesktop.DBus', '/org/freedesktop/DBus', 'org.freedesktop.DBus', 'ListNames').unpack()[0]
     for name in names:
@@ -149,11 +165,15 @@ def probe(root, metadata):
             if owned(pid, root): pids.add(pid)
         except GLib.Error: pass  # A private helper may exit between ListNames and PID lookup.
     result['ownedBusPids'] = sorted(pids)
+    if metadata.get('DESKMORPH_PROTOTYPE_TOKEN'):
+        sys.path.insert(0, str(Path(__file__).with_name('wayland_prototype')))
+        from probe import run as run_prototype
+        result['prototype'] = run_prototype(root, metadata, bus, call)
     bus.close_sync(None)
     return result
 
 
-def run(output):
+def run(output, prototype=False):
     # Reap private D-Bus service grandchildren as well as the direct supervisor.
     libc = C.CDLL(None)
     assert libc.prctl(36, 1, 0, 0, 0) == 0, 'Cannot establish child subreaper'
@@ -167,6 +187,12 @@ def run(output):
             GDK_BACKEND='wayland', WAYLAND_DISPLAY=SOCKET, LIBGL_ALWAYS_SOFTWARE='1')
         for key in ['DISPLAY', 'AT_SPI_BUS_ADDRESS', 'SESSION_MANAGER', 'DESKTOP_STARTUP_ID', 'XDG_SESSION_ID']:
             env.pop(key, None)
+        if prototype:
+            env['DESKMORPH_PROTOTYPE_TOKEN'] = secrets.token_hex(32)
+            extension = root / 'data/gnome-shell/extensions/deskmorph-lab@deskmorph.local'
+            shutil.copytree(Path(__file__).with_name('wayland_prototype'), extension)
+            for key, value in [('enabled-extensions', "['deskmorph-lab@deskmorph.local']"), ('disable-user-extensions', 'false')]:
+                subprocess.run(['gsettings', 'set', 'org.gnome.shell', key, value], env=env, check=True)
         result = None
         process = None
         started = time.monotonic()
@@ -189,7 +215,7 @@ def run(output):
                 time.sleep(.1)
             else: raise AssertionError('Owned compositor readiness timed out')
             result = probe(root, metadata)
-            result.update(kind='GNOME headless capability probe', hostDisplayUsed=False, inputInjected=False,
+            result.update(kind='GNOME headless extension prototype' if prototype else 'GNOME headless capability probe', hostDisplayUsed=False, inputInjected=prototype, hostInputInjected=False,
                 unsafeModeEnabled=False, privateSettings=True, elapsedSeconds=round(time.monotonic() - started, 3))
         finally:
             if process:
@@ -225,6 +251,8 @@ def run(output):
                 time.sleep(.1)
             log = (root / 'session.log').read_text()
             output.with_suffix('.log').write_text(log)
+            if (root / 'fixture.log').exists():
+                output.with_suffix('.fixture.log').write_text((root / 'fixture.log').read_text())
             assert not any(active(pid) for pid in pids), 'Owned lab process did not exit'
             if result:
                 result['ownedChildPids'] = sorted(pids)
@@ -241,7 +269,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--output', type=Path)
     parser.add_argument('--session', type=Path, help=argparse.SUPPRESS)
+    parser.add_argument('--prototype', action='store_true', help='Run lab-only GNOME extension and native window prototype')
     args = parser.parse_args()
     if args.session: session(args.session)
-    elif args.output: run(args.output.resolve())
+    elif args.output: run(args.output.resolve(), args.prototype)
     else: parser.error('--output is required')

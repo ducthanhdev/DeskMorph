@@ -2,7 +2,7 @@
 
 Mục tiêu giữ nguyên toàn bộ 99 đầu việc trong IMPLEMENTATION_PLAN.md. Chưa đạt cổng hoàn thành toàn dự án. Checkbox chưa đánh dấu không đồng nghĩa chưa có code: nhiều mục đang chờ kiểm thử đủ phạm vi.
 
-Hiện đã đánh dấu 86/99 mục, gồm G3.2–G3.3 bằng fixture môi trường cô lập và G0.5/G2.1/G2.3 qua capability EWMH, kiểm thử lỗi adapter và native startup thiếu xprop. Đã bổ sung G0.4/G2.4/G2.5 qua popup/auto-hide native và G9.6/G9.9 bằng hồi quy policy/asset/force-close và ảnh Studio thật trong README. Các cổng GUI, Wayland và phát hành vẫn chưa hoàn tất.
+Hiện đã đánh dấu 88/99 mục, gồm G3.2–G3.3 bằng fixture môi trường cô lập và G0.5/G2.1/G2.3 qua capability EWMH, kiểm thử lỗi adapter và native startup thiếu xprop. Đã bổ sung G0.4/G2.4/G2.5 qua popup/auto-hide native và G9.6/G9.9 bằng hồi quy policy/asset/force-close và ảnh Studio thật trong README. Các cổng GUI, Wayland và phát hành vẫn chưa hoàn tất.
 
 ## Môi trường tham chiếu đã xác minh
 
@@ -568,3 +568,12 @@ Script cần AT-SPI, Python GI, GTK3 và libXtst. Chỉ gửi phím khi kiểm t
 - [Bằng chứng D-Bus](benchmarks/media-bus-restart-2026-10-29.json): hai lần outage 4,512/4,584 giây, tự phục hồi 1,678/1,656 giây sau khởi động bus/player thay thế. Enter Pause đúng replacement, metadata signal mới tới UI; đúng một metadata match rule khi hiện, không còn khi Escape ẩn. Ba lượt trước đó cũng qua hai restart mỗi lượt (hai lượt có log chẩn đoán, một lượt bản cuối). Lượt kiểm thử trước khi chốt từng thất bại do reconnect và harness race; chỉ các lượt hoàn chỉnh mới tính đạt.
 - 54/54 frontend, Rust 65 pass/4 ignored, TS/Vite và native custom-protocol build qua. Regression frontend kiểm xóa controls khi disconnect, cùng owner/bus mới phải gửi GUID mới cho artwork/action, bỏ event khi ẩn và dọn listener; Rust kiểm từ chối same-owner/new-bus. Bốn ignored test cần native environment giữ nguyên, không báo thành pass.
 - Các tiến trình lab thoát, bytes config thử nghiệm khôi phục; host audio server/default sink và host bus ID trước/sau giữ nguyên. Chốt G7.7 trong phạm vi signals/reconnect/cleanup trên GNOME/X11 với service thật trong lab riêng. Tổng 86/99; headset vật lý, host session restart tổng thể, sleep, hotplug màn hình, Wayland và phát hành vẫn chưa chốt.
+
+
+## G9.2/G9.3 — Prototype Wayland native và quyết định giới hạn adapter (29/10/2026)
+
+- Thêm extension GNOME 46 chỉ nạp trong runtime/marker/token của harness riêng; không sửa desktop host, không bật Shell unsafe mode. Actor St qua `addChrome` là prototype Dock; Meta.Window thao tác native Wayland fixture. Đây chưa phải Tauri integration.
+- [Bằng chứng cuối](benchmarks/wayland-prototype-2026-10-29.json): output 1280×720, actor mapped 500×54 tại (390,666)/(390,0); ba vòng mỗi cạnh co 4px/hiện 54px theo pointer ảo thực trong compositor lab. Hai GTK native Wayland window cùng đúng PID/app ID, bốn lượt activate stable sequence chính xác; PID sai và token sai bị từ chối. Đóng window1 giữ window2 và process, đóng window2 làm fixture thoát0. Tắt extension gỡ endpoint; toàn bộ process lab đã thoát. JSON có checksum bốn source prototype. `inputInjected=true` chỉ trong lab, `hostInputInjected=false`.
+- Lượt đầu dùng API seat không đúng GNOME 46 nên enable thất bại; sửa sang Clutter backend. Một lượt khác dừng ở roundtrip keyfile trong lúc startup helper ghi settings; harness nay đợi hai read liên tiếp và xác minh restore. Hai lượt prototype hoàn chỉnh cuối qua cả disable cleanup; các lượt lỗi không tính đạt.
+- [Quyết định adapter](WAYLAND_ADAPTER_DECISION.md): GNOME 46 không có layer-shell/foreign-toplevel, GetWindows client thường bị từ chối và Eval bị chặn. Công bố sản phẩm hiện unsupported cho placement/auto-hide/native window control trên GNOME Wayland; ghi nhận extension tự nguyện theo version là hướng đã chứng minh, chưa triển khai cầu nối production. Không tự bật capability từ lab và không suy hỗ trợ KDE/COSMIC.
+- Chốt G9.2 đúng yêu cầu prototype, G9.3 theo lựa chọn công bố giới hạn; tổng 88/99. G9.4 vẫn mở vì chưa chạy lại luồng sản phẩm theo version, G8.7 chưa có launcher shortcut Wayland. Python compile/diff check qua; không đổi code sản phẩm hay khẳng định app đã được kiểm trên Wayland.

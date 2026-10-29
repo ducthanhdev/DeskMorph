@@ -182,8 +182,8 @@ Tiêu chí: widget không có phần cứng/service tự ẩn hoặc báo thiế
 Phần tài liệu/kiểm thử bắt đầu từ G0; cổng phát hành tổng hợp sau các giai đoạn chọn đưa vào release.
 
 - [x] G9.1 Chọn compositor Wayland mục tiêu dựa trên môi trường sử dụng; khảo sát layer-shell, window enumeration/control, icon identity, shortcuts và wallpaper.
-- [ ] G9.2 Tạo prototype nhỏ chứng minh dock placement/auto-hide và liệt kê/chuyển/đóng cửa sổ native; đánh giá quyền và protocol thực tế.
-- [ ] G9.3 Quyết định adapter Wayland theo kết quả: triển khai API được hỗ trợ, tích hợp extension/plugin nếu cần, hoặc công bố giới hạn; không cam kết API chung mà compositor không cung cấp.
+- [x] G9.2 Tạo prototype nhỏ chứng minh dock placement/auto-hide và liệt kê/chuyển/đóng cửa sổ native; đánh giá quyền và protocol thực tế.
+- [x] G9.3 Quyết định adapter Wayland theo kết quả: triển khai API được hỗ trợ, tích hợp extension/plugin nếu cần, hoặc công bố giới hạn; không cam kết API chung mà compositor không cung cấp.
 - [ ] G9.4 Chạy lại luồng cốt lõi trên mỗi tổ hợp được tuyên bố hỗ trợ; tách verified/experimental/unsupported với phiên bản cụ thể.
 - [x] G9.5 Tích hợp lệnh test vào package scripts/CI: config/migration, desktop parser, grouping, geometry, tìm kiếm; build TS/Vite và cargo check/test phù hợp.
 - [x] G9.6 Kiểm tra policy IPC/capabilities và asset scope theo tính năng thật; hạn chế quyền dư sau khi thay shell launch bằng desktop launcher.
@@ -193,6 +193,8 @@ Phần tài liệu/kiểm thử bắt đầu từ G0; cổng phát hành tổng 
 - [x] G9.10 Cập nhật tài liệu kiến trúc cũ theo code thực; changelog, giới hạn và danh sách tính năng chưa hỗ trợ.
 - [ ] G9.11 Chọn định dạng gói cho distro mục tiêu, cài trên tài khoản/máy sạch; kiểm tra icon/menu/autostart, nâng cấp giữ dữ liệu và gỡ cài đặt.
 - [ ] G9.12 Checklist release có kết quả, version và artifact; quyết định phát hành sau kiểm thử, không tự công bố chỉ vì build thành công.
+
+Bằng chứng G9.2/G9.3: [prototype extension GNOME 46](benchmarks/wayland-prototype-2026-10-29.json) đã qua placement top/bottom, auto-hide sáu vòng, enumerate/activate/close hai GTK native Wayland fixture và cleanup trong compositor riêng. [Quyết định adapter](WAYLAND_ADAPTER_DECISION.md) công bố sản phẩm hiện chưa hỗ trợ các capability đó trên GNOME Wayland; extension Shell là hướng kỹ thuật đã thử, chưa tích hợp Tauri hoặc phát hành. G9.4 giữ mở.
 
 Tiêu chí: mỗi artifact cài/chạy được trên môi trường công bố; không lỗi nghiêm trọng trong luồng chính; giới hạn Wayland và backend được ghi rõ; nâng cấp không mất cấu hình.
 
