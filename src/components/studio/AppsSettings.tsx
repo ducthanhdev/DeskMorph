@@ -1,3 +1,4 @@
+import { ErrorText } from "../ErrorText";
 import { useState } from "react";
 import { invoke } from "../../ipc";
 import { useConfig, errorMessage } from "../../config/store";
@@ -38,7 +39,7 @@ function ClassMapping({ pin, platform, platformError }: { pin: PinnedApp; platfo
       finally { setBusy(false); }
     }}>{t("save")}</button>
     <button disabled={busy} onClick={() => setDraft(pin.matchClasses.join("\n"))}>{t("cancel")}</button>
-    {error && <p role="alert">{error}</p>}
+    {error && <p role="alert"><ErrorText error={error} /></p>}
   </details>;
 }
 export function AppsSettings() {
@@ -64,7 +65,7 @@ export function AppsSettings() {
     </Card>
     <Card title={t("appsTab")}>
       <div className="settings-inline"><input aria-label={t("searchApps")} placeholder={t("searchApps")} value={query} onChange={(e) => setQuery(e.target.value)} /><button className="studio-button" onClick={refresh}>{t("refresh")}</button></div>
-      {(error || operationError) && <p role="alert">{error || operationError}</p>}{loading && <p role="status">{t("scanningApps")}</p>}
+      {(error || operationError) && <p role="alert"><ErrorText error={error || operationError} /></p>}{loading && <p role="status">{t("scanningApps")}</p>}
       {!loading && !error && !searchApps(apps, query).length && <p role="status">{t("noApps")}</p>}
       <div className="studio-app-list">{searchApps(apps, query).slice(0, 60).map((app) => {
         const existing = config.pinnedApps?.find((pin) => installedForPin(pin, apps)?.id === app.id);

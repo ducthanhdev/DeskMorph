@@ -1,5 +1,10 @@
 export const messages = {
   vi: {
+    operationFailed: "Không thực hiện được thao tác. Hãy thử lại hoặc kiểm tra khả năng hỗ trợ của desktop.",
+    configNotReady: "Cấu hình chưa tải xong. Hãy thử lại.", configConflict: "Cấu hình đã thay đổi. Hãy tải lại và kiểm tra trước khi áp dụng.",
+    configWriteError: "Không lưu được cấu hình. Kiểm tra quyền ghi và dung lượng ổ đĩa rồi thử lại.", configReadError: "Không đọc được cấu hình. Kiểm tra quyền truy cập rồi thử lại.",
+    configVersionError: "Phiên bản cấu hình chưa được hỗ trợ. Hãy cập nhật DeskMorph hoặc dùng bản xuất tương thích.", configInvalidError: "Cấu hình không hợp lệ. Kiểm tra file trước khi nhập lại.", configExportError: "Không xuất được cấu hình. Kiểm tra thư mục đích rồi thử lại.",
+    pinClassConflict: "Lớp cửa sổ này đã được ghép với ứng dụng khác. Hãy kiểm tra các ứng dụng ghim.", pinIdentityConflict: "Ứng dụng này đã được ghim. Hãy kiểm tra danh sách ghim.", pinMissingError: "Ứng dụng ghim không còn tồn tại. Hãy làm mới danh sách.",
     previewHelp: "Rê chuột để thử phóng to. Mẫu luôn hiển thị để bạn chỉnh sửa; thử hiệu ứng không mở ứng dụng.", previewDockOff: "Dock đang tắt. Bật Dock để dùng giao diện này trên desktop.",
     previewAnimation: "Thử hiệu ứng mở ứng dụng", restoreAppearance: "Khôi phục giao diện lúc mở Studio",
     capabilityProbeFailed: "Chưa xác minh được khả năng này. Hãy kiểm tra lại desktop.", developing: "Đang phát triển", refreshCapabilities: "Kiểm tra lại khả năng desktop",
@@ -40,6 +45,11 @@ export const messages = {
     unknown: "Chưa xác định", today: "Hôm nay", previousMonth: "Tháng trước", nextMonth: "Tháng sau", details: "Chi tiết", themeNord: "Nord tối giản", themeNeon: "Neon tím", themePop: "Pop Teal",
   },
   en: {
+    operationFailed: "Unable to complete this action. Retry or check the supported desktop capabilities.",
+    configNotReady: "Configuration is still loading. Please retry.", configConflict: "Configuration has changed. Reload and review it before applying changes.",
+    configWriteError: "Unable to save configuration. Check write permissions and free disk space, then retry.", configReadError: "Unable to read configuration. Check access permissions, then retry.",
+    configVersionError: "This configuration version is unsupported. Update DeskMorph or use a compatible export.", configInvalidError: "The configuration is invalid. Check the file before importing again.", configExportError: "Unable to export configuration. Check the destination folder, then retry.",
+    pinClassConflict: "This window class is already assigned to another application. Review your pinned applications.", pinIdentityConflict: "This application is already pinned. Review the pinned list.", pinMissingError: "The pinned application no longer exists. Refresh the list.",
     previewHelp: "Hover to preview magnification. The sample stays visible while you edit; previewing an animation does not open an app.", previewDockOff: "The Dock is off. Enable it to use this appearance on your desktop.",
     previewAnimation: "Preview launch animation", restoreAppearance: "Restore appearance from Studio startup",
     capabilityProbeFailed: "This capability could not be verified. Check the desktop again.", developing: "In development", refreshCapabilities: "Check desktop capabilities again",

@@ -43,6 +43,7 @@ test('launcher states, keyboard selection, pending Enter lock, failure retry and
     .replace(/import \{ AppIcon \} from .*;/, 'const AppIcon="AppIcon";')
     .replaceAll('"../appSearch"', JSON.stringify(searchUrl)).replaceAll('"../hooks/asyncLifetime"', JSON.stringify(lifetimeUrl));
   // JSX runtime import is emitted by TypeScript, so replace it after transpiling.
+  source = source.replace(/import \{ ErrorText \} from .*;/, 'const ErrorText="ErrorText";');
   const transpiled = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.ESNext, jsx: ts.JsxEmit.ReactJSX, target: ts.ScriptTarget.ES2022 } }).outputText.replaceAll('"react/jsx-runtime"', JSON.stringify(jsxUrl));
   const { AppLauncher } = await import('data:text/javascript;base64,' + Buffer.from(transpiled).toString('base64'));
   const render = () => { stateIndex = refIndex = 0; return AppLauncher({ generation: 73 }); };

@@ -57,6 +57,19 @@ def run(app, config_home, click, focus_studio, native_keys, type_entry, native_c
         time.sleep(3.5)
         assert 'app_launch_failed; launch_app' in text(), 'Window polling erased action failure'
         assert not marker.exists(), 'Failed launch reported false success'
+        focus_studio(); click('Hệ thống'); click('English')
+        wait(lambda: snapshot()['config']['language'] == 'en', 'Language change did not persist')
+        wait(lambda: 'Unable to launch application' in text() and 'app_launch_failed; launch_app' in text(), 'Retained Dock error did not translate to English')
+        focus_studio('DeskMorph Taskbar')
+        detail = node('Details', 'button')
+        assert detail is not None and detail.get_component_iface().grab_focus()
+        native_keys(chord=[0xff0d])
+        wait(lambda: 'No such file or directory (os error 2)' in text(), 'Keyboard did not reveal original launch diagnostic')
+        # Keep the minimum-height retry geometry check on the collapsed disclosure.
+        native_keys(chord=[0xff0d])
+        focus_studio(); click('Tiếng Việt')
+        wait(lambda: snapshot()['config']['language'] == 'vi' and node('Chi tiết', 'button') is not None, 'Retained Dock error did not return to Vietnamese')
+        passed.append('retained Dock error translates vi/en live; language persists; Enter opens diagnostic disclosure without replaying launch')
         retry_bounds = node('Thử lại', 'button').get_component_iface().get_extents(Atspi.CoordType.SCREEN)
         dock_bounds = node('DeskMorph Taskbar', 'frame').get_component_iface().get_extents(Atspi.CoordType.SCREEN)
         assert retry_bounds.y >= dock_bounds.y and retry_bounds.y + retry_bounds.height <= dock_bounds.y + dock_bounds.height, 'Retry button clipped outside minimum-height Dock'
@@ -150,6 +163,8 @@ def run(app, config_home, click, focus_studio, native_keys, type_entry, native_c
         print(json.dumps(report, ensure_ascii=False), flush=True)
     finally:
         config_path.parent.chmod(mode)
+        if snapshot()['config']['language'] != 'vi':
+            focus_studio(); click('System'); click('Tiếng Việt')
         entry.unlink(missing_ok=True); executable.unlink(missing_ok=True); marker.unlink(missing_ok=True)
         for key, value in previous_wallpaper.items():
             subprocess.run(['gsettings', 'set', 'org.gnome.desktop.background', key, value], check=True)

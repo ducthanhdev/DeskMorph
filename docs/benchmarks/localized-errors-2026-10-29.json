@@ -1,0 +1,20 @@
+{
+  "pid": 2434326,
+  "passed": [
+    "retained Dock error translates vi/en live; language persists; Enter opens diagnostic disclosure without replaying launch",
+    "Dock missing executable error survives >2 window polls; repair + explicit Retry dispatches exact command",
+    "desktop entry removed after listing stays in launcher with context; restore + Retry launches original desktop ID even after results refresh",
+    "read-only config directory leaves disk/revision unchanged and shows code/context; Retry persists original patch exactly once",
+    "Studio failed patch followed by popup unpin: Retry rejects stale revision without extra writes; reload keeps concurrent data",
+    "deleted image fails without GNOME URI change or false success; restore + Retry applies exact original path"
+  ],
+  "scope": "G5.8 partial: translated error presentation and native vi/en retained error, not complete localization certification",
+  "frontendTests": 41,
+  "build": "TypeScript/Vite and debug custom-protocol passed",
+  "configRestored": true,
+  "limitations": [
+    "native recovery/durability warnings still need localization",
+    "complete long-string layout and plural audit pending",
+    "legacy unused DockContextMenu and default user-visible names need audit"
+  ]
+}

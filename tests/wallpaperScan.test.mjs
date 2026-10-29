@@ -58,6 +58,7 @@ test('wallpaper scan effects cancel only their request, ignore stale results, re
     .replace(/import \{ Card, Toggle \} from .*;/, 'const Card="Card", Toggle="Toggle";')
     .replaceAll('"../../dateTime"', JSON.stringify(dateTimeUrl))
     .replaceAll('"../../capabilities"', JSON.stringify(capabilitiesUrl));
+  source = source.replace(/import \{ ErrorText \} from .*;/, 'const ErrorText="ErrorText";');
   const transpiled = ts.transpileModule(source, { compilerOptions: {
     module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022, jsx: ts.JsxEmit.ReactJSX,
   } }).outputText.replaceAll('"react/jsx-runtime"', JSON.stringify(jsxUrl));
@@ -99,7 +100,7 @@ test('wallpaper scan effects cancel only their request, ignore stale results, re
     click(tree, 'scan'); render();
     assert.deepEqual(calls.filter(call => call.command === 'cancel_wallpaper_scan')[1].args, { requestId: second });
     scans[2].reject(new Error('permission denied')); await flush(); tree = render();
-    assert.ok([...nodes(tree)].some(node => node.props?.role === 'alert' && node.props.children?.includes('permission denied')));
+    assert.ok([...nodes(tree)].some(node => node.props?.role === 'alert' && [node.props.children].flat(Infinity).some(child => child?.props?.error === 'permission denied')));
     click(tree, 'retry'); render();
     const beforeDispose = [...states];
     for (const effect of effects) effect.cleanup?.();

@@ -1,3 +1,4 @@
+import { ErrorText } from "../ErrorText";
 import { Fragment, useEffect, useRef, useState } from "react";
 import { invoke } from "../../ipc";
 import { DEFAULT_CONFIG, type TaskbarConfig } from "../../types";
@@ -71,6 +72,6 @@ export function SystemSettings() {
         {available === false && <small>{capabilityReason(platform, feature, t, platformError)}</small>}
       </dd></Fragment>)}
     </dl><p className="settings-help">{t("updatesUnsupported")}</p><button onClick={refreshPlatform}>{t("refreshCapabilities")}</button></Card>
-    {error && <p role="alert">{error}</p>}{status && <p role="status">{status}</p>}
+    {error && <p role="alert"><ErrorText error={error} /></p>}{status && <p role="status">{status}</p>}
   </>;
 }

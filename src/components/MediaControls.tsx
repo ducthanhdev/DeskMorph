@@ -1,3 +1,4 @@
+import { ErrorText } from "./ErrorText";
 import { useEffect, useRef, useState } from "react";
 import { invoke } from "../ipc";
 import { listen } from "@tauri-apps/api/event";
@@ -62,7 +63,7 @@ export function MediaControls({ generation }: { generation?: number }) {
   };
   return <section className="media-controls" aria-label={t("media")}>
     <h3>{t("media")}</h3>
-    {error && <p role="alert">{t("mediaError")} ({error}) <button onClick={() => void refresh()}>{t("retry")}</button></p>}
+    {error && <p role="alert">{t("mediaError")} <ErrorText error={error} /> <button onClick={() => void refresh()}>{t("retry")}</button></p>}
     {!player && !error && <p role="status">{t("mediaEmpty")}</p>}
     {players.length > 1 && <fieldset disabled={busy}><legend>{t("mediaPlayer")}</legend>{players.map((item) => <label key={`${item.name}:${item.owner}`}><input type="radio" name="media-player" checked={item.name === player?.name && item.owner === player?.owner} onChange={() => setSelection(`${item.name}:${item.owner}`)} />{item.identity || item.name}</label>)}</fieldset>}
     {player && <>

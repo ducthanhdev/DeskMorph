@@ -1,3 +1,4 @@
+import { ErrorText } from "./ErrorText";
 import { useEffect, useRef, useState } from "react";
 import { invoke } from "../ipc";
 import { listen } from "@tauri-apps/api/event";
@@ -82,7 +83,7 @@ export function AudioPopup({ generation }: { generation?: number }) {
   };
   return <section className="audio-popup" ref={root} aria-label={t("audio")}>
     <header><h2>{t("audio")}</h2><button onClick={() => { if (generation !== undefined) void invoke("hide_dock_context_menu", { generation }).catch((e) => { if (active.current) setError(String(e)); }); }}>{t("close")}</button></header>
-    {error && <div role="alert"><p>{t("audioUnavailable")} <small>({error})</small></p><button onClick={() => void refresh()}>{t("retry")}</button></div>}
+    {error && <div role="alert"><p>{t("audioUnavailable")} <ErrorText error={error} /></p><button onClick={() => void refresh()}>{t("retry")}</button></div>}
     {!snapshot && !error && <p role="status">{t("loading")}</p>}
     {snapshot && <>
       {snapshot.sinks.length === 0 && <p role="status">{t("audioEmpty")}</p>}

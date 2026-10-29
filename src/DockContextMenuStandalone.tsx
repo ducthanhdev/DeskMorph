@@ -1,3 +1,4 @@
+import { ErrorText } from "./components/ErrorText";
 import { useEffect, useRef, useState } from "react";
 import { invoke } from "./ipc";
 import { listen } from "@tauri-apps/api/event";
@@ -64,8 +65,8 @@ function ContextActions({ menu }: { menu: DockContextMenuState }) {
     <header><AppIcon path={menu.iconPath} /><strong>{menu.appName}</strong></header>
     {!platform?.windows.enumerate && <p role="status">{capabilityReason(platform, "windowEnumeration", t, platformError)}</p>}
     {missing && <p role="status">{t("unavailable")}</p>}
-    {catalogueError && <p role="alert">{catalogueError}</p>}
-    {(error || configError || refreshError) && <p role="alert">{error || configError || `${t("refreshWindowsError")}: ${refreshError}`}</p>}
+    {catalogueError && <p role="alert"><ErrorText error={catalogueError} /></p>}
+    {(error || configError || refreshError) && <p role="alert"><ErrorText error={error || configError || refreshError!} /></p>}
     {(menu.command || installed) && <button disabled={busy || missing} onClick={() => void perform(() => menu.command ? invoke("spawn_app", { execCmd: menu.command }) : invoke("launch_installed_app", { id: installed!.id, action: null }))}><Plus size={16} /> {t("newLaunch")}</button>}
     <button disabled={busy || (!menu.isPinned && !menu.desktopId)} onClick={() => void togglePin()}>{menu.isPinned ? <PinOff size={16} /> : <Pin size={16} />}{menu.isPinned ? t("unpin") : t("pin")}</button>
     {menu.isPinned && pinIndex >= 0 && <div className="context-reorder">

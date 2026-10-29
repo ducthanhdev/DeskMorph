@@ -1,3 +1,4 @@
+import { ErrorText } from "./ErrorText";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { invoke } from "../ipc";
 import { Pin, PinOff, RefreshCw, Search, Settings } from "lucide-react";
@@ -50,7 +51,7 @@ export function AppLauncher({ generation }: { generation?: number }) {
       onChange={(e) => { setQuery(e.target.value); setSelected(0); }}
       onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); void launch(results[current]); } }} />
       <button onClick={refresh} aria-label={t("refresh")} title={t("refresh")}><RefreshCw size={16} /></button></header>
-    {(error || configError || launchError) && <p role="alert">{error || configError || launchError} {launchError && failedApp && <button disabled={!!launching} onClick={() => void launch(failedApp)}>{t("retry")}</button>}</p>}
+    {(error || configError || launchError) && <p role="alert"><ErrorText error={error || configError || launchError!} /> {launchError && failedApp && <button disabled={!!launching} onClick={() => void launch(failedApp)}>{t("retry")}</button>}</p>}
     {loading && <p role="status">{t("scanningApps")}</p>}
     {!loading && !error && !results.length && <p role="status">{t("noApps")}</p>}
     {launching && <p role="status" aria-live="polite">{t("launching")} {apps.find((app) => app.id === launching)?.name}</p>}

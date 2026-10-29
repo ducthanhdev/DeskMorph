@@ -356,9 +356,9 @@ if __name__ == '__main__':
                 interface = node.get_text_iface()
                 if interface: texts.append(Atspi.Text.get_text(interface, 0, -1))
             observed = '\n'.join(texts)
-            if 'xprop_unavailable:' in observed: break
+            if 'xprop_unavailable' in observed: break
             time.sleep(0.1)
-        assert 'xprop_unavailable:' in observed, 'Missing xprop capability error did not reach Studio'
+        assert 'xprop_unavailable' in observed, 'Missing xprop capability error did not reach Studio'
         assert any(node.get_name() in ('Tìm ứng dụng', 'Search applications') for node, _ in descendants(app)), 'Dock launcher disappeared when window management was unavailable'
         report = {'passed': ['missing xprop reaches Studio capability status', 'Dock and launcher remain available'], 'pid': app.get_process_id(), 'inputSent': False}
         Path('/tmp/deskmorph-desktop-test/platform-tool-missing-result.json').write_text(json.dumps(report, indent=2))

@@ -1,3 +1,4 @@
+import { ErrorText } from "./components/ErrorText";
 import React, { useEffect, useLayoutEffect, useState, useRef } from "react";
 import { invoke } from "./ipc";
 import { useConfig } from "./config/store";
@@ -488,9 +489,9 @@ export const Taskbar: React.FC = () => {
       className="taskbar-wrapper"
       onContextMenu={(e) => e.preventDefault()}
     >
-      {windowsError && !operationError && !configError && <div className="app-status" role="alert"><span className="dock-error-message">{windowsError}</span><button onClick={() => setWindowsError(null)}>{t("close")}</button></div>}
-      {operationError && <div className="app-status" role="alert"><span className="dock-error-message">{operationError}</span> {retryAction && <button onClick={retryAction}>{t("retry")}</button>} <button onClick={() => { setOperationError(null); setRetryAction(null); }}>{t("close")}</button></div>}
-      {configError && !operationError && <div className="app-status" role="alert"><span className="dock-error-message">{configError}</span><button onClick={configRetry}>{t("retry")}</button></div>}
+      {windowsError && !operationError && !configError && <div className="app-status" role="alert"><span className="dock-error-message"><ErrorText error={windowsError} /></span><button onClick={() => setWindowsError(null)}>{t("close")}</button></div>}
+      {operationError && <div className="app-status" role="alert"><span className="dock-error-message"><ErrorText error={operationError} /></span> {retryAction && <button onClick={retryAction}>{t("retry")}</button>} <button onClick={() => { setOperationError(null); setRetryAction(null); }}>{t("close")}</button></div>}
+      {configError && !operationError && <div className="app-status" role="alert"><span className="dock-error-message"><ErrorText error={configError} /></span><button onClick={configRetry}>{t("retry")}</button></div>}
       {/* Hit test trigger area at the edge when hidden */}
       {isHidden && (
         <div

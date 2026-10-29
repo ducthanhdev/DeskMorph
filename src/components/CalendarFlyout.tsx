@@ -1,3 +1,4 @@
+import { ErrorText } from "./ErrorText";
 import { useConfig } from "../config/store";
 import { useI18n } from "../i18n/useI18n";
 import React, { useState, useEffect } from "react";
@@ -110,7 +111,7 @@ export const CalendarFlyout: React.FC = () => {
   return (
     <div className="calendar-flyout-window" onContextMenu={(e) => e.preventDefault()}>
       <div className="calendar-flyout-card">
-        {error && <p role="alert">{error}</p>}
+        {error && <p role="alert"><ErrorText error={error} /></p>}
         {/* Live Date & Time Banner */}
         <div className="calendar-live-banner">
           <div className="calendar-live-date">

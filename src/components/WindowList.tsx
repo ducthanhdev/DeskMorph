@@ -1,3 +1,4 @@
+import { ErrorText } from "./ErrorText";
 import { useEffect, useRef, useState } from "react";
 import { invoke } from "../ipc";
 import { X } from "lucide-react";
@@ -88,7 +89,7 @@ export function WindowList({ menu }: { menu: DockContextMenuState }) {
         <button className="window-list-close" disabled={closing === w.id || !platform?.windows.close} onClick={() => void close(w.id)} aria-label={`${t("close")} ${w.title}`} title={platform?.windows.close ? t("close") : capabilityReason(platform, "windowClose", t, platformError)}><X size={16} /></button>
       </div>)}
     </div>
-    {(error || refreshError) && <p role="alert">{error || `${t("refreshWindowsError")}: ${refreshError}`}</p>}
+    {(error || refreshError) && <p role="alert"><ErrorText error={error || refreshError!} /></p>}
     {!platform?.windows.enumerate && <p role="status">{capabilityReason(platform, "windowEnumeration", t, platformError)}</p>}
     {platform && !platform.windows.activate && <p>{capabilityReason(platform, "windowActivation", t, platformError)}</p>}
     {platform && !platform.windows.close && <p>{capabilityReason(platform, "windowClose", t, platformError)}</p>}

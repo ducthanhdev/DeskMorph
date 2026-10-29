@@ -137,3 +137,6 @@ Polling theo visibility, race đăng ký listener, cache mẫu CPU/RAM và diagn
 
 
 Studio giữ snapshot `appearanceOf(config)` đầu tiên sau khi config ready làm điểm khôi phục trong phiên chạy. Nút khôi phục gửi patch chỉ các APPEARANCE_KEYS qua store authoritative, giữ pin, widget, auto-hide, monitor, ngôn ngữ và lifecycle hiện tại. Đổi tab không thay checkpoint; lỗi lưu vẫn giữ checkpoint cho retry; completion sau unmount không cập nhật trạng thái nút. Đây là khôi phục diện mạo đầu phiên, khác với hoàn tác preset gần nhất.
+
+
+Thông báo lỗi hiển thị qua `ErrorText`/`i18n/errors.ts` được dịch tại render để phản ánh language thay đổi khi lỗi còn tồn tại. Mã lỗi/command giữ nguyên; nút Chi tiết/Details mở chẩn đoán gốc, không dispatch lại thao tác. Backend vẫn giữ structured errors và retry contract; danh sách code/command quyết định thông báo hướng xử lý, mã chưa biết có fallback đã dịch. Đây là bước đầu G5.8; native config warnings và audit chuỗi dài chưa hoàn tất.

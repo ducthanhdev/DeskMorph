@@ -1,3 +1,4 @@
+import { ErrorText } from "../ErrorText";
 import { useEffect, useRef, useState } from "react";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { invoke } from "../../ipc";
@@ -101,7 +102,7 @@ export function WallpaperSettings() {
       {config.wallpaperScheduleEnabled && schedule?.nextRunUnixMs && <p className="settings-help" role="status">{t("nextWallpaper")}: {formatClock(schedule.nextRunUnixMs, locale, config)}</p>}
       {schedule?.running && <p role="status">{t("changingWallpaper")}</p>}
       {schedule?.lastRunUnixMs && <p className="settings-help">{t("lastWallpaperAttempt")}: {formatClockDateTime(schedule.lastRunUnixMs, locale, config)}</p>}
-      {schedule?.lastError && <p role="alert">{t("scheduleError")}: {schedule.lastError}</p>}
+      {schedule?.lastError && <p role="alert">{t("scheduleError")}: <ErrorText error={schedule.lastError} /></p>}
     </section>
     {current && <p className="settings-help">{t("currentWallpaper")}: <span className="wallpaper-folder-path">{current}</span></p>}
     <div className="wallpaper-filters">
@@ -110,9 +111,9 @@ export function WallpaperSettings() {
       <select aria-label={t("format")} value={format} onChange={(e) => { setFormat(e.target.value); setPage(0); }}><option value="">{t("allFormats")}</option>{[...new Set(scan.images.map((image) => image.format))].sort().map((value) => <option key={value} value={value}>{value.toUpperCase()}</option>)}</select>
       <Toggle label={t("favoritesOnly")} value={favoritesOnly} onChange={(value) => { setFavoritesOnly(value); setPage(0); }} />
     </div>
-    {libraryError && <p role="alert">{libraryError} <button onClick={() => setRefresh((value) => value + 1)}>{t("retry")}</button></p>}
-    {pollError && <p role="alert">{pollError}</p>}
-    {error && <p role="alert">{error} {failedApply && <button disabled={applying} onClick={() => void apply(failedApply.path)}>{t("retry")}</button>}</p>}{status && <p role="status">{status}</p>}
+    {libraryError && <p role="alert"><ErrorText error={libraryError} /> <button onClick={() => setRefresh((value) => value + 1)}>{t("retry")}</button></p>}
+    {pollError && <p role="alert"><ErrorText error={pollError} /></p>}
+    {error && <p role="alert"><ErrorText error={error} /> {failedApply && <button disabled={applying} onClick={() => void apply(failedApply.path)}>{t("retry")}</button>}</p>}{status && <p role="status">{status}</p>}
     {scan.limited && <p role="status">{t("scanLimited")}</p>}
     {scan.issues.length > 0 && <details className="wallpaper-issues"><summary>{t("scanIssues")} ({scan.issues.length})</summary><ul>{scan.issues.map((issue, i) => <li key={i}><code>{issue.path}</code>: {issue.message}</li>)}</ul></details>}
     {loading ? <p role="status">{t("loading")}</p> : !filtered.length ? <p role="status">{t("noWallpapers")}</p> : <>

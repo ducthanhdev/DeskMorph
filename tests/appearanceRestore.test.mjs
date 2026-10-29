@@ -28,6 +28,7 @@ test('Studio restore captures first ready appearance, survives tab/config change
     .replace(/import \{ (useConfig|usePlatform|useI18n|useAsyncLifetime) \} from .*;/g, 'const { $1 }=globalThis.__restoreTest;')
     .replace(/import \{ (Sparkles|DockSettings|AppsSettings|AppearanceSettings|SystemSettings|WallpaperSettings|DockPreview) \} from .*;/g, 'const $1="$1";')
     .replace('"./dockAppearance"', JSON.stringify(compile(read('../src/dockAppearance.ts'))));
+  source = source.replace(/import \{ ErrorText \} from .*;/, 'const ErrorText="ErrorText";');
   source = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.ESNext, jsx: ts.JsxEmit.ReactJSX } }).outputText.replaceAll('"react/jsx-runtime"', JSON.stringify(jsx));
   const { Studio } = await import('data:text/javascript;base64,' + Buffer.from(source).toString('base64'));
   const render = () => { stateIndex = effectIndex = 0; const result = Studio(); for (const commit of pending.splice(0)) commit(); return result; };

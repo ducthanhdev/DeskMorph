@@ -67,11 +67,11 @@ function subscribe(fn: () => void) {
   };
 }
 async function updateConfig(patch: Partial<TaskbarConfig>) {
-  if (!state.ready) { report("Cấu hình chưa tải xong; hãy thử lại"); return false; }
+  if (!state.ready) { report(new CommandError("config_not_ready", "Configuration is still loading", "patch_config")); return false; }
   return perform((expectedRevision) => invoke<ConfigSnapshot>("patch_config", { patch, expectedRevision }));
 }
 export async function mutatePin(action: "add" | "remove" | "toggleEnabled" | "move" | "setClasses", id: string, pin?: PinnedApp | Pick<PinnedApp, "matchClasses">, target?: number) {
-  if (!state.ready) { report("Cấu hình chưa tải xong; hãy thử lại"); return false; }
+  if (!state.ready) { report(new CommandError("config_not_ready", "Configuration is still loading", "mutate_pin")); return false; }
   return perform((expectedRevision) => invoke<ConfigSnapshot>("mutate_pin", { action, id, pin: pin ?? null, target: target ?? null, expectedRevision }));
 }
 export async function replaceConfigDocument(document: unknown, expectedRevision: number) {
