@@ -181,7 +181,7 @@ Tiêu chí: widget không có phần cứng/service tự ẩn hoặc báo thiế
 
 Phần tài liệu/kiểm thử bắt đầu từ G0; cổng phát hành tổng hợp sau các giai đoạn chọn đưa vào release.
 
-- [ ] G9.1 Chọn compositor Wayland mục tiêu dựa trên môi trường sử dụng; khảo sát layer-shell, window enumeration/control, icon identity, shortcuts và wallpaper.
+- [x] G9.1 Chọn compositor Wayland mục tiêu dựa trên môi trường sử dụng; khảo sát layer-shell, window enumeration/control, icon identity, shortcuts và wallpaper.
 - [ ] G9.2 Tạo prototype nhỏ chứng minh dock placement/auto-hide và liệt kê/chuyển/đóng cửa sổ native; đánh giá quyền và protocol thực tế.
 - [ ] G9.3 Quyết định adapter Wayland theo kết quả: triển khai API được hỗ trợ, tích hợp extension/plugin nếu cần, hoặc công bố giới hạn; không cam kết API chung mà compositor không cung cấp.
 - [ ] G9.4 Chạy lại luồng cốt lõi trên mỗi tổ hợp được tuyên bố hỗ trợ; tách verified/experimental/unsupported với phiên bản cụ thể.
