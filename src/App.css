@@ -1867,3 +1867,6 @@ button:focus-visible { outline: 2px solid #48b9c7; outline-offset: -2px; }
 .localized-error { overflow-wrap: anywhere; }
 .error-details-toggle { margin-inline-start: 8px; font: inherit; }
 .error-diagnostics { display: block; margin-block-start: 6px; white-space: pre-wrap; overflow-wrap: anywhere; user-select: text; }
+
+/* Long user names must wrap inside the class-mapping summary as well as the pin row. */
+.class-mapping { min-width: 0; max-width: 100%; overflow-wrap: anywhere; }

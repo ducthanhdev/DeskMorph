@@ -711,7 +711,7 @@ if __name__ == '__main__':
         app = run(app, TEST_CONFIG, click, focus_studio, native_keys, test_app, start_isolated_app, lambda current: globals().__setitem__('app', current), require_unlocked_desktop, assert_pointer_over_test_app)
     if args.localization_smoke:
         from localization_smoke import run
-        app = run(app, TEST_CONFIG, click, focus_studio, native_keys, test_app, start_isolated_app, lambda current: globals().__setitem__('app', current))
+        app = run(app, TEST_CONFIG, click, focus_studio, native_keys, test_app, start_isolated_app, lambda current: globals().__setitem__('app', current), native_click_node)
     if args.capabilities_smoke:
         from capabilities_smoke import run
         app = run(app, TEST_CONFIG, click, focus_studio, native_keys, test_app, start_isolated_app, lambda current: globals().__setitem__('app', current))

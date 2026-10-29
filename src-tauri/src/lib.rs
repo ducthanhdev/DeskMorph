@@ -1,3 +1,4 @@
+mod ui_messages;
 mod diagnostics;
 mod shortcuts;
 mod system_widgets;

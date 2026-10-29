@@ -123,7 +123,7 @@ Phụ thuộc G1/G4.
 - [x] G5.5 Export/import JSON có version, validation và màn hình tóm tắt thay đổi; nhập lỗi không thay cấu hình hiện có.
 - [x] G5.6 Reset cấu hình có xác nhận cụ thể và phương án khôi phục; xác định rõ có xóa preset cá nhân hay không.
 - [x] G5.7 Định dạng giờ 12/24, hiện giây, ngày tháng theo locale.
-- [ ] G5.8 Gom chuỗi giao diện vào tài nguyên vi/en; lưu ngôn ngữ, hỗ trợ chuỗi dài, plural và thông báo lỗi.
+- [x] G5.8 Gom chuỗi giao diện vào tài nguyên vi/en; lưu ngôn ngữ, hỗ trợ chuỗi dài, plural và thông báo lỗi.
 - [ ] G5.9 Focus-visible, nhãn accessible, tab order, contrast và trạng thái disabled; mọi thao tác chính dùng được bằng bàn phím.
 - [x] G5.10 Capability được phản ánh trong UI: tính năng chưa hỗ trợ có lý do cụ thể, không nút hoạt động giả; tách mục đang phát triển khỏi chức năng dùng được.
 

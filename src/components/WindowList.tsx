@@ -4,7 +4,7 @@ import { invoke } from "../ipc";
 import { X } from "lucide-react";
 import type { DockContextMenuState } from "../types";
 import { useI18n } from "../i18n/useI18n";
-import { errorMessage } from "../config/store";
+import { useConfig, errorMessage } from "../config/store";
 import { capabilityReason } from "../capabilities";
 import { usePlatform } from "../hooks/usePlatform";
 import { useAsyncLifetime } from "../hooks/useAsyncLifetime";
@@ -18,7 +18,10 @@ export function WindowList({ menu }: { menu: DockContextMenuState }) {
   const { apps } = useInstalledApps();
   const installed = menu.desktopId ? apps.find((app) => app.id === menu.desktopId) : installedForClass(menu.windows?.[0]?.class_name || "", apps);
   const iconPath = installed?.iconPath;
-  const { t, count } = useI18n();
+  const { t, count, pinName } = useI18n();
+  const { config } = useConfig();
+  const pinned = config.pinnedApps?.find(pin => pin.id === menu.appId);
+  const appName = pinned ? pinName(pinned) : menu.appName;
   const { platform, error: platformError } = usePlatform();
   const { windows, refreshError, active } = useLiveWindows(menu);
   const [error, setError] = useState("");
@@ -64,7 +67,7 @@ export function WindowList({ menu }: { menu: DockContextMenuState }) {
     catch (err) { if (!signal.aborted) setError(`${t("closeWindowError")}: ${errorMessage(err)}`); }
     finally { if (!signal.aborted) setClosing(null); }
   };
-  return <section className="window-list" aria-label={`${t("windows")} ${menu.appName}`}
+  return <section className="window-list" aria-label={`${t("windows")} ${appName}`}
     onKeyDown={(e) => {
       if (!windows.length) return;
       const index = Math.max(0, windows.findIndex((w) => w.id === selectedId));
@@ -79,7 +82,7 @@ export function WindowList({ menu }: { menu: DockContextMenuState }) {
       e.preventDefault();
       setSelectedId(windows[next]?.id);
     }}>
-    <header><AppIcon path={iconPath} size={20} /><strong>{menu.appName}</strong><span>{platform?.windows.enumerate ? count("window", windows.length) : t("windowStatusUnavailable")}</span></header>
+    <header><AppIcon path={iconPath} size={20} /><strong>{appName}</strong><span>{platform?.windows.enumerate ? count("window", windows.length) : t("windowStatusUnavailable")}</span></header>
     <div className="window-list-items">
       {windows.map((w) => <div key={w.id} className={`window-list-row ${w.is_active ? "is-active" : ""}`}>
         <button className="window-list-select" ref={(el) => { if (el) buttons.current.set(w.id, el); else buttons.current.delete(w.id); }}

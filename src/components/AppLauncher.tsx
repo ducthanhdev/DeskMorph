@@ -77,6 +77,6 @@ export function AppLauncher({ generation }: { generation?: number }) {
         const signal = lifetime.capture();
         try { if (await close() && !signal.aborted) await invoke("show_studio"); }
         catch (e) { if (!signal.aborted) setLaunchError(errorMessage(e)); }
-      }}><Settings size={14} /> Studio</button></footer>
+      }}><Settings size={14} /> {t("studio")}</button></footer>
   </section>;
 }

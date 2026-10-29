@@ -16,7 +16,7 @@ interface Thumbnail { path: string; thumbnail: string | null; error: string | nu
 const PAGE_SIZE = 24;
 export function WallpaperSettings() {
   const { config, updateConfig } = useConfig();
-  const { t, locale } = useI18n();
+  const { t, locale, text } = useI18n();
   const { platform, error: platformError } = usePlatform();
   const [folder, setFolder] = useState("");
   const [scan, setScan] = useState<Scan>({ images: [], issues: [], limited: false });
@@ -113,7 +113,7 @@ export function WallpaperSettings() {
     </div>
     {libraryError && <p role="alert"><ErrorText error={libraryError} /> <button onClick={() => setRefresh((value) => value + 1)}>{t("retry")}</button></p>}
     {pollError && <p role="alert"><ErrorText error={pollError} /></p>}
-    {error && <p role="alert"><ErrorText error={error} /> {failedApply && <button disabled={applying} onClick={() => void apply(failedApply.path)}>{t("retry")}</button>}</p>}{status && <p role="status">{status}</p>}
+    {error && <p role="alert"><ErrorText error={error} /> {failedApply && <button disabled={applying} onClick={() => void apply(failedApply.path)}>{t("retry")}</button>}</p>}{status && <p role="status">{text(status)}</p>}
     {scan.limited && <p role="status">{t("scanLimited")}</p>}
     {scan.issues.length > 0 && <details className="wallpaper-issues"><summary>{t("scanIssues")} ({scan.issues.length})</summary><ul>{scan.issues.map((issue, i) => <li key={i}><code>{issue.path}</code>: {issue.message}</li>)}</ul></details>}
     {loading ? <p role="status">{t("loading")}</p> : !filtered.length ? <p role="status">{t("noWallpapers")}</p> : <>

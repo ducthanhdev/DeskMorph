@@ -33,7 +33,7 @@ import {
 
 export const Taskbar: React.FC = () => {
   const lifetime = useAsyncLifetime();
-  const { t, locale, count } = useI18n();
+  const { t, locale, count, pinName } = useI18n();
   const { apps: installedApps, loading: appsLoading, error: appsError } = useInstalledApps();
   const { platform, error: platformError } = usePlatform();
   const [windowsError, setWindowsError] = useState<string | null>(null);
@@ -586,7 +586,7 @@ export const Taskbar: React.FC = () => {
 
               return (
                 <button
-                  aria-label={`${pinned.name} • ${platform?.windows.enumerate ? count("window", windows.length) : t("windowStatusUnavailable")}${missing ? ` • ${t("unavailable")}` : ""}`}
+                  aria-label={`${pinName(pinned)} • ${platform?.windows.enumerate ? count("window", windows.length) : t("windowStatusUnavailable")}${missing ? ` • ${t("unavailable")}` : ""}`}
                   aria-keyshortcuts="Control+Shift+ArrowLeft Control+Shift+ArrowRight"
                   key={pinned.id}
                   data-pin-id={pinned.id}
@@ -632,7 +632,7 @@ export const Taskbar: React.FC = () => {
                   onClick={(e) => {
                     if (Date.now() < suppressClickUntil.current) return;
                     if (window) {
-                      void selectWindows(e, windows, pinned.name, pinned.id, installed);
+                      void selectWindows(e, windows, pinName(pinned), pinned.id, installed);
                     } else {
                       launchPinned();
                     }
@@ -646,7 +646,7 @@ export const Taskbar: React.FC = () => {
                       pinIndex: pinnedList.findIndex((app) => app.id === pinned.id),
                       pinCount: pinnedList.length,
                       appId: pinned.id,
-                      appName: pinned.name,
+                      appName: pinName(pinned),
                       command: launchCommandForPin(pinned),
                       windowId: window?.id,
                       isPinned: true,
@@ -654,9 +654,9 @@ export const Taskbar: React.FC = () => {
                     })
                   }
                   data-dock-tooltip={
-                    missing ? `${pinned.name} • ${t("unavailable")}` : window
-                      ? `${pinned.name} • ${count("window", windows.length)} • ${t("selectWindow")}`
-                      : `${pinned.name} • ${platform?.windows.enumerate ? t("open") : t("windowStatusUnavailable")}`
+                    missing ? `${pinName(pinned)} • ${t("unavailable")}` : window
+                      ? `${pinName(pinned)} • ${count("window", windows.length)} • ${t("selectWindow")}`
+                      : `${pinName(pinned)} • ${platform?.windows.enumerate ? t("open") : t("windowStatusUnavailable")}`
                   }
                   style={dockAppStyle(config, visual, true, isRunning, isActive, magnifyScale)}
                 >

@@ -6,7 +6,7 @@ const compile = source => 'data:text/javascript;base64,' + Buffer.from(ts.transp
   compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022 },
 }).outputText).toString('base64');
 const errorUrl = compile(fs.readFileSync(new URL('../src/commandError.ts', import.meta.url), 'utf8'));
-const messagesUrl = compile(fs.readFileSync(new URL('../src/i18n/messages.ts', import.meta.url), 'utf8'));
+const messagesUrl = compile(fs.readFileSync(new URL('../src/i18n/messages.ts', import.meta.url), 'utf8').replace('import resources from "./messages.json";', 'const resources = ' + fs.readFileSync(new URL('../src/i18n/messages.json', import.meta.url), 'utf8') + ';'));
 const { CommandError } = await import(errorUrl);
 const { translate } = await import(messagesUrl);
 const jsxUrl = compile('export const jsx=(type,props)=>({type,props}); export const jsxs=jsx; export const Fragment="Fragment";');

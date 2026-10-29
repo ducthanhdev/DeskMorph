@@ -1,3 +1,4 @@
+import { useI18n } from "./i18n/useI18n";
 import React from "react";
 import { Plus, Pin, PinOff, X, Flame } from "lucide-react";
 import { DockContextMenuState } from "./types";
@@ -19,6 +20,7 @@ export const DockContextMenu: React.FC<DockContextMenuProps> = ({
   onCloseWindow,
   onForceKill,
 }) => {
+  const { t } = useI18n();
   // Clamping X so the menu always stays completely within the taskbar window
   const clampedX = Math.max(120, Math.min(menu.anchorX, 1100 - 120));
 
@@ -44,7 +46,7 @@ export const DockContextMenu: React.FC<DockContextMenuProps> = ({
               display: "inline-block",
             }}
           />
-          {menu.isRunning ? "Đang chạy" : "Chưa khởi chạy"}
+          {menu.isRunning ? t("running") : t("notRunning")}
         </span>
       </div>
 
@@ -58,7 +60,7 @@ export const DockContextMenu: React.FC<DockContextMenuProps> = ({
         <span className="dock-menu-item-icon" style={{ color: "#38bdf8" }}>
           <Plus size={15} />
         </span>
-        <span>Mở cửa sổ mới</span>
+        <span>{t("newWindow")}</span>
       </button>
 
       {/* Action 2: Toggle Pin to Dock */}
@@ -69,7 +71,7 @@ export const DockContextMenu: React.FC<DockContextMenuProps> = ({
         <span className="dock-menu-item-icon" style={{ color: menu.isPinned ? "#f59e0b" : "#94a3b8" }}>
           {menu.isPinned ? <PinOff size={15} /> : <Pin size={15} />}
         </span>
-        <span>{menu.isPinned ? "Bỏ ghim khỏi Dock" : "Ghim vào Dock"}</span>
+        <span>{menu.isPinned ? t("unpin") : t("pin")}</span>
       </button>
 
       {/* Actions when app is running */}
@@ -85,7 +87,7 @@ export const DockContextMenu: React.FC<DockContextMenuProps> = ({
             <span className="dock-menu-item-icon" style={{ color: "#94a3b8" }}>
               <X size={15} />
             </span>
-            <span>Đóng cửa sổ</span>
+            <span>{t("close")}</span>
           </button>
 
           {/* Action 4: Force Kill Process */}
@@ -96,7 +98,7 @@ export const DockContextMenu: React.FC<DockContextMenuProps> = ({
             <span className="dock-menu-item-icon" style={{ color: "#ef4444" }}>
               <Flame size={15} />
             </span>
-            <span>Buộc dừng (Force Kill)</span>
+            <span>{t("forceQuit")}</span>
           </button>
         </>
       )}

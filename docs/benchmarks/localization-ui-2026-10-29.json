@@ -1,0 +1,338 @@
+{
+  "passed": [
+    "real invalid-height config recovers with a backup; stable warning persists and translates en/vi live",
+    "native restart retains language and translatable warning code",
+    "open import review translates fields/scalar values en/vi, preserves long path and cancels without applying data",
+    "five tabs in vi/en at 800x600 and 1280x800 keep visible controls horizontally contained; long custom name retained; native export/cancel labels translated",
+    "launcher/audio/system/calendar/context controls translate vi/en; read-only popup audit does not launch apps or change services"
+  ],
+  "fixturePids": [
+    2618366,
+    2618721
+  ],
+  "normalPid": 2623082,
+  "configRestored": true,
+  "allFixturesExited": true,
+  "layouts": [
+    {
+      "language": "en",
+      "tab": "dockTab",
+      "windowSize": [
+        800,
+        600
+      ],
+      "visibleControlsChecked": 8
+    },
+    {
+      "language": "en",
+      "tab": "appsTab",
+      "windowSize": [
+        800,
+        600
+      ],
+      "visibleControlsChecked": 14
+    },
+    {
+      "language": "en",
+      "tab": "appearanceTab",
+      "windowSize": [
+        800,
+        600
+      ],
+      "visibleControlsChecked": 8
+    },
+    {
+      "language": "en",
+      "tab": "wallpaperTab",
+      "windowSize": [
+        800,
+        600
+      ],
+      "visibleControlsChecked": 13
+    },
+    {
+      "language": "en",
+      "tab": "systemTab",
+      "windowSize": [
+        800,
+        600
+      ],
+      "visibleControlsChecked": 12
+    },
+    {
+      "language": "vi",
+      "tab": "dockTab",
+      "windowSize": [
+        800,
+        600
+      ],
+      "visibleControlsChecked": 8
+    },
+    {
+      "language": "vi",
+      "tab": "appsTab",
+      "windowSize": [
+        800,
+        600
+      ],
+      "visibleControlsChecked": 11
+    },
+    {
+      "language": "vi",
+      "tab": "appearanceTab",
+      "windowSize": [
+        800,
+        600
+      ],
+      "visibleControlsChecked": 8
+    },
+    {
+      "language": "vi",
+      "tab": "wallpaperTab",
+      "windowSize": [
+        800,
+        600
+      ],
+      "visibleControlsChecked": 13
+    },
+    {
+      "language": "vi",
+      "tab": "systemTab",
+      "windowSize": [
+        800,
+        600
+      ],
+      "visibleControlsChecked": 12
+    },
+    {
+      "language": "en",
+      "tab": "dockTab",
+      "windowSize": [
+        1280,
+        800
+      ],
+      "visibleControlsChecked": 12
+    },
+    {
+      "language": "en",
+      "tab": "appsTab",
+      "windowSize": [
+        1280,
+        800
+      ],
+      "visibleControlsChecked": 30
+    },
+    {
+      "language": "en",
+      "tab": "appearanceTab",
+      "windowSize": [
+        1280,
+        800
+      ],
+      "visibleControlsChecked": 12
+    },
+    {
+      "language": "en",
+      "tab": "wallpaperTab",
+      "windowSize": [
+        1280,
+        800
+      ],
+      "visibleControlsChecked": 17
+    },
+    {
+      "language": "en",
+      "tab": "systemTab",
+      "windowSize": [
+        1280,
+        800
+      ],
+      "visibleControlsChecked": 14
+    },
+    {
+      "language": "vi",
+      "tab": "dockTab",
+      "windowSize": [
+        1280,
+        800
+      ],
+      "visibleControlsChecked": 12
+    },
+    {
+      "language": "vi",
+      "tab": "appsTab",
+      "windowSize": [
+        1280,
+        800
+      ],
+      "visibleControlsChecked": 30
+    },
+    {
+      "language": "vi",
+      "tab": "appearanceTab",
+      "windowSize": [
+        1280,
+        800
+      ],
+      "visibleControlsChecked": 12
+    },
+    {
+      "language": "vi",
+      "tab": "wallpaperTab",
+      "windowSize": [
+        1280,
+        800
+      ],
+      "visibleControlsChecked": 17
+    },
+    {
+      "language": "vi",
+      "tab": "systemTab",
+      "windowSize": [
+        1280,
+        800
+      ],
+      "visibleControlsChecked": 14
+    }
+  ],
+  "longNameRanges": [
+    {
+      "language": "en",
+      "windowSize": [
+        800,
+        600
+      ],
+      "ranges": [
+        {
+          "x": 2390,
+          "y": 238,
+          "width": 0,
+          "height": 0
+        }
+      ],
+      "summaryRect": {
+        "x": 2661,
+        "y": 669,
+        "width": 478,
+        "height": 96
+      },
+      "rangeGeometryAvailable": false,
+      "screenshot": "localization-2026-10-29/localization-apps-en-800.png"
+    },
+    {
+      "language": "vi",
+      "windowSize": [
+        800,
+        600
+      ],
+      "ranges": [
+        {
+          "x": 2390,
+          "y": 238,
+          "width": 0,
+          "height": 0
+        }
+      ],
+      "summaryRect": {
+        "x": 2661,
+        "y": 688,
+        "width": 478,
+        "height": 96
+      },
+      "rangeGeometryAvailable": false,
+      "screenshot": "localization-2026-10-29/localization-apps-vi-800.png"
+    },
+    {
+      "language": "en",
+      "windowSize": [
+        1280,
+        800
+      ],
+      "ranges": [
+        {
+          "x": 2390,
+          "y": 238,
+          "width": 0,
+          "height": 0
+        }
+      ],
+      "summaryRect": {
+        "x": 2661,
+        "y": 536,
+        "width": 958,
+        "height": 64
+      },
+      "rangeGeometryAvailable": false,
+      "screenshot": "localization-2026-10-29/localization-apps-en-1280.png"
+    },
+    {
+      "language": "vi",
+      "windowSize": [
+        1280,
+        800
+      ],
+      "ranges": [
+        {
+          "x": 2390,
+          "y": 238,
+          "width": 0,
+          "height": 0
+        }
+      ],
+      "summaryRect": {
+        "x": 2661,
+        "y": 536,
+        "width": 958,
+        "height": 64
+      },
+      "rangeGeometryAvailable": false,
+      "screenshot": "localization-2026-10-29/localization-apps-vi-1280.png"
+    }
+  ],
+  "recoveryFilesRestored": true,
+  "jsxLiteralAudit": {
+    "filesScanned": 26,
+    "unexpectedNaturalLanguageJsxText": [],
+    "allowedBrandUnitsAndLanguageSelfNames": [
+      "DeskMorph",
+      "CPU:",
+      "RAM:",
+      "GiB (",
+      "Tiếng Việt",
+      "English"
+    ],
+    "scope": "JSX literal text only; resource key/types/runtime audited separately"
+  },
+  "commandErrorsRegression": {
+    "pid": 2601085,
+    "passed": [
+      "retained Dock error translates vi/en live; language persists; Enter opens diagnostic disclosure without replaying launch",
+      "Dock missing executable error survives >2 window polls; repair + explicit Retry dispatches exact command",
+      "desktop entry removed after listing stays in launcher with context; restore + Retry launches original desktop ID even after results refresh",
+      "read-only config directory leaves disk/revision unchanged and shows code/context; Retry persists original patch exactly once",
+      "Studio failed patch followed by popup unpin: Retry rejects stale revision without extra writes; reload keeps concurrent data",
+      "deleted image fails without GNOME URI change or false success; restore + Retry applies exact original path"
+    ]
+  },
+  "validation": {
+    "frontendTests": 45,
+    "rustTestsIncludingNative": 68,
+    "builds": [
+      "TypeScript/Vite",
+      "debug custom-protocol"
+    ],
+    "resourceKeysPerLanguage": 285,
+    "languagePersistence": "config mutation, native restart and all WebView labels observed",
+    "longNameCharacters": 315,
+    "textRangeGeometryAvailable": false,
+    "textRangeLimit": "WebKit AT-SPI returned 0x0; never used as proof. Positive class-mapping summary bounds and four manually inspected screenshots prove the specific fixture layout.",
+    "screenshotsReviewed": [
+      "en-800",
+      "vi-800",
+      "en-1280",
+      "vi-1280"
+    ],
+    "visualFinding": "Before CSS change, class-mapping summary overflowed and introduced horizontal scrolling; min-width:0/max-width:100%/overflow-wrap:anywhere removes overflow while retaining full custom name.",
+    "nativeLocaleLimit": "Standard GTK/WebKit chooser internals follow desktop locale. App-owned export title/actions use shared catalogue."
+  }
+}

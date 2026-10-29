@@ -21,7 +21,7 @@ export function DockPreview() {
   const { config, ready } = useConfig();
   const { apps, loading, error } = useInstalledApps();
   const { platform } = usePlatform();
-  const { t, locale, count } = useI18n();
+  const { t, locale, count, pinName } = useI18n();
   const { iconSize, glyphSize, maxScale } = dockMetrics(config);
   const launcherSize = Math.max(28, iconSize - 2);
   const now = useClock(config.showClock);
@@ -65,7 +65,7 @@ export function DockPreview() {
         {config.showApps && <div className="dock-apps-viewport"><div className={`dock-apps ${hover !== null ? "is-magnifying" : ""}`} onMouseMove={event => setHover(event.clientX)} onMouseLeave={() => setHover(null)}>
           <div className="dock-pinned-group">{pinnedItems.map(({ pinned, windows }) => {
             const installed = installedForPin(pinned, apps);
-            return item(pinned.id, pinned.name, getPinnedVisual(pinned), installed?.iconPath, windows, true, desktopIsMissing(desktopIdForPin(pinned), installed, { loading, error }));
+            return item(pinned.id, pinName(pinned), getPinnedVisual(pinned), installed?.iconPath, windows, true, desktopIsMissing(desktopIdForPin(pinned), installed, { loading, error }));
           })}</div>
           {unpinnedGroups.length > 0 && pinnedItems.length > 0 && <div className="dock-apps-separator" aria-hidden="true" />}
           {unpinnedGroups.length > 0 && <div className="dock-unpinned-group">{unpinnedGroups.map(rows => item(rows[0].class_name, rows[0].class_name, getAppVisual(rows[0].class_name), installedForClass(rows[0].class_name, apps)?.iconPath, rows, false))}</div>}

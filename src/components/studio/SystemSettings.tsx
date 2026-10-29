@@ -13,7 +13,7 @@ interface Review { config: TaskbarConfig; changedFields: string[]; expectedRevis
 export function SystemSettings() {
   const { config, revision, updateConfig, replaceConfigDocument } = useConfig();
   const { platform, error: platformError, refresh: refreshPlatform } = usePlatform();
-  const { t, language } = useI18n();
+  const { t, language, text } = useI18n();
   const [autostart, setAutostart] = useState(false);
   const [error, setError] = useState("");
   const [status, setStatus] = useState("");
@@ -73,6 +73,6 @@ export function SystemSettings() {
         {available === false && <small>{capabilityReason(platform, feature, t, platformError)}</small>}
       </dd></Fragment>)}
     </dl><p className="settings-help">{t("updatesUnsupported")}</p><button onClick={refreshPlatform}>{t("refreshCapabilities")}</button></Card>
-    {error && <p role="alert"><ErrorText error={error} /></p>}{status && <p role="status">{status}</p>}
+    {error && <p role="alert"><ErrorText error={error} /></p>}{status && <p role="status">{text(status)}</p>}
   </>;
 }

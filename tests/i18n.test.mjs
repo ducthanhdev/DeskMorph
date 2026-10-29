@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import ts from 'typescript';
-const source = ts.transpileModule(fs.readFileSync(new URL('../src/i18n/messages.ts', import.meta.url), 'utf8'), {
+const source = ts.transpileModule(fs.readFileSync(new URL('../src/i18n/messages.ts', import.meta.url), 'utf8').replace('import resources from "./messages.json";', 'const resources = ' + fs.readFileSync(new URL('../src/i18n/messages.json', import.meta.url), 'utf8') + ';'), {
   compilerOptions: { module: ts.ModuleKind.ESNext },
 }).outputText;
 const { messages, formatCount } = await import('data:text/javascript;base64,' + Buffer.from(source).toString('base64'));
@@ -16,6 +16,8 @@ test('window and application counts use locale and plural forms', () => {
   assert.equal(formatCount('en', 'app', 0), '0 applications');
   assert.equal(formatCount('vi', 'window', 1), '1 cửa sổ');
   assert.equal(formatCount('vi', 'app', 2), '2 ứng dụng');
+  assert.equal(formatCount('en', 'window', 1000), '1,000 windows');
+  assert.equal(formatCount('vi', 'window', 1000), '1.000 cửa sổ');
 });
 
 const errorsSource = ts.transpileModule(fs.readFileSync(new URL('../src/i18n/errors.ts', import.meta.url), 'utf8'), {
@@ -101,4 +103,28 @@ test('import review covers every config field and translates scalar values while
     assert.equal(configFieldLabel(language, '__proto__'), '__proto__');
     assert.equal(configFieldLabel(language, 'futureField'), 'futureField');
   }
+});
+
+const pinSource = ts.transpileModule(fs.readFileSync(new URL('../src/i18n/pinNames.ts', import.meta.url), 'utf8')
+  .replace('import defaults from "../config/defaults.json";', 'const defaults = ' + fs.readFileSync(new URL('../src/config/defaults.json', import.meta.url), 'utf8') + ';'),
+  { compilerOptions: { module: ts.ModuleKind.ESNext } }).outputText
+  .replace('"./messages"', JSON.stringify('data:text/javascript;base64,' + Buffer.from(source).toString('base64')));
+const { displayPinName } = await import('data:text/javascript;base64,' + Buffer.from(pinSource).toString('base64'));
+test('bundled Files/Settings names translate for display while custom identities/names/commands remain user data', () => {
+  const defaults = JSON.parse(fs.readFileSync(new URL('../src/config/defaults.json', import.meta.url)));
+  const pin = defaults.pinnedApps.find(pin => pin.id === 'files');
+  assert.equal(displayPinName('en', pin), 'Files');
+  assert.equal(displayPinName('vi', pin), pin.name);
+  for (const change of [{ name: 'My Documents' }, { command: 'custom-file-manager' }, { desktopId: 'files.desktop' }, { id: 'custom-files' }, { iconType: 'custom' }]) {
+    const custom = { ...pin, ...change };
+    assert.equal(displayPinName('en', custom), custom.name);
+  }
+  assert.equal(pin.name, 'Tệp tin (Files)');
+});
+
+test('stored success status follows language changes while paths and application names pass through', async () => {
+  const { translateStoredText } = await import('data:text/javascript;base64,' + Buffer.from(source).toString('base64'));
+  assert.equal(translateStoredText('en', messages.vi.configSaved), messages.en.configSaved);
+  assert.equal(translateStoredText('vi', messages.en.wallpaperApplied), messages.vi.wallpaperApplied);
+  assert.equal(translateStoredText('en', '/tmp/Tên-của-tôi.json'), '/tmp/Tên-của-tôi.json');
 });

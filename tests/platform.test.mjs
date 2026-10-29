@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import ts from 'typescript';
 const compile = source => 'data:text/javascript;base64,' + Buffer.from(ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.ESNext } }).outputText).toString('base64');
-const read = path => fs.readFileSync(new URL(path, import.meta.url), 'utf8');
+const read = path => fs.readFileSync(new URL(path, import.meta.url), 'utf8').replace('import resources from "./messages.json";', 'const resources = ' + fs.readFileSync(new URL('../src/i18n/messages.json', import.meta.url), 'utf8') + ';');
 const deferred = () => { let resolve, reject; const promise = new Promise((yes, no) => { resolve = yes; reject = no; }); return { promise, resolve, reject }; };
 const flush = async () => { for (let i = 0; i < 20; i++) await Promise.resolve(); };
 

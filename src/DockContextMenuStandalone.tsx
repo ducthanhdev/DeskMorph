@@ -21,7 +21,7 @@ import type { DockContextMenuState, PinnedApp } from "./types";
 function ContextActions({ menu }: { menu: DockContextMenuState }) {
   const lifetime = useAsyncLifetime();
   const { platform, error: platformError } = usePlatform();
-  const { t } = useI18n();
+  const { t, pinName } = useI18n();
   const { config, mutatePin, error: configError } = useConfig();
   const { apps, loading, error: catalogueError } = useInstalledApps();
   const installed = apps.find((app) => app.id === menu.desktopId);
@@ -32,6 +32,8 @@ function ContextActions({ menu }: { menu: DockContextMenuState }) {
   const [confirmKill, setConfirmKill] = useState(false);
   const root = useRef<HTMLElement>(null);
   const pinIndex = config.pinnedApps?.findIndex((pin) => pin.id === menu.appId) ?? -1;
+  const pinned = config.pinnedApps?.find(pin => pin.id === menu.appId);
+  const appName = pinned ? pinName(pinned) : menu.appName;
   const hide = () => invoke("hide_dock_context_menu", { generation: menu.popupGeneration });
   useEffect(() => { root.current?.querySelector<HTMLButtonElement>("button:not(:disabled)")?.focus(); }, []);
   const perform = async (task: () => Promise<unknown>, close = true) => {
@@ -53,7 +55,7 @@ function ContextActions({ menu }: { menu: DockContextMenuState }) {
     const signal = lifetime.capture();
     if (await mutatePin(menu.isPinned ? "remove" : "add", id, pin) && !signal.aborted) await hide();
   };
-  return <section ref={root} className="context-actions" aria-label={`${t("details")} ${menu.appName}`} onContextMenu={(e) => e.preventDefault()}
+  return <section ref={root} className="context-actions" aria-label={`${t("details")} ${appName}`} onContextMenu={(e) => e.preventDefault()}
     onKeyDown={(e) => {
       if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(e.key)) return;
       e.preventDefault();
@@ -62,7 +64,7 @@ function ContextActions({ menu }: { menu: DockContextMenuState }) {
       const next = e.key === "Home" ? 0 : e.key === "End" ? buttons.length - 1 : (index + (e.key === "ArrowDown" ? 1 : -1) + buttons.length) % buttons.length;
       buttons[next]?.focus();
     }}>
-    <header><AppIcon path={menu.iconPath} /><strong>{menu.appName}</strong></header>
+    <header><AppIcon path={menu.iconPath} /><strong>{appName}</strong></header>
     {!platform?.windows.enumerate && <p role="status">{capabilityReason(platform, "windowEnumeration", t, platformError)}</p>}
     {missing && <p role="status">{t("unavailable")}</p>}
     {catalogueError && <p role="alert"><ErrorText error={catalogueError} /></p>}

@@ -2,7 +2,7 @@
 
 Mục tiêu giữ nguyên toàn bộ 99 đầu việc trong IMPLEMENTATION_PLAN.md. Chưa đạt cổng hoàn thành toàn dự án. Checkbox chưa đánh dấu không đồng nghĩa chưa có code: nhiều mục đang chờ kiểm thử đủ phạm vi.
 
-Hiện đã đánh dấu 84/99 mục, gồm G3.2–G3.3 bằng fixture môi trường cô lập và G0.5/G2.1/G2.3 qua capability EWMH, kiểm thử lỗi adapter và native startup thiếu xprop. Đã bổ sung G0.4/G2.4/G2.5 qua popup/auto-hide native và G9.6/G9.9 bằng hồi quy policy/asset/force-close và ảnh Studio thật trong README. Các cổng GUI, Wayland và phát hành vẫn chưa hoàn tất.
+Hiện đã đánh dấu 85/99 mục, gồm G3.2–G3.3 bằng fixture môi trường cô lập và G0.5/G2.1/G2.3 qua capability EWMH, kiểm thử lỗi adapter và native startup thiếu xprop. Đã bổ sung G0.4/G2.4/G2.5 qua popup/auto-hide native và G9.6/G9.9 bằng hồi quy policy/asset/force-close và ảnh Studio thật trong README. Các cổng GUI, Wayland và phát hành vẫn chưa hoàn tất.
 
 ## Môi trường tham chiếu đã xác minh
 
@@ -475,3 +475,12 @@ Script cần AT-SPI, Python GI, GTK3 và libXtst. Chỉ gửi phím khi kiểm t
 - Nhãn review phủ toàn bộ khóa TaskbarConfig bằng type contract và đối chiếu defaults; bật/tắt, chưa đặt, vị trí, ngôn ngữ, số có cách hiển thị theo locale. Không thay tên/path/dữ liệu người dùng. Vá lỗi cấu hình trong Apps và lỗi validation preset dùng ErrorText chung.
 - Frontend 43/43; Rust 63 qua/4 native ignored trong lượt sandbox, riêng config 15/15 gồm migration và directory-sync fault injection; TypeScript/Vite và debug custom-protocol build qua. Native fixture height sai tạo recovery và warning Anh/Việt, restart giữ language/warning; review đang mở dịch fields/scalars, giữ path dài 311 ký tự và Hủy không áp dụng. Native xác nhận byte config và tập recovery files phục hồi, hai PID fixture thoát. [Bằng chứng](benchmarks/config-localization-2026-10-29.json).
 - Tổng vẫn 84/99; G5.8 chưa đánh dấu. Native path test chứng minh dữ liệu còn đầy đủ, chưa chứng minh layout mọi chuỗi dài ở mọi kích thước. Còn audit tên mặc định/chuỗi legacy/native dialogs, toàn màn hình/popups và accessibility.
+
+
+## G5.8 — Chốt tài nguyên vi/en, nhãn dài và popup (29/10/2026)
+
+- `messages.json` giữ 285 khóa/ngôn ngữ, React và `ui_messages.rs` dùng chung nhãn cho hộp thoại export. Kiểm tra cùng tập khóa/non-empty và native labels. `messages.ts` giữ API typed + Intl plural/number format; 0/1/2/1000 có kiểm tra vi/en. Chuyển stored success status khi đổi ngôn ngữ, không sửa đường dẫn/dữ liệu riêng.
+- Dock/preview/Apps/context/window header dịch Files/Settings chỉ khi metadata nhãn mặc định còn nguyên, không có desktop identity riêng. Custom name/command/id/icon giữ nguyên và không ghi đè config. Legacy component chưa dùng cũng gom nhãn vào catalog. Audit AST JSX trên 26 file không còn literal ngôn ngữ tự nhiên ngoài brand, đơn vị CPU/RAM/GiB và tên tự gọi của ngôn ngữ; kết hợp kiểm tra keys/runtime, không coi AST search tự chứng minh toàn bộ.
+- Native 20 tổ hợp năm tab × hai ngôn ngữ × hai kích thước 800×600/1280×800 qua kiểm tra visible-control bounds. Native export/cancel labels, launcher/audio/system/calendar/context labels vi/en, recovery warning/restart, review fields/scalars và path dài qua. Lỗi Dock vi/en, Enter mở diagnostic, launch/catalogue/config write/conflict/wallpaper Retry qua 6 nhóm ca; config và GNOME URI phục hồi.
+- Ảnh thật phát hiện summary ghép lớp cửa sổ tràn ngang với tên 315 ký tự dù button bounds pass. Sửa min-width/max-width/overflow-wrap; rect summary dương nằm trong Studio ở bốn tổ hợp, đã xem ảnh trước/sau. Text range WebKit trả 0×0: ghi rõ unavailable, không dùng làm bằng chứng đạt. Harness duyệt AT-SPI bỏ subtree chooser hết hạn, bấm Open và chờ review ready thay fixed sleep; finally đóng chooser trước restore khi cần. Profile test/recovery được phục hồi.
+- Frontend 45/45; Rust native/private-bus 68/68, TypeScript/Vite/debug custom-protocol build và diff check qua. [Bằng chứng/ảnh](benchmarks/localization-ui-2026-10-29.json), [hợp đồng và giới hạn](I18N.md). Widget GTK/WebKit tiêu chuẩn theo locale desktop, dữ liệu app/title/path và diagnostic OS giữ nguyên; app-owned UI theo cấu hình. G5.8 đánh dấu, tổng 85/99. G5.9 vẫn chưa chốt vì chưa chứng minh mọi thao tác bàn phím/contrast toàn ứng dụng.

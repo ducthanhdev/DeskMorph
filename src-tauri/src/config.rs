@@ -424,10 +424,11 @@ fn write_export(path: &Path, snapshot: &Snapshot) -> Result<()> {
 pub fn export_config(window: tauri::WebviewWindow, state: tauri::State<ConfigState>) -> Result<Option<String>> {
     use gtk::prelude::*;
     let snapshot = state.0.lock().map_err(|e| ConfigError::new("config_lock", e))?.snapshot.clone();
-    let english = snapshot.config["language"] == "en";
+    let language = snapshot.config["language"].as_str().unwrap_or("vi");
+    let label = |key| crate::ui_messages::text(language, key);
     let parent = window.gtk_window().map_err(|e| ConfigError::new("config_export", e))?;
-    let dialog = gtk::FileChooserDialog::new(Some(if english { "Export configuration" } else { "Xuất cấu hình" }), Some(&parent), gtk::FileChooserAction::Save);
-    dialog.add_buttons(&[(if english { "Cancel" } else { "Hủy" }, gtk::ResponseType::Cancel), (if english { "Save" } else { "Lưu" }, gtk::ResponseType::Accept)]);
+    let dialog = gtk::FileChooserDialog::new(Some(label("exportConfig")), Some(&parent), gtk::FileChooserAction::Save);
+    dialog.add_buttons(&[(label("cancel"), gtk::ResponseType::Cancel), (label("save"), gtk::ResponseType::Accept)]);
     dialog.set_current_name("deskmorph-config.json");
     dialog.set_do_overwrite_confirmation(true);
     let response = dialog.run();

@@ -40,7 +40,7 @@ test('wallpaper scan effects cancel only their request, ignore stale results, re
     usePolling() {},
     useConfig: () => ({ config, updateConfig: assert.fail }),
     usePlatform: () => ({ platform }),
-    useI18n: () => ({ t: key => key, locale: 'vi-VN' }),
+    useI18n: () => ({ t: key => key, text: value => value, locale: 'vi-VN' }),
     convertFileSrc: path => path,
     invoke(command, args) {
       calls.push({ command, args });

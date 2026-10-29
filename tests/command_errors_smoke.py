@@ -38,8 +38,9 @@ def run(app, config_home, click, focus_studio, native_keys, type_entry, native_c
         file = root / f'error-retry-{label}.json'
         file.write_text(json.dumps({'schemaVersion': 1, 'config': value}))
         focus_studio(); click('Hệ thống'); click('Nhập cấu hình'); focus_studio('Select File')
-        native_keys(chord=[0xffe3, ord('l')]); native_keys(value=str(file)); native_keys(chord=[0xff0d])
-        time.sleep(.8); click('Áp dụng cấu hình đã nhập')
+        native_keys(chord=[0xffe3, ord('l')]); native_keys(value=str(file)); click('Open', 'button')
+        wait(lambda: node('Áp dụng cấu hình đã nhập', 'button') is not None, 'Import review did not become ready')
+        click('Áp dụng cấu hình đã nhập')
         wait(lambda: snapshot()['config'] == value, 'Error fixture config import failed')
 
     def make_executable():
@@ -163,6 +164,9 @@ def run(app, config_home, click, focus_studio, native_keys, type_entry, native_c
         print(json.dumps(report, ensure_ascii=False), flush=True)
     finally:
         config_path.parent.chmod(mode)
+        chooser = next((n for n in descendants(app) if n.get_name() == 'Select File' and n.get_role_name() == 'file chooser'), None)
+        if chooser is not None:
+            focus_studio('Select File'); native_keys(chord=[0xff1b])
         if snapshot()['config']['language'] != 'vi':
             focus_studio(); click('System'); click('Tiếng Việt')
         entry.unlink(missing_ok=True); executable.unlink(missing_ok=True); marker.unlink(missing_ok=True)
