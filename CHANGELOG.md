@@ -2,6 +2,8 @@
 
 ## Unreleased — development 0.1.0
 
+- Thêm recipe `.deb` development cho Ubuntu/Pop!_OS24.04 amd64, dependency runtime và desktop action Launcher. Kiểm dpkg root riêng, nâng version metadata tổng hợp/cài lại/gỡ giữ dữ liệu; binary release trích từ gói qua GUI Wayland và GIO desktop entry/action. Chưa qua cài sạch hoặc đủ cổng release.
+
 - Kiểm chứng fallback phím launcher GNOME46 Wayland qua gsd-media-keys thật: cold/warm, focus/input, từ chối grab trùng và gỡ phím. Portal chưa triển khai; giữ giới hạn theo compositor.
 
 - Thêm `--launcher` cold/warm theo profile, mở tìm ứng dụng khi Dock tắt; cửa sổ thường có titlebar và compositor quản lý trên Wayland. Sửa thứ tự startup và Dock lấy focus khi map; giữ popup Dock dùng policy riêng.

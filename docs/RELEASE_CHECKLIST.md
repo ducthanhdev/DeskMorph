@@ -1,6 +1,6 @@
 # Checklist phát hành — 0.1.0 development
 
-Chưa có release candidate hoặc artifact đã qua cài sạch. Chỉ tick khi có bằng chứng/version/artifact tương ứng; không phát hành chỉ vì build thành công.
+Đã có `.deb` development0.1.0 cho Ubuntu/Pop!_OS24.04 amd64, [recipe và kiểm thử](PACKAGING.md), SHA256 `f138ca13d82a29ff9ced3b4b9fe3194b60cd03ce43cfac2b4c508035250a6b15`. Chưa có release candidate hoặc artifact đã qua cài sạch. Chỉ tick khi có bằng chứng/version/artifact tương ứng; không phát hành chỉ vì build thành công.
 
 - [ ] Chốt phạm vi và mọi đầu việc bắt buộc trong IMPLEMENTATION_PLAN.md; xử lý lỗi nghiêm trọng trước tính năng mở rộng.
 - [ ] Ghi commit, toolchain, distro/desktop/session, dependency versions và artifact checksum.

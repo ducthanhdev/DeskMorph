@@ -198,7 +198,7 @@ Bằng chứng G9.2/G9.3: [prototype extension GNOME 46](benchmarks/wayland-prot
 
 Tiêu chí: mỗi artifact cài/chạy được trên môi trường công bố; không lỗi nghiêm trọng trong luồng chính; giới hạn Wayland và backend được ghi rõ; nâng cấp không mất cấu hình.
 
-Bằng chứng G9.6/G9.9: quyền plugin opener đã bỏ, core chỉ cho listen/unlisten; CSP không tải script/font remote và asset scope ban đầu rỗng, cấp từng file. Native startup/IPC, icon trong ảnh Studio thật, thumbnail kiểm tra pixel và force-close với PID giả đều đã qua; chi tiết trong PROGRESS.md. README có ảnh `docs/images/studio.png`, hướng dẫn dependency (gồm libXi), build/cài/gỡ và giới hạn. Cài sạch/nâng cấp vẫn thuộc G9.11, chưa được suy từ hướng dẫn này.
+Bằng chứng G9.6/G9.9: quyền plugin opener đã bỏ, core chỉ cho listen/unlisten; CSP không tải script/font remote và asset scope ban đầu rỗng, cấp từng file. Native startup/IPC, icon trong ảnh Studio thật, thumbnail kiểm tra pixel và force-close với PID giả đều đã qua; chi tiết trong PROGRESS.md. README có ảnh `docs/images/studio.png`, hướng dẫn dependency (gồm libXi), build/cài/gỡ và giới hạn. Đã có [recipe deb và kiểm thử dpkg/GUI release](PACKAGING.md); cài sạch/nâng cấp từ artifact tiền nhiệm thực vẫn thuộc G9.11, không suy từ reinstall hoặc upgrade metadata tổng hợp.
 
 ## 13. Thứ tự triển khai cụ thể cho đợt đầu
 

@@ -102,6 +102,8 @@ def session(root):
         'XDG_SESSION_TYPE', 'XDG_CURRENT_DESKTOP']}
     if os.environ.get('DESKMORPH_PROTOTYPE_TOKEN'):
         values['DESKMORPH_PROTOTYPE_TOKEN'] = os.environ['DESKMORPH_PROTOTYPE_TOKEN']
+    if os.environ.get('DESKMORPH_LAB_BINARY'):
+        values['DESKMORPH_LAB_BINARY'] = os.environ['DESKMORPH_LAB_BINARY']
     call(bus, 'org.freedesktop.DBus', '/org/freedesktop/DBus', 'org.freedesktop.DBus',
         'UpdateActivationEnvironment', GLib.Variant('(a{ss})', (values,)))
     metadata = dict(values, busAddress=os.environ['DBUS_SESSION_BUS_ADDRESS'], gnomePid=os.getpid())
@@ -200,7 +202,7 @@ def probe(root, metadata, launcher=False, shortcut=False):
     return result
 
 
-def run(output, prototype=False, launcher=False, shortcut=False):
+def run(output, prototype=False, launcher=False, shortcut=False, binary=None):
     launcher = launcher or shortcut
     # Reap private D-Bus service grandchildren as well as the direct supervisor.
     libc = C.CDLL(None)
@@ -215,6 +217,10 @@ def run(output, prototype=False, launcher=False, shortcut=False):
             GDK_BACKEND='wayland', WAYLAND_DISPLAY=SOCKET, LIBGL_ALWAYS_SOFTWARE='1')
         for key in ['DISPLAY', 'AT_SPI_BUS_ADDRESS', 'SESSION_MANAGER', 'DESKTOP_STARTUP_ID', 'XDG_SESSION_ID']:
             env.pop(key, None)
+        if binary:
+            binary = binary.resolve()
+            assert binary.is_file(), 'Lab binary is missing'
+            env['DESKMORPH_LAB_BINARY'] = str(binary)
         if prototype or launcher:
             env['DESKMORPH_PROTOTYPE_TOKEN'] = secrets.token_hex(32)
             extension = root / 'data/gnome-shell/extensions/deskmorph-lab@deskmorph.local'
@@ -305,7 +311,10 @@ if __name__ == '__main__':
     parser.add_argument('--prototype', action='store_true', help='Run lab-only GNOME extension and native window prototype')
     parser.add_argument('--launcher-test', action='store_true', help='Exercise the actual DeskMorph CLI launcher on private Wayland')
     parser.add_argument('--shortcut-test', action='store_true', help='Exercise GNOME custom shortcut through private gsd-media-keys')
+    parser.add_argument('--binary', type=Path, help='Use this executable for the launcher UI probe')
     args = parser.parse_args()
+    if args.binary and (not args.launcher_test or args.shortcut_test):
+        parser.error('--binary requires --launcher-test and cannot be combined with --shortcut-test')
     if args.session: session(args.session)
-    elif args.output: run(args.output.resolve(), args.prototype, args.launcher_test, args.shortcut_test)
+    elif args.output: run(args.output.resolve(), args.prototype, args.launcher_test, args.shortcut_test, args.binary)
     else: parser.error('--output is required')

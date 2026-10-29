@@ -1,0 +1,32 @@
+{
+  "version": "0.1.0",
+  "stage": "development artifact, not release candidate",
+  "sourceBaseCommit": "0cd7ad3ddce14c301b9174caf7e3b6c1cca4abdd",
+  "sourceTreeNote": "Build includes uncommitted Linux packaging config and desktop template. Runtime application Rust/TS source matches base commit; no clean commit/reproducibility claim.",
+  "artifact": "src-tauri/target/release/bundle/deb/DeskMorph_0.1.0_amd64.deb",
+  "sha256": "f138ca13d82a29ff9ced3b4b9fe3194b60cd03ce43cfac2b4c508035250a6b15",
+  "bytes": 2549260,
+  "configSha256": {
+    "src-tauri/tauri.linux.conf.json": "9d327e68291f88216ac0f2f6055accdd753a1425218f394e8b095eb90235a0a4",
+    "src-tauri/packaging/deskmorph.desktop.hbs": "4024d6b2848fff28f66613cd7cfd20bdacc0e945c33a445a4b19e9cf0bcf0839",
+    "src-tauri/Cargo.lock": "5c6ed9e60da82a357d02dacdd713be6de2d97d81499af28946dd8c7ca9434a6b",
+    "package-lock.json": "8f612499eeb451c62ca5614e5ec1482f5a658ea176decf768fee839f97ab7cab"
+  },
+  "toolchain": {
+    "rust": "rustc 1.97.1 (8bab26f4f 2026-07-14)\nbinary: rustc\ncommit-hash: 8bab26f4f68e0e26f0bb7960be334d5b520ea452\ncommit-date: 2026-07-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.97.1\nLLVM version: 22.1.6",
+    "cargo": "cargo 1.97.1 (c980f4866 2026-06-30)",
+    "node": "v22.22.2",
+    "npm": "10.9.7",
+    "tauri": "tauri-cli 2.12.4"
+  },
+  "osRelease": "NAME=\"Pop!_OS\"\nVERSION=\"24.04 LTS\"\nID=pop\nID_LIKE=\"ubuntu debian\"\nPRETTY_NAME=\"Pop!_OS 24.04 LTS\"\nVERSION_ID=\"24.04\"\nHOME_URL=\"https://pop.system76.com\"\nSUPPORT_URL=\"https://support.system76.com\"\nBUG_REPORT_URL=\"https://github.com/pop-os/pop/issues\"\nPRIVACY_POLICY_URL=\"https://system76.com/privacy\"\nVERSION_CODENAME=noble\nUBUNTU_CODENAME=noble\nLOGO=distributor-logo-pop-os\n",
+  "commands": [
+    "CARGO_NET_OFFLINE=true npm run tauri -- build --bundles deb --ci",
+    "CARGO_NET_OFFLINE=true npm run tauri -- bundle --bundles deb --ci"
+  ],
+  "evidence": [
+    "deb-package-2026-10-29.json",
+    "deb-release-ui-2026-10-29.json"
+  ],
+  "releaseDecision": "Not published; G9.11 clean-account/real-upgrade and remaining quality gates are open."
+}

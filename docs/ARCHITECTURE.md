@@ -159,3 +159,8 @@ Sản phẩm giữ capability placement/auto-hide/window management tắt trên 
 `deskmorph --launcher` dùng request có kiểu, giữ wire `studio` cho lệnh mặc định và thêm JSON launcher/token giới hạn 4096 byte, deadline đọc 500ms. Token không rỗng, tối đa 1024 byte, không control characters; lấy từ XDG_ACTIVATION_TOKEN hoặc DESKTOP_STARTUP_ID, chuyển cho GTK startup ID. Socket ACK chỉ xác nhận dispatch/queue, không xác nhận compositor cấp focus.
 
 Cold launcher giữ Studio ẩn, chờ surface đăng ký listener và cấu hình publish xong trước dispatch qua GTK idle. Dock không chủ động lấy focus khi map. Launcher CLI dùng cùng WebView nhưng là toplevel thường: titlebar, task switcher, không keep-above, không anchor/set_position, không outside-click watcher và không tự ẩn khi blur. Mở popup từ Dock khôi phục title/hints/blur policy cũ. Generation vẫn bảo vệ launch completion và Escape. Vị trí Wayland do compositor quyết định; layout chỉ áp position khi adapter có capability. Native Wayland lab đã qua CLI/search/Escape với explicit lab activation; chưa chứng minh shortcut/token thực.
+
+
+## Đóng gói Linux
+
+`tauri.linux.conf.json` chọn deb cho Ubuntu/Pop!_OS24.04 amd64. Tauri phát hiện GTK/WebKit/appindicator runtime dependencies; cấu hình thêm libX11/libXi/libxcb và khuyến nghị x11-utils/pulseaudio-utils. Desktop template dùng binary cài `deskmorph`, workaround WebKit đồng nhất và action --launcher; không tự bật autostart. `tests/deb_package_smoke.py` chạy dpkg vào root/database riêng bằng bwrap namespaces, kiểm cài/upgrade metadata tổng hợp/reinstall/remove/purge và bảo toàn config. GUI lab có --binary để kiểm executable trích từ gói, SHA256 khớp payload dpkg. Xem [PACKAGING.md](PACKAGING.md); chưa phải chứng nhận clean account hoặc release.

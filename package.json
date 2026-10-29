@@ -8,6 +8,8 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "tauri": "tauri",
+    "package:deb": "tauri build --bundles deb --ci",
+    "verify:deb": "python3 tests/deb_package_smoke.py",
     "test": "node tests/run.mjs",
     "check:rust": "cargo check --offline --manifest-path src-tauri/Cargo.toml",
     "test:rust": "cargo test --offline --manifest-path src-tauri/Cargo.toml --lib"

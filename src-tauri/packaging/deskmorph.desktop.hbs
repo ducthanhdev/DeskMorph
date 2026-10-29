@@ -1,0 +1,15 @@
+[Desktop Entry]
+Type=Application
+Name={{name}}
+Comment=Desktop customization studio and Dock
+Exec=env WEBKIT_DISABLE_DMABUF_RENDERER=1 {{exec}}
+Icon={{icon}}
+Terminal=false
+Categories={{categories}}
+StartupNotify=false
+Actions=Launcher;
+
+[Desktop Action Launcher]
+Name=Open application launcher
+Name[vi]=Mở trình tìm ứng dụng
+Exec=env WEBKIT_DISABLE_DMABUF_RENDERER=1 {{exec}} --launcher

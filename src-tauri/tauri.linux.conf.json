@@ -1,0 +1,16 @@
+{
+  "bundle": {
+    "targets": ["deb"],
+    "category": "Utility",
+    "shortDescription": "Desktop customization studio and Dock",
+    "longDescription": "Customize the Linux desktop with a Dock, application launcher, wallpaper library, audio and system widgets. GNOME/X11 is the reference environment; unsupported desktop capabilities remain disabled.",
+    "linux": {
+      "deb": {
+        "section": "utils",
+        "depends": ["libx11-6", "libxi6", "libxcb1"],
+        "recommends": ["x11-utils", "pulseaudio-utils"],
+        "desktopTemplate": "packaging/deskmorph.desktop.hbs"
+      }
+    }
+  }
+}

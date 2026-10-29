@@ -1,0 +1,38 @@
+{
+  "package": "desk-morph",
+  "version": "0.1.0",
+  "sha256": "f138ca13d82a29ff9ced3b4b9fe3194b60cd03ce43cfac2b4c508035250a6b15",
+  "bytes": 2549260,
+  "packageControl": "Package: desk-morph\nVersion: 0.1.0\nArchitecture: amd64\nInstalled-Size: 6069\nMaintainer: ducthanhdev\nSection: utils\nPriority: optional\nDepends: libx11-6, libxi6, libxcb1, libayatana-appindicator3-1, libwebkit2gtk-4.1-0, libgtk-3-0\nRecommends: x11-utils, pulseaudio-utils\nDescription: Desktop customization studio and Dock\n Customize the Linux desktop with a Dock, application launcher, wallpaper library, audio and system widgets. GNOME/X11 is the reference environment; unsupported desktop capabilities remain disabled.\n",
+  "noMaintainerScripts": true,
+  "installedStatus": "install ok installed 0.1.0",
+  "nativeHelp": true,
+  "desktopValidated": true,
+  "launcherDesktopAction": true,
+  "iconFiles": 3,
+  "reinstallSameVersionPreservesConfig": true,
+  "decodedIcons": [
+    {
+      "path": "usr/share/icons/hicolor/128x128/apps/deskmorph.png",
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "usr/share/icons/hicolor/256x256@2/apps/deskmorph.png",
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "usr/share/icons/hicolor/32x32/apps/deskmorph.png",
+      "width": 32,
+      "height": 32
+    }
+  ],
+  "syntheticUpgradeFrom": "0.1.0~package-test",
+  "syntheticUpgradePreservesConfig": true,
+  "removeDeletesPackagedFiles": true,
+  "purgePreservesUserData": true,
+  "installedBinarySha256": "5b6ac46cc121d10f57bea30013c82c06abc953c069b32a4d1b915f7e53c64734",
+  "hostDpkgStatusUnchanged": true,
+  "scope": "Private dpkg root in bwrap user/PID/network namespaces; borrowed host runtime/dependency status. Upgrade from a synthetic earlier package version with identical payload, then same-version reinstall. No previous-release migration, GUI, autostart, clean account or clean OS certification."
+}

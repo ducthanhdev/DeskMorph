@@ -5,6 +5,8 @@ import os
 from pathlib import Path
 import subprocess
 import time
+import hashlib
+import signal
 import gi
 gi.require_version('Atspi', '2.0')
 from gi.repository import Atspi, Gio, GLib
@@ -15,7 +17,7 @@ def run():
     assert str(root).startswith('/tmp/deskmorph-wayland-lab-')
     assert os.environ['XDG_RUNTIME_DIR'] == str(root / 'runtime') and not os.environ.get('DISPLAY')
     metadata = json.loads((root / 'session.json').read_text())
-    binary = Path(__file__).resolve().parents[1] / 'src-tauri/target/agent/debug/deskmorph'
+    binary = Path(os.environ.get('DESKMORPH_LAB_BINARY', Path(__file__).resolve().parents[1] / 'src-tauri/target/agent/debug/deskmorph'))
     env = dict(os.environ, DESKMORPH_CONFIG_HOME=str(root / 'deskmorph-config'), WEBKIT_DISABLE_DMABUF_RENDERER='1')
     bus = Gio.bus_get_sync(Gio.BusType.SESSION, None)
     def dispatch(**command):
@@ -38,7 +40,7 @@ def run():
         return next((a for a in descendants(Atspi.get_desktop(0)) if a.get_role_name() == 'application' and a.get_process_id() == pid), None)
     def search(app):
         return next((n for n in descendants(app) if n.get_role_name() == 'entry' and n.get_name() in ('Tìm ứng dụng', 'Search applications')), None)
-    process = None
+    process = None; menu_pid = None
     try:
         wait(lambda: dispatch(op='prepare'), 'Lab Shell did not initialize')
         time.sleep(.5)
@@ -95,6 +97,30 @@ def run():
         assert forwarded_studio.returncode == 0
         wait(lambda: any(w['title'] == 'DeskMorph Studio' for w in dispatch(op='state')['windows']), 'Default command no longer opens Studio')
         report = dict(appPid=first_pid, disabledDockAppPid=process.pid, disabledDockColdStart=True, disabledConfigUnchanged=True, windowManagerCloseHides=True, defaultCommandOpensStudio=True, coldStartLauncher=True, studioHidden=True, nativeWayland=True, searchEmptyState=True, nativeEscape=True, warmForwardAck=True, automaticColdFocus=automatic_cold_focus, automaticWarmFocus=automatic_warm_focus, explicitLabActivationForInput=True, scope='Direct CLI on private GNOME46 Wayland. Native input tested after explicit lab activation. No real custom keybinding or desktop activation token yet; automatic focus is not asserted.')
+        report['binarySha256'] = hashlib.sha256(binary.read_bytes()).hexdigest()
+        desktop = binary.parent.parent / 'share/applications/DeskMorph.desktop'
+        if desktop.exists():
+            process.terminate(); process.wait(timeout=8)
+            launch_env = dict(env, PATH=str(binary.parent) + os.pathsep + env['PATH'])
+            helper = 'import sys; from gi.repository import Gio; app=Gio.DesktopAppInfo.new_from_filename(sys.argv[1]); assert app; app.launch([], None) if sys.argv[2]=="studio" else app.launch_action("Launcher", None)'
+            subprocess.run(['/usr/bin/python3', '-c', helper, str(desktop), 'studio'], env=launch_env, check=True, timeout=8)
+            def owned_menu_app():
+                for proc in Path('/proc').iterdir():
+                    if not proc.name.isdigit(): continue
+                    try:
+                        if (proc / 'exe').resolve() != binary.resolve(): continue
+                        if f'DESKMORPH_CONFIG_HOME={env["DESKMORPH_CONFIG_HOME"]}'.encode() in (proc / 'environ').read_bytes().split(b'\0'): return int(proc.name)
+                    except (OSError, PermissionError): pass
+                return None
+            menu_pid = wait(owned_menu_app, 'Packaged desktop entry did not start the packaged executable')
+            assert menu_pid not in (first_pid, process.pid)
+            dispatch(op='target', pid=menu_pid)
+            wait(lambda: any(w['title'] == 'DeskMorph Studio' for w in dispatch(op='state')['windows']), 'Packaged desktop entry did not map Studio on cold start')
+            subprocess.run(['/usr/bin/python3', '-c', helper, str(desktop), 'launcher'], env=launch_env, check=True, timeout=8)
+            wait(lambda: any(w['title'] == 'DeskMorph Launcher' for w in dispatch(op='state')['windows']), 'Packaged desktop action did not open launcher')
+            report['packagedMenuAppPid'] = menu_pid
+            report['packagedDesktopEntryGioLaunch'] = True
+            report['packagedLauncherDesktopActionGioLaunch'] = True
         (root / 'launcher-result.json').write_text(json.dumps(report, indent=2) + '\n')
     except Exception:
         try:
@@ -104,6 +130,11 @@ def run():
         except Exception as error: print('DIAGNOSTIC', repr(error), flush=True)
         raise
     finally:
+        if menu_pid:
+            try:
+                assert f'DESKMORPH_COMPOSITOR_LAB={root}'.encode() in Path(f'/proc/{menu_pid}/environ').read_bytes().split(b'\0')
+                os.kill(menu_pid, signal.SIGTERM)
+            except FileNotFoundError: pass
         if process and process.poll() is None:
             process.terminate()
             try: process.wait(timeout=8)

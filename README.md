@@ -51,6 +51,10 @@ Trong Hệ thống, bạn có thể bật phím tắt launcher như `Ctrl+Super+
 
 Executable nhận `--launcher` để mở cửa sổ tìm ứng dụng, kể cả khi Dock tắt; không có đối số mở Studio. GNOME Wayland có [hướng dẫn gán/gỡ phím desktop](docs/WAYLAND_SHORTCUTS.md). CLI đã qua cold/warm/search/Escape trên Wayland lab; compositor quyết định vị trí/focus và bạn có thể chọn DeskMorph Launcher từ trình chuyển cửa sổ. Custom shortcut GNOME46 qua media-keys thật đã kiểm cold/warm/focus/search/Escape và gỡ phím trong lab riêng; portal/token và compositor khác chưa được chứng nhận.
 
+## Gói Debian development
+
+Đã có recipe `.deb` cho Ubuntu/Pop!_OS24.04 amd64: `npm run package:deb`. Xem [build, cài/gỡ và bằng chứng kiểm thử](docs/PACKAGING.md). Artifact đã qua dpkg root riêng và GUI của binary trích từ gói; chưa qua tài khoản/máy sạch hoặc đủ cổng phát hành. Tên package là `desk-morph`, executable `deskmorph`.
+
 ## Build và cài thủ công
 
 ```sh
