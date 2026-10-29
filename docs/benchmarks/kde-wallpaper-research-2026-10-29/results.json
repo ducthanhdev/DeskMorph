@@ -1,0 +1,40 @@
+{
+  "date": "2026-10-29",
+  "scope": "KDE Plasma wallpaper API runtime research",
+  "runtime": {
+    "kwin": "5.27.11",
+    "plasmaWorkspace": "5.27.12",
+    "backend": "KWin Wayland virtual nested compositor",
+    "output": "Virtual-0 800x600",
+    "isolation": "KWin, Plasma, D-Bus, XDG config/state/cache/runtime under /tmp"
+  },
+  "checks": [
+    {
+      "name": "kwin_startup",
+      "result": "pass",
+      "evidence": "kwin_wayland --virtual created the private kwin-test Wayland socket and stayed alive"
+    },
+    {
+      "name": "plasmashell_startup",
+      "result": "pass_with_runtime_warnings",
+      "evidence": "plasmashell stayed alive and exported org.kde.plasmashell /PlasmaShell"
+    },
+    {
+      "name": "evaluateScript",
+      "result": "pass",
+      "evidence": "org.kde.PlasmaShell.evaluateScript returned successfully for a print probe"
+    },
+    {
+      "name": "image_wallpaper_script",
+      "result": "api_confirmed",
+      "script": "desktopsForActivity(currentActivity()); wallpaperPlugin=org.kde.image; currentConfigGroup=[Wallpaper,org.kde.image,General]; writeConfig(Image,file-uri)",
+      "evidence": "KDE setaswallpaper.desktop ships the same script"
+    },
+    {
+      "name": "visible_pixel",
+      "result": "blocked",
+      "evidence": "KWin virtual compositor does not advertise wl_shm; grim cannot capture output. KWin ScreenShot2 also rejected the unauthorised lab caller."
+    }
+  ],
+  "decision": "Keep KDE wallpaper adapter unsupported. Do not claim G6.9 complete until a compositor path permits a visible-pixel assertion and readback/error behavior is tested."
+}
