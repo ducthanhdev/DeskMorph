@@ -1,0 +1,91 @@
+{
+  "runs": [
+    {
+      "pid": 2893513,
+      "observations": [
+        {
+          "control": "clock",
+          "rect": [
+            3249,
+            1021,
+            78,
+            34
+          ],
+          "backingPixels": 1954,
+          "expectedRGB": [
+            23,
+            34,
+            53
+          ],
+          "screenshot": "native-0.2-clock.png"
+        },
+        {
+          "control": "stats",
+          "rect": [
+            2972,
+            1017,
+            117,
+            20
+          ],
+          "backingPixels": 1528,
+          "expectedRGB": [
+            23,
+            34,
+            53
+          ],
+          "screenshot": "native-0.2-stats.png"
+        }
+      ],
+      "configUnchanged": true,
+      "inputSent": false,
+      "scope": "Actual X11 Dock root pixels for opaque information backing in enabled isolated profile, tolerance 1/channel; no claim of font raster contrast or full app coverage"
+    },
+    {
+      "pid": 2894053,
+      "observations": [
+        {
+          "control": "clock",
+          "rect": [
+            3249,
+            1021,
+            78,
+            34
+          ],
+          "backingPixels": 1960,
+          "expectedRGB": [
+            23,
+            34,
+            53
+          ],
+          "screenshot": "native-1-clock.png"
+        },
+        {
+          "control": "stats",
+          "rect": [
+            2972,
+            1017,
+            117,
+            20
+          ],
+          "backingPixels": 1532,
+          "expectedRGB": [
+            23,
+            34,
+            53
+          ],
+          "screenshot": "native-1-stats.png"
+        }
+      ],
+      "configUnchanged": true,
+      "inputSent": false,
+      "scope": "Actual X11 Dock root pixels for opaque information backing in enabled isolated profile, tolerance 1/channel; no claim of font raster contrast or full app coverage"
+    }
+  ],
+  "fixturePids": [
+    2893513,
+    2894053
+  ],
+  "normalPid": 2894565,
+  "configRestored": true,
+  "allFixtureProcessesExited": true
+}

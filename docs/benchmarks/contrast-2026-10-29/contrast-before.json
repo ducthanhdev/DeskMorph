@@ -1,0 +1,7860 @@
+{
+  "cssSha256": "1862a76efab3df4ae0c1f4ca1f94ce70a67a10667cdf301f70030bbc9167125d",
+  "ephemeralContext": true,
+  "engine": "WebKitGTK 2.52.6",
+  "cases": [
+    {
+      "name": "dock/clock-date/#000000/0.2",
+      "threshold": 4.5,
+      "ratio": 4.32388821127905,
+      "foreground": [
+        100.0,
+        116.0,
+        139.0,
+        1.0
+      ],
+      "background": [
+        2.6,
+        3.4000000000000004,
+        5.6000000000000005,
+        1.0
+      ],
+      "computed": {
+        "index": 0,
+        "color": [
+          100,
+          116,
+          139,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.2
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": false
+    },
+    {
+      "name": "dock/clock-time/#000000/0.2",
+      "threshold": 4.5,
+      "ratio": 20.57670422979565,
+      "foreground": [
+        255.0,
+        255.0,
+        255.0,
+        1.0
+      ],
+      "background": [
+        2.6,
+        3.4000000000000004,
+        5.6000000000000005,
+        1.0
+      ],
+      "computed": {
+        "index": 1,
+        "color": [
+          255,
+          255,
+          255,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.2
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "dock/clock-hover/#000000/0.2",
+      "threshold": 4.5,
+      "ratio": 3.748408977598199,
+      "foreground": [
+        100.0,
+        116.0,
+        139.0,
+        1.0
+      ],
+      "background": [
+        22.792,
+        23.528000000000002,
+        25.552000000000003,
+        1.0
+      ],
+      "computed": {
+        "index": 2,
+        "color": [
+          100,
+          116,
+          139,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              0.08
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.2
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": false
+    },
+    {
+      "name": "dock/stats/#000000/0.2",
+      "threshold": 4.5,
+      "ratio": 15.135043448426767,
+      "foreground": [
+        226.0,
+        232.0,
+        240.0,
+        1.0
+      ],
+      "background": [
+        17.744,
+        18.496,
+        20.564,
+        1.0
+      ],
+      "computed": {
+        "index": 3,
+        "color": [
+          226,
+          232,
+          240,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              0.06
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.2
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "dock/battery-action/#000000/0.2",
+      "threshold": 4.5,
+      "ratio": 17.838089029025344,
+      "foreground": [
+        255.0,
+        255.0,
+        255.0,
+        1.0
+      ],
+      "background": [
+        22.792,
+        23.528000000000002,
+        25.552000000000003,
+        1.0
+      ],
+      "computed": {
+        "index": 4,
+        "color": [
+          255,
+          255,
+          255,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              0.08
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.2
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "dock/clock-date/#000000/0.8",
+      "threshold": 4.5,
+      "ratio": 4.063364233110515,
+      "foreground": [
+        100.0,
+        116.0,
+        139.0,
+        1.0
+      ],
+      "background": [
+        10.4,
+        13.600000000000001,
+        22.400000000000002,
+        1.0
+      ],
+      "computed": {
+        "index": 5,
+        "color": [
+          100,
+          116,
+          139,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.8
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": false
+    },
+    {
+      "name": "dock/clock-time/#000000/0.8",
+      "threshold": 4.5,
+      "ratio": 19.336911575221464,
+      "foreground": [
+        255.0,
+        255.0,
+        255.0,
+        1.0
+      ],
+      "background": [
+        10.4,
+        13.600000000000001,
+        22.400000000000002,
+        1.0
+      ],
+      "computed": {
+        "index": 6,
+        "color": [
+          255,
+          255,
+          255,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.8
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "dock/clock-hover/#000000/0.8",
+      "threshold": 4.5,
+      "ratio": 3.384844370709745,
+      "foreground": [
+        100.0,
+        116.0,
+        139.0,
+        1.0
+      ],
+      "background": [
+        29.968000000000004,
+        32.912000000000006,
+        41.00800000000001,
+        1.0
+      ],
+      "computed": {
+        "index": 7,
+        "color": [
+          100,
+          116,
+          139,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              0.08
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.8
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": false
+    },
+    {
+      "name": "dock/stats/#000000/0.8",
+      "threshold": 4.5,
+      "ratio": 13.800615753627852,
+      "foreground": [
+        226.0,
+        232.0,
+        240.0,
+        1.0
+      ],
+      "background": [
+        25.076,
+        28.084,
+        36.356,
+        1.0
+      ],
+      "computed": {
+        "index": 8,
+        "color": [
+          226,
+          232,
+          240,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              0.06
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.8
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "dock/battery-action/#000000/0.8",
+      "threshold": 4.5,
+      "ratio": 16.10794222160992,
+      "foreground": [
+        255.0,
+        255.0,
+        255.0,
+        1.0
+      ],
+      "background": [
+        29.968000000000004,
+        32.912000000000006,
+        41.00800000000001,
+        1.0
+      ],
+      "computed": {
+        "index": 9,
+        "color": [
+          255,
+          255,
+          255,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              0.08
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.8
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "dock/clock-date/#000000/0.85",
+      "threshold": 4.5,
+      "ratio": 4.038897560316945,
+      "foreground": [
+        100.0,
+        116.0,
+        139.0,
+        1.0
+      ],
+      "background": [
+        11.049999999999999,
+        14.45,
+        23.8,
+        1.0
+      ],
+      "computed": {
+        "index": 10,
+        "color": [
+          100,
+          116,
+          139,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.85
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": false
+    },
+    {
+      "name": "dock/clock-time/#000000/0.85",
+      "threshold": 4.5,
+      "ratio": 19.22047852585464,
+      "foreground": [
+        255.0,
+        255.0,
+        255.0,
+        1.0
+      ],
+      "background": [
+        11.049999999999999,
+        14.45,
+        23.8,
+        1.0
+      ],
+      "computed": {
+        "index": 11,
+        "color": [
+          255,
+          255,
+          255,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.85
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "dock/clock-hover/#000000/0.85",
+      "threshold": 4.5,
+      "ratio": 3.352942057081528,
+      "foreground": [
+        100.0,
+        116.0,
+        139.0,
+        1.0
+      ],
+      "background": [
+        30.566000000000003,
+        33.694,
+        42.29600000000001,
+        1.0
+      ],
+      "computed": {
+        "index": 12,
+        "color": [
+          100,
+          116,
+          139,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              0.08
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.85
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": false
+    },
+    {
+      "name": "dock/stats/#000000/0.85",
+      "threshold": 4.5,
+      "ratio": 13.679480624877009,
+      "foreground": [
+        226.0,
+        232.0,
+        240.0,
+        1.0
+      ],
+      "background": [
+        25.686999999999998,
+        28.882999999999996,
+        37.672,
+        1.0
+      ],
+      "computed": {
+        "index": 13,
+        "color": [
+          226,
+          232,
+          240,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              0.06
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.85
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "dock/battery-action/#000000/0.85",
+      "threshold": 4.5,
+      "ratio": 15.956124126483955,
+      "foreground": [
+        255.0,
+        255.0,
+        255.0,
+        1.0
+      ],
+      "background": [
+        30.566000000000003,
+        33.694,
+        42.29600000000001,
+        1.0
+      ],
+      "computed": {
+        "index": 14,
+        "color": [
+          255,
+          255,
+          255,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              0.08
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.85
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "dock/clock-date/#000000/0.92",
+      "threshold": 4.5,
+      "ratio": 4.003376485494871,
+      "foreground": [
+        100.0,
+        116.0,
+        139.0,
+        1.0
+      ],
+      "background": [
+        11.96,
+        15.64,
+        25.76,
+        1.0
+      ],
+      "computed": {
+        "index": 15,
+        "color": [
+          100,
+          116,
+          139,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.92
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": false
+    },
+    {
+      "name": "dock/clock-time/#000000/0.92",
+      "threshold": 4.5,
+      "ratio": 19.05143931512027,
+      "foreground": [
+        255.0,
+        255.0,
+        255.0,
+        1.0
+      ],
+      "background": [
+        11.96,
+        15.64,
+        25.76,
+        1.0
+      ],
+      "computed": {
+        "index": 16,
+        "color": [
+          255,
+          255,
+          255,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.92
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "dock/clock-hover/#000000/0.92",
+      "threshold": 4.5,
+      "ratio": 3.308036103834029,
+      "foreground": [
+        100.0,
+        116.0,
+        139.0,
+        1.0
+      ],
+      "background": [
+        31.40320000000001,
+        34.7888,
+        44.0992,
+        1.0
+      ],
+      "computed": {
+        "index": 17,
+        "color": [
+          100,
+          116,
+          139,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              0.08
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.92
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": false
+    },
+    {
+      "name": "dock/stats/#000000/0.92",
+      "threshold": 4.5,
+      "ratio": 13.508055227962739,
+      "foreground": [
+        226.0,
+        232.0,
+        240.0,
+        1.0
+      ],
+      "background": [
+        26.5424,
+        30.0016,
+        39.5144,
+        1.0
+      ],
+      "computed": {
+        "index": 18,
+        "color": [
+          226,
+          232,
+          240,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              0.06
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.92
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "dock/battery-action/#000000/0.92",
+      "threshold": 4.5,
+      "ratio": 15.742423754739727,
+      "foreground": [
+        255.0,
+        255.0,
+        255.0,
+        1.0
+      ],
+      "background": [
+        31.40320000000001,
+        34.7888,
+        44.0992,
+        1.0
+      ],
+      "computed": {
+        "index": 19,
+        "color": [
+          255,
+          255,
+          255,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              0.08
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.92
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "dock/clock-date/#000000/1",
+      "threshold": 4.5,
+      "ratio": 3.9610386726366444,
+      "foreground": [
+        100.0,
+        116.0,
+        139.0,
+        1
+      ],
+      "background": [
+        13.0,
+        17.0,
+        28.0,
+        1
+      ],
+      "computed": {
+        "index": 20,
+        "color": [
+          100,
+          116,
+          139,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": false
+    },
+    {
+      "name": "dock/clock-time/#000000/1",
+      "threshold": 4.5,
+      "ratio": 18.849960319745765,
+      "foreground": [
+        255.0,
+        255.0,
+        255.0,
+        1
+      ],
+      "background": [
+        13.0,
+        17.0,
+        28.0,
+        1
+      ],
+      "computed": {
+        "index": 21,
+        "color": [
+          255,
+          255,
+          255,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "dock/clock-hover/#000000/1",
+      "threshold": 4.5,
+      "ratio": 3.256433320399213,
+      "foreground": [
+        100.0,
+        116.0,
+        139.0,
+        1.0
+      ],
+      "background": [
+        32.36,
+        36.040000000000006,
+        46.160000000000004,
+        1.0
+      ],
+      "computed": {
+        "index": 22,
+        "color": [
+          100,
+          116,
+          139,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              0.08
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": false
+    },
+    {
+      "name": "dock/stats/#000000/1",
+      "threshold": 4.5,
+      "ratio": 13.309807329249637,
+      "foreground": [
+        226.0,
+        232.0,
+        240.0,
+        1.0
+      ],
+      "background": [
+        27.519999999999996,
+        31.279999999999998,
+        41.62,
+        1.0
+      ],
+      "computed": {
+        "index": 23,
+        "color": [
+          226,
+          232,
+          240,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              0.06
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "dock/battery-action/#000000/1",
+      "threshold": 4.5,
+      "ratio": 15.496854220957005,
+      "foreground": [
+        255.0,
+        255.0,
+        255.0,
+        1.0
+      ],
+      "background": [
+        32.36,
+        36.040000000000006,
+        46.160000000000004,
+        1.0
+      ],
+      "computed": {
+        "index": 24,
+        "color": [
+          255,
+          255,
+          255,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              0.08
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "dock/clock-date/#ffffff/0.2",
+      "threshold": 4.5,
+      "ratio": 3.0665440067148104,
+      "foreground": [
+        100.0,
+        116.0,
+        139.0,
+        1.0
+      ],
+      "background": [
+        206.6,
+        207.4,
+        209.6,
+        1.0
+      ],
+      "computed": {
+        "index": 25,
+        "color": [
+          100,
+          116,
+          139,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.2
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": false
+    },
+    {
+      "name": "dock/clock-time/#ffffff/0.2",
+      "threshold": 4.5,
+      "ratio": 1.551858632208841,
+      "foreground": [
+        255.0,
+        255.0,
+        255.0,
+        1.0
+      ],
+      "background": [
+        206.6,
+        207.4,
+        209.6,
+        1.0
+      ],
+      "computed": {
+        "index": 26,
+        "color": [
+          255,
+          255,
+          255,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.2
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": false
+    },
+    {
+      "name": "dock/clock-hover/#ffffff/0.2",
+      "threshold": 4.5,
+      "ratio": 3.1852005239021004,
+      "foreground": [
+        100.0,
+        116.0,
+        139.0,
+        1.0
+      ],
+      "background": [
+        210.472,
+        211.208,
+        213.232,
+        1.0
+      ],
+      "computed": {
+        "index": 27,
+        "color": [
+          100,
+          116,
+          139,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              0.08
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.2
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": false
+    },
+    {
+      "name": "dock/stats/#ffffff/0.2",
+      "threshold": 4.5,
+      "ratio": 1.2234286811094264,
+      "foreground": [
+        226.0,
+        232.0,
+        240.0,
+        1.0
+      ],
+      "background": [
+        209.504,
+        210.256,
+        212.32399999999998,
+        1.0
+      ],
+      "computed": {
+        "index": 28,
+        "color": [
+          226,
+          232,
+          240,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              0.06
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.2
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": false
+    },
+    {
+      "name": "dock/battery-action/#ffffff/0.2",
+      "threshold": 4.5,
+      "ratio": 1.4940480990624538,
+      "foreground": [
+        255.0,
+        255.0,
+        255.0,
+        1.0
+      ],
+      "background": [
+        210.472,
+        211.208,
+        213.232,
+        1.0
+      ],
+      "computed": {
+        "index": 29,
+        "color": [
+          255,
+          255,
+          255,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              0.08
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.2
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": false
+    },
+    {
+      "name": "dock/clock-date/#ffffff/0.8",
+      "threshold": 4.5,
+      "ratio": 2.157648590107447,
+      "foreground": [
+        100.0,
+        116.0,
+        139.0,
+        1.0
+      ],
+      "background": [
+        61.399999999999984,
+        64.6,
+        73.39999999999999,
+        1.0
+      ],
+      "computed": {
+        "index": 30,
+        "color": [
+          100,
+          116,
+          139,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.8
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": false
+    },
+    {
+      "name": "dock/clock-time/#ffffff/0.8",
+      "threshold": 4.5,
+      "ratio": 10.267910431787818,
+      "foreground": [
+        255.0,
+        255.0,
+        255.0,
+        1.0
+      ],
+      "background": [
+        61.399999999999984,
+        64.6,
+        73.39999999999999,
+        1.0
+      ],
+      "computed": {
+        "index": 31,
+        "color": [
+          255,
+          255,
+          255,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.8
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "dock/clock-hover/#ffffff/0.8",
+      "threshold": 4.5,
+      "ratio": 1.6986482136338787,
+      "foreground": [
+        100.0,
+        116.0,
+        139.0,
+        1.0
+      ],
+      "background": [
+        76.88799999999999,
+        79.832,
+        87.928,
+        1.0
+      ],
+      "computed": {
+        "index": 32,
+        "color": [
+          100,
+          116,
+          139,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              0.08
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.8
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": false
+    },
+    {
+      "name": "dock/stats/#ffffff/0.8",
+      "threshold": 4.5,
+      "ratio": 6.961997091227242,
+      "foreground": [
+        226.0,
+        232.0,
+        240.0,
+        1.0
+      ],
+      "background": [
+        73.01599999999999,
+        76.02399999999999,
+        84.29599999999999,
+        1.0
+      ],
+      "computed": {
+        "index": 33,
+        "color": [
+          226,
+          232,
+          240,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              0.06
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.8
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "dock/battery-action/#ffffff/0.8",
+      "threshold": 4.5,
+      "ratio": 8.083599800577575,
+      "foreground": [
+        255.0,
+        255.0,
+        255.0,
+        1.0
+      ],
+      "background": [
+        76.88799999999999,
+        79.832,
+        87.928,
+        1.0
+      ],
+      "computed": {
+        "index": 34,
+        "color": [
+          255,
+          255,
+          255,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              0.08
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.8
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "dock/clock-date/#ffffff/0.85",
+      "threshold": 4.5,
+      "ratio": 2.5873423919255636,
+      "foreground": [
+        100.0,
+        116.0,
+        139.0,
+        1.0
+      ],
+      "background": [
+        49.300000000000004,
+        52.7,
+        62.05000000000001,
+        1.0
+      ],
+      "computed": {
+        "index": 35,
+        "color": [
+          100,
+          116,
+          139,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.85
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": false
+    },
+    {
+      "name": "dock/clock-time/#ffffff/0.85",
+      "threshold": 4.5,
+      "ratio": 12.312755681561828,
+      "foreground": [
+        255.0,
+        255.0,
+        255.0,
+        1.0
+      ],
+      "background": [
+        49.300000000000004,
+        52.7,
+        62.05000000000001,
+        1.0
+      ],
+      "computed": {
+        "index": 36,
+        "color": [
+          255,
+          255,
+          255,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.85
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "dock/clock-hover/#ffffff/0.85",
+      "threshold": 4.5,
+      "ratio": 2.017852029586767,
+      "foreground": [
+        100.0,
+        116.0,
+        139.0,
+        1.0
+      ],
+      "background": [
+        65.756,
+        68.88400000000001,
+        77.48600000000002,
+        1.0
+      ],
+      "computed": {
+        "index": 37,
+        "color": [
+          100,
+          116,
+          139,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              0.08
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.85
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": false
+    },
+    {
+      "name": "dock/stats/#ffffff/0.85",
+      "threshold": 4.5,
+      "ratio": 8.29823810120909,
+      "foreground": [
+        226.0,
+        232.0,
+        240.0,
+        1.0
+      ],
+      "background": [
+        61.642,
+        64.838,
+        73.62700000000001,
+        1.0
+      ],
+      "computed": {
+        "index": 38,
+        "color": [
+          226,
+          232,
+          240,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              0.06
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.85
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "dock/battery-action/#ffffff/0.85",
+      "threshold": 4.5,
+      "ratio": 9.602640577985133,
+      "foreground": [
+        255.0,
+        255.0,
+        255.0,
+        1.0
+      ],
+      "background": [
+        65.756,
+        68.88400000000001,
+        77.48600000000002,
+        1.0
+      ],
+      "computed": {
+        "index": 39,
+        "color": [
+          255,
+          255,
+          255,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              0.08
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.85
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "dock/clock-date/#ffffff/0.92",
+      "threshold": 4.5,
+      "ratio": 3.2564333203992137,
+      "foreground": [
+        100.0,
+        116.0,
+        139.0,
+        1.0
+      ],
+      "background": [
+        32.35999999999999,
+        36.03999999999999,
+        46.16,
+        1.0
+      ],
+      "computed": {
+        "index": 40,
+        "color": [
+          100,
+          116,
+          139,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.92
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": false
+    },
+    {
+      "name": "dock/clock-time/#ffffff/0.92",
+      "threshold": 4.5,
+      "ratio": 15.496854220957006,
+      "foreground": [
+        255.0,
+        255.0,
+        255.0,
+        1.0
+      ],
+      "background": [
+        32.35999999999999,
+        36.03999999999999,
+        46.16,
+        1.0
+      ],
+      "computed": {
+        "index": 41,
+        "color": [
+          255,
+          255,
+          255,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.92
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "dock/clock-hover/#ffffff/0.92",
+      "threshold": 4.5,
+      "ratio": 2.5545726032808163,
+      "foreground": [
+        100.0,
+        116.0,
+        139.0,
+        1.0
+      ],
+      "background": [
+        50.17120000000001,
+        53.5568,
+        62.867200000000004,
+        1.0
+      ],
+      "computed": {
+        "index": 42,
+        "color": [
+          100,
+          116,
+          139,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              0.08
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.92
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": false
+    },
+    {
+      "name": "dock/stats/#ffffff/0.92",
+      "threshold": 4.5,
+      "ratio": 10.517295951222197,
+      "foreground": [
+        226.0,
+        232.0,
+        240.0,
+        1.0
+      ],
+      "background": [
+        45.71839999999999,
+        49.177599999999984,
+        58.69039999999998,
+        1.0
+      ],
+      "computed": {
+        "index": 43,
+        "color": [
+          226,
+          232,
+          240,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              0.06
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.92
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "dock/battery-action/#ffffff/0.92",
+      "threshold": 4.5,
+      "ratio": 12.156809409209792,
+      "foreground": [
+        255.0,
+        255.0,
+        255.0,
+        1.0
+      ],
+      "background": [
+        50.17120000000001,
+        53.5568,
+        62.867200000000004,
+        1.0
+      ],
+      "computed": {
+        "index": 44,
+        "color": [
+          255,
+          255,
+          255,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              0.08
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.92
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "dock/clock-date/#ffffff/1",
+      "threshold": 4.5,
+      "ratio": 3.9610386726366444,
+      "foreground": [
+        100.0,
+        116.0,
+        139.0,
+        1
+      ],
+      "background": [
+        13.0,
+        17.0,
+        28.0,
+        1
+      ],
+      "computed": {
+        "index": 45,
+        "color": [
+          100,
+          116,
+          139,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": false
+    },
+    {
+      "name": "dock/clock-time/#ffffff/1",
+      "threshold": 4.5,
+      "ratio": 18.849960319745765,
+      "foreground": [
+        255.0,
+        255.0,
+        255.0,
+        1
+      ],
+      "background": [
+        13.0,
+        17.0,
+        28.0,
+        1
+      ],
+      "computed": {
+        "index": 46,
+        "color": [
+          255,
+          255,
+          255,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "dock/clock-hover/#ffffff/1",
+      "threshold": 4.5,
+      "ratio": 3.256433320399213,
+      "foreground": [
+        100.0,
+        116.0,
+        139.0,
+        1.0
+      ],
+      "background": [
+        32.36,
+        36.040000000000006,
+        46.160000000000004,
+        1.0
+      ],
+      "computed": {
+        "index": 47,
+        "color": [
+          100,
+          116,
+          139,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              0.08
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": false
+    },
+    {
+      "name": "dock/stats/#ffffff/1",
+      "threshold": 4.5,
+      "ratio": 13.309807329249637,
+      "foreground": [
+        226.0,
+        232.0,
+        240.0,
+        1.0
+      ],
+      "background": [
+        27.519999999999996,
+        31.279999999999998,
+        41.62,
+        1.0
+      ],
+      "computed": {
+        "index": 48,
+        "color": [
+          226,
+          232,
+          240,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              0.06
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "dock/battery-action/#ffffff/1",
+      "threshold": 4.5,
+      "ratio": 15.496854220957005,
+      "foreground": [
+        255.0,
+        255.0,
+        255.0,
+        1.0
+      ],
+      "background": [
+        32.36,
+        36.040000000000006,
+        46.160000000000004,
+        1.0
+      ],
+      "computed": {
+        "index": 49,
+        "color": [
+          255,
+          255,
+          255,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              0.08
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "studio/dim",
+      "threshold": 4.5,
+      "ratio": 3.0740074281592467,
+      "foreground": [
+        100.0,
+        116.0,
+        139.0,
+        1
+      ],
+      "background": [
+        30.0,
+        41.0,
+        59.0,
+        1
+      ],
+      "computed": {
+        "index": 50,
+        "color": [
+          100,
+          116,
+          139,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              30,
+              41,
+              59,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": false
+    },
+    {
+      "name": "studio/help",
+      "threshold": 4.5,
+      "ratio": 5.70533616718228,
+      "foreground": [
+        148.0,
+        163.0,
+        184.0,
+        1
+      ],
+      "background": [
+        30.0,
+        41.0,
+        59.0,
+        1
+      ],
+      "computed": {
+        "index": 51,
+        "color": [
+          148,
+          163,
+          184,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              30,
+              41,
+              59,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "studio/button",
+      "threshold": 4.5,
+      "ratio": 13.35325281838611,
+      "foreground": [
+        241.0,
+        245.0,
+        249.0,
+        1
+      ],
+      "background": [
+        30.0,
+        41.0,
+        59.0,
+        1
+      ],
+      "computed": {
+        "index": 52,
+        "color": [
+          241,
+          245,
+          249,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              30,
+              41,
+              59,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              30,
+              41,
+              59,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "studio/button-hover",
+      "threshold": 4.5,
+      "ratio": 9.451924418631656,
+      "foreground": [
+        241.0,
+        245.0,
+        249.0,
+        1
+      ],
+      "background": [
+        51.0,
+        65.0,
+        85.0,
+        1
+      ],
+      "computed": {
+        "index": 53,
+        "color": [
+          241,
+          245,
+          249,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              51,
+              65,
+              85,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              30,
+              41,
+              59,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "studio/danger",
+      "threshold": 4.5,
+      "ratio": 7.736322461223324,
+      "foreground": [
+        253.0,
+        164.0,
+        175.0,
+        1
+      ],
+      "background": [
+        30.0,
+        41.0,
+        59.0,
+        1
+      ],
+      "computed": {
+        "index": 54,
+        "color": [
+          253,
+          164,
+          175,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              30,
+              41,
+              59,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              30,
+              41,
+              59,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "studio/input",
+      "threshold": 4.5,
+      "ratio": 16.193006440967938,
+      "foreground": [
+        241.0,
+        245.0,
+        249.0,
+        1
+      ],
+      "background": [
+        17.0,
+        24.0,
+        39.0,
+        1
+      ],
+      "computed": {
+        "index": 55,
+        "color": [
+          241,
+          245,
+          249,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              17,
+              24,
+              39,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              30,
+              41,
+              59,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "studio/textarea",
+      "threshold": 4.5,
+      "ratio": 16.193006440967938,
+      "foreground": [
+        241.0,
+        245.0,
+        249.0,
+        1
+      ],
+      "background": [
+        17.0,
+        24.0,
+        39.0,
+        1
+      ],
+      "computed": {
+        "index": 56,
+        "color": [
+          241,
+          245,
+          249,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              17,
+              24,
+              39,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              30,
+              41,
+              59,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "studio/range-output",
+      "threshold": 4.5,
+      "ratio": 6.297198139354907,
+      "foreground": [
+        72.0,
+        185.0,
+        199.0,
+        1
+      ],
+      "background": [
+        30.0,
+        41.0,
+        59.0,
+        1
+      ],
+      "computed": {
+        "index": 57,
+        "color": [
+          72,
+          185,
+          199,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              30,
+              41,
+              59,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "popup/launcher/#000000",
+      "threshold": 4.5,
+      "ratio": 14.547218051633713,
+      "foreground": [
+        226.0,
+        232.0,
+        240.0,
+        1.0
+      ],
+      "background": [
+        14.7,
+        22.54,
+        41.16,
+        1.0
+      ],
+      "computed": {
+        "index": 58,
+        "color": [
+          226,
+          232,
+          240,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              15,
+              23,
+              42,
+              0.98
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "popup/launcher-selected-subtitle/#000000",
+      "threshold": 4.5,
+      "ratio": 6.018970076948699,
+      "foreground": [
+        167.0,
+        184.0,
+        204.0,
+        1.0
+      ],
+      "background": [
+        36.0,
+        55.0,
+        75.0,
+        1.0
+      ],
+      "computed": {
+        "index": 59,
+        "color": [
+          167,
+          184,
+          204,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              36,
+              55,
+              75,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              15,
+              23,
+              42,
+              0.98
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "popup/context/#000000",
+      "threshold": 4.5,
+      "ratio": 14.547218051633713,
+      "foreground": [
+        226.0,
+        232.0,
+        240.0,
+        1.0
+      ],
+      "background": [
+        14.7,
+        22.54,
+        41.16,
+        1.0
+      ],
+      "computed": {
+        "index": 60,
+        "color": [
+          226,
+          232,
+          240,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              15,
+              23,
+              42,
+              0.98
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "popup/context-danger/#000000",
+      "threshold": 4.5,
+      "ratio": 9.484060958462026,
+      "foreground": [
+        253.0,
+        164.0,
+        175.0,
+        1.0
+      ],
+      "background": [
+        14.7,
+        22.54,
+        41.16,
+        1.0
+      ],
+      "computed": {
+        "index": 61,
+        "color": [
+          253,
+          164,
+          175,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              15,
+              23,
+              42,
+              0.98
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "popup/window-list/#000000",
+      "threshold": 4.5,
+      "ratio": 14.579849251299363,
+      "foreground": [
+        226.0,
+        232.0,
+        240.0,
+        1.0
+      ],
+      "background": [
+        14.549999999999999,
+        22.31,
+        40.74,
+        1.0
+      ],
+      "computed": {
+        "index": 62,
+        "color": [
+          226,
+          232,
+          240,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              15,
+              23,
+              42,
+              0.97
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "popup/window-active-status/#000000",
+      "threshold": 4.5,
+      "ratio": 6.092762144775268,
+      "foreground": [
+        72.0,
+        185.0,
+        199.0,
+        1.0
+      ],
+      "background": [
+        22.593,
+        45.086600000000004,
+        62.8964,
+        1.0
+      ],
+      "computed": {
+        "index": 63,
+        "color": [
+          72,
+          185,
+          199,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              72,
+              185,
+              199,
+              0.14
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              15,
+              23,
+              42,
+              0.97
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "popup/audio/#000000",
+      "threshold": 4.5,
+      "ratio": 15.353063731314563,
+      "foreground": [
+        241.0,
+        245.0,
+        249.0,
+        1
+      ],
+      "background": [
+        23.0,
+        29.0,
+        44.0,
+        1
+      ],
+      "computed": {
+        "index": 64,
+        "color": [
+          241,
+          245,
+          249,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              23,
+              29,
+              44,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "popup/audio-help/#000000",
+      "threshold": 4.5,
+      "ratio": 11.328564856920929,
+      "foreground": [
+        203.0,
+        213.0,
+        225.0,
+        1
+      ],
+      "background": [
+        23.0,
+        29.0,
+        44.0,
+        1
+      ],
+      "computed": {
+        "index": 65,
+        "color": [
+          203,
+          213,
+          225,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              23,
+              29,
+              44,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "popup/system-help/#000000",
+      "threshold": 4.5,
+      "ratio": 11.328564856920929,
+      "foreground": [
+        203.0,
+        213.0,
+        225.0,
+        1
+      ],
+      "background": [
+        23.0,
+        29.0,
+        44.0,
+        1
+      ],
+      "computed": {
+        "index": 66,
+        "color": [
+          203,
+          213,
+          225,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              23,
+              29,
+              44,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "popup/calendar-weekday/#000000",
+      "threshold": 4.5,
+      "ratio": 9.185693066985523,
+      "foreground": [
+        168.0,
+        181.0,
+        199.0,
+        1.0
+      ],
+      "background": [
+        11.700000000000001,
+        15.3,
+        25.2,
+        1.0
+      ],
+      "computed": {
+        "index": 67,
+        "color": [
+          168,
+          181,
+          199,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.9
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "popup/calendar-outside/#000000",
+      "threshold": 4.5,
+      "ratio": 9.185693066985523,
+      "foreground": [
+        168.0,
+        181.0,
+        199.0,
+        1.0
+      ],
+      "background": [
+        11.700000000000001,
+        15.3,
+        25.2,
+        1.0
+      ],
+      "computed": {
+        "index": 68,
+        "color": [
+          168,
+          181,
+          199,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.9
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "popup/calendar-today/#000000",
+      "threshold": 4.5,
+      "ratio": 9.9814118844207,
+      "foreground": [
+        255.0,
+        255.0,
+        255.0,
+        1.0
+      ],
+      "background": [
+        40.0,
+        70.0,
+        87.0,
+        1.0
+      ],
+      "computed": {
+        "index": 69,
+        "color": [
+          255,
+          255,
+          255,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              40,
+              70,
+              87,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.9
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "popup/launcher/#ffffff",
+      "threshold": 4.5,
+      "ratio": 13.827988332377796,
+      "foreground": [
+        226.0,
+        232.0,
+        240.0,
+        1.0
+      ],
+      "background": [
+        19.800000000000004,
+        27.640000000000004,
+        46.260000000000005,
+        1.0
+      ],
+      "computed": {
+        "index": 70,
+        "color": [
+          226,
+          232,
+          240,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              15,
+              23,
+              42,
+              0.98
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "popup/launcher-selected-subtitle/#ffffff",
+      "threshold": 4.5,
+      "ratio": 6.018970076948699,
+      "foreground": [
+        167.0,
+        184.0,
+        204.0,
+        1.0
+      ],
+      "background": [
+        36.0,
+        55.0,
+        75.0,
+        1.0
+      ],
+      "computed": {
+        "index": 71,
+        "color": [
+          167,
+          184,
+          204,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              36,
+              55,
+              75,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              15,
+              23,
+              42,
+              0.98
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "popup/context/#ffffff",
+      "threshold": 4.5,
+      "ratio": 13.827988332377796,
+      "foreground": [
+        226.0,
+        232.0,
+        240.0,
+        1.0
+      ],
+      "background": [
+        19.800000000000004,
+        27.640000000000004,
+        46.260000000000005,
+        1.0
+      ],
+      "computed": {
+        "index": 72,
+        "color": [
+          226,
+          232,
+          240,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              15,
+              23,
+              42,
+              0.98
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "popup/context-danger/#ffffff",
+      "threshold": 4.5,
+      "ratio": 9.015159036709735,
+      "foreground": [
+        253.0,
+        164.0,
+        175.0,
+        1.0
+      ],
+      "background": [
+        19.800000000000004,
+        27.640000000000004,
+        46.260000000000005,
+        1.0
+      ],
+      "computed": {
+        "index": 73,
+        "color": [
+          253,
+          164,
+          175,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              15,
+              23,
+              42,
+              0.98
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "popup/window-list/#ffffff",
+      "threshold": 4.5,
+      "ratio": 13.485287847375004,
+      "foreground": [
+        226.0,
+        232.0,
+        240.0,
+        1.0
+      ],
+      "background": [
+        22.200000000000006,
+        29.960000000000004,
+        48.39000000000001,
+        1.0
+      ],
+      "computed": {
+        "index": 74,
+        "color": [
+          226,
+          232,
+          240,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              15,
+              23,
+              42,
+              0.97
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "popup/window-active-status/#ffffff",
+      "threshold": 4.5,
+      "ratio": 5.562591299043217,
+      "foreground": [
+        72.0,
+        185.0,
+        199.0,
+        1.0
+      ],
+      "background": [
+        29.17200000000001,
+        51.66560000000001,
+        69.47540000000001,
+        1.0
+      ],
+      "computed": {
+        "index": 75,
+        "color": [
+          72,
+          185,
+          199,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              72,
+              185,
+              199,
+              0.14
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              15,
+              23,
+              42,
+              0.97
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "popup/audio/#ffffff",
+      "threshold": 4.5,
+      "ratio": 15.353063731314563,
+      "foreground": [
+        241.0,
+        245.0,
+        249.0,
+        1
+      ],
+      "background": [
+        23.0,
+        29.0,
+        44.0,
+        1
+      ],
+      "computed": {
+        "index": 76,
+        "color": [
+          241,
+          245,
+          249,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              23,
+              29,
+              44,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "popup/audio-help/#ffffff",
+      "threshold": 4.5,
+      "ratio": 11.328564856920929,
+      "foreground": [
+        203.0,
+        213.0,
+        225.0,
+        1
+      ],
+      "background": [
+        23.0,
+        29.0,
+        44.0,
+        1
+      ],
+      "computed": {
+        "index": 77,
+        "color": [
+          203,
+          213,
+          225,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              23,
+              29,
+              44,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "popup/system-help/#ffffff",
+      "threshold": 4.5,
+      "ratio": 11.328564856920929,
+      "foreground": [
+        203.0,
+        213.0,
+        225.0,
+        1
+      ],
+      "background": [
+        23.0,
+        29.0,
+        44.0,
+        1
+      ],
+      "computed": {
+        "index": 78,
+        "color": [
+          203,
+          213,
+          225,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              23,
+              29,
+              44,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "popup/calendar-weekday/#ffffff",
+      "threshold": 4.5,
+      "ratio": 7.008012692424531,
+      "foreground": [
+        168.0,
+        181.0,
+        199.0,
+        1.0
+      ],
+      "background": [
+        37.199999999999996,
+        40.8,
+        50.69999999999999,
+        1.0
+      ],
+      "computed": {
+        "index": 79,
+        "color": [
+          168,
+          181,
+          199,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.9
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "popup/calendar-outside/#ffffff",
+      "threshold": 4.5,
+      "ratio": 7.008012692424531,
+      "foreground": [
+        168.0,
+        181.0,
+        199.0,
+        1.0
+      ],
+      "background": [
+        37.199999999999996,
+        40.8,
+        50.69999999999999,
+        1.0
+      ],
+      "computed": {
+        "index": 80,
+        "color": [
+          168,
+          181,
+          199,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.9
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "popup/calendar-today/#ffffff",
+      "threshold": 4.5,
+      "ratio": 9.9814118844207,
+      "foreground": [
+        255.0,
+        255.0,
+        255.0,
+        1.0
+      ],
+      "background": [
+        40.0,
+        70.0,
+        87.0,
+        1.0
+      ],
+      "computed": {
+        "index": 81,
+        "color": [
+          255,
+          255,
+          255,
+          1
+        ],
+        "chain": [
+          {
+            "background": [
+              40,
+              70,
+              87,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              13,
+              17,
+              28,
+              0.9
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              255,
+              255,
+              255,
+              1
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          },
+          {
+            "background": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "opacity": 1,
+            "image": "none"
+          }
+        ]
+      },
+      "passed": true
+    }
+  ],
+  "passed": 58,
+  "total": 82,
+  "inputSent": false,
+  "scope": "Computed style fixtures using actual App.css in Gtk.OffscreenWindow; white/black backdrops, flat layers and group opacity. Hover selectors mapped to test-hover. No assertion of full app coverage, artwork, gradients, control borders, focus contrast, native widgets or screen-reader behavior.",
+  "screenshot": "contrast-before.png"
+}

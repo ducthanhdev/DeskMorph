@@ -10,7 +10,7 @@
   --accent-purple: #8b5cf6;
   --text-main: #f1f5f9;
   --text-muted: #94a3b8;
-  --text-dim: #64748b;
+  --text-dim: #94a3b8;
   --radius-lg: 16px;
   --radius-md: 12px;
   --radius-sm: 8px;
@@ -1415,7 +1415,7 @@ body {
 
 .clock-date {
   font-size: 10px;
-  color: var(--text-dim);
+  color: #cbd5e1;
   font-weight: 500;
 }
 
@@ -1879,3 +1879,10 @@ button:focus-visible { outline: 2px solid #48b9c7; outline-offset: -2px; }
 .app-launcher input:focus-visible { outline: 3px solid #67e8f9; outline-offset: 1px; border-radius: 3px; }
 
 .settings-inline .accent-swatch { flex: none; width: 42px; height: 34px; cursor: pointer; }
+
+/* Information stays readable even when the Dock surface is nearly transparent. */
+.taskbar-container .stat-pill, .taskbar-container .dock-action-btn,
+.taskbar-container .clock-section { background: #172235; }
+.taskbar-container .clock-section { padding: 3px 6px; border-radius: 8px; }
+.taskbar-container .clock-section.interactive-widget:hover { background: #253348; }
+.taskbar-container .dock-action-btn:hover { background: #48b9c7; color: #0c1017; }
