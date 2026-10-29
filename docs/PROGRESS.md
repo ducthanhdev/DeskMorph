@@ -800,3 +800,11 @@ Script cần AT-SPI, Python GI, GTK3 và libXtst. Chỉ gửi phím khi kiểm t
 - Hồi quy với cùng harness ở scale 1, PID 791055: 16 ca qua, exit 0; Python compile và diff check qua.
 - Đây là application GTK scale 2 trên X11, không đổi scale compositor; chưa chứng minh scale 125/150%, mixed DPI, negative-origin, hoặc khả năng dùng toàn bộ nội dung trong popup thấp. G2.10 vẫn mở, tổng 94/99.
 - Đánh giá file: giữ harness tái sử dụng và JSON rectangle nhỏ để tái lập phép đo ở scale 1/2; không commit log/profile/binary.
+
+
+## G9.8 — Stress restart audio mở rộng, chưa đạt (30/10/2026)
+
+- Mở rộng harness bằng `DESKMORPH_RESTART_CYCLES=12` (mặc định vẫn 3; giới hạn 3–100), restart core/Pulse mỗi vòng thứ ba; thêm guard focus nguồn/mute và native popup activation, retry truy vấn AT-SPI lỗi trong timeout chỉ khi owner còn sống. Ghi chẩn đoán trước cleanup khi thất bại.
+- Hai lượt stress đi qua 6 vòng rồi dừng ở vòng 7: popup không còn trong cây accessibility, không còn subscription; lượt cuối đọc native active window là Taskbar cùng PID, tiến trình app trạng thái S. [Bằng chứng chưa đạt](benchmarks/audio-restart-stress-2026-10-30/result.json). Chưa xác định nguyên nhân dismissal; không kết luận lỗi reconnect hoặc coi stress đạt. Các lượt đầu còn lỗi focus/startup và subtree AT-SPI thay thế đã được ghi nhận trong quá trình chỉnh harness.
+- Ca mặc định 3 vòng trên harness cuối qua, exit 0; mute/volume/reconnect, hide/reopen/cleanup, bytes config và host audio server/default sink được giữ; các daemon riêng đã thoát. Python compile/diff check qua. Đây là kiểm hồi quy harness, không thay thế stress 12 vòng.
+- G9.8 tiếp tục mở, tổng 94/99; còn điều tra dismissal khi stress, soak dài hạn, sleep thật và hotplug. Đánh giá file: giữ harness tham số hóa/chẩn đoán có thể tái dùng và JSON kết quả chưa đạt; không commit log daemon, cây sinks dài, profile hay binary.

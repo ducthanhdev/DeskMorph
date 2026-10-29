@@ -1,0 +1,118 @@
+{
+  "hostBefore": {
+    "server_string": "/run/user/1000/pulse/native",
+    "server_name": "PulseAudio (on PipeWire 1.6.8)",
+    "default_sink_name": "alsa_output.pci-0000_00_1f.3.analog-stereo"
+  },
+  "cycles": [
+    {
+      "kind": "pulse-service",
+      "oldServicePid": 819977,
+      "newServicePid": 820369,
+      "oldSubscriptionPid": 820283,
+      "newSubscriptionPid": 820450,
+      "errorAfterSeconds": 0.055,
+      "recoveredAfterSeconds": 2.103,
+      "autoRecovery": true,
+      "externalVolumeSignal": true,
+      "uiMuteTargetsPrivateSink": true,
+      "privateSinkFactory": "support.null-audio-sink"
+    },
+    {
+      "kind": "pulse-service",
+      "oldServicePid": 820369,
+      "newServicePid": 820553,
+      "oldSubscriptionPid": 820450,
+      "newSubscriptionPid": 820679,
+      "errorAfterSeconds": 0.037,
+      "recoveredAfterSeconds": 2.107,
+      "autoRecovery": true,
+      "externalVolumeSignal": true,
+      "uiMuteTargetsPrivateSink": true,
+      "privateSinkFactory": "support.null-audio-sink"
+    },
+    {
+      "kind": "core-and-pulse",
+      "oldServicePid": 820553,
+      "newServicePid": 820804,
+      "oldSubscriptionPid": 820679,
+      "newSubscriptionPid": 820887,
+      "errorAfterSeconds": 0.086,
+      "recoveredAfterSeconds": 2.047,
+      "autoRecovery": true,
+      "externalVolumeSignal": true,
+      "uiMuteTargetsPrivateSink": true,
+      "privateSinkFactory": "support.null-audio-sink"
+    },
+    {
+      "kind": "pulse-service",
+      "oldServicePid": 820804,
+      "newServicePid": 821011,
+      "oldSubscriptionPid": 820887,
+      "newSubscriptionPid": 821124,
+      "errorAfterSeconds": 0.092,
+      "recoveredAfterSeconds": 2.102,
+      "autoRecovery": true,
+      "externalVolumeSignal": true,
+      "uiMuteTargetsPrivateSink": true,
+      "privateSinkFactory": "support.null-audio-sink"
+    },
+    {
+      "kind": "pulse-service",
+      "oldServicePid": 821011,
+      "newServicePid": 821237,
+      "oldSubscriptionPid": 821124,
+      "newSubscriptionPid": 821305,
+      "errorAfterSeconds": 0.038,
+      "recoveredAfterSeconds": 2.101,
+      "autoRecovery": true,
+      "externalVolumeSignal": true,
+      "uiMuteTargetsPrivateSink": true,
+      "privateSinkFactory": "support.null-audio-sink"
+    },
+    {
+      "kind": "core-and-pulse",
+      "oldServicePid": 821237,
+      "newServicePid": 821444,
+      "oldSubscriptionPid": 821305,
+      "newSubscriptionPid": 821529,
+      "errorAfterSeconds": 0.037,
+      "recoveredAfterSeconds": 2.027,
+      "autoRecovery": true,
+      "externalVolumeSignal": true,
+      "uiMuteTargetsPrivateSink": true,
+      "privateSinkFactory": "support.null-audio-sink"
+    }
+  ],
+  "requestedCycles": 12,
+  "transientAtspiRetries": 0,
+  "appFixturePid": 819994,
+  "error": "AssertionError('Popup did not reconnect without Retry')",
+  "activeWindow": "_NET_ACTIVE_WINDOW(WINDOW): window id # 0x3800017",
+  "activeOwner": "_NET_WM_PID(CARDINAL) = 819994\n_NET_WM_NAME(UTF8_STRING) = \"DeskMorph Taskbar\"",
+  "appState": "S",
+  "popupNodes": [],
+  "subscriptions": [],
+  "date": "2026-10-30",
+  "passed": false,
+  "command": "DESKMORPH_RESTART_CYCLES=12 python3 tests/desktop_smoke.py --audio-service-restart-smoke",
+  "exitCode": 1,
+  "completedCycles": 6,
+  "interpretation": "Popup absent and subscription cleaned at restart 7; native app alive and active window owned Taskbar. Dismissal cause unproven; not accepted as service recovery stress success.",
+  "limits": [
+    "Private PipeWire/Pulse null sinks; no host service restart",
+    "Failure does not establish a production reconnect defect without identifying dismissal cause",
+    "Not a long soak or sleep/resume test"
+  ],
+  "binarySha256": "bbb3a7d70a7675a1b9e4a9780824282d62cd81ca141de0587ccd511641bfd180",
+  "defaultThreeCycleRegression": {
+    "exitCode": 0,
+    "cycles": 3,
+    "normalPid": 828245,
+    "configRestored": true,
+    "servicesExited": true,
+    "hostUnchanged": true,
+    "hiddenStopsSubscription": true,
+    "reopenAfterRestart": true
+  }
+}
