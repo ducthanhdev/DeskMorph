@@ -34,3 +34,6 @@ Nút “Kiểm tra lại khả năng desktop” phát event tới các WebView �
 
 
 Icon catalogue trên GNOME/X11 tham chiếu đã qua GTK theme inheritance/hicolor/absolute SVG/PNG và theme switch trên IconTheme riêng; native pixels đã xác minh launcher, Dock ghim/chưa ghim, window rows. Nguồn được rasterize tối đa 64 px vào cache 512 PNG/32 KiB mỗi file; nguồn lỗi/vượt giới hạn hoặc class mơ hồ dùng fallback. Scope asset chỉ thêm cache icon riêng không đệ quy, không thêm source file. Xem APPLICATION_CATALOGUE.md và benchmarks/application-icons-2026-10-29.json; không suy phép đo scale 1 thành mixed-DPI hoặc native Wayland.
+
+
+COSMIC wallpaper có [nghiên cứu API và pixel](benchmarks/cosmic-background-2026-10-29/results.json) trên compositor lồng commit8cb1802 + cosmic-bg1.11.0: private RON source Path, startup và atomic config update hiển thị đúng. Chưa có adapter sản phẩm hoặc chứng nhận toàn phiên COSMIC; capability vẫn unsupported. KDE chưa có runtime kiểm trên máy.

@@ -34,3 +34,10 @@ SIGSTOP không phải system suspend. Ca này xác minh worker tiếp tục xử
 [Bằng chứng và tám ảnh chụp stage](benchmarks/wallpaper-visible-2026-10-29/results.json) từ `/usr/bin/python3 tests/wayland_lab.py --wallpaper-test --output /tmp/deskmorph-wallpaper-visible/results.json`: UI DeskMorph thật Apply image01 (hồng), lỗi file mất rồi Retry image02 (xanh), đọc cả khóa URI sáng/tối và đối chiếu3 pixel nền thực với RGB nguồn, tolerance2/channel. Thu nhỏ riêng cửa sổ thuộc PID lab trước chụp và khôi phục sau đó. Cả vi/en, reduced motion, GNOME Shell46.0/Mutter46.2, output ảo1280×720 scale1.
 
 Sau Apply/Retry, ca phân biệt key đặt URI sáng về ảnh hồng trong keyfile lab, giữ URI tối xanh và đổi color-scheme prefer-dark/default. Pixel stage lần lượt xanh/hồng, chứng minh compositor chọn đúng key chứ không chỉ settings ghi thành công. Đây là thao tác test bên ngoài app trong môi trường riêng, không phải app viết hai URI khác nhau. Không chụp hoặc đổi wallpaper desktop host; mọi process/mount portal lab đã dọn. G6.9 còn các desktop khác chưa được xác minh; không bật adapter COSMIC/KDE từ kết quả GNOME.
+
+
+## Khảo sát COSMIC, chưa bật adapter
+
+[Ca chạy và ảnh nền thực](benchmarks/cosmic-background-2026-10-29/results.json): `cosmic-comp` backend winit lồng trên GNOME Wayland lab, `cosmic-bg`1.11.0 (9520e16), compositor commit8cb1802. Cả XDG config/runtime và bus đều riêng; không dùng session COSMIC của người dùng. Khóa `cosmic/com.system76.CosmicBackground/v1/all` chứa RON với `source: Path("…")`, `same-on-all=true`. Ảnh hồng được đọc lúc startup; atomic replace file all sang ảnh xanh làm nền đổi khi cùng PID cosmic-bg còn chạy, đối chiếu3 pixel stage/tolerance2 và ảnh đã xem. Không cần chạy cosmic-settings-daemon trong ca này.
+
+Đây là API research; sản phẩm vẫn báo unsupported trên COSMIC. Trước khi bật cần adapter đọc/ghi RON giữ nguyên field chưa biết, xử lý per-output và same-on-all, nguồn không phải Path, lỗi quyền/ảnh, concurrent write/rollback, rồi kiểm xuyên UI/IPC trong COSMIC. Không dùng regex của fixture để sửa config người dùng. KDE chưa có compositor/runtime trên máy tham chiếu, chưa có bằng chứng API.

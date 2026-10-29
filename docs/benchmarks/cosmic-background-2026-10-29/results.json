@@ -1,0 +1,95 @@
+{
+  "command": "/usr/bin/python3 tests/wayland_lab.py --cosmic-test --output /tmp/deskmorph-cosmic-background/final.json",
+  "outerPackages": [
+    "gnome-settings-daemon\t46.0-1ubuntu1.24.04.1",
+    "gnome-shell\t46.0-0ubuntu6~24.04.16",
+    "libmutter-14-0:amd64\t46.2-1ubuntu0.24.04.18",
+    "xdg-desktop-portal\t1.18.4-1ubuntu2.24.04.3",
+    "xdg-desktop-portal-gnome\t",
+    "xdg-desktop-portal-gtk\t1.15.1-1build2"
+  ],
+  "cosmicProbe": {
+    "versions": [
+      "cosmic-bg\t1.11.0~1792526117~24.04~9520e16",
+      "cosmic-comp\t0.1~1792508925~24.04~8cb1802"
+    ],
+    "binarySha256": {
+      "cosmic-comp": "2399b768cc6a4599a6495d0865cf4dc6807cfee2c6e46b3d7466a800f903be5e",
+      "cosmic-bg": "dcfaf79907ef5031fa40799bbd56dd33ee19135c90c3580cf2eb98579894bf3a"
+    },
+    "compositorPid": 3658480,
+    "backgroundPid": 3658511,
+    "nestedSocket": "wayland-1",
+    "window": {
+      "id": 1,
+      "pid": 3658480,
+      "appId": null,
+      "title": "Smithay",
+      "focused": false,
+      "clientType": 0,
+      "frame": {
+        "x": 0,
+        "y": 32,
+        "width": 1280,
+        "height": 688
+      }
+    },
+    "captures": [
+      {
+        "file": "background-1.png",
+        "sha256": "32db5918d755ea4820f54427daa96f5ca5b21c18f1f8aa644e30538f37ce45fd",
+        "samples": [
+          [
+            209,
+            55,
+            105
+          ],
+          [
+            209,
+            55,
+            105
+          ],
+          [
+            209,
+            55,
+            105
+          ]
+        ]
+      },
+      {
+        "file": "background-2.png",
+        "sha256": "407fefc88c3f937c3c3d7d3b8c51fa0db3ab9f8de8d8ab2f3ae7a8db7e2109d8",
+        "samples": [
+          [
+            52,
+            86,
+            120
+          ],
+          [
+            52,
+            86,
+            120
+          ],
+          [
+            52,
+            86,
+            120
+          ]
+        ]
+      }
+    ],
+    "initialConfigPixelsVerified": true,
+    "liveConfigPixelsVerified": true,
+    "scope": "Actual COSMIC nested winit and cosmic-bg, private config RON path update and outer stage pixels. Research only; no production adapter or general COSMIC desktop support claim."
+  },
+  "hostDisplayUsed": false,
+  "hostInputInjected": false,
+  "privateSettings": true,
+  "ownedProcessesExited": true,
+  "ownedPortalMountRemoved": true,
+  "sourceSha256": {
+    "tests/cosmic_background_probe.py": "9943a15fa93c5916115d20493bd7e25e1c72fa1dbe99c09c620b8d16565e2864",
+    "tests/wayland_lab.py": "cce8e3a1e3cce89c7299e85c0b33735734190f11f1a8a334aa2bde67e29e8b8c",
+    "tests/wayland_prototype/launcher_extension.js": "e96b0d0a7612c850725066e6aea84e59815592eedfe233761b409175e7b68d8c"
+  }
+}

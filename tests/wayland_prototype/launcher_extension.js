@@ -33,12 +33,12 @@ export default class LauncherLab extends Base {
     Dispatch(token, payload) {
         if (token !== this._token) throw new Error('Invalid lab token');
         const command = JSON.parse(payload);
-        if (command.op === 'backgroundScreenshot') {
-            if (GLib.getenv('DESKMORPH_WALLPAPER_TEST') !== '1') throw new Error('Wallpaper lab mode required');
+        if (['backgroundScreenshot', 'stageScreenshot'].includes(command.op)) {
+            if (GLib.getenv('DESKMORPH_WALLPAPER_TEST') !== '1' && GLib.getenv('DESKMORPH_COSMIC_TEST') !== '1') throw new Error('Wallpaper lab mode required');
             const root = GLib.getenv('DESKMORPH_COMPOSITOR_LAB');
             this._captureSequence = (this._captureSequence ?? 0) + 1;
             const path = `${root}/background-${this._captureSequence}.png`;
-            const windows = this._windows().filter(w => !w.minimized);
+            const windows = command.op === 'backgroundScreenshot' ? this._windows().filter(w => !w.minimized) : [];
             windows.forEach(w => w.minimize());
             Main.overview.hide();
             GLib.timeout_add(GLib.PRIORITY_DEFAULT, 700, () => {

@@ -1,0 +1,94 @@
+"""COSMIC compositor/background capability research inside the owned GNOME lab."""
+import json
+import hashlib
+import gi
+gi.require_version("GdkPixbuf", "2.0")
+import os
+import re
+from pathlib import Path
+import subprocess
+import time
+from gi.repository import Gio, GLib, GdkPixbuf
+
+
+def run():
+    root = Path(os.environ['DESKMORPH_COMPOSITOR_LAB'])
+    assert str(root).startswith('/tmp/deskmorph-wayland-lab-')
+    assert os.environ['XDG_RUNTIME_DIR'] == str(root / 'runtime') and not os.environ.get('DISPLAY')
+    env = dict(os.environ, XDG_CURRENT_DESKTOP='COSMIC', COSMIC_BACKEND='winit')
+    metadata = json.loads((root / 'session.json').read_text())
+    bus = Gio.bus_get_sync(Gio.BusType.SESSION, None)
+    def dispatch(**command):
+        reply = bus.call_sync('org.gnome.Shell', '/org/deskmorph/Lab', 'org.deskmorph.Lab', 'Dispatch',
+            GLib.Variant('(ss)', (metadata['DESKMORPH_PROTOTYPE_TOKEN'], json.dumps(command))),
+            None, Gio.DBusCallFlags.NONE, 3000, None)
+        return json.loads(reply.unpack()[0])
+    def wait(predicate, message):
+        deadline = time.monotonic() + 20
+        while time.monotonic() < deadline:
+            value = predicate()
+            if value: return value
+            time.sleep(.1)
+        raise AssertionError(message)
+    config_dir = root / 'config/cosmic/com.system76.CosmicBackground/v1'
+    config_dir.mkdir(parents=True)
+    images = []
+    for name, color in [('pink', 0xd13769ff), ('blue', 0x345678ff)]:
+        path = root / (name + '.png')
+        image = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, False, 8, 8, 8)
+        image.fill(color); image.savev(str(path), 'png', [], [])
+        images.append(path)
+    template = Path('/usr/share/cosmic/com.system76.CosmicBackground/v1/all').read_text().replace('#true', 'true')
+    def set_source(path):
+        document, replacements = re.subn(r'source: Path\("[^\"]*"\)', 'source: Path(' + json.dumps(str(path)) + ')', template)
+        assert replacements == 1, 'Installed COSMIC background schema changed'
+        temporary = config_dir / 'all.tmp'
+        temporary.write_text(document); temporary.replace(config_dir / 'all')
+    (config_dir / 'same-on-all').write_text('true')
+    set_source(images[0])
+    children = []
+    try:
+        with (root / 'deskmorph-launcher.log').open('w') as log:
+            compositor = subprocess.Popen(['cosmic-comp', '--no-xwayland'], env=env, stdout=log, stderr=log)
+            children.append(compositor)
+            def nested_socket():
+                assert compositor.poll() is None, 'Nested COSMIC compositor exited'
+                return next((p for p in (root / 'runtime').glob('wayland-*') if not p.name.endswith('.lock')), None)
+            socket = wait(nested_socket, 'Nested COSMIC socket did not appear')
+            dispatch(op='target', pid=compositor.pid)
+            window = wait(lambda: next((w for w in dispatch(op='state')['windows'] if w['frame']['width'] > 0 and w['frame']['height'] > 0), None), 'Nested COSMIC window did not map')
+            dispatch(op='activate', id=window['id'], pid=compositor.pid)
+            background = subprocess.Popen(['cosmic-bg'], env=dict(env, WAYLAND_DISPLAY=socket.name), stdout=log, stderr=log)
+            children.append(background)
+            time.sleep(3)
+            assert background.poll() is None, 'COSMIC background exited'
+            captures = []
+            def capture_pixels(expected):
+                capture = Path(dispatch(op='stageScreenshot')['path'])
+                wait(lambda: Path(str(capture) + '.json').exists(), 'Nested compositor screenshot missing')
+                assert json.loads(Path(str(capture) + '.json').read_text()).get('ok')
+                image = GdkPixbuf.Pixbuf.new_from_file(str(capture))
+                data = image.get_pixels(); stride = image.get_rowstride(); channels = image.get_n_channels()
+                samples = [list(data[y*stride+x*channels:y*stride+x*channels+3]) for x,y in [(200,200),(640,360),(1000,500)]]
+                captures.append(dict(file=capture.name, sha256=hashlib.sha256(capture.read_bytes()).hexdigest(), samples=samples))
+                return all(max(abs(a-b) for a,b in zip(rgb, expected)) <= 2 for rgb in samples)
+            assert capture_pixels([209,55,105]), captures
+            set_source(images[1])
+            time.sleep(2)
+            live_updated = capture_pixels([52,86,120])
+            assert live_updated, 'COSMIC background did not react to config replacement'
+            report = dict(versions=subprocess.check_output(['dpkg-query', '-W', 'cosmic-comp', 'cosmic-bg'], text=True).splitlines(),
+                binarySha256={name: hashlib.sha256(Path('/usr/bin/' + name).read_bytes()).hexdigest() for name in ('cosmic-comp', 'cosmic-bg')},
+                compositorPid=compositor.pid, backgroundPid=background.pid,
+                nestedSocket=socket.name, window=window, captures=captures, initialConfigPixelsVerified=True, liveConfigPixelsVerified=live_updated,
+                scope='Actual COSMIC nested winit and cosmic-bg, private config RON path update and outer stage pixels. Research only; no production adapter or general COSMIC desktop support claim.')
+            (root / 'launcher-result.json').write_text(json.dumps(dict(cosmicProbe=report), indent=2))
+    finally:
+        for child in reversed(children):
+            if child.poll() is None:
+                child.terminate()
+                try: child.wait(timeout=5)
+                except subprocess.TimeoutExpired: child.kill(); child.wait(timeout=5)
+
+
+if __name__ == '__main__': run()
