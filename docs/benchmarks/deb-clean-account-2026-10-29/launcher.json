@@ -1,0 +1,297 @@
+{
+  "gnomePid": 4009186,
+  "globals": [
+    {
+      "interface": "gtk_shell1",
+      "version": 5
+    },
+    {
+      "interface": "wl_compositor",
+      "version": 6
+    },
+    {
+      "interface": "wl_data_device_manager",
+      "version": 3
+    },
+    {
+      "interface": "wl_output",
+      "version": 4
+    },
+    {
+      "interface": "wl_seat",
+      "version": 8
+    },
+    {
+      "interface": "wl_shm",
+      "version": 2
+    },
+    {
+      "interface": "wl_subcompositor",
+      "version": 1
+    },
+    {
+      "interface": "wp_fractional_scale_manager_v1",
+      "version": 1
+    },
+    {
+      "interface": "wp_presentation",
+      "version": 1
+    },
+    {
+      "interface": "wp_single_pixel_buffer_manager_v1",
+      "version": 1
+    },
+    {
+      "interface": "wp_viewporter",
+      "version": 1
+    },
+    {
+      "interface": "xdg_activation_v1",
+      "version": 1
+    },
+    {
+      "interface": "xdg_wm_base",
+      "version": 6
+    },
+    {
+      "interface": "zwp_idle_inhibit_manager_v1",
+      "version": 1
+    },
+    {
+      "interface": "zwp_keyboard_shortcuts_inhibit_manager_v1",
+      "version": 1
+    },
+    {
+      "interface": "zwp_linux_dmabuf_v1",
+      "version": 5
+    },
+    {
+      "interface": "zwp_pointer_constraints_v1",
+      "version": 1
+    },
+    {
+      "interface": "zwp_pointer_gestures_v1",
+      "version": 3
+    },
+    {
+      "interface": "zwp_primary_selection_device_manager_v1",
+      "version": 1
+    },
+    {
+      "interface": "zwp_relative_pointer_manager_v1",
+      "version": 1
+    },
+    {
+      "interface": "zwp_tablet_manager_v2",
+      "version": 1
+    },
+    {
+      "interface": "zwp_text_input_manager_v3",
+      "version": 1
+    },
+    {
+      "interface": "zxdg_exporter_v1",
+      "version": 1
+    },
+    {
+      "interface": "zxdg_exporter_v2",
+      "version": 1
+    },
+    {
+      "interface": "zxdg_importer_v1",
+      "version": 1
+    },
+    {
+      "interface": "zxdg_importer_v2",
+      "version": 1
+    },
+    {
+      "interface": "zxdg_output_manager_v1",
+      "version": 3
+    }
+  ],
+  "displayState": [
+    2,
+    [
+      [
+        [
+          "Meta-0",
+          "MetaVendor",
+          "MetaVirtualMonitor",
+          "0x00"
+        ],
+        [
+          [
+            "1280x720@60.000",
+            1280,
+            720,
+            60.0,
+            1.0,
+            [
+              1.0
+            ],
+            {
+              "is-current": true,
+              "is-preferred": true
+            }
+          ]
+        ],
+        {
+          "is-builtin": false,
+          "display-name": "MetaVendor"
+        }
+      ]
+    ],
+    [
+      [
+        0,
+        0,
+        1.0,
+        0,
+        true,
+        [
+          [
+            "Meta-0",
+            "MetaVendor",
+            "MetaVirtualMonitor",
+            "0x00"
+          ]
+        ],
+        {}
+      ]
+    ],
+    {
+      "renderer": "native",
+      "layout-mode": 2,
+      "legacy-ui-scaling-factor": 1
+    }
+  ],
+  "probes": {
+    "windows": {
+      "error": "g-dbus-error-quark: GDBus.Error:org.freedesktop.DBus.Error.AccessDenied: GetWindows is not allowed (9)"
+    },
+    "shellEval": {
+      "value": [
+        false,
+        ""
+      ]
+    },
+    "globalShortcuts": {
+      "error": "g-dbus-error-quark: GDBus.Error:org.freedesktop.DBus.Error.InvalidArgs: No such interface “org.freedesktop.portal.GlobalShortcuts” (16)"
+    }
+  },
+  "packages": [
+    "gnome-settings-daemon\t46.0-1ubuntu1.24.04.1",
+    "gnome-shell\t46.0-0ubuntu6~24.04.16",
+    "libmutter-14-0:amd64\t46.2-1ubuntu0.24.04.18",
+    "xdg-desktop-portal\t1.18.4-1ubuntu2.24.04.3",
+    "xdg-desktop-portal-gnome\t",
+    "xdg-desktop-portal-gtk\t1.15.1-1build2"
+  ],
+  "portalBackends": {
+    "cosmic.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.cosmic\nInterfaces=org.freedesktop.impl.portal.Access;org.freedesktop.impl.portal.FileChooser;org.freedesktop.impl.portal.RemoteDesktop;org.freedesktop.impl.portal.Screenshot;org.freedesktop.impl.portal.Settings;org.freedesktop.impl.portal.ScreenCast\nUseIn=COSMIC\n",
+    "gnome-keyring.portal": "[portal]\nDBusName=org.freedesktop.secrets\nInterfaces=org.freedesktop.impl.portal.Secret\nUseIn=gnome\n",
+    "gtk.portal": "[portal]\nDBusName=org.freedesktop.impl.portal.desktop.gtk\nInterfaces=org.freedesktop.impl.portal.FileChooser;org.freedesktop.impl.portal.AppChooser;org.freedesktop.impl.portal.Print;org.freedesktop.impl.portal.Notification;org.freedesktop.impl.portal.Inhibit;org.freedesktop.impl.portal.Access;org.freedesktop.impl.portal.Account;org.freedesktop.impl.portal.Email;org.freedesktop.impl.portal.DynamicLauncher;org.freedesktop.impl.portal.Lockdown;org.freedesktop.impl.portal.Settings;\nUseIn=gnome\n"
+  },
+  "wallpaperSettingsRoundtrip": true,
+  "ownedBusPids": [
+    4009185,
+    4009186,
+    4009196,
+    4009202,
+    4009235,
+    4009240,
+    4009288,
+    4009302,
+    4009304,
+    4009316,
+    4009326,
+    4009348,
+    4009350,
+    4009364,
+    4009373,
+    4009386,
+    4009391,
+    4009404,
+    4009411,
+    4009417,
+    4009425,
+    4009426,
+    4009428,
+    4009438,
+    4009462,
+    4009515,
+    4009521,
+    4009531,
+    4009558
+  ],
+  "launcher": {
+    "appPid": 4009702,
+    "disabledDockAppPid": 4009942,
+    "disabledDockColdStart": true,
+    "disabledConfigUnchanged": true,
+    "windowManagerCloseHides": true,
+    "defaultCommandOpensStudio": true,
+    "coldStartLauncher": true,
+    "studioHidden": true,
+    "nativeWayland": true,
+    "searchEmptyState": true,
+    "nativeEscape": true,
+    "warmForwardAck": true,
+    "automaticColdFocus": true,
+    "automaticWarmFocus": true,
+    "explicitLabActivationForInput": true,
+    "scope": "Direct CLI on private GNOME46 Wayland. Native input tested after explicit lab activation. No real custom keybinding or desktop activation token yet; automatic focus is not asserted.",
+    "binarySha256": "5b6ac46cc121d10f57bea30013c82c06abc953c069b32a4d1b915f7e53c64734",
+    "packagedMenuAppPid": 4010159,
+    "packagedDesktopEntryGioLaunch": true,
+    "packagedLauncherDesktopActionGioLaunch": true
+  },
+  "kind": "GNOME headless launcher probe",
+  "hostDisplayUsed": false,
+  "inputInjected": true,
+  "hostInputInjected": false,
+  "cleanAccount": true,
+  "unsafeModeEnabled": false,
+  "privateSettings": true,
+  "elapsedSeconds": 5.966,
+  "ownedPortalMountRemoved": true,
+  "ownedChildPids": [
+    4009185,
+    4009186,
+    4009196,
+    4009202,
+    4009235,
+    4009240,
+    4009288,
+    4009302,
+    4009304,
+    4009316,
+    4009326,
+    4009348,
+    4009350,
+    4009364,
+    4009373,
+    4009386,
+    4009391,
+    4009404,
+    4009411,
+    4009417,
+    4009425,
+    4009426,
+    4009428,
+    4009438,
+    4009462,
+    4009515,
+    4009521,
+    4009531,
+    4009558,
+    4010197,
+    4010214,
+    4010216,
+    4010222,
+    4010240
+  ],
+  "ownedProcessesExited": true,
+  "scope": "Packaged executable extracted from DeskMorph_0.1.0_amd64.deb; fresh HOME under private GNOME46 Wayland lab; no host display/input; package was not installed into a real account."
+}

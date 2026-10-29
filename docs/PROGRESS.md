@@ -732,3 +732,9 @@ Script cần AT-SPI, Python GI, GTK3 và libXtst. Chỉ gửi phím khi kiểm t
 - Chốt luồng cốt lõi theo tổ hợp có bằng chứng: GNOME 46.0/X11 là `Verified`; GNOME 46/Mutter 46.2 Wayland và COSMIC cosmic-bg1.11.0/cosmic-comp8cb1802 là `Experimental, wallpaper-only`; KDE Plasma5.27.12/KWin5.27.11 là `Unsupported` vì thiếu pixel/readback. Không suy một output nested thành hỗ trợ toàn desktop, DPI hoặc hotplug.
 - [Ma trận](PLATFORM_SUPPORT_MATRIX.md) ghi version, output, luồng đã chạy và liên kết benchmark. Đây là phạm vi công bố cụ thể nên G9.4 đạt trong phạm vi đã tuyên bố; G2.10/G2.11, G5.9, G6.7, G6.9, G9.8, G9.11 và G9.12 vẫn mở. Tổng 91/99.
 - Đánh giá file: giữ ma trận và các benchmark đã chọn vì reviewer cần đối chiếu version/core-flow; không thêm ảnh/log mới.
+
+## G9.11 — Binary packaged chạy với HOME tài khoản sạch (29/10/2026)
+
+- Thêm cờ `--clean-account` cho `tests/wayland_lab.py`; harness tạo HOME mới dưới root lab, giữ D-Bus/runtime/config/state riêng và nhận diện cleanup. Dùng executable trích nguyên từ `.deb`, checksum payload `5b6ac46c…` khớp manifest.
+- [Bằng chứng](benchmarks/deb-clean-account-2026-10-29/launcher.json): cold/warm launcher, tìm kiếm rỗng, Escape, Dock tắt, Studio mặc định, GIO menu và Desktop Action đều qua trên GNOME46 Wayland riêng; `cleanAccount=true`, host display/input không dùng, mọi child đã thoát. G9.11 vẫn mở vì đây chưa phải cài package bằng apt trên account thật, chưa có autostart sau đăng nhập và chưa có migration từ artifact tiền nhiệm có ý nghĩa.
+- Đánh giá file: giữ cờ harness vì tái sử dụng cho release artifact và guard HOME/ownership; giữ JSON tóm tắt có checksum và scope; không commit `.deb`, log hoặc HOME/profile sinh ra.

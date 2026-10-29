@@ -213,7 +213,7 @@ def probe(root, metadata, launcher=False, shortcut=False):
     return result
 
 
-def run(output, prototype=False, launcher=False, shortcut=False, binary=None, terminal=False, snap=False, snap_gui=False, wallpaper=False, cosmic=False):
+def run(output, prototype=False, launcher=False, shortcut=False, binary=None, terminal=False, snap=False, snap_gui=False, wallpaper=False, cosmic=False, clean_account=False):
     snap = snap or snap_gui
     launcher = launcher or shortcut or terminal or snap or wallpaper or cosmic
     # Reap private D-Bus service grandchildren as well as the direct supervisor.
@@ -227,7 +227,7 @@ def run(output, prototype=False, launcher=False, shortcut=False, binary=None, te
     host_state_before = host_state_digest() if cosmic else None
     with tempfile.TemporaryDirectory(prefix='deskmorph-wayland-lab-') as directory:
         root = Path(directory)
-        for name in ['runtime', 'config', 'data', 'cache', 'state']: (root / name).mkdir(mode=0o700)
+        for name in ['runtime', 'config', 'data', 'cache', 'state', 'home']: (root / name).mkdir(mode=0o700)
         env = dict(os.environ, **{MARKER: str(root)}, XDG_RUNTIME_DIR=str(root / 'runtime'),
             XDG_STATE_HOME=str(root / 'state'), XDG_CONFIG_HOME=str(root / 'config'), XDG_DATA_HOME=str(root / 'data'), XDG_CACHE_HOME=str(root / 'cache'),
             XDG_SESSION_TYPE='wayland', XDG_CURRENT_DESKTOP='GNOME', GSETTINGS_BACKEND='keyfile',
@@ -252,6 +252,10 @@ def run(output, prototype=False, launcher=False, shortcut=False, binary=None, te
             binary = binary.resolve()
             assert binary.is_file(), 'Lab binary is missing'
             env['DESKMORPH_LAB_BINARY'] = str(binary)
+        if clean_account:
+            # Exercise the packaged executable with a fresh account-like HOME;
+            # desktop/session services remain the private lab services above.
+            env['HOME'] = str(root / 'home')
         if prototype or launcher:
             env['DESKMORPH_PROTOTYPE_TOKEN'] = secrets.token_hex(32)
             extension = root / 'data/gnome-shell/extensions/deskmorph-lab@deskmorph.local'
@@ -283,7 +287,7 @@ def run(output, prototype=False, launcher=False, shortcut=False, binary=None, te
                 time.sleep(.1)
             else: raise AssertionError('Owned compositor readiness timed out')
             result = probe(root, metadata, launcher, shortcut)
-            result.update(kind='GNOME headless launcher probe' if launcher else 'GNOME headless extension prototype' if prototype else 'GNOME headless capability probe', hostDisplayUsed=False, inputInjected=prototype or launcher, hostInputInjected=False,
+            result.update(kind='GNOME headless launcher probe' if launcher else 'GNOME headless extension prototype' if prototype else 'GNOME headless capability probe', hostDisplayUsed=False, inputInjected=prototype or launcher, hostInputInjected=False, cleanAccount=clean_account,
                 unsafeModeEnabled=False, privateSettings=True, elapsedSeconds=round(time.monotonic() - started, 3))
         except Exception as error:
             result = dict(kind='GNOME headless failed probe', passed=False,
@@ -383,6 +387,7 @@ if __name__ == '__main__':
     parser.add_argument('--snap-test', action='store_true', help='Launch installed Chromium Snap headless with an isolated profile through DeskMorph UI')
     parser.add_argument('--terminal-test', action='store_true', help='Launch a real terminal from the actual launcher in the private lab')
     parser.add_argument('--binary', type=Path, help='Use this executable for the launcher UI probe')
+    parser.add_argument('--clean-account', action='store_true', help='Use a fresh private HOME for the selected lab run')
     args = parser.parse_args()
     if args.cosmic_test and (args.wallpaper_test or args.shortcut_test or args.terminal_test or args.snap_test or args.snap_gui_test or args.binary):
         parser.error('--cosmic-test requires its own run')
@@ -395,5 +400,5 @@ if __name__ == '__main__':
     if args.binary and (not (args.launcher_test or args.terminal_test or args.snap_test or args.snap_gui_test or args.wallpaper_test) or args.shortcut_test):
         parser.error('--binary requires a launcher, terminal, or Snap mode and cannot be combined with --shortcut-test')
     if args.session: session(args.session)
-    elif args.output: run(args.output.resolve(), args.prototype, args.launcher_test, args.shortcut_test, args.binary, args.terminal_test, args.snap_test, args.snap_gui_test, args.wallpaper_test, args.cosmic_test)
+    elif args.output: run(args.output.resolve(), args.prototype, args.launcher_test, args.shortcut_test, args.binary, args.terminal_test, args.snap_test, args.snap_gui_test, args.wallpaper_test, args.cosmic_test, args.clean_account)
     else: parser.error('--output is required')
