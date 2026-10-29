@@ -155,9 +155,9 @@ Phụ thuộc G2/G4. Chốt backend bằng spike PulseAudio/PipeWire và D-Bus t
 - [x] G7.4 Discover MPRIS players qua session bus; chọn player ưu tiên và cho người dùng đổi khi có nhiều player.
 - [x] G7.5 Hiển thị title/artist/artwork/status; xử lý metadata thiếu, player thoát và artwork lỗi, cache ảnh có giới hạn.
 - [x] G7.6 Play/pause/previous/next theo capability player; nút không được hỗ trợ có trạng thái rõ.
-- [ ] G7.7 Ưu tiên signals thay polling nhanh; reconnect khi audio/session service khởi động lại; dọn subscriptions khi không cần.
+- [x] G7.7 Ưu tiên signals thay polling nhanh; reconnect khi audio/session service khởi động lại; dọn subscriptions khi không cần.
 
-Giới hạn hiện tại: ảnh bìa chỉ nhận file cục bộ; URL remote có fallback rõ ràng. Hotplug được kiểm thử bằng null sink, chưa bằng headset thật. Reconnect đã kiểm thử khi child subscription dừng; restart service/session bus thực tế còn nằm ở G7.7. Bằng chứng: audio-result.json, media-result.json và các ca thiếu công cụ/service, exit trong PROGRESS.md.
+Giới hạn hiện tại: ảnh bìa chỉ nhận file cục bộ; URL remote có fallback rõ ràng. Hotplug được kiểm thử bằng null sink, chưa bằng headset thật. Reconnect đã kiểm thử bằng restart tiến trình PipeWire/Pulse và session dbus-daemon riêng: tự phục hồi, nhận signals mới và dọn subscription khi ẩn. G7.7 chốt trong môi trường GNOME/X11 tham chiếu; không suy rộng thành restart dịch vụ host, headset thật, sleep/resume hoặc mọi desktop. Bằng chứng bổ sung: benchmarks/audio-service-restart-2026-10-29.json và benchmarks/media-bus-restart-2026-10-29.json. Bằng chứng: audio-result.json, media-result.json và các ca thiếu công cụ/service, exit trong PROGRESS.md.
 
 Tiêu chí: volume đồng bộ với hệ thống, hotplug không crash; hai player không bị điều khiển nhầm; service thiếu vẫn dùng Dock được. Test mapping/capability và kiểm thử native với player, headset thực tế nếu có.
 

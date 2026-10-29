@@ -2,18 +2,26 @@
 use gio::{glib::{self, prelude::*, VariantDict, FromVariant}, DBusCallFlags};
 use serde::Serialize;
 use tauri::{AppHandle, Emitter};
-use std::{sync::{Arc, atomic::{AtomicBool, Ordering}, Mutex}, time::{Duration, Instant}};
+use std::{sync::{Arc, atomic::{AtomicBool, Ordering}, Mutex, OnceLock}, time::{Duration, Instant}};
 const PATH: &str = "/org/mpris/MediaPlayer2";
 const PLAYER: &str = "org.mpris.MediaPlayer2.Player";
 #[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Player {
-    pub name: String, pub owner: String, pub identity: String, pub title: String, pub artists: Vec<String>,
+    pub name: String, pub owner: String, pub bus_id: String, pub identity: String, pub title: String, pub artists: Vec<String>,
     pub art_url: String, pub status: String, pub can_play: bool, pub can_pause: bool, pub can_next: bool, pub can_previous: bool,
 }
 fn bus() -> Result<gio::DBusConnection, String> {
-    let connection = gio::bus_get_sync(gio::BusType::Session, gio::Cancellable::NONE).map_err(|e| format!("media_bus: {e}"))?;
+    static CONNECTION: OnceLock<Mutex<Option<gio::DBusConnection>>> = OnceLock::new();
+    let mut cached = CONNECTION.get_or_init(|| Mutex::new(None)).lock().map_err(|_| "media_bus_lock")?;
+    if let Some(connection) = cached.as_ref().filter(|connection| !connection.is_closed()) { return Ok(connection.clone()); }
+    *cached = None;
+    let address = gio::dbus_address_get_for_bus_sync(gio::BusType::Session, gio::Cancellable::NONE).map_err(|e| format!("media_bus: {e}"))?;
+    let connection = gio::DBusConnection::for_address_sync(&address,
+        gio::DBusConnectionFlags::AUTHENTICATION_CLIENT | gio::DBusConnectionFlags::MESSAGE_BUS_CONNECTION,
+        None, gio::Cancellable::NONE).map_err(|e| format!("media_bus: {e}"))?;
     connection.set_exit_on_close(false);
+    *cached = Some(connection.clone());
     Ok(connection)
 }
 fn call(connection: &gio::DBusConnection, name: &str, path: &str, interface: &str, method: &str, args: Option<&glib::Variant>) -> Result<glib::Variant, String> {
@@ -30,6 +38,10 @@ fn properties(connection: &gio::DBusConnection, name: &str, interface: &str) -> 
     VariantDict::from_variant(&reply.child_value(0)).ok_or("media_properties_response".into())
 }
 fn boolean(dict: &VariantDict, key: &str) -> bool { dict.lookup::<bool>(key).ok().flatten().unwrap_or(false) }
+fn validate_identity(owner: &str, bus_id: &str, expected_owner: &str, expected_bus_id: &str) -> Result<(), String> {
+    if owner != expected_owner || bus_id != expected_bus_id { return Err("media_player_replaced".into()); }
+    Ok(())
+}
 fn string(dict: &VariantDict, key: &str) -> String { dict.lookup::<String>(key).ok().flatten().unwrap_or_default().chars().take(2048).collect() }
 fn player(connection: &gio::DBusConnection, name: &str) -> Result<Player, String> {
     let owner = owner(connection, name)?;
@@ -37,7 +49,7 @@ fn player(connection: &gio::DBusConnection, name: &str) -> Result<Player, String
     let root = properties(connection, &owner, "org.mpris.MediaPlayer2")?;
     let metadata = props.lookup_value("Metadata", None).and_then(|value| VariantDict::from_variant(&value)).unwrap_or_default();
     let control = boolean(&props, "CanControl");
-    Ok(Player { name: name.into(), owner, identity: string(&root, "Identity"), title: string(&metadata, "xesam:title"),
+    Ok(Player { name: name.into(), owner, bus_id: connection.guid().into(), identity: string(&root, "Identity"), title: string(&metadata, "xesam:title"),
         artists: metadata.lookup::<Vec<String>>("xesam:artist").ok().flatten().unwrap_or_default().into_iter().take(16).map(|artist| artist.chars().take(256).collect()).collect(),
         art_url: string(&metadata, "mpris:artUrl"), status: string(&props, "PlaybackStatus"), can_play: control && boolean(&props, "CanPlay"), can_pause: control && boolean(&props, "CanPause"),
         can_next: control && boolean(&props, "CanGoNext"), can_previous: control && boolean(&props, "CanGoPrevious") })
@@ -59,12 +71,12 @@ fn discover() -> Result<Vec<Player>, String> {
 #[tauri::command]
 pub async fn get_media_players() -> Result<Vec<Player>, String> { tauri::async_runtime::spawn_blocking(discover).await.map_err(|e| e.to_string())? }
 #[tauri::command]
-pub async fn control_media(name: String, expected_owner: String, action: String) -> Result<(), String> {
+pub async fn control_media(name: String, expected_owner: String, expected_bus_id: String, action: String) -> Result<(), String> {
     tauri::async_runtime::spawn_blocking(move || {
         if !name.starts_with("org.mpris.MediaPlayer2.") { return Err("media_invalid_player".into()); }
         let connection = bus()?;
         let selected = player(&connection, &name)?;
-        if selected.owner != expected_owner { return Err("media_player_replaced".into()); }
+        validate_identity(&selected.owner, &selected.bus_id, &expected_owner, &expected_bus_id)?;
         let allowed = match action.as_str() { "Play" => selected.can_play, "Pause" => selected.can_pause, "Next" => selected.can_next, "Previous" => selected.can_previous, _ => false };
         if !allowed { return Err("media_action_unsupported".into()); }
         call(&connection, &expected_owner, PATH, PLAYER, &action, None)?; Ok(())
@@ -98,18 +110,23 @@ fn artwork(url: &str, cache: &Mutex<std::collections::VecDeque<(String, String)>
     Ok(Some(data))
 }
 #[tauri::command]
-pub async fn get_media_artwork(app: AppHandle, name: String, expected_owner: String) -> Result<Option<String>, String> {
+pub async fn get_media_artwork(app: AppHandle, name: String, expected_owner: String, expected_bus_id: String) -> Result<Option<String>, String> {
     use tauri::Manager;
     let cache = app.state::<MediaState>().1.clone();
     tauri::async_runtime::spawn_blocking(move || {
         if !name.starts_with("org.mpris.MediaPlayer2.") { return Err("media_invalid_player".into()); }
         let selected = player(&bus()?, &name)?;
-        if selected.owner != expected_owner { return Err("media_player_replaced".into()); }
+        validate_identity(&selected.owner, &selected.bus_id, &expected_owner, &expected_bus_id)?;
         artwork(&selected.art_url, &cache)
     }).await.map_err(|e| e.to_string())?
 }
 pub fn start(app: &AppHandle) {
     use tauri::Manager;
+    // GTK also uses GIO's shared session connection. Losing that bus must not
+    // terminate the whole app before the independent media connection retries.
+    if let Ok(shared) = gio::bus_get_sync(gio::BusType::Session, gio::Cancellable::NONE) {
+        shared.set_exit_on_close(false);
+    }
     let stop = app.state::<MediaState>().0.clone(); let app = app.clone();
     std::thread::spawn(move || {
         let context = glib::MainContext::new();
@@ -127,11 +144,16 @@ pub fn start(app: &AppHandle) {
                     while !stop.load(Ordering::Relaxed) && crate::popup::is_audio_active(&app) && !connection.is_closed() {
                         for _ in 0..32 { if !context.pending() { break; } context.iteration(false); }
                         if dirty.load(Ordering::Relaxed) && refreshed.elapsed() >= Duration::from_millis(200) {
-                            dirty.store(false, Ordering::Relaxed); let _ = app.emit("deskmorph:media", &discover()); refreshed = Instant::now();
+                            dirty.store(false, Ordering::Relaxed);
+                            let result = discover();
+                            let _ = app.emit("deskmorph:media", &result); refreshed = Instant::now();
                         }
                         std::thread::sleep(Duration::from_millis(100));
                     }
                     connection.signal_unsubscribe(props); connection.signal_unsubscribe(names);
+                    if connection.is_closed() && crate::popup::is_audio_active(&app) {
+                        let _ = app.emit("deskmorph:media", &Err::<Vec<Player>, _>("media_bus_unavailable"));
+                    }
                 } else { let _ = app.emit("deskmorph:media", &Err::<Vec<Player>, _>("media_bus_unavailable")); }
                 for _ in 0..20 { if stop.load(Ordering::Relaxed) || !crate::popup::is_audio_active(&app) { break; } std::thread::sleep(Duration::from_millis(100)); }
             }
@@ -143,6 +165,12 @@ pub fn stop(app: &AppHandle) { use tauri::Manager; app.state::<MediaState>().0.s
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn restarted_bus_cannot_reuse_an_old_players_unique_owner() {
+        assert!(validate_identity(":1.5", "new-bus", ":1.5", "new-bus").is_ok());
+        assert_eq!(validate_identity(":1.5", "new-bus", ":1.5", "old-bus").unwrap_err(), "media_player_replaced");
+        assert!(validate_identity(":1.6", "same-bus", ":1.5", "same-bus").is_err());
+    }
     #[test]
     fn artwork_is_local_bounded_cached_and_invalidated() {
         use gio::prelude::FileExt;

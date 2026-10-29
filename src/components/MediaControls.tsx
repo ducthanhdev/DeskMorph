@@ -5,7 +5,7 @@ import { listen } from "@tauri-apps/api/event";
 import { usePopupActive } from "../hooks/usePopupActive";
 import { usePopupFocus } from "../hooks/usePopupFocus";
 import { useI18n } from "../i18n/useI18n";
-type Player = { name: string; owner: string; identity: string; title: string; artists: string[]; artUrl: string; status: string; canPlay: boolean; canPause: boolean; canNext: boolean; canPrevious: boolean };
+type Player = { name: string; owner: string; busId: string; identity: string; title: string; artists: string[]; artUrl: string; status: string; canPlay: boolean; canPause: boolean; canNext: boolean; canPrevious: boolean };
 export function MediaControls({ generation }: { generation?: number }) {
   const { t } = useI18n();
   const [players, setPlayers] = useState<Player[]>([]);
@@ -21,20 +21,20 @@ export function MediaControls({ generation }: { generation?: number }) {
   const active = useRef(false);
   active.current = visible;
   const changing = useRef(false);
-  const player = players.find((player) => `${player.name}:${player.owner}` === selection) ?? players[0];
+  const player = players.find((player) => `${player.busId}:${player.name}:${player.owner}` === selection) ?? players[0];
   useEffect(() => {
     let disposed = false; setArtwork(null); setArtworkError(false);
     if (player?.artUrl && active.current) {
-      void invoke<string | null>("get_media_artwork", { name: player.name, expectedOwner: player.owner })
+      void invoke<string | null>("get_media_artwork", { name: player.name, expectedOwner: player.owner, expectedBusId: player.busId })
         .then((data) => { if (!disposed && active.current) setArtwork(data); })
         .catch(() => { if (!disposed && active.current) setArtworkError(true); });
     }
     return () => { disposed = true; };
-  }, [player?.name, player?.owner, player?.artUrl]);
+  }, [player?.busId, player?.name, player?.owner, player?.artUrl]);
   const refresh = async (signal?: AbortSignal) => {
     if (!active.current || signal?.aborted) return;
     try { const values = await invoke<Player[]>("get_media_players"); if (active.current && !signal?.aborted) { setPlayers(values); setError(null); } }
-    catch (e) { if (active.current && !signal?.aborted) setError(String(e)); }
+    catch (e) { if (active.current && !signal?.aborted) { setPlayers([]); setError(String(e)); } }
   };
   useEffect(() => {
     let disposed = false; const stops: (() => void)[] = [];
@@ -42,7 +42,7 @@ export function MediaControls({ generation }: { generation?: number }) {
       const results = await Promise.allSettled([
         listen<{ Ok: Player[] } | { Err: string }>("deskmorph:media", ({ payload }) => {
           if (disposed || !active.current) return;
-          if ("Ok" in payload) { setPlayers(payload.Ok); setError(null); } else setError(payload.Err);
+          if ("Ok" in payload) { setPlayers(payload.Ok); setError(null); } else { setPlayers([]); setError(payload.Err); }
         }),
       ]);
       for (const result of results) { if (result.status === "fulfilled") { if (disposed) result.value(); else stops.push(result.value); } else if (!disposed) setError(String(result.reason)); }
@@ -60,7 +60,7 @@ export function MediaControls({ generation }: { generation?: number }) {
   const control = async (action: string) => {
     if (!player || changing.current || !active.current) return;
     changing.current = true; setBusy(true); setError(null);
-    try { await invoke("control_media", { name: player.name, expectedOwner: player.owner, action }); await refresh(); }
+    try { await invoke("control_media", { name: player.name, expectedOwner: player.owner, expectedBusId: player.busId, action }); await refresh(); }
     catch (e) { if (active.current) setError(String(e)); }
     finally { changing.current = false; if (active.current) setBusy(false); }
   };
@@ -68,7 +68,7 @@ export function MediaControls({ generation }: { generation?: number }) {
     <h3>{t("media")}</h3>
     {error && <p role="alert">{t("mediaError")} <ErrorText error={error} /> <button onClick={() => void refresh()}>{t("retry")}</button></p>}
     {!player && !error && <p role="status">{t("mediaEmpty")}</p>}
-    {players.length > 1 && <fieldset disabled={busy}><legend>{t("mediaPlayer")}</legend>{players.map((item) => <label key={`${item.name}:${item.owner}`}><input type="radio" name="media-player" checked={item.name === player?.name && item.owner === player?.owner} onChange={() => setSelection(`${item.name}:${item.owner}`)} />{item.identity || item.name}</label>)}</fieldset>}
+    {players.length > 1 && <fieldset disabled={busy}><legend>{t("mediaPlayer")}</legend>{players.map((item) => <label key={`${item.busId}:${item.name}:${item.owner}`}><input type="radio" name="media-player" checked={item.name === player?.name && item.owner === player?.owner} onChange={() => setSelection(`${item.busId}:${item.name}:${item.owner}`)} />{item.identity || item.name}</label>)}</fieldset>}
     {player && <>
       {artwork && <img className="media-artwork" src={artwork} alt={t("mediaArtwork")} onError={() => { setArtwork(null); setArtworkError(true); }} />}
       {artworkError && <p>{t("mediaArtworkError")}</p>}

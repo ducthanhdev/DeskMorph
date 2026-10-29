@@ -1,0 +1,41 @@
+{
+  "hostBusId": "09c9d1b64f7c4cf9f3ab395b71ec840d",
+  "appFixturePid": 3152443,
+  "escapeAfterRestart": true,
+  "oneMetadataSubscriptionAndHiddenCleanup": true,
+  "cycles": [
+    {
+      "oldBusPid": 3152396,
+      "newBusPid": 3152932,
+      "replacementPlayerPid": 3152944,
+      "outageSeconds": 4.512,
+      "recoverySeconds": 1.678,
+      "automaticRecovery": true,
+      "pauseTargetsReplacement": true,
+      "metadataSignalAfterReconnect": true
+    },
+    {
+      "oldBusPid": 3152932,
+      "newBusPid": 3153273,
+      "replacementPlayerPid": 3153274,
+      "outageSeconds": 4.584,
+      "recoverySeconds": 1.656,
+      "automaticRecovery": true,
+      "pauseTargetsReplacement": true,
+      "metadataSignalAfterReconnect": true
+    }
+  ],
+  "ownedPids": [
+    3152396,
+    3152397,
+    3152932,
+    3152944,
+    3153273,
+    3153274
+  ],
+  "ownedProcessesExited": true,
+  "normalPid": 3153438,
+  "configRestored": true,
+  "hostBusIdAfter": "09c9d1b64f7c4cf9f3ab395b71ec840d",
+  "scope": "Native X11 media popup with private restartable session dbus-daemon and owned MPRIS fixtures; host AT-SPI address explicitly preserved. No host bus restart or real media commands."
+}

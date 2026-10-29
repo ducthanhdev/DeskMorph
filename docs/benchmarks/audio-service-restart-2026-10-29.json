@@ -1,0 +1,68 @@
+{
+  "hostBefore": {
+    "server_string": "/run/user/1000/pulse/native",
+    "server_name": "PulseAudio (on PipeWire 1.6.8)",
+    "default_sink_name": "alsa_output.pci-0000_00_1f.3.analog-stereo"
+  },
+  "cycles": [
+    {
+      "kind": "pulse-service",
+      "oldServicePid": 3147237,
+      "newServicePid": 3147645,
+      "oldSubscriptionPid": 3147608,
+      "newSubscriptionPid": 3148327,
+      "errorAfterSeconds": 0.078,
+      "recoveredAfterSeconds": 2.093,
+      "autoRecovery": true,
+      "externalVolumeSignal": true,
+      "uiMuteTargetsPrivateSink": true,
+      "privateSinkFactory": "support.null-audio-sink"
+    },
+    {
+      "kind": "pulse-service",
+      "oldServicePid": 3147645,
+      "newServicePid": 3148427,
+      "oldSubscriptionPid": 3148327,
+      "newSubscriptionPid": 3148544,
+      "errorAfterSeconds": 0.056,
+      "recoveredAfterSeconds": 2.072,
+      "autoRecovery": true,
+      "externalVolumeSignal": true,
+      "uiMuteTargetsPrivateSink": true,
+      "privateSinkFactory": "support.null-audio-sink"
+    },
+    {
+      "kind": "core-and-pulse",
+      "oldServicePid": 3148427,
+      "newServicePid": 3148651,
+      "oldSubscriptionPid": 3148544,
+      "newSubscriptionPid": 3148713,
+      "errorAfterSeconds": 0.115,
+      "recoveredAfterSeconds": 1.901,
+      "autoRecovery": true,
+      "externalVolumeSignal": true,
+      "uiMuteTargetsPrivateSink": true,
+      "privateSinkFactory": "support.null-audio-sink"
+    }
+  ],
+  "appFixturePid": 3147276,
+  "hiddenStopsSubscription": true,
+  "reopenAfterRestart": true,
+  "servicePids": [
+    3147236,
+    3147237,
+    3147645,
+    3148427,
+    3148650,
+    3148651
+  ],
+  "servicesExited": true,
+  "normalPid": 3148951,
+  "configRestored": true,
+  "hostAfter": {
+    "server_string": "/run/user/1000/pulse/native",
+    "server_name": "PulseAudio (on PipeWire 1.6.8)",
+    "default_sink_name": "alsa_output.pci-0000_00_1f.3.analog-stereo"
+  },
+  "scope": "Real private PipeWire 1.6.8 / pipewire-pulse processes, hardware-free null sinks and private sockets; native X11 popup reconnect and hidden cleanup. No host service restart, headset, system suspend or session D-Bus restart coverage."
+}
