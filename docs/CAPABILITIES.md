@@ -1,6 +1,6 @@
 # Khả năng desktop và phạm vi đã kiểm thử
 
-Ma trận ban đầu cho G0.5/G2.1. Đây là bản development; cổng phát hành vẫn nằm trong [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md). Bằng chứng chi tiết và những ca còn thiếu nằm trong [PROGRESS.md](PROGRESS.md).
+Ma trận ban đầu cho G0.5/G2.1. Đây là bản development; cổng phát hành vẫn nằm trong [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md). Bằng chứng chi tiết và những ca còn thiếu nằm trong [PROGRESS.md](PROGRESS.md). Phạm vi version/core-flow đã chốt tại [PLATFORM_SUPPORT_MATRIX.md](PLATFORM_SUPPORT_MATRIX.md); đây là giới hạn công bố, không phải tuyên bố hỗ trợ các desktop chưa có trong bảng.
 
 | Môi trường | Liệt kê / chuyển / yêu cầu đóng cửa sổ native | Dock / popup | Hình nền | Workspace | Global shortcut |
 | --- | --- | --- | --- | --- | --- |

@@ -726,3 +726,9 @@ Script cần AT-SPI, Python GI, GTK3 và libXtst. Chỉ gửi phím khi kiểm t
 - Tải và giải nén package vào `/tmp`, không cài host; KWin 5.27.11 virtual và Plasma 5.27.12 khởi động với XDG/D-Bus riêng. `org.kde.plasmashell /PlasmaShell evaluateScript` phản hồi; script `org.kde.image` và nhóm `Wallpaper/org.kde.image/General` đối chiếu với `setaswallpaper.desktop` của KDE.
 - Không chốt adapter: KWin virtual không quảng bá `wl_shm`, `grim` không chụp được output; ScreenShot2 yêu cầu caller được cấp quyền. Vì vậy chưa có bằng chứng pixel/readback/error của sản phẩm. [Bản ghi](benchmarks/kde-wallpaper-research-2026-10-29/results.json), [giới hạn](KDE_WALLPAPER.md). G6.9 vẫn mở, tổng 90/99.
 - Đánh giá file: giữ JSON tóm tắt và tài liệu API vì giúp tái lập quyết định unsupported; không commit package, log, profile hay ảnh chụp lỗi trong `/tmp`.
+
+## G9.4 — Ma trận phiên bản và phạm vi công bố (29/10/2026)
+
+- Chốt luồng cốt lõi theo tổ hợp có bằng chứng: GNOME 46.0/X11 là `Verified`; GNOME 46/Mutter 46.2 Wayland và COSMIC cosmic-bg1.11.0/cosmic-comp8cb1802 là `Experimental, wallpaper-only`; KDE Plasma5.27.12/KWin5.27.11 là `Unsupported` vì thiếu pixel/readback. Không suy một output nested thành hỗ trợ toàn desktop, DPI hoặc hotplug.
+- [Ma trận](PLATFORM_SUPPORT_MATRIX.md) ghi version, output, luồng đã chạy và liên kết benchmark. Đây là phạm vi công bố cụ thể nên G9.4 đạt trong phạm vi đã tuyên bố; G2.10/G2.11, G5.9, G6.7, G6.9, G9.8, G9.11 và G9.12 vẫn mở. Tổng 91/99.
+- Đánh giá file: giữ ma trận và các benchmark đã chọn vì reviewer cần đối chiếu version/core-flow; không thêm ảnh/log mới.
