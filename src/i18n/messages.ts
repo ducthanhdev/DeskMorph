@@ -1,5 +1,7 @@
 export const messages = {
   vi: {
+    previewHelp: "Rê chuột để thử phóng to. Mẫu luôn hiển thị để bạn chỉnh sửa; thử hiệu ứng không mở ứng dụng.", previewDockOff: "Dock đang tắt. Bật Dock để dùng giao diện này trên desktop.",
+    previewAnimation: "Thử hiệu ứng mở ứng dụng", restoreAppearance: "Khôi phục giao diện lúc mở Studio",
     capabilityProbeFailed: "Chưa xác minh được khả năng này. Hãy kiểm tra lại desktop.", developing: "Đang phát triển", refreshCapabilities: "Kiểm tra lại khả năng desktop",
     autoHideInactive: "Tùy chọn tự ẩn đã lưu đang tạm dừng; Dock vẫn hiển thị trong phiên này.", windowStatusUnavailable: "Chưa đọc được trạng thái cửa sổ",
     dockPlacement: "Đặt Dock ở cạnh màn hình", nativeWindowsUnavailable: "Quản lý cửa sổ native hiện chỉ có adapter X11. XWayland không bao phủ cửa sổ Wayland.",
@@ -38,6 +40,8 @@ export const messages = {
     unknown: "Chưa xác định", today: "Hôm nay", previousMonth: "Tháng trước", nextMonth: "Tháng sau", details: "Chi tiết", themeNord: "Nord tối giản", themeNeon: "Neon tím", themePop: "Pop Teal",
   },
   en: {
+    previewHelp: "Hover to preview magnification. The sample stays visible while you edit; previewing an animation does not open an app.", previewDockOff: "The Dock is off. Enable it to use this appearance on your desktop.",
+    previewAnimation: "Preview launch animation", restoreAppearance: "Restore appearance from Studio startup",
     capabilityProbeFailed: "This capability could not be verified. Check the desktop again.", developing: "In development", refreshCapabilities: "Check desktop capabilities again",
     autoHideInactive: "The saved auto-hide preference is paused; the Dock stays visible in this session.", windowStatusUnavailable: "Window state unavailable",
     dockPlacement: "Place Dock at the screen edge", nativeWindowsUnavailable: "Native window management currently has an X11 adapter only. XWayland does not cover Wayland windows.",

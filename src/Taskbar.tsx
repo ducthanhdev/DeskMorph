@@ -1,16 +1,18 @@
 import React, { useEffect, useLayoutEffect, useState, useRef } from "react";
 import { invoke } from "./ipc";
 import { useConfig } from "./config/store";
-import { dockMetrics, dockSurface } from "./dockAppearance";
+import { dockMetrics, dockSurface, dockAppStyle, magnificationScale } from "./dockAppearance";
 import { useI18n } from "./i18n/useI18n";
 import { desktopIdForPin, desktopIsMissing, installedForClass, installedForPin, launchCommandForPin } from "./appSearch";
 import { useInstalledApps } from "./hooks/useInstalledApps";
 import { SystemWidgets } from "./components/SystemWidgets";
-import { AppIcon } from "./components/AppIcon";
+import { DockAppTile, DockStats } from "./components/DockParts";
+import { getPinnedVisual, getAppVisual } from "./dockVisuals";
 import { useDockTooltip } from "./hooks/useDockTooltip";
 import { usePlatform } from "./hooks/usePlatform";
 import { usePolling } from "./hooks/usePolling";
 import { useAsyncLifetime } from "./hooks/useAsyncLifetime";
+import { useReducedMotion } from "./hooks/useReducedMotion";
 import { useClock } from "./hooks/useClock";
 import { formatClock } from "./dateTime";
 import { capabilityReason } from "./capabilities";
@@ -19,22 +21,13 @@ import { listen } from "@tauri-apps/api/event";
 import {
   SystemStats,
   OpenWindow,
-  PinnedApp,
   InstalledApp,
   DEFAULT_PINNED_APPS,
 } from "./types";
 import {
   Volume2,
-  Cpu,
-  HardDrive,
   Shuffle,
-  Terminal,
-  Folder,
-  Globe,
   Sparkles,
-  AppWindow,
-  Code2,
-  Settings,
 } from "lucide-react";
 
 export const Taskbar: React.FC = () => {
@@ -46,7 +39,6 @@ export const Taskbar: React.FC = () => {
   const [retryAction, setRetryAction] = useState<(() => void) | null>(null);
   const [operationError, setOperationError] = useState<string | null>(null);
   const [stats, setStats] = useState<SystemStats | null>(null);
-  const ramDescription = stats ? `RAM: ${(stats.ram_used_mb / 1024).toFixed(1)} GiB / ${(stats.ram_total_mb / 1024).toFixed(1)} GiB (${stats.ram_percent}%)` : undefined;
   const [openWindows, setOpenWindows] = useState<OpenWindow[]>([]);
   const appsRef = useRef<HTMLDivElement>(null);
   const [appsScroll, setAppsScroll] = useState({ overflow: false, back: false, forward: false });
@@ -109,15 +101,8 @@ export const Taskbar: React.FC = () => {
     window.addEventListener("blur", onBlur);
     return () => { window.removeEventListener("keydown", cancel); window.removeEventListener("blur", onBlur); };
   }, []);
-  const [systemReducedMotion, setSystemReducedMotion] = useState(() => matchMedia("(prefers-reduced-motion: reduce)").matches);
-  const reducedMotion = config.reduceMotion || systemReducedMotion;
+  const reducedMotion = useReducedMotion(config.reduceMotion);
   const tooltip = useDockTooltip(popupVisible || Boolean(draggingId));
-  useEffect(() => {
-    const query = matchMedia("(prefers-reduced-motion: reduce)");
-    const changed = () => setSystemReducedMotion(query.matches);
-    query.addEventListener("change", changed);
-    return () => query.removeEventListener("change", changed);
-  }, []);
 
   const keepVisibleBriefly = (durationMs = 7000) => {
     setPreviewVisible(true);
@@ -218,7 +203,7 @@ export const Taskbar: React.FC = () => {
     };
   }, []);
 
-  const { height: currentHeight, iconSize: btnSize, maxScale, hitWidth, hitHeight } = dockMetrics(config);
+  const { height: currentHeight, iconSize: btnSize, maxScale } = dockMetrics(config);
 
   // Sync window physical size when hidden state changes
   useEffect(() => {
@@ -295,25 +280,10 @@ export const Taskbar: React.FC = () => {
     }
 
     rafId.current = requestAnimationFrame(() => {
-      const R = 110; // Influence radius in pixels
-
       const nextScales: Record<string, number> = {};
-
       iconRefs.current.forEach((el, id) => {
-        if (!el) return;
         const rect = el.getBoundingClientRect();
-        // The button stays fixed; only its decorative visual layer is scaled.
-        const centerX = rect.left + rect.width / 2;
-        const d = Math.abs(centerX - mouseViewportX);
-
-        if (d <= R) {
-          // Cosine wave: scale = 1 + (maxScale - 1) * cos((d / R) * (PI / 2))
-          const cosine = Math.cos((d / R) * (Math.PI / 2));
-          const scale = 1 + (maxScale - 1) * cosine;
-          nextScales[id] = Math.round(scale * 1000) / 1000;
-        } else {
-          nextScales[id] = 1;
-        }
+        nextScales[id] = magnificationScale(Math.abs(rect.left + rect.width / 2 - mouseViewportX), maxScale);
       });
 
       setIsMagnifying(true);
@@ -418,130 +388,6 @@ export const Taskbar: React.FC = () => {
     }
   };
 
-  const getPinnedVisual = (app: PinnedApp) => {
-    switch (app.iconType) {
-      case "chrome":
-      case "browser":
-        return {
-          icon: <Globe size={20} />,
-          color: app.color || "#38bdf8",
-          bg: "rgba(56, 189, 248, 0.18)",
-          border: "rgba(56, 189, 248, 0.45)",
-        };
-      case "code":
-        return {
-          icon: <Code2 size={20} />,
-          color: app.color || "#818cf8",
-          bg: "rgba(129, 140, 248, 0.2)",
-          border: "rgba(129, 140, 248, 0.5)",
-        };
-      case "terminal":
-        return {
-          icon: <Terminal size={20} />,
-          color: app.color || "#34d399",
-          bg: "rgba(52, 211, 153, 0.18)",
-          border: "rgba(52, 211, 153, 0.45)",
-        };
-      case "files":
-        return {
-          icon: <Folder size={20} />,
-          color: app.color || "#fbbf24",
-          bg: "rgba(251, 191, 36, 0.18)",
-          border: "rgba(251, 191, 36, 0.45)",
-        };
-      case "settings":
-        return {
-          icon: <Settings size={20} />,
-          color: app.color || "#94a3b8",
-          bg: "rgba(148, 163, 184, 0.18)",
-          border: "rgba(148, 163, 184, 0.45)",
-        };
-      default:
-        return {
-          icon: <AppWindow size={20} />,
-          color: app.color || "#c084fc",
-          bg: "rgba(192, 132, 252, 0.18)",
-          border: "rgba(192, 132, 252, 0.45)",
-        };
-    }
-  };
-
-  const getAppVisual = (className: string) => {
-    const lower = className.toLowerCase();
-    if (lower.includes("chrome") || lower.includes("chromium")) {
-      return {
-        icon: <Globe size={20} />,
-        color: "#38bdf8",
-        bg: "rgba(56, 189, 248, 0.18)",
-        border: "rgba(56, 189, 248, 0.45)",
-      };
-    }
-    if (lower.includes("firefox")) {
-      return {
-        icon: <Globe size={20} />,
-        color: "#fb923c",
-        bg: "rgba(251, 146, 60, 0.18)",
-        border: "rgba(251, 146, 60, 0.45)",
-      };
-    }
-    if (
-      lower.includes("terminal") ||
-      lower.includes("console") ||
-      lower.includes("pty") ||
-      lower.includes("kitty") ||
-      lower.includes("alacritty")
-    ) {
-      return {
-        icon: <Terminal size={20} />,
-        color: "#34d399",
-        bg: "rgba(52, 211, 153, 0.18)",
-        border: "rgba(52, 211, 153, 0.45)",
-      };
-    }
-    if (
-      lower.includes("code") ||
-      lower.includes("cursor") ||
-      lower.includes("ide") ||
-      lower.includes("antigravity")
-    ) {
-      return {
-        icon: <Code2 size={20} />,
-        color: "#818cf8",
-        bg: "rgba(129, 140, 248, 0.2)",
-        border: "rgba(129, 140, 248, 0.5)",
-      };
-    }
-    if (lower.includes("nautilus") || lower.includes("file") || lower.includes("thunar")) {
-      return {
-        icon: <Folder size={20} />,
-        color: "#fbbf24",
-        bg: "rgba(251, 191, 36, 0.18)",
-        border: "rgba(251, 191, 36, 0.45)",
-      };
-    }
-    if (lower.includes("setting") || lower.includes("preference")) {
-      return {
-        icon: <Settings size={20} />,
-        color: "#94a3b8",
-        bg: "rgba(148, 163, 184, 0.18)",
-        border: "rgba(148, 163, 184, 0.45)",
-      };
-    }
-    if (lower.includes("deskmorph")) {
-      return {
-        icon: <Sparkles size={20} />,
-        color: "#48b9c7",
-        bg: "rgba(72, 185, 199, 0.2)",
-        border: "rgba(72, 185, 199, 0.5)",
-      };
-    }
-    return {
-      icon: <AppWindow size={20} />,
-      color: "#c084fc",
-      bg: "rgba(192, 132, 252, 0.18)",
-      border: "rgba(192, 132, 252, 0.45)",
-    };
-  };
 
 
   const launcherSize = Math.max(28, btnSize - 2);
@@ -811,59 +657,12 @@ export const Taskbar: React.FC = () => {
                       ? `${pinned.name} • ${count("window", windows.length)} • ${t("selectWindow")}`
                       : `${pinned.name} • ${platform?.windows.enumerate ? t("open") : t("windowStatusUnavailable")}`
                   }
-                  style={{
-                    width: `${hitWidth}px`,
-                    height: `${hitHeight}px`,
-                    ["--magnify-scale" as string]: magnifyScale,
-                    color: visual.color,
-                    ["--icon-background" as string]: isActive
-                      ? visual.bg
-                      : isRunning
-                      ? "rgba(255, 255, 255, 0.08)"
-                      : "rgba(255, 255, 255, 0.03)",
-                    ["--icon-border" as string]: isActive
-                      ? visual.border
-                      : isRunning
-                      ? "rgba(255, 255, 255, 0.12)"
-                      : "rgba(255, 255, 255, 0.05)",
-                    opacity: isRunning ? 1 : 0.78,
-                    ["--launch-border" as string]: visual.border,
-                    ["--launch-glow" as string]: visual.bg,
-                  }}
+                  style={dockAppStyle(config, visual, true, isRunning, isActive, magnifyScale)}
                 >
-                  <span className="app-icon-tile">
-                  <span className="app-icon-visual"><span
-                    className={`app-icon-glyph ${
-                      isLaunching && config.bouncingLaunch !== false && !reducedMotion ? "glyph-bouncing" : ""
-                    }`}
-                  >
-                    {installed?.iconPath ? <AppIcon path={installed.iconPath} size={Math.round(btnSize * .68)} /> : visual.icon}
-                  </span></span>
-
-                  {missing && <span className="app-unavailable-mark" aria-hidden="true">!</span>}
-
-                  {/* Dynamic Floor Shadow / Glow beneath bouncing icon */}
-                  {isLaunching && config.dynamicShadow !== false && !reducedMotion && (
-                    <span
-                      className="dock-launch-shadow"
-                      style={{
-                        ["--shadow-color" as string]: visual.color,
-                      }}
-                    />
-                  )}
-
-                  {windows.length > 1 && <span className="dock-window-count" aria-hidden="true">{windows.length > 9 ? "9+" : windows.length}</span>}
-                  {/* Running Indicator Dot */}
-                  {isRunning && (
-                    <span
-                      className={`running-dot ${isActive ? "dot-active" : "dot-inactive"}`}
-                      style={{
-                        background: isActive ? visual.color : "rgba(255, 255, 255, 0.55)",
-                        boxShadow: isActive ? `0 0 8px ${visual.color}` : "none",
-                      }}
-                    />
-                  )}
-                  </span>
+                  <DockAppTile visual={visual} iconPath={installed?.iconPath} glyphSize={Math.round(btnSize * .68)}
+                    running={isRunning} active={isActive} count={windows.length} missing={missing}
+                    bouncing={isLaunching && config.bouncingLaunch !== false && !reducedMotion}
+                    shadow={isLaunching && config.dynamicShadow !== false && !reducedMotion} />
                 </button>
               );
             })}
@@ -910,26 +709,10 @@ export const Taskbar: React.FC = () => {
                       })
                     }
                     data-dock-tooltip={`${win.class_name} • ${count("window", windows.length)} • ${t("selectWindow")}`}
-                    style={{
-                      width: `${hitWidth}px`,
-                      height: `${hitHeight}px`,
-                      ["--magnify-scale" as string]: magnifyScale,
-                      color: visual.color,
-                      ["--icon-background" as string]: isActive ? visual.bg : "rgba(255, 255, 255, 0.05)",
-                      ["--icon-border" as string]: isActive ? visual.border : "rgba(255, 255, 255, 0.08)",
-                    }}
+                    style={dockAppStyle(config, visual, false, true, isActive, magnifyScale)}
                   >
-                    <span className="app-icon-tile">
-                    <span className="app-icon-visual"><span className="app-icon-glyph">{installed?.iconPath ? <AppIcon path={installed.iconPath} size={Math.round(btnSize * .68)} /> : visual.icon}</span></span>
-                    {windows.length > 1 && <span className="dock-window-count" aria-hidden="true">{windows.length > 9 ? "9+" : windows.length}</span>}
-                    <span
-                      className={`running-dot ${isActive ? "dot-active" : "dot-inactive"}`}
-                      style={{
-                        background: isActive ? visual.color : "rgba(255, 255, 255, 0.5)",
-                        boxShadow: isActive ? `0 0 8px ${visual.color}` : "none",
-                      }}
-                    />
-                    </span>
+                    <DockAppTile visual={visual} iconPath={installed?.iconPath} glyphSize={Math.round(btnSize * .68)}
+                      running active={isActive} count={windows.length} />
                   </button>
                 );
               })}
@@ -944,41 +727,7 @@ export const Taskbar: React.FC = () => {
           {config.showStats && <div className="dock-divider" />}
 
           {/* Live System Stats */}
-          {config.showStats && stats && (
-            <div className="taskbar-section stats-section">
-              <div className="stat-pill" role="img" aria-label={`CPU: ${stats.cpu_usage}%`} data-dock-tooltip={`CPU: ${stats.cpu_usage}%`}>
-                <Cpu size={14} className="stat-icon cpu-icon" />
-                <div className="stat-bar-mini">
-                  <div
-                    className="stat-bar-fill"
-                    style={{
-                      width: `${Math.min(stats.cpu_usage, 100)}%`,
-                      background: stats.cpu_usage > 75 ? "#ef4444" : config.accentColor,
-                    }}
-                  />
-                </div>
-                <span className="stat-text">{stats.cpu_usage.toFixed(0)}%</span>
-              </div>
-
-              <div
-                className="stat-pill"
-                role="img" aria-label={ramDescription}
-                data-dock-tooltip={ramDescription}
-              >
-                <HardDrive size={14} className="stat-icon ram-icon" />
-                <div className="stat-bar-mini">
-                  <div
-                    className="stat-bar-fill"
-                    style={{
-                      width: `${Math.min(stats.ram_percent, 100)}%`,
-                      background: stats.ram_percent > 85 ? "#ef4444" : "#a855f7",
-                    }}
-                  />
-                </div>
-                <span className="stat-text">{stats.ram_percent.toFixed(0)}%</span>
-              </div>
-            </div>
-          )}
+          {config.showStats && <DockStats stats={stats} accentColor={config.accentColor} />}
 
           {/* Wallpaper quick shuffle */}
           {config.showShuffle && (

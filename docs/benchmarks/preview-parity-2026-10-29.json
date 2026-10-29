@@ -1,0 +1,817 @@
+{
+  "passed": [
+    "preview and real Dock native glyph pixels/hit slots match at height 40 and 90",
+    "top/bottom, size clamp, opacity/radius/spacing changes render on both surfaces",
+    "cross-tab restore returns startup appearance and preserves pins/widgets/auto-hide",
+    "preview launch animation moves real rendered glyph without launching application",
+    "hover magnifies preview without moving its hit slot; reduced-motion suppresses it"
+  ],
+  "observations": [
+    {
+      "phase": "startup",
+      "appearance": {
+        "position": "top",
+        "height": 40,
+        "iconSize": 56,
+        "iconSpacing": 0,
+        "opacity": 0.2,
+        "borderRadius": 0,
+        "accentColor": "#48b9c7",
+        "bouncingLaunch": true,
+        "dynamicShadow": true,
+        "magnification": true,
+        "maxMagnificationScale": 1.35,
+        "reduceMotion": true
+      },
+      "previewGlyph": {
+        "width": 18,
+        "height": 18,
+        "y": 11,
+        "pixels": 324
+      },
+      "dockGlyph": {
+        "width": 18,
+        "height": 18,
+        "y": 11,
+        "pixels": 324
+      },
+      "hitSlot": [
+        27,
+        30
+      ],
+      "gaps": [
+        -1,
+        0
+      ],
+      "hoverGlyph": {
+        "width": 18,
+        "height": 18,
+        "y": 11,
+        "pixels": 324
+      }
+    },
+    {
+      "phase": "preset",
+      "appearance": {
+        "position": "bottom",
+        "height": 48,
+        "iconSize": 32,
+        "iconSpacing": 6,
+        "opacity": 0.8,
+        "borderRadius": 12,
+        "accentColor": "#88c0d0",
+        "bouncingLaunch": false,
+        "dynamicShadow": false,
+        "magnification": true,
+        "maxMagnificationScale": 1.2,
+        "reduceMotion": false
+      },
+      "previewGlyph": {
+        "width": 22,
+        "height": 22,
+        "y": 13,
+        "pixels": 484
+      },
+      "dockGlyph": {
+        "width": 22,
+        "height": 22,
+        "y": 13,
+        "pixels": 484
+      },
+      "hitSlot": [
+        33,
+        38
+      ],
+      "gaps": [
+        5,
+        6
+      ],
+      "hoverGlyph": {
+        "width": 26,
+        "height": 26,
+        "y": 11,
+        "pixels": 676
+      }
+    },
+    {
+      "phase": "restored",
+      "appearance": {
+        "position": "top",
+        "height": 40,
+        "iconSize": 56,
+        "iconSpacing": 0,
+        "opacity": 0.2,
+        "borderRadius": 0,
+        "accentColor": "#48b9c7",
+        "bouncingLaunch": true,
+        "dynamicShadow": true,
+        "magnification": true,
+        "maxMagnificationScale": 1.35,
+        "reduceMotion": true
+      },
+      "previewGlyph": {
+        "width": 18,
+        "height": 18,
+        "y": 11,
+        "pixels": 324
+      },
+      "dockGlyph": {
+        "width": 18,
+        "height": 18,
+        "y": 11,
+        "pixels": 324
+      },
+      "hitSlot": [
+        27,
+        30
+      ],
+      "gaps": [
+        -1,
+        0
+      ],
+      "hoverGlyph": {
+        "width": 18,
+        "height": 18,
+        "y": 11,
+        "pixels": 324
+      }
+    },
+    {
+      "phase": "startup",
+      "appearance": {
+        "position": "bottom",
+        "height": 90,
+        "iconSize": 56,
+        "iconSpacing": 24,
+        "opacity": 1,
+        "borderRadius": 40,
+        "accentColor": "#48b9c7",
+        "bouncingLaunch": true,
+        "dynamicShadow": true,
+        "magnification": true,
+        "maxMagnificationScale": 1.35,
+        "reduceMotion": true
+      },
+      "previewGlyph": {
+        "width": 38,
+        "height": 38,
+        "y": 26,
+        "pixels": 1444
+      },
+      "dockGlyph": {
+        "width": 38,
+        "height": 38,
+        "y": 26,
+        "pixels": 1444
+      },
+      "hitSlot": [
+        56,
+        80
+      ],
+      "gaps": [
+        24,
+        24
+      ],
+      "hoverGlyph": {
+        "width": 38,
+        "height": 38,
+        "y": 26,
+        "pixels": 1444
+      }
+    },
+    {
+      "phase": "preset",
+      "appearance": {
+        "position": "bottom",
+        "height": 48,
+        "iconSize": 32,
+        "iconSpacing": 6,
+        "opacity": 0.8,
+        "borderRadius": 12,
+        "accentColor": "#88c0d0",
+        "bouncingLaunch": false,
+        "dynamicShadow": false,
+        "magnification": true,
+        "maxMagnificationScale": 1.2,
+        "reduceMotion": false
+      },
+      "previewGlyph": {
+        "width": 22,
+        "height": 22,
+        "y": 13,
+        "pixels": 484
+      },
+      "dockGlyph": {
+        "width": 22,
+        "height": 22,
+        "y": 13,
+        "pixels": 484
+      },
+      "hitSlot": [
+        33,
+        38
+      ],
+      "gaps": [
+        5,
+        6
+      ],
+      "hoverGlyph": {
+        "width": 26,
+        "height": 26,
+        "y": 11,
+        "pixels": 676
+      }
+    },
+    {
+      "phase": "restored",
+      "appearance": {
+        "position": "bottom",
+        "height": 90,
+        "iconSize": 56,
+        "iconSpacing": 24,
+        "opacity": 1,
+        "borderRadius": 40,
+        "accentColor": "#48b9c7",
+        "bouncingLaunch": true,
+        "dynamicShadow": true,
+        "magnification": true,
+        "maxMagnificationScale": 1.35,
+        "reduceMotion": true
+      },
+      "previewGlyph": {
+        "width": 38,
+        "height": 38,
+        "y": 26,
+        "pixels": 1444
+      },
+      "dockGlyph": {
+        "width": 38,
+        "height": 38,
+        "y": 26,
+        "pixels": 1444
+      },
+      "hitSlot": [
+        56,
+        80
+      ],
+      "gaps": [
+        24,
+        24
+      ],
+      "hoverGlyph": {
+        "width": 38,
+        "height": 38,
+        "y": 26,
+        "pixels": 1444
+      }
+    },
+    {
+      "previewAnimationFrames": [
+        {
+          "width": 38,
+          "height": 38,
+          "y": 25,
+          "pixels": 1444
+        },
+        {
+          "width": 38,
+          "height": 38,
+          "y": 25,
+          "pixels": 1444
+        },
+        {
+          "width": 40,
+          "height": 36,
+          "y": 27,
+          "pixels": 1440
+        },
+        {
+          "width": 38,
+          "height": 38,
+          "y": 21,
+          "pixels": 1444
+        },
+        {
+          "width": 36,
+          "height": 39,
+          "y": 17,
+          "pixels": 1404
+        },
+        {
+          "width": 36,
+          "height": 39,
+          "y": 17,
+          "pixels": 1404
+        },
+        {
+          "width": 36,
+          "height": 40,
+          "y": 16,
+          "pixels": 1440
+        },
+        {
+          "width": 36,
+          "height": 39,
+          "y": 17,
+          "pixels": 1404
+        },
+        {
+          "width": 36,
+          "height": 38,
+          "y": 20,
+          "pixels": 1368
+        },
+        {
+          "width": 36,
+          "height": 38,
+          "y": 23,
+          "pixels": 1368
+        },
+        {
+          "width": 36,
+          "height": 38,
+          "y": 23,
+          "pixels": 1368
+        },
+        {
+          "width": 38,
+          "height": 36,
+          "y": 27,
+          "pixels": 1368
+        },
+        {
+          "width": 38,
+          "height": 36,
+          "y": 27,
+          "pixels": 1368
+        },
+        {
+          "width": 38,
+          "height": 38,
+          "y": 25,
+          "pixels": 1444
+        },
+        {
+          "width": 40,
+          "height": 36,
+          "y": 27,
+          "pixels": 1440
+        }
+      ],
+      "launchMarkerAbsent": true
+    }
+  ],
+  "fixturePids": [
+    2213246,
+    2214355
+  ],
+  "normalPid": 2215840,
+  "fixturesRemoved": true,
+  "configRestored": true,
+  "dockMotionRegression": {
+    "passed": [
+      "default and eight extreme size/spacing combinations preserve native hit targets and keep magnified/bouncing icon pixels inside viewport",
+      "independent bounce and magnification toggles suppress their visual effects without changing hit slots or launch input",
+      "app reduced-motion preference disables magnification and bounce while retaining launch input",
+      "live GNOME enable-animations changes disable and restore WebKit reduced-motion effects in the same process"
+    ],
+    "pid": 2215840,
+    "cases": 14,
+    "preferencesRestored": true
+  },
+  "tooltipRegression": {
+    "passed": [
+      "top: launcher/pin/clock/widgets share delay, native focus, work-area bounds and empty input region; long text pixels fit",
+      "top: launcher/calendar/audio suppress pending and new tooltips while open",
+      "bottom: launcher/pin/clock/widgets share delay, native focus, work-area bounds and empty input region; long text pixels fit",
+      "bottom: launcher/calendar/audio suppress pending and new tooltips while open"
+    ],
+    "timings": [
+      {
+        "text": "Tìm ứng dụng",
+        "position": "top",
+        "seconds": 0.6,
+        "rect": [
+          2248,
+          114,
+          250,
+          44
+        ]
+      },
+      {
+        "text": "Mở lịch",
+        "position": "top",
+        "seconds": 0.583,
+        "rect": [
+          3240,
+          114,
+          250,
+          44
+        ]
+      },
+      {
+        "text": "DeskMorph Tooltip — tên ứng dụng rất dài để kiểm t",
+        "position": "top",
+        "seconds": 0.567,
+        "rect": [
+          2574,
+          114,
+          250,
+          44
+        ]
+      },
+      {
+        "text": "Âm thanh",
+        "position": "top",
+        "seconds": 0.567,
+        "rect": [
+          3017,
+          114,
+          250,
+          44
+        ]
+      },
+      {
+        "text": "Tiện ích hệ thống",
+        "position": "top",
+        "seconds": 0.573,
+        "rect": [
+          3174,
+          114,
+          250,
+          44
+        ]
+      },
+      {
+        "text": "CPU:",
+        "position": "top",
+        "seconds": 0.568,
+        "rect": [
+          2874,
+          114,
+          250,
+          44
+        ]
+      },
+      {
+        "text": "RAM:",
+        "position": "top",
+        "seconds": 0.561,
+        "rect": [
+          2874,
+          114,
+          250,
+          44
+        ]
+      },
+      {
+        "text": "Đổi hình nền ngẫu nhiên",
+        "position": "top",
+        "seconds": 0.568,
+        "rect": [
+          2964,
+          114,
+          250,
+          44
+        ]
+      },
+      {
+        "text": "Pin 79%",
+        "position": "top",
+        "seconds": 0.597,
+        "rect": [
+          3078,
+          114,
+          250,
+          44
+        ]
+      },
+      {
+        "text": "Mạng",
+        "position": "top",
+        "seconds": 0.559,
+        "rect": [
+          3132,
+          114,
+          250,
+          44
+        ]
+      },
+      {
+        "text": "Tìm ứng dụng",
+        "position": "bottom",
+        "seconds": 0.621,
+        "rect": [
+          2248,
+          954,
+          250,
+          44
+        ]
+      },
+      {
+        "text": "Mở lịch",
+        "position": "bottom",
+        "seconds": 0.584,
+        "rect": [
+          3240,
+          954,
+          250,
+          44
+        ]
+      },
+      {
+        "text": "DeskMorph Tooltip — tên ứng dụng rất dài để kiểm t",
+        "position": "bottom",
+        "seconds": 0.566,
+        "rect": [
+          2574,
+          954,
+          250,
+          44
+        ]
+      },
+      {
+        "text": "Âm thanh",
+        "position": "bottom",
+        "seconds": 0.552,
+        "rect": [
+          3017,
+          954,
+          250,
+          44
+        ]
+      },
+      {
+        "text": "Tiện ích hệ thống",
+        "position": "bottom",
+        "seconds": 0.561,
+        "rect": [
+          3174,
+          954,
+          250,
+          44
+        ]
+      },
+      {
+        "text": "CPU:",
+        "position": "bottom",
+        "seconds": 0.558,
+        "rect": [
+          2874,
+          954,
+          250,
+          44
+        ]
+      },
+      {
+        "text": "RAM:",
+        "position": "bottom",
+        "seconds": 0.549,
+        "rect": [
+          2874,
+          954,
+          250,
+          44
+        ]
+      },
+      {
+        "text": "Đổi hình nền ngẫu nhiên",
+        "position": "bottom",
+        "seconds": 0.562,
+        "rect": [
+          2964,
+          954,
+          250,
+          44
+        ]
+      },
+      {
+        "text": "Pin 79%",
+        "position": "bottom",
+        "seconds": 0.528,
+        "rect": [
+          3078,
+          954,
+          250,
+          44
+        ]
+      },
+      {
+        "text": "Mạng",
+        "position": "bottom",
+        "seconds": 0.582,
+        "rect": [
+          3132,
+          954,
+          250,
+          44
+        ]
+      }
+    ],
+    "pid": 2234642,
+    "preferencesRestored": true
+  },
+  "clockRegression": {
+    "passed": [
+      "8 live combinations on Dock, preview and calendar",
+      "localized dates on three surfaces",
+      "English 12-hour clock without seconds persists across restart"
+    ],
+    "observations": [
+      {
+        "language": "vi",
+        "clock24": true,
+        "clockSeconds": true,
+        "dockDescription": "13:25:53 Th 5, 29 thg 10",
+        "previewClock": "13:25:53",
+        "calendarClock": "13:25:54"
+      },
+      {
+        "language": "vi",
+        "clock24": true,
+        "clockSeconds": false,
+        "dockDescription": "13:25 Th 5, 29 thg 10",
+        "previewClock": "13:25",
+        "calendarClock": "13:25"
+      },
+      {
+        "language": "vi",
+        "clock24": false,
+        "clockSeconds": true,
+        "dockDescription": "01:26:00 CH Th 5, 29 thg 10",
+        "previewClock": "01:26:00 CH",
+        "calendarClock": "01:26:01 CH"
+      },
+      {
+        "language": "vi",
+        "clock24": false,
+        "clockSeconds": false,
+        "dockDescription": "01:26 CH Th 5, 29 thg 10",
+        "previewClock": "01:26 CH",
+        "calendarClock": "01:26 CH"
+      },
+      {
+        "language": "en",
+        "clock24": true,
+        "clockSeconds": true,
+        "dockDescription": "13:26:09 Thu, Oct 29",
+        "previewClock": "13:26:09",
+        "calendarClock": "13:26:10"
+      },
+      {
+        "language": "en",
+        "clock24": true,
+        "clockSeconds": false,
+        "dockDescription": "13:26 Thu, Oct 29",
+        "previewClock": "13:26",
+        "calendarClock": "13:26"
+      },
+      {
+        "language": "en",
+        "clock24": false,
+        "clockSeconds": true,
+        "dockDescription": "01:26:15 PM Thu, Oct 29",
+        "previewClock": "01:26:16 PM",
+        "calendarClock": "01:26:16 PM"
+      },
+      {
+        "language": "en",
+        "clock24": false,
+        "clockSeconds": false,
+        "dockDescription": "01:26 PM Thu, Oct 29",
+        "previewClock": "01:26 PM",
+        "calendarClock": "01:26 PM"
+      }
+    ],
+    "afterRestart": {
+      "language": "en",
+      "clock24": false,
+      "clockSeconds": false,
+      "dockDescription": "01:26 PM Thu, Oct 29",
+      "previewClock": "01:26 PM",
+      "calendarClock": "01:26 PM"
+    },
+    "testPids": [
+      2199364,
+      2201605
+    ],
+    "scope": "Actual host time; midnight/noon/year rollover use deterministic formatter tests. Host clock unchanged.",
+    "normalPid": 2202073,
+    "preferencesRestored": true
+  },
+  "iconRegression": {
+    "pid": 2202274,
+    "fixturePid": 2202470,
+    "observations": [
+      {
+        "surface": "absolute SVG pinned Dock",
+        "rgb": [
+          241,
+          37,
+          169
+        ],
+        "matchingPixels": 470
+      },
+      {
+        "surface": "absolute SVG launcher",
+        "rgb": [
+          241,
+          37,
+          169
+        ],
+        "matchingPixels": 1024
+      },
+      {
+        "surface": "absolute SVG window row",
+        "rgb": [
+          241,
+          37,
+          169
+        ],
+        "matchingPixels": 324
+      },
+      {
+        "surface": "hicolor PNG pinned Dock",
+        "rgb": [
+          31,
+          219,
+          87
+        ],
+        "matchingPixels": 470
+      },
+      {
+        "surface": "hicolor PNG launcher",
+        "rgb": [
+          31,
+          219,
+          87
+        ],
+        "matchingPixels": 1024
+      },
+      {
+        "surface": "hicolor PNG window row",
+        "rgb": [
+          31,
+          219,
+          87
+        ],
+        "matchingPixels": 324
+      },
+      {
+        "surface": "hicolor PNG unpinned Dock",
+        "rgb": [
+          31,
+          219,
+          87
+        ],
+        "matchingPixels": 470
+      },
+      {
+        "surface": "hicolor PNG unpinned window row",
+        "rgb": [
+          31,
+          219,
+          87
+        ],
+        "matchingPixels": 324
+      }
+    ],
+    "missingIconKeepsApplication": true,
+    "cachedFiles": 82,
+    "cacheBoundsVerified": true,
+    "scope": "Native reference-scale X11 pixel checks; custom theme switching separately tested in private IconTheme",
+    "normalPid": 2203861,
+    "preferencesRestored": true,
+    "fixturesRemoved": true,
+    "ownedWindowFixtureExited": true
+  },
+  "cleanup": {
+    "exitedPids": {
+      "2213246": true,
+      "2214355": true,
+      "2215840": true,
+      "2202274": true,
+      "2202470": true,
+      "2199364": true,
+      "2201605": true,
+      "2203861": true,
+      "2202073": true
+    },
+    "normalPid": 2234642,
+    "normalProfileVerified": true,
+    "gnomeAnimations": "true"
+  },
+  "environment": "Pop!_OS 24.04, GNOME46, X11, scale1; isolated custom-protocol debug build",
+  "frontendTestsPassed": 39,
+  "rustScope": "Backend unchanged from 64 passing Rust tests in G5.10",
+  "builds": [
+    "TypeScript/Vite",
+    "offline custom-protocol"
+  ],
+  "binarySha256": "cbccb2ad0acdc63766a630d8ccde8a6a1bcc3f7882ad041e63b551fcd97f59f7",
+  "limits": [
+    "Pixel glyph size/spacing equality is verified; compositing colors differ with each background and are not compared for exact equality.",
+    "Reference scale1/X11 only; this does not certify mixed DPI or native Wayland.",
+    "Earlier dialog/focus/off-viewport/label harness failures and the first tooltip timeout are excluded from passing evidence."
+  ]
+}

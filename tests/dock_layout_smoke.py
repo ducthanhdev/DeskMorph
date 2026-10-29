@@ -208,7 +208,8 @@ def run(app, config_home, click, focus_studio, native_keys, native_click_node,
                     assert abs(sprite()['width'] - expected_glyph) <= 1, 'Icon size was not independently clamped'
                     dx, dy, dw, dh = dock_geometry()
                     assert dx <= before[0] and before[0] + before[2] <= dx + dw and dy <= before[1] and before[1] + before[3] <= dy + dh
-                    for node in descendants(app):
+                    dock_frame = find('frame', 'DeskMorph Taskbar')
+                    for node in descendants(dock_frame):
                         if node.get_role_name() == 'image' and node.get_name().startswith(('CPU:', 'RAM:')):
                             wx, wy, ww, wh = rect(node)
                             assert dx <= wx and wx + ww <= dx + dw and dy <= wy and wy + wh <= dy + dh, 'System stat widget is clipped at this Dock height'

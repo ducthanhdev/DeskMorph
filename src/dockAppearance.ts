@@ -30,6 +30,20 @@ export function dockSurface(config: TaskbarConfig): CSSProperties {
     ["--stats-direction" as string]: metrics.height < 47 ? "row" : "column",
   };
 }
+export function dockAppStyle(config: TaskbarConfig, visual: { color: string; bg: string; border: string }, pinned: boolean, running: boolean, active: boolean, scale = 1): CSSProperties {
+  const { hitWidth, hitHeight } = dockMetrics(config);
+  return {
+    width: `${hitWidth}px`, height: `${hitHeight}px`, color: visual.color,
+    ["--magnify-scale" as string]: scale,
+    ["--icon-background" as string]: active ? visual.bg : running ? `rgba(255,255,255,${pinned ? .08 : .05})` : "rgba(255,255,255,.03)",
+    ["--icon-border" as string]: active ? visual.border : running ? `rgba(255,255,255,${pinned ? .12 : .08})` : "rgba(255,255,255,.05)",
+    opacity: pinned && !running ? .78 : 1,
+    ["--launch-border" as string]: visual.border, ["--launch-glow" as string]: visual.bg,
+  };
+}
+export function magnificationScale(distance: number, maxScale: number) {
+  return distance > 110 ? 1 : Math.round((1 + (maxScale - 1) * Math.cos(distance / 110 * Math.PI / 2)) * 1000) / 1000;
+}
 export const BUILTIN_PRESETS = [
   { id: "nord", nameKey: "themeNord", appearance: { position: "bottom", height: 48, iconSize: 32, iconSpacing: 6, opacity: .8, borderRadius: 12, accentColor: "#88c0d0", bouncingLaunch: false, dynamicShadow: false, magnification: true, maxMagnificationScale: 1.2, reduceMotion: false } },
   { id: "neon", nameKey: "themeNeon", appearance: { position: "bottom", height: 64, iconSize: 42, iconSpacing: 10, opacity: .92, borderRadius: 20, accentColor: "#8b5cf6", bouncingLaunch: true, dynamicShadow: true, magnification: true, maxMagnificationScale: 1.35, reduceMotion: false } },

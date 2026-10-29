@@ -117,7 +117,7 @@ Tiêu chí phát hành preview: hoàn thành luồng tìm → mở → ghim → 
 Phụ thuộc G1/G4.
 
 - [x] G5.1 Chia cài đặt thành Dock, Ứng dụng, Giao diện, Hình nền, Hệ thống; mô tả ngắn tác dụng của từng tùy chọn.
-- [ ] G5.2 Preview dùng cùng model/tokens với Dock thật; thay đổi hiển thị đúng và có cách khôi phục trước đó.
+- [x] G5.2 Preview dùng cùng model/tokens với Dock thật; thay đổi hiển thị đúng và có cách khôi phục trước đó.
 - [x] G5.3 Preset đầy đủ: màu, opacity, radius, icon size, height, spacing, animation; xác định trường nào preset sở hữu để không ghi đè pin/autostart.
 - [x] G5.4 Lưu/đổi tên/xóa preset cá nhân; tên trùng và preset thiếu trường được xử lý rõ.
 - [x] G5.5 Export/import JSON có version, validation và màn hình tóm tắt thay đổi; nhập lỗi không thay cấu hình hiện có.

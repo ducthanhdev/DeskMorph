@@ -1767,8 +1767,8 @@ button:focus-visible { outline: 2px solid #48b9c7; outline-offset: -2px; }
 .system-info dd small { display: block; margin-top: 4px; color: var(--text-muted); }
 .dock-preview-stage { min-height: 150px; display: flex; align-items: flex-end; justify-content: center; padding: 20px 0; overflow: auto; background: linear-gradient(135deg, #1e3348, #261937); border-radius: 12px; }
 .dock-preview-stage.preview-top { align-items: flex-start; }
-.dock-preview-stage .preview-surface { position: relative; flex-shrink: 0; transform: none; margin: 0; max-width: 100%; overflow: auto; }
-.preview-app { display: flex; flex-shrink: 0; align-items: center; justify-content: center; }
+.dock-preview-stage .preview-surface { position: relative; flex-shrink: 0; transform: none; margin: 0; max-width: 100%; overflow: visible; }
+.appearance-restore { margin: -6px 0 22px; }
 .preview-surface time { white-space: nowrap; }
 .studio-card .wallpaper-card { padding: 0; overflow: hidden; }
 .studio-card .wallpaper-thumb-img { display: block; width: 100%; height: 130px; object-fit: cover; }
@@ -1778,7 +1778,7 @@ button:focus-visible { outline: 2px solid #48b9c7; outline-offset: -2px; }
 
 .studio-card select { appearance: none; -webkit-appearance: none; background-color: #111827; color: #f1f5f9; padding-right: 30px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='m1 1 5 5 5-5' stroke='%2394a3b8' fill='none' stroke-width='2'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; }
 
-.dock-preview-stage .preview-surface { width: max-content; gap: 12px; }
+.dock-preview-stage .preview-surface { width: max-content; }
 .wallpaper-folder-path { overflow-wrap: anywhere; user-select: text; font-size: 12px; }
 .wallpaper-filters { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 20px 0; }
 .wallpaper-filters input { flex: 1; }
@@ -1860,3 +1860,6 @@ button:focus-visible { outline: 2px solid #48b9c7; outline-offset: -2px; }
   text-align: center;
   pointer-events: none;
 }
+
+.preview-animation { margin-top: 14px; }
+.dock-preview > .settings-help { margin-bottom: 12px; }
