@@ -756,3 +756,8 @@ Script cần AT-SPI, Python GI, GTK3 và libXtst. Chỉ gửi phím khi kiểm t
 - Chốt theo đúng hợp đồng: GNOME adapter đã kiểm Apply/Retry/Shuffle và pixel; COSMIC adapter đã kiểm schema/defaults, UI/IPC, lỗi/read-only/Retry/Shuffle và pixel; KDE API đã được thử trong KWin/Plasma runtime riêng nhưng không bật vì chưa chứng minh pixel/readback. UI trả unsupported state rõ ràng cho KDE.
 - Không suy kết quả này thành scheduler riêng, hotplug, multi-output hoặc toàn desktop COSMIC/KDE. Các giới hạn đó thuộc phần chưa hỗ trợ khác, còn yêu cầu G6.9 về adapter riêng, capability gate và không bật backend chưa xác minh đã đạt. Tổng 93/99.
 - Đánh giá file: dùng các benchmark GNOME/COSMIC/KDE đã commit; không thêm test/log mới vì không thay code trong lượt chốt.
+
+## G6.7/G9.8 — Kiểm tra khả năng sleep/resume thật của môi trường (30/10/2026)
+
+- Kiểm tra read-only cho thấy systemd đang `running` và có `rtcwake`, nhưng `/dev/rtc0` là `root:root 0600`; `rtcwake -m mem -s 1 --dry-run` trả `Permission denied`. Không thực hiện suspend khi không có quyền RTC/cơ chế đánh thức chắc chắn.
+- Đây là blocker môi trường cho ca sleep thật, không tính SIGSTOP/CONT hiện có thành sleep. G6.7 và G9.8 vẫn mở; không thay đổi checkbox hay tuyên bố scheduler đã qua system suspend.
