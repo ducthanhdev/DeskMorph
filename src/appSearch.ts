@@ -15,13 +15,26 @@ export function searchApps(apps: InstalledApp[], query: string) {
     .sort((a, b) => a.rank - b.rank || normalizeSearch(a.app.name).localeCompare(normalizeSearch(b.app.name)) || a.app.id.localeCompare(b.app.id))
     .map(({ app }) => app);
 }
+/** Explicit desktop identities never fall through to unrelated executable/WM_CLASS hints. */
+export function desktopIdForPin(pin: PinnedApp): string | undefined {
+  if (pin.desktopId !== undefined) return pin.desktopId;
+  const command = pin.command.trim();
+  if (command.startsWith("desktop:")) return command.slice("desktop:".length);
+  if (command.endsWith(".desktop") && !/[\s/]/.test(command)) return command;
+  return undefined;
+}
+export function launchCommandForPin(pin: PinnedApp): string {
+  const desktopId = desktopIdForPin(pin);
+  return desktopId !== undefined ? `desktop:${desktopId}` : pin.command;
+}
 export function installedForPin(pin: PinnedApp, apps: InstalledApp[]) {
-  if (pin.desktopId) return apps.find((app) => app.id === pin.desktopId);
-  const command = pin.command.replace(/^desktop:/, "");
-  const exact = apps.find((app) => app.id === command || app.executable.split("/").pop() === command);
-  if (exact) return exact;
+  const desktopId = desktopIdForPin(pin);
+  if (desktopId !== undefined) return apps.find((app) => app.id === desktopId);
+  const command = pin.command.trim();
+  const exact = apps.filter((app) => app.executable === command || (!command.includes("/") && app.executable.split("/").pop() === command));
+  if (exact.length) return exact.length === 1 ? exact[0] : undefined;
   const matches = apps.filter((app) => app.matchClasses.some((cls) => pin.matchClasses.some((hint) => cls.toLowerCase() === hint.toLowerCase())));
-  return matches[0];
+  return matches.length === 1 ? matches[0] : undefined;
 }
 export function pinFromApp(app: InstalledApp): PinnedApp {
   return { id: app.id, desktopId: app.id, name: app.name, command: `desktop:${app.id}`, matchClasses: app.matchClasses, iconType: "custom", enabled: true };

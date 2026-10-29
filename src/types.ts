@@ -19,6 +19,7 @@ export interface OpenWindow {
 export interface PinnedApp {
   id: string;
   name: string;
+  /** Legacy argv command; desktopId, when present, owns launch identity. */
   command: string;
   desktopId?: string;
   matchClasses: string[];
@@ -93,10 +94,12 @@ export interface DockContextMenuState {
 }
 
 export interface InstalledApp {
+  /** Canonical desktop ID, used by GIO for launch; never rebuild Exec from hints. */
   id: string;
   name: string;
   genericName: string;
   keywords: string[];
+  /** Discovery/matching hint only, not a replacement for a legacy pin command. */
   executable: string;
   matchClasses: string[];
   iconPath: string | null;

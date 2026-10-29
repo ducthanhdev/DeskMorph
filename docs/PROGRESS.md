@@ -2,7 +2,7 @@
 
 Mục tiêu giữ nguyên toàn bộ 99 đầu việc trong IMPLEMENTATION_PLAN.md. Chưa đạt cổng hoàn thành toàn dự án. Checkbox chưa đánh dấu không đồng nghĩa chưa có code: nhiều mục đang chờ kiểm thử đủ phạm vi.
 
-Hiện đã đánh dấu 69/99 mục, gồm G3.2–G3.3 bằng fixture môi trường cô lập và G0.5/G2.1/G2.3 qua capability EWMH, kiểm thử lỗi adapter và native startup thiếu xprop. Đã bổ sung G0.4/G2.4/G2.5 qua popup/auto-hide native và G9.6/G9.9 bằng hồi quy policy/asset/force-close và ảnh Studio thật trong README. Các cổng GUI, Wayland và phát hành vẫn chưa hoàn tất.
+Hiện đã đánh dấu 70/99 mục, gồm G3.2–G3.3 bằng fixture môi trường cô lập và G0.5/G2.1/G2.3 qua capability EWMH, kiểm thử lỗi adapter và native startup thiếu xprop. Đã bổ sung G0.4/G2.4/G2.5 qua popup/auto-hide native và G9.6/G9.9 bằng hồi quy policy/asset/force-close và ảnh Studio thật trong README. Các cổng GUI, Wayland và phát hành vẫn chưa hoàn tất.
 
 ## Môi trường tham chiếu đã xác minh
 
@@ -340,3 +340,13 @@ Script cần AT-SPI, Python GI, GTK3 và libXtst. Chỉ gửi phím khi kiểm t
 - Native --catalogue-refresh-smoke --exports-smoke exit 0: app 1556472 với FLATPAK_USER_DIR riêng chưa có; query giữ nguyên trong launcher, tự nhận install/atomic rename/Hidden/restore/uninstall. Nút refresh giữ đúng entry, đóng consumer rồi sửa entry và mở lại nhận tên mới. Tám quan sát đã qua xuyên GIO→backend dirty/event→hook→UI; không coi thời gian vòng đợi trong report là benchmark latency từ lúc ghi file.
 - Finally stop đúng isolated app, khôi phục nguyên config, xóa thư mục mkdtemp fixture; normal app 1557263. Hồi quy export discovery/launch tiếp theo app 1557481 qua, normal app cuối 1557976; mọi fixture/marker và cấu hình được khôi phục. Python compile/diff check qua.
 - Cache 30s, explicit refresh và dirty event đã có trong backend; retained monitor/disconnect qua fixture trước đó. [Hợp đồng hiện tại](APPLICATION_CATALOGUE.md), [bản ghi](benchmarks/catalogue-refresh-2026-10-29.json). G3.6 đánh dấu, tổng 69/99; icon theme/render native và packaged app launch còn ở các mục chưa đánh dấu.
+
+
+## G3.5 — Model ứng dụng và lệnh pin legacy (29/10/2026)
+
+- Audit InstalledApp Rust/TypeScript cùng hợp đồng serde camelCase: desktop ID/name/genericName/keywords/executable hint/matchClasses/iconPath/actions. Discovery fixtures đã kiểm metadata qua GIO; pinFromApp lưu desktopId và desktop:ID, launch không dựng Exec từ metadata.
+- Sửa lỗi thực: Taskbar từng dùng catalogue match để thay lệnh legacy bằng desktop launch, làm mất profile/argv riêng. launchCommandForPin giữ nguyên command cũ nếu không có desktop identity; dùng chung click/middle-click/menu. ContextActions thực thi command đã chuẩn hóa thay vì tự thay lại bằng installed.id; Desktop Actions vẫn dùng ID/action qua GIO.
+- desktopId, command desktop:ID và bare ID.desktop đều là identity ưu tiên. Entry mất không được fallback sang app khác cùng WM_CLASS. Legacy executable hoặc hints mơ hồ không chọn apps[0]; full executable path có thể phân biệt cùng basename. Không tự ghi lại pin migration hoặc đổi custom command theo catalogue.
+- Frontend 27/27 (hai ca mới kiểm missing desktop identity, ambiguity, path và argv legacy), TS/Vite/custom-protocol build qua. Không thay Rust implementation ở phần này nên giữ bằng chứng 51/51 của lượt G3.6.
+- Native --pin-identity-smoke exit 0 app 1753967: cả legacy và explicit desktop pin được catalogue nhận là đã ghim; 6 lượt left/middle/context chạy đúng argv. Legacy giữ hai từ và literal ; $(touch never); explicit desktop ID thắng command trái ngược. Restart 1754867 giữ nguyên pin/command; finally khôi phục cấu hình, xóa fixture, normal 1755108.
+- Hồi quy --launch-smoke exit 0 app 1757435: multi/single giữ đúng số activation/native windows qua unpinned/pinned middle click; hai Desktop Actions nhận compose/two words và private; menu app không action không giữ nút cũ. Preferences restored=true; /proc xác minh mọi process trong report đã thoát. [Hợp đồng](APPLICATION_CATALOGUE.md), [bản ghi](benchmarks/pin-identity-2026-10-29.json). G3.5 đánh dấu, tổng 70/99; chống duplicate desktop pin G3.10 và tập packaged app G3.4 vẫn chưa chốt.

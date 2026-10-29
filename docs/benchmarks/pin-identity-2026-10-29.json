@@ -1,0 +1,132 @@
+{
+  "initialPid": 1753967,
+  "restartPid": 1754867,
+  "observations": [
+    {
+      "mode": "legacy",
+      "action": "left",
+      "argv": [
+        "legacy-legacy",
+        "two words",
+        "literal ; $(touch never)"
+      ]
+    },
+    {
+      "mode": "legacy",
+      "action": "middle",
+      "argv": [
+        "legacy-legacy",
+        "two words",
+        "literal ; $(touch never)"
+      ]
+    },
+    {
+      "mode": "legacy",
+      "action": "context",
+      "argv": [
+        "legacy-legacy",
+        "two words",
+        "literal ; $(touch never)"
+      ]
+    },
+    {
+      "mode": "desktop",
+      "action": "left",
+      "argv": [
+        "desktop-desktop"
+      ]
+    },
+    {
+      "mode": "desktop",
+      "action": "middle",
+      "argv": [
+        "desktop-desktop"
+      ]
+    },
+    {
+      "mode": "desktop",
+      "action": "context",
+      "argv": [
+        "desktop-desktop"
+      ]
+    }
+  ],
+  "pinsPreservedAfterRestart": true,
+  "scope": "Owned native command/desktop fixtures, no existing user app launch",
+  "normalPid": 1755108,
+  "preferencesRestored": true,
+  "fixturesRemoved": true,
+  "date": "2026-10-29",
+  "task": "G3.5",
+  "frontendTests": {
+    "passed": 27,
+    "failed": 0
+  },
+  "frontendBuild": "passed",
+  "customProtocolBuild": "passed",
+  "desktopActionsRegression": {
+    "passed": [
+      "multi: ordinary launch plus unpinned/pinned middle click preserve application instance semantics and Dock count",
+      "single: ordinary launch plus unpinned/pinned middle click preserve application instance semantics and Dock count",
+      "declared Desktop Actions run exact arguments; application without actions has no stale action buttons"
+    ],
+    "events": [
+      {
+        "pid": 1757930,
+        "mode": "multi",
+        "event": "activate",
+        "xid": "0x4200003"
+      },
+      {
+        "pid": 1758158,
+        "mode": "multi",
+        "event": "activate",
+        "xid": "0x4400003"
+      },
+      {
+        "pid": 1758349,
+        "mode": "multi",
+        "event": "activate",
+        "xid": "0x4600003"
+      },
+      {
+        "pid": 1758664,
+        "mode": "single",
+        "event": "activate",
+        "xid": "0x4800003"
+      },
+      {
+        "pid": 1758664,
+        "mode": "single",
+        "event": "activate",
+        "xid": "0x4800003"
+      },
+      {
+        "pid": 1758664,
+        "mode": "single",
+        "event": "activate",
+        "xid": "0x4800003"
+      },
+      {
+        "pid": 1759152,
+        "mode": "action",
+        "event": "action",
+        "arguments": [
+          "compose",
+          "two words"
+        ]
+      },
+      {
+        "pid": 1759272,
+        "mode": "action",
+        "event": "action",
+        "arguments": [
+          "private"
+        ]
+      }
+    ],
+    "pid": 1757435,
+    "preferencesRestored": true
+  },
+  "launchFixtureProcessesExited": true
+}

@@ -5,7 +5,7 @@ import ts from 'typescript';
 const source = ts.transpileModule(fs.readFileSync(new URL('../src/appSearch.ts', import.meta.url), 'utf8'), {
   compilerOptions: { module: ts.ModuleKind.ESNext },
 }).outputText;
-const { searchApps, normalizeSearch, installedForPin, pinFromApp } = await import('data:text/javascript;base64,' + Buffer.from(source).toString('base64'));
+const { searchApps, normalizeSearch, installedForPin, pinFromApp, desktopIdForPin, launchCommandForPin } = await import('data:text/javascript;base64,' + Buffer.from(source).toString('base64'));
 const app = (id, name, extra = {}) => ({ id, name, genericName: '', keywords: [], matchClasses: [], executable: '/bin/true', iconPath: null, actions: [], ...extra });
 
 test('Vietnamese search ignores accents, case and extra spaces', () => {
@@ -28,4 +28,26 @@ test('desktop identity wins over legacy rules and pin creation preserves safe la
   assert.equal(installedForPin({ ...pin, desktopId: 'removed.desktop' }, apps), undefined);
   assert.equal(pinFromApp(apps[0]).command, 'desktop:one.desktop');
   assert.equal(pinFromApp(apps[0]).desktopId, 'one.desktop');
+});
+
+test('removed desktop identities and ambiguous legacy hints never resolve to another application', () => {
+  const apps = [app('one.desktop', 'One', { executable: '/bin/editor', matchClasses: ['editor'] }), app('two.desktop', 'Two', { executable: '/opt/editor', matchClasses: ['editor'] })];
+  const pin = { id: 'legacy', command: 'custom --profile work', matchClasses: ['EDITOR'] };
+  assert.equal(installedForPin(pin, apps), undefined);
+  assert.equal(installedForPin({ ...pin, command: 'editor' }, apps), undefined);
+  assert.equal(installedForPin({ ...pin, command: '/opt/editor' }, apps)?.id, 'two.desktop');
+  for (const command of ['desktop:removed.desktop', 'removed.desktop']) {
+    assert.equal(installedForPin({ ...pin, command }, apps), undefined);
+    assert.equal(desktopIdForPin({ ...pin, command }), 'removed.desktop');
+  }
+  assert.equal(installedForPin({ ...pin, command: 'one.desktop' }, apps)?.id, 'one.desktop');
+});
+test('legacy commands keep arguments while explicit desktop identity determines launch', () => {
+  const pin = { id: 'legacy', command: '/opt/editor --profile "two words"', matchClasses: ['editor'] };
+  const apps = [app('editor.desktop', 'Editor', { matchClasses: ['editor'] })];
+  assert.equal(installedForPin(pin, apps)?.id, 'editor.desktop');
+  assert.equal(launchCommandForPin(pin), pin.command);
+  assert.equal(launchCommandForPin({ ...pin, desktopId: 'editor.desktop' }), 'desktop:editor.desktop');
+  assert.equal(launchCommandForPin({ ...pin, command: 'editor.desktop' }), 'desktop:editor.desktop');
+  assert.equal(launchCommandForPin(pinFromApp(apps[0])), 'desktop:editor.desktop');
 });

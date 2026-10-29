@@ -2,7 +2,7 @@
 
 DeskMorph dùng GIO AppInfo/ DesktopAppInfo cho cả discovery và launch theo desktop ID. Không tự tách Exec thành shell command. XDG_DATA_HOME/applications có ưu tiên cao nhất, gồm Hidden=true tombstone. GIO xử lý ID từ đường con, desktop environment, locale và symlink deployment.
 
-Ngay đầu run_app, trước GTK/GIO hay worker, catalogue_paths::prepare giữ thứ tự thư mục tuyệt đối trong XDG_DATA_DIRS, loại trùng và nối các export hiện có:
+Ngay đầu run_app, trước GTK/GIO hay worker, catalogue_paths::prepare giữ thứ tự thư mục tuyệt đối trong XDG_DATA_DIRS, loại trùng và nối các đường export chuẩn:
 
 1. $FLATPAK_USER_DIR/exports/share nếu biến là đường tuyệt đối; nếu không, $XDG_DATA_HOME/flatpak/exports/share. XDG_DATA_HOME thiếu hoặc tương đối thì dùng $HOME/.local/share.
 2. /var/lib/flatpak/exports/share.
@@ -28,3 +28,18 @@ Catalogue backend cache 30 giây; AppInfoMonitor và GTK theme change đánh d�
 ```
 
 Ca refresh tạo FLATPAK_USER_DIR riêng còn chưa tồn tại khi app khởi động. Giữ launcher mở với query cố định, rồi tạo export/entry, atomic rename, Hidden=true, khôi phục và gỡ. Kiểm kết quả UI thay đổi mà không refresh/restart; thêm refresh chủ động và thay entry khi consumer đã đóng rồi mở lại. Sau cùng dọn đúng thư mục mkdtemp sở hữu và khôi phục config/process thường. [Bản ghi](benchmarks/catalogue-refresh-2026-10-29.json) lưu thời gian vòng đợi quan sát; đây không phải benchmark độ trễ đầy đủ từ filesystem đến UI. Kiểm chứng native hiện trên GNOME X11 tham chiếu.
+
+
+## Model và tương thích pin cũ
+
+InstalledApp ở Rust/TypeScript có id desktop chuẩn, name/genericName/keywords, executable hint, matchClasses, iconPath nullable và danh sách action ID/name. Serde camelCase là hợp đồng IPC. Launch desktop entry luôn dùng id qua GIO; executable và matchClasses phục vụ nhận diện, không dùng để tái tạo Exec.
+
+Pin mới từ catalogue lưu desktopId cùng command=desktop:ID. Với pin cũ, desktopId (nếu có), command desktop:ID hoặc bare ID.desktop là identity ưu tiên; nếu entry không còn thì không được tìm một ứng dụng khác bằng WM_CLASS. Lệnh cũ không có desktop identity được giữ nguyên, kể cả argv và đường dẫn có khoảng trắng. Ghép metadata chỉ khi executable hoặc WM_CLASS cho kết quả duy nhất; trường hợp mơ hồ giữ icon/fallback hiện có thay vì chọn theo thứ tự catalogue.
+
+launchCommandForPin được dùng cho click/middle-click/menu của pin. Menu ưu tiên command đã chuẩn hóa từ pin, còn Desktop Actions dùng action ID của InstalledApp. Không tự viết lại pin legacy sang desktop ID và không làm mất profile/flags riêng. Pin cũ vẫn qua migration/load của ConfigStore.
+
+```sh
+/usr/bin/python3 tests/desktop_smoke.py --pin-identity-smoke
+```
+
+Ca native dùng hai pin với executable/script có khoảng trắng và argv nhiều từ/ký tự shell literal. Một pin legacy resolve metadata bằng StartupWMClass nhưng phải giữ lệnh riêng; pin còn lại có desktopId trái với command và phải mở đúng desktop entry. Cả click/middle-click/menu đều kiểm argv thực thi; restart kiểm nguyên danh sách pin/lệnh. [Bản ghi](benchmarks/pin-identity-2026-10-29.json).

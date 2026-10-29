@@ -3,7 +3,7 @@ import { invoke } from "./ipc";
 import { useConfig } from "./config/store";
 import { dockMetrics, dockSurface } from "./dockAppearance";
 import { useI18n } from "./i18n/useI18n";
-import { installedForPin } from "./appSearch";
+import { desktopIdForPin, installedForPin, launchCommandForPin } from "./appSearch";
 import { useInstalledApps } from "./hooks/useInstalledApps";
 import { SystemWidgets } from "./components/SystemWidgets";
 import { AppIcon } from "./components/AppIcon";
@@ -764,7 +764,7 @@ export const Taskbar: React.FC = () => {
                       void movePin(pinned.id, Math.max(0, Math.min(pinnedList.length - 1, index + (e.key === "ArrowLeft" ? -1 : 1))));
                     }
                   }}
-                  onAuxClick={(e) => { if (e.button === 1) { e.preventDefault(); void handleLaunchApp(pinned.id, installed ? `desktop:${installed.id}` : pinned.command); } }}
+                  onAuxClick={(e) => { if (e.button === 1) { e.preventDefault(); void handleLaunchApp(pinned.id, launchCommandForPin(pinned)); } }}
                   ref={(el) => {
                     if (el) iconRefs.current.set(pinned.id, el);
                     else iconRefs.current.delete(pinned.id);
@@ -777,12 +777,12 @@ export const Taskbar: React.FC = () => {
                     if (window) {
                       void selectWindows(e, windows, pinned.name, pinned.id);
                     } else {
-                      handleLaunchApp(pinned.id, installed ? `desktop:${installed.id}` : pinned.command);
+                      handleLaunchApp(pinned.id, launchCommandForPin(pinned));
                     }
                   }}
                   onContextMenu={(e) =>
                     openContextMenu(e, {
-                      desktopId: installed?.id || pinned.desktopId,
+                      desktopId: desktopIdForPin(pinned) ?? installed?.id,
                       windows,
                       matchClasses: pinned.matchClasses,
                       iconPath: installed?.iconPath,
@@ -790,7 +790,7 @@ export const Taskbar: React.FC = () => {
                       pinCount: pinnedList.length,
                       appId: pinned.id,
                       appName: pinned.name,
-                      command: installed ? `desktop:${installed.id}` : pinned.command,
+                      command: launchCommandForPin(pinned),
                       windowId: window?.id,
                       isPinned: true,
                       isRunning,

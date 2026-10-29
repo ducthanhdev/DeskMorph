@@ -60,7 +60,7 @@ function ContextActions({ menu }: { menu: DockContextMenuState }) {
     }}>
     <header><AppIcon path={menu.iconPath} /><strong>{menu.appName}</strong></header>
     {(error || configError || refreshError) && <p role="alert">{error || configError || `${t("refreshWindowsError")}: ${refreshError}`}</p>}
-    {(menu.command || installed) && <button disabled={busy} onClick={() => void perform(() => installed ? invoke("launch_installed_app", { id: installed.id, action: null }) : invoke("spawn_app", { execCmd: menu.command }))}><Plus size={16} /> {t("newLaunch")}</button>}
+    {(menu.command || installed) && <button disabled={busy} onClick={() => void perform(() => menu.command ? invoke("spawn_app", { execCmd: menu.command }) : invoke("launch_installed_app", { id: installed!.id, action: null }))}><Plus size={16} /> {t("newLaunch")}</button>}
     <button disabled={busy || (!menu.isPinned && !menu.desktopId)} onClick={() => void togglePin()}>{menu.isPinned ? <PinOff size={16} /> : <Pin size={16} />}{menu.isPinned ? t("unpin") : t("pin")}</button>
     {menu.isPinned && pinIndex >= 0 && <div className="context-reorder">
       <button disabled={busy || pinIndex === 0} onClick={() => void perform(() => mutatePin("move", menu.appId!, undefined, pinIndex - 1))}><ArrowLeft size={14} /> {t("moveLeft")}</button>
