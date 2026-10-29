@@ -738,3 +738,9 @@ Script cần AT-SPI, Python GI, GTK3 và libXtst. Chỉ gửi phím khi kiểm t
 - Thêm cờ `--clean-account` cho `tests/wayland_lab.py`; harness tạo HOME mới dưới root lab, giữ D-Bus/runtime/config/state riêng và nhận diện cleanup. Dùng executable trích nguyên từ `.deb`, checksum payload `5b6ac46c…` khớp manifest.
 - [Bằng chứng](benchmarks/deb-clean-account-2026-10-29/launcher.json): cold/warm launcher, tìm kiếm rỗng, Escape, Dock tắt, Studio mặc định, GIO menu và Desktop Action đều qua trên GNOME46 Wayland riêng; `cleanAccount=true`, host display/input không dùng, mọi child đã thoát. G9.11 vẫn mở vì đây chưa phải cài package bằng apt trên account thật, chưa có autostart sau đăng nhập và chưa có migration từ artifact tiền nhiệm có ý nghĩa.
 - Đánh giá file: giữ cờ harness vì tái sử dụng cho release artifact và guard HOME/ownership; giữ JSON tóm tắt có checksum và scope; không commit `.deb`, log hoặc HOME/profile sinh ra.
+
+## G9.12 — Checklist release và quyết định no-go (29/10/2026)
+
+- [Checklist phát hành](RELEASE_CHECKLIST.md) ghi version `0.1.0`, artifact `.deb`, SHA256/size, build/package smoke, GUI packaged, giới hạn môi trường và các cổng chưa đạt. Quyết định là **không phát hành/không publish**; không ký hoặc upload artifact development.
+- Quyết định này hoàn tất yêu cầu có kết quả và quyết định sau kiểm thử, không biến build thành tuyên bố release. G9.11, G2.10/G2.11, G5.9, G6.7, G6.9 và G9.8 vẫn mở. Tổng 92/99.
+- Đánh giá file: giữ checklist vì là artifact quyết định release; không commit binary hoặc log package.

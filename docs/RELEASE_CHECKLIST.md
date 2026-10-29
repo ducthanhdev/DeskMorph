@@ -1,16 +1,21 @@
-# Checklist phát hành — 0.1.0 development
+# Checklist phát hành DeskMorph 0.1.0
 
-Đã có `.deb` development0.1.0 cho Ubuntu/Pop!_OS24.04 amd64, [recipe và kiểm thử](PACKAGING.md), SHA256 `f138ca13d82a29ff9ced3b4b9fe3194b60cd03ce43cfac2b4c508035250a6b15`. Chưa có release candidate hoặc artifact đã qua cài sạch. Chỉ tick khi có bằng chứng/version/artifact tương ứng; không phát hành chỉ vì build thành công.
+Ngày đánh giá: 29/10/2026. Quyết định: **Không phát hành** và không công bố artifact
+này. Đây là quyết định có chủ ý sau kiểm thử; các cổng còn thiếu phải hoàn thành
+trước khi tạo release candidate mới.
 
-- [ ] Chốt phạm vi và mọi đầu việc bắt buộc trong IMPLEMENTATION_PLAN.md; xử lý lỗi nghiêm trọng trước tính năng mở rộng.
-- [ ] Ghi commit, toolchain, distro/desktop/session, dependency versions và artifact checksum.
-- [ ] Unit/build/CI pass trên commit ứng viên; ghi rõ native tests không thuộc CI headless.
-- [ ] Luồng search → launch → pin → reorder → activate/close → restart pass; popup/focus/auto-hide/overflow và bàn phím được stress test.
-- [ ] Config migration/corruption/import/reset/concurrent updates không mất dữ liệu; backup và lỗi IO được kiểm tra.
-- [ ] CSP/IPC/asset scope được native regression; icon/thumbnail vẫn tải đúng và path ngoài scope bị từ chối.
-- [ ] Monitor topology/hotplug/mixed DPI và sleep/resume được test hoặc giới hạn được chốt rõ; không gắn nhãn verified cho môi trường chưa chạy.
-- [ ] Wallpaper/audio/media/system services restart, missing capability và hardware cases trong phạm vi release được kiểm tra.
-- [ ] Chốt định dạng gói cho distro mục tiêu; kiểm thử icon/menu/autostart trên tài khoản sạch.
-- [ ] Cài mới, nâng cấp giữ cấu hình và gỡ executable/desktop entry được thử bằng artifact thực; không tự xóa dữ liệu cá nhân.
-- [ ] README/architecture/changelog/known limitations khớp code; thêm ảnh chụp native đã xác minh.
-- [ ] Người phụ trách release quyết định version/artifact sau khi các cổng trên đạt; chưa publish trong phiên triển khai này.
+| Hạng mục | Kết quả | Bằng chứng / giới hạn |
+| --- | --- | --- |
+| Version và nền build | `0.1.0`, amd64, Ubuntu/Pop!_OS 24.04 | [manifest](benchmarks/deb-artifact-manifest-2026-10-29.json); artifact được build trước các thay đổi cuối, nên không gọi là reproducible release |
+| Artifact | Có `.deb` development, SHA256 `f138ca13d82a29ff9ced3b4b9fe3194b60cd03ce43cfac2b4c508035250a6b15`, 2,549,260 bytes | [dpkg report](benchmarks/deb-package-2026-10-29.json); không commit binary |
+| Build và package smoke | Pass | `npm run build`, cargo custom-protocol và `verify:deb`; dependency status mượn host trong bwrap |
+| GUI packaged / HOME mới | Pass trong lab | [clean-account report](benchmarks/deb-clean-account-2026-10-29/launcher.json); không thay thế cài apt trên account thật |
+| GNOME X11 core flow | Pass trong môi trường tham chiếu | Ma trận [PLATFORM_SUPPORT_MATRIX](PLATFORM_SUPPORT_MATRIX.md) |
+| GNOME Wayland/COSMIC/KDE scope | Có giới hạn rõ | Wayland/COSMIC wallpaper-only experimental; KDE unsupported vì thiếu pixel/readback |
+| Accessibility toàn ứng dụng | Chưa đạt | G5.9 còn mở |
+| Sleep thật, DPI/hotplug, lifecycle dài | Chưa đạt | G2.10/G2.11/G6.7/G9.8 còn mở |
+| Cài account/máy sạch, autostart login, migration tiền nhiệm | Chưa đạt | G9.11 còn mở |
+| Ký artifact / publish | Không thực hiện | Quyết định no-go; không upload hoặc công bố |
+
+Artifact trên chỉ là bản development để tái kiểm trong lab. Không dùng checklist
+này làm lời chứng nhận hỗ trợ distro/desktop ngoài phạm vi ma trận.
