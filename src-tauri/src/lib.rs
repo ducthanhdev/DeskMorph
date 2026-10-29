@@ -301,6 +301,7 @@ fn run_app() -> Result<(), String> {
             show_studio,
             quit_app,
             platform::get_platform_info,
+            platform::refresh_platform_info,
             config::get_config,
             config::patch_config,
             config::retry_config_apply,

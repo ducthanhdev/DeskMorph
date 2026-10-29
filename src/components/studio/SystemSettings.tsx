@@ -6,10 +6,11 @@ import { usePlatform } from "../../hooks/usePlatform";
 import { useI18n } from "../../i18n/useI18n";
 import { Card, Toggle } from "./Controls";
 import { ShortcutSettings } from "./ShortcutSettings";
+import { capabilityReason } from "../../capabilities";
 interface Review { config: TaskbarConfig; changedFields: string[]; expectedRevision: number; kind: "import" | "reset" }
 export function SystemSettings() {
   const { config, revision, updateConfig, replaceConfigDocument } = useConfig();
-  const { platform } = usePlatform();
+  const { platform, error: platformError, refresh: refreshPlatform } = usePlatform();
   const { t } = useI18n();
   const [autostart, setAutostart] = useState(false);
   const [error, setError] = useState("");
@@ -61,8 +62,15 @@ export function SystemSettings() {
       {previous && <button className="studio-button" disabled={revision !== previous.revision} onClick={async () => { if (await replaceConfigDocument({ schemaVersion: 1, config: previous.config }, previous.revision)) setPrevious(null); }}>{t("undo")}</button>}
     </Card>
     <Card title={t("systemInfo")}><dl className="system-info"><dt>{t("desktop")}</dt><dd>{platform?.desktop || t("unknown")}</dd><dt>{t("session")}</dt><dd>{platform?.session.toUpperCase() || t("unknown")}</dd>
-      {([ ["enumerateWindows", platform?.windows.enumerate], ["activateWindows", platform?.windows.activate], ["closeWindows", platform?.windows.close], ["workspaces", platform?.workspaces], ["wallpaperSupport", platform?.wallpaper] ] as const).map(([label, available]) => <Fragment key={label}><dt>{t(label)}</dt><dd>{available === undefined ? t("loading") : available ? t("supported") : t("unsupported")}</dd></Fragment>)}
-    </dl><p className="settings-help">{t("updatesUnsupported")}</p></Card>
+      {([
+        ["dockPlacement", "dockPlacement", platform?.dockPlacement], ["autoHide", "autoHide", platform?.autoHide],
+        ["enumerateWindows", "windowEnumeration", platform?.windows.enumerate], ["activateWindows", "windowActivation", platform?.windows.activate],
+        ["closeWindows", "windowClose", platform?.windows.close], ["forceQuit", "forceQuit", platform?.forceQuit],
+        ["wallpaperSupport", "wallpaper", platform?.wallpaper], ["workspaces", "workspaces", platform?.workspaces],
+      ] as const).map(([label, feature, available]) => <Fragment key={label}><dt>{t(label)}</dt><dd>{available === undefined ? (platformError ? t("capabilityProbeFailed") : t("loading")) : available ? t("supported") : feature === "workspaces" ? t("developing") : t("unsupported")}
+        {available === false && <small>{capabilityReason(platform, feature, t, platformError)}</small>}
+      </dd></Fragment>)}
+    </dl><p className="settings-help">{t("updatesUnsupported")}</p><button onClick={refreshPlatform}>{t("refreshCapabilities")}</button></Card>
     {error && <p role="alert">{error}</p>}{status && <p role="status">{status}</p>}
   </>;
 }

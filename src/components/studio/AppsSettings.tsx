@@ -7,7 +7,9 @@ import { useI18n } from "../../i18n/useI18n";
 import { AppIcon } from "../AppIcon";
 import type { OpenWindow, PinnedApp } from "../../types";
 import { Card } from "./Controls";
-function ClassMapping({ pin }: { pin: PinnedApp }) {
+import { usePlatform, type PlatformInfo } from "../../hooks/usePlatform";
+import { capabilityReason } from "../../capabilities";
+function ClassMapping({ pin, platform, platformError }: { pin: PinnedApp; platform: PlatformInfo | null; platformError: string | null }) {
   const { mutatePin } = useConfig();
   const { t } = useI18n();
   const [draft, setDraft] = useState(pin.matchClasses.join("\n"));
@@ -17,7 +19,8 @@ function ClassMapping({ pin }: { pin: PinnedApp }) {
   return <details className="class-mapping"><summary>{t("classMapping")} {pin.name}</summary>
     <p>{t("classMappingHelp")}</p>
     <label>{t("classMapping")}<textarea aria-label={`${t("classMapping")} ${pin.name}`} rows={3} value={draft} onChange={(e) => setDraft(e.target.value)} /></label>
-    <button disabled={busy} onClick={async () => {
+    <button disabled={busy || !platform?.windows.enumerate} onClick={async () => {
+      if (!platform?.windows.enumerate) return;
       setBusy(true);
       try {
         const windows = await invoke<OpenWindow[]>("get_open_windows");
@@ -25,6 +28,7 @@ function ClassMapping({ pin }: { pin: PinnedApp }) {
       } catch (e) { setError(errorMessage(e)); }
       finally { setBusy(false); }
     }}>{t("readWindowClasses")}</button>
+    {!platform?.windows.enumerate && <p role="status">{capabilityReason(platform, "windowEnumeration", t, platformError)}</p>}
     {classes.length > 0 && <select aria-label={`${t("runningClasses")} ${pin.name}`} value="" onChange={(e) => {
       if (e.target.value) setDraft((value) => [...new Set([...value.split("\n").filter(Boolean), e.target.value])].join("\n"));
     }}><option value="">{t("runningClasses")}</option>{classes.map((cls) => <option key={cls} value={cls}>{cls}</option>)}</select>}
@@ -38,6 +42,7 @@ function ClassMapping({ pin }: { pin: PinnedApp }) {
   </details>;
 }
 export function AppsSettings() {
+  const { platform, error: platformError } = usePlatform();
   const { config, mutatePin, error: configError } = useConfig();
   const { apps, loading, error, refresh } = useInstalledApps();
   const { t } = useI18n();
@@ -53,7 +58,7 @@ export function AppsSettings() {
           <button aria-label={`${t("moveLeft")} ${pin.name}`} disabled={index === 0} onClick={() => void mutatePin("move", pin.id, undefined, index - 1)}>←</button>
           <button aria-label={`${t("moveRight")} ${pin.name}`} disabled={index === config.pinnedApps!.length - 1} onClick={() => void mutatePin("move", pin.id, undefined, index + 1)}>→</button>
           <button aria-label={`${t("unpin")} ${pin.name}`} onClick={() => void mutatePin("remove", pin.id)}>{t("unpin")}</button>
-          <ClassMapping key={JSON.stringify(pin.matchClasses)} pin={pin} />
+          <ClassMapping key={JSON.stringify(pin.matchClasses)} pin={pin} platform={platform} platformError={platformError} />
         </div>;
       })}
     </Card>

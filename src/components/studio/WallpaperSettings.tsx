@@ -7,6 +7,7 @@ import { usePolling } from "../../hooks/usePolling";
 import { useI18n } from "../../i18n/useI18n";
 import { Card, Toggle } from "./Controls";
 import { formatClock, formatClockDateTime } from "../../dateTime";
+import { capabilityReason } from "../../capabilities";
 interface Image { path: string; filename: string; folder: string; format: string }
 interface Scan { images: Image[]; issues: { path: string; message: string }[]; limited: boolean }
 interface ScheduleStatus { enabled: boolean; running: boolean; nextRunUnixMs: number | null; lastRunUnixMs: number | null; lastPath: string | null; lastError: string | null }
@@ -15,7 +16,7 @@ const PAGE_SIZE = 24;
 export function WallpaperSettings() {
   const { config, updateConfig } = useConfig();
   const { t, locale } = useI18n();
-  const { platform } = usePlatform();
+  const { platform, error: platformError } = usePlatform();
   const [folder, setFolder] = useState("");
   const [scan, setScan] = useState<Scan>({ images: [], issues: [], limited: false });
   const [current, setCurrent] = useState("");
@@ -72,7 +73,7 @@ export function WallpaperSettings() {
     return () => { disposed = true; };
   }, [visiblePaths, loading, refresh]);
   const apply = async (path?: string) => {
-    if (applyLock.current) return;
+    if (!platform?.wallpaper || applyLock.current) return;
     applyLock.current = true; setApplying(true); setStatus(""); setError(""); setFailedApply(null);
     try {
       let applied = path;
@@ -84,7 +85,7 @@ export function WallpaperSettings() {
   };
   return <Card title={t("wallpaperTab")}>
     <p className="settings-help">{t("wallpaperHelp")}</p>
-    {!platform?.wallpaper && <p role="status">{t("unsupported")}</p>}
+    {!platform?.wallpaper && <p role="status">{capabilityReason(platform, "wallpaper", t, platformError)}</p>}
     <form className="settings-inline" onSubmit={async (e) => {
       e.preventDefault(); const path = folder.trim();
       if (!path.startsWith("/")) { setError(t("absoluteFolder")); return; }

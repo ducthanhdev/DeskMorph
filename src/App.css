@@ -1764,6 +1764,7 @@ button:focus-visible { outline: 2px solid #48b9c7; outline-offset: -2px; }
 .system-info { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 14px; }
 .system-info dt { color: var(--text-muted); }
 .system-info dd { overflow-wrap: anywhere; }
+.system-info dd small { display: block; margin-top: 4px; color: var(--text-muted); }
 .dock-preview-stage { min-height: 150px; display: flex; align-items: flex-end; justify-content: center; padding: 20px 0; overflow: auto; background: linear-gradient(135deg, #1e3348, #261937); border-radius: 12px; }
 .dock-preview-stage.preview-top { align-items: flex-start; }
 .dock-preview-stage .preview-surface { position: relative; flex-shrink: 0; transform: none; margin: 0; max-width: 100%; overflow: auto; }

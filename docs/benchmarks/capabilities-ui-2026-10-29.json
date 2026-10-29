@@ -1,0 +1,43 @@
+{
+  "passed": [
+    "native capability loss/recovery broadcasts to Studio and Dock; launcher remains usable",
+    "unsupported desktop disables wallpaper actions and explains adapter; workspaces marked in development",
+    "Wayland-declared X11-rendered fixture disables placement/auto-hide and keeps saved auto-hide Dock visible; not native Wayland proof"
+  ],
+  "fixturePids": [
+    2110364,
+    2111055,
+    2111482
+  ],
+  "normalPid": 2111864,
+  "configRestored": true,
+  "fixturesRemoved": true,
+  "cleanup": {
+    "fixturesExited": {
+      "2110364": true,
+      "2111055": true,
+      "2111482": true
+    },
+    "normalProfileVerified": true
+  },
+  "autoHideRegression": {
+    "passed": [
+      "top: hide, edge reveal, calendar/audio keep visible, Escape and disable",
+      "bottom: hide, edge reveal, calendar/audio keep visible, Escape and disable"
+    ],
+    "pid": 2108425,
+    "preferencesRestored": true
+  },
+  "environment": "Pop!_OS 24.04, GNOME 46, X11, scale 1; isolated custom-protocol debug build",
+  "rustTestsPassed": 64,
+  "frontendTestsPassed": 38,
+  "builds": [
+    "TypeScript/Vite",
+    "offline custom-protocol"
+  ],
+  "limits": [
+    "Wayland metadata with GDK_BACKEND=x11 verifies UI gates only; not native Wayland placement or auto-hide certification.",
+    "Wallpaper read-only/schema reason mapping is covered; host GSettings lockdown was not changed or exercised.",
+    "Earlier harness failures and pointer-interrupted run are excluded from passing evidence."
+  ]
+}

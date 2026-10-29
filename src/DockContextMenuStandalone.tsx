@@ -3,6 +3,7 @@ import { invoke } from "./ipc";
 import { listen } from "@tauri-apps/api/event";
 import { ArrowLeft, ArrowRight, Flame, Pin, PinOff, Plus, X } from "lucide-react";
 import { useConfig, errorMessage } from "./config/store";
+import { capabilityReason } from "./capabilities";
 import { usePlatform } from "./hooks/usePlatform";
 import { useInstalledApps } from "./hooks/useInstalledApps";
 import { useI18n } from "./i18n/useI18n";
@@ -18,7 +19,7 @@ import type { DockContextMenuState, PinnedApp } from "./types";
 
 function ContextActions({ menu }: { menu: DockContextMenuState }) {
   const lifetime = useAsyncLifetime();
-  const { platform } = usePlatform();
+  const { platform, error: platformError } = usePlatform();
   const { t } = useI18n();
   const { config, mutatePin, error: configError } = useConfig();
   const { apps, loading, error: catalogueError } = useInstalledApps();
@@ -61,6 +62,7 @@ function ContextActions({ menu }: { menu: DockContextMenuState }) {
       buttons[next]?.focus();
     }}>
     <header><AppIcon path={menu.iconPath} /><strong>{menu.appName}</strong></header>
+    {!platform?.windows.enumerate && <p role="status">{capabilityReason(platform, "windowEnumeration", t, platformError)}</p>}
     {missing && <p role="status">{t("unavailable")}</p>}
     {catalogueError && <p role="alert">{catalogueError}</p>}
     {(error || configError || refreshError) && <p role="alert">{error || configError || `${t("refreshWindowsError")}: ${refreshError}`}</p>}
@@ -73,16 +75,16 @@ function ContextActions({ menu }: { menu: DockContextMenuState }) {
     {installed?.actions.map((action) => <button key={action.id} disabled={busy} onClick={() => void perform(() => invoke("launch_installed_app", { id: installed.id, action: action.id }))}><Plus size={16} />{action.name}</button>)}
     {Boolean(windows.length) && <div className="context-window-items" aria-label={t("windows")}>
       {windows.map((window) => <div key={window.id} className={`context-window-row ${window.is_active ? "is-active" : ""}`}>
-        <button disabled={busy || !platform?.windows.activate} title={platform?.windows.activate ? window.title : t("activateUnavailable")} onClick={() => void perform(() => invoke("activate_window", { windowId: window.id }))}>{window.title}</button>
-        <button disabled={busy || !platform?.windows.close} title={platform?.windows.close ? t("close") : t("closeUnavailable")} aria-label={`${t("close")} ${window.title}`} onClick={() => void perform(() => invoke("close_window", { xid: window.id }))}><X size={14} /></button>
+        <button disabled={busy || !platform?.windows.activate} title={platform?.windows.activate ? window.title : capabilityReason(platform, "windowActivation", t, platformError)} onClick={() => { if (platform?.windows.activate) void perform(() => invoke("activate_window", { windowId: window.id })); }}>{window.title}</button>
+        <button disabled={busy || !platform?.windows.close} title={platform?.windows.close ? t("close") : capabilityReason(platform, "windowClose", t, platformError)} aria-label={`${t("close")} ${window.title}`} onClick={() => { if (platform?.windows.close) void perform(() => invoke("close_window", { xid: window.id })); }}><X size={14} /></button>
       </div>)}
     </div>}
     {menu.windowId && windows.some((window) => window.id === menu.windowId) && <>
-      <button className="context-danger" title={platform?.forceQuit ? undefined : t("forceUnavailable")} disabled={busy || !platform?.forceQuit} onClick={() => setConfirmKill(true)}><Flame size={16} /> {t("forceQuit")}</button>
+      <button className="context-danger" title={platform?.forceQuit ? undefined : capabilityReason(platform, "forceQuit", t, platformError)} disabled={busy || !platform?.forceQuit} onClick={() => setConfirmKill(true)}><Flame size={16} /> {t("forceQuit")}</button>
       {confirmKill && <div className="context-confirm" role="alert">
         <p>{t("forceWarning")}</p>
         <button disabled={busy} onClick={() => setConfirmKill(false)}>{t("cancel")}</button>
-        <button className="context-danger" disabled={busy} onClick={() => void perform(() => invoke("force_kill_window", { xid: menu.windowId }))}>{t("forceConfirm")}</button>
+        <button className="context-danger" disabled={busy || !platform?.forceQuit} onClick={() => { if (platform?.forceQuit) void perform(() => invoke("force_kill_window", { xid: menu.windowId })); }}>{t("forceConfirm")}</button>
       </div>}
     </>}
   </section>;

@@ -8,6 +8,7 @@ const compile = source => 'data:text/javascript;base64,' + Buffer.from(ts.transp
 }).outputText).toString('base64');
 const jsxUrl = compile('export const jsx = (type, props) => ({type, props}); export const jsxs = jsx; export const Fragment = "Fragment";');
 const errorUrl = compile(fs.readFileSync(new URL('../src/commandError.ts', import.meta.url), 'utf8'));
+const capabilitiesUrl = compile(fs.readFileSync(new URL('../src/capabilities.ts', import.meta.url), 'utf8'));
 const dateTimeUrl = compile(fs.readFileSync(new URL('../src/dateTime.ts', import.meta.url), 'utf8'));
 const deferred = () => { let resolve, reject; const promise = new Promise((yes, no) => { resolve = yes; reject = no; }); return { promise, resolve, reject }; };
 const flush = async () => { for (let i = 0; i < 20; i++) await Promise.resolve(); };
@@ -21,6 +22,7 @@ function* nodes(tree) {
 test('wallpaper scan effects cancel only their request, ignore stale results, retry errors and suppress disposed completion', async () => {
   const states = [], refs = [], effects = [], pending = [], calls = [], scans = [];
   let stateIndex = 0, refIndex = 0, effectIndex = 0;
+  let platform = { wallpaper: true };
   let config = { wallpaperFolders: ['/first'], wallpaperRecursive: true, wallpaperFavorites: [], wallpaperIntervalMinutes: 1 };
   globalThis.__wallpaperScanTest = {
     useState(initial) {
@@ -37,7 +39,7 @@ test('wallpaper scan effects cancel only their request, ignore stale results, re
     },
     usePolling() {},
     useConfig: () => ({ config, updateConfig: assert.fail }),
-    usePlatform: () => ({ platform: { wallpaper: true } }),
+    usePlatform: () => ({ platform }),
     useI18n: () => ({ t: key => key, locale: 'vi-VN' }),
     convertFileSrc: path => path,
     invoke(command, args) {
@@ -54,7 +56,8 @@ test('wallpaper scan effects cancel only their request, ignore stale results, re
   source = source.replace(/import \{ useConfig, errorMessage \} from .*;/,
     `const { useConfig } = globalThis.__wallpaperScanTest; import { errorMessage } from ${JSON.stringify(errorUrl)};`)
     .replace(/import \{ Card, Toggle \} from .*;/, 'const Card="Card", Toggle="Toggle";')
-    .replaceAll('"../../dateTime"', JSON.stringify(dateTimeUrl));
+    .replaceAll('"../../dateTime"', JSON.stringify(dateTimeUrl))
+    .replaceAll('"../../capabilities"', JSON.stringify(capabilitiesUrl));
   const transpiled = ts.transpileModule(source, { compilerOptions: {
     module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022, jsx: ts.JsxEmit.ReactJSX,
   } }).outputText.replaceAll('"react/jsx-runtime"', JSON.stringify(jsxUrl));
@@ -84,6 +87,15 @@ test('wallpaper scan effects cancel only their request, ignore stale results, re
     let tree = render();
     assert.ok([...nodes(tree)].some(node => node.props?.['aria-label'] === 'apply new.png'));
     assert.ok(![...nodes(tree)].some(node => node.props?.['aria-label'] === 'apply stale.png'));
+    platform = { wallpaper: false, unavailableReasons: { wallpaper: 'wallpaper_read_only' } };
+    tree = render();
+    const apply = [...nodes(tree)].find(node => node.props?.['aria-label'] === 'apply new.png');
+    assert.equal(apply.props.disabled, true);
+    const priorCalls = calls.length;
+    await apply.props.onClick();
+    assert.equal(calls.length, priorCalls, 'Unsupported handler cannot dispatch wallpaper apply even if invoked directly');
+    assert.ok([...nodes(tree)].some(node => node.props?.role === 'status' && node.props.children === 'wallpaperReadOnly'));
+    platform = { wallpaper: true }; tree = render();
     click(tree, 'scan'); render();
     assert.deepEqual(calls.filter(call => call.command === 'cancel_wallpaper_scan')[1].args, { requestId: second });
     scans[2].reject(new Error('permission denied')); await flush(); tree = render();

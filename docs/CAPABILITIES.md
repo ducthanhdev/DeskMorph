@@ -13,12 +13,14 @@ Có `DISPLAY`, XWayland hoặc file XML protocol trên đĩa không chứng minh
 
 ## Phát hiện khi chạy
 
-`get_platform_info` trả session/desktop thực tế, `windows.enumerate`, `windows.activate`, `windows.close`, `forceQuit`, `workspaces`, `wallpaper`, monitor topology và lý do thiếu hỗ trợ. `windowManagement` giữ ý nghĩa khả năng liệt kê để Dock tiếp tục hiển thị app đã ghim khi tính năng cửa sổ không khả dụng.
+`get_platform_info` trả session/desktop thực tế, `windows.enumerate`, `windows.activate`, `windows.close`, `forceQuit`, `workspaces`, `wallpaper`, `dockPlacement`, `autoHide`, `unavailableReasons` theo từng tính năng, monitor topology và lý do thiếu hỗ trợ. `windowManagement` giữ ý nghĩa khả năng liệt kê để Dock tiếp tục hiển thị app đã ghim khi tính năng cửa sổ không khả dụng.
 
 - Liệt kê cần gọi được `xprop` thành công và đọc `_NET_CLIENT_LIST` có kiểu WINDOW, kể cả danh sách rỗng hợp lệ. Thiếu property, sai kiểu/định dạng hoặc lỗi lệnh không được trả thành danh sách rỗng thành công.
 - Chuyển/đóng cần window manager công bố chính xác atom EWMH tương ứng. UI tắt thao tác thiếu hỗ trợ; command kiểm tra lại trước gửi request. Command thành công nghĩa là đã gửi yêu cầu; window manager/ứng dụng vẫn quyết định chuyển focus hoặc hỏi xác nhận đóng.
 - Force-close còn cần `xkill`; luôn yêu cầu xác nhận và không thay thế đóng bình thường. Hồi quy native của thay đổi force-close mới chưa hoàn tất.
-- Workspace hiện luôn false. Hình nền chỉ bật adapter GNOME đã có code; desktop khác có lý do unsupported. CPU/RAM, UPower, NetworkManager, audio và MPRIS có trạng thái thiếu công cụ/service riêng.
+- Workspace hiện luôn false và UI ghi “Đang phát triển”. Đặt cạnh/màn hình và tự ẩn chỉ bật trong phiên X11 có DISPLAY; đây là gate cho adapter hiện tại, không chứng nhận mọi WM X11. Nếu config đã lưu tự ẩn nhưng phiên chưa hỗ trợ, giữ giá trị cấu hình và cho Dock hiện đầy đủ. Hình nền chỉ bật khi desktop có token GNOME chính xác (phân tách bằng dấu hai chấm), schema/key tồn tại và các key light/dark ghi được; desktop khác có lý do unsupported. CPU/RAM, UPower, NetworkManager, audio và MPRIS có trạng thái thiếu công cụ/service riêng.
+
+Nút “Kiểm tra lại khả năng desktop” phát event tới các WebView để đọc lại capability. Lỗi probe xóa snapshot hỗ trợ cũ; loading/lỗi không được suy thành khả dụng. Ghim/mở app và chỉnh WM_CLASS thủ công vẫn dùng được khi không đọc được cửa sổ. Trạng thái Dock lúc này ghi chưa đọc được cửa sổ thay vì khẳng định 0. UI hiện lý do vi/en cho từng tính năng thiếu; thao tác activate/close/force-close và apply/shuffle kiểm tra gate trước dispatch.
 
 ## Bằng chứng hiện có
 

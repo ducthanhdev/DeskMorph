@@ -357,12 +357,20 @@ fn settings_for(name: &'static str) -> Result<gio::Settings, String> {
 fn gnome_settings() -> Result<gio::Settings, String> {
     use gio::prelude::*;
     let desktop = std::env::var("XDG_CURRENT_DESKTOP").unwrap_or_default().to_uppercase();
-    if !desktop.contains("GNOME") { return Err("Wallpaper changes are supported on the verified GNOME adapter only".into()); }
-    let settings = settings_for("org.gnome.desktop.background")?;
-    if !settings.settings_schema().is_some_and(|schema| schema.has_key("picture-uri")) { return Err("GNOME picture-uri setting is unavailable".into()); }
+    if !desktop.split(':').any(|name| name == "GNOME") { return Err("wallpaper_adapter_unsupported: Wallpaper changes are supported on the verified GNOME adapter only".into()); }
+    let settings = settings_for("org.gnome.desktop.background").map_err(|error| format!("wallpaper_schema_unavailable: {error}"))?;
+    if !settings.settings_schema().is_some_and(|schema| schema.has_key("picture-uri")) { return Err("wallpaper_setting_unavailable: GNOME picture-uri setting is unavailable".into()); }
     Ok(settings)
 }
-pub fn available() -> bool { gnome_settings().is_ok() }
+pub fn availability() -> Result<(), String> {
+    use gio::prelude::*;
+    let settings = gnome_settings()?;
+    let has_dark = settings.settings_schema().is_some_and(|schema| schema.has_key("picture-uri-dark"));
+    if !settings.is_writable("picture-uri") || (has_dark && !settings.is_writable("picture-uri-dark")) {
+        return Err("wallpaper_read_only: Wallpaper settings are read-only".into());
+    }
+    Ok(())
+}
 pub fn current_wallpaper() -> Result<String, String> {
     use gio::prelude::*;
     let settings = gnome_settings()?;

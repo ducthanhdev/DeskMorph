@@ -2,7 +2,7 @@
 
 Mục tiêu giữ nguyên toàn bộ 99 đầu việc trong IMPLEMENTATION_PLAN.md. Chưa đạt cổng hoàn thành toàn dự án. Checkbox chưa đánh dấu không đồng nghĩa chưa có code: nhiều mục đang chờ kiểm thử đủ phạm vi.
 
-Hiện đã đánh dấu 81/99 mục, gồm G3.2–G3.3 bằng fixture môi trường cô lập và G0.5/G2.1/G2.3 qua capability EWMH, kiểm thử lỗi adapter và native startup thiếu xprop. Đã bổ sung G0.4/G2.4/G2.5 qua popup/auto-hide native và G9.6/G9.9 bằng hồi quy policy/asset/force-close và ảnh Studio thật trong README. Các cổng GUI, Wayland và phát hành vẫn chưa hoàn tất.
+Hiện đã đánh dấu 82/99 mục, gồm G3.2–G3.3 bằng fixture môi trường cô lập và G0.5/G2.1/G2.3 qua capability EWMH, kiểm thử lỗi adapter và native startup thiếu xprop. Đã bổ sung G0.4/G2.4/G2.5 qua popup/auto-hide native và G9.6/G9.9 bằng hồi quy policy/asset/force-close và ảnh Studio thật trong README. Các cổng GUI, Wayland và phát hành vẫn chưa hoàn tất.
 
 ## Môi trường tham chiếu đã xác minh
 
@@ -426,4 +426,13 @@ Script cần AT-SPI, Python GI, GTK3 và libXtst. Chỉ gửi phím khi kiểm t
 - Frontend test SystemPopup thật với React/IPC adapter kiểm capability disable/reason, bốn mã lỗi cụ thể dịch vi/en, khóa request lặp trong pending, generic failure còn context, inactive completion không cập nhật UI. Full Rust cuối 63/63 gồm ignored, frontend 36/36, TS/Vite và offline custom-protocol build qua.
 - Native --system-locations-smoke cuối exit 0 app 2026982/2027782: monitor fallback mở GTK 2027462/XID 0x4800003; receiver nhận đúng Downloads flags/path; missing directory không tạo/không launch và restore+click thành công; trash:/// nhận đúng, sentinel giữ nguyên. Khi ẩn mọi handler, cả ba nút disabled và đủ lý do. Các lượt trước chưa đạt (một lượt selector mất popup, hai lượt trạng thái Hidden handler); bản sửa cuối kiểm lại toàn bộ xanh. Finally restore exact config bytes, xóa riêng MIME/XDG/receiver fixtures và chạy normal 2028171.
 - Hồi quy --system-open-smoke --system-smoke exit 0 app 2028171: COSMIC Files thật mở cửa sổ Downloads mới qua GIO/native GFile; đóng đúng XID mới, các cửa sổ có sẵn còn nguyên. UPower/NetworkManager, CPU/RAM/chu kỳ và widget restore đều qua. /proc ngoài sandbox xác minh mọi PID fixture/test trong report đã thoát, không còn owned receiver từ các lượt trước, normal profile không còn private MIME config/receiver/timing env.
-- [Hợp đồng](SYSTEM_TOOLS.md), [bản ghi](benchmarks/system-locations-2026-10-29.json). G8.4/G8.5 đánh dấu, tổng 81/99. G8.7 Wayland portal và G9.4 ma trận runtime vẫn mở; không suy fixture thành hỗ trợ mọi monitor package hoặc Trash browser.
+- [Hợp đồng](SYSTEM_TOOLS.md), [bản ghi](benchmarks/system-locations-2026-10-29.json). G8.4/G8.5 đánh dấu, tổng 82/99. G8.7 Wayland portal và G9.4 ma trận runtime vẫn mở; không suy fixture thành hỗ trợ mọi monitor package hoặc Trash browser.
+
+
+## G5.10 — UI phản ánh capability (29/10/2026)
+
+- Backend trả `unavailableReasons` theo từng feature, placement/auto-hide, kiểm tra adapter GNOME theo token desktop chính xác và schema/key/writable. UI dịch lý do vi/en, ghi workspace “Đang phát triển”, khóa đọc WM_CLASS/placement/auto-hide/apply/shuffle và action cửa sổ khi thiếu capability. Ghim/mở app và sửa class thủ công còn dùng được; Dock không khẳng định 0 cửa sổ khi không đọc được backend.
+- Refresh capability phát event tới các WebView; lỗi probe xóa snapshot true cũ; hook gộp event, bỏ completion sau dispose, dọn listener và retry. Unit test kiểm tra mất/phục hồi capability và guard apply của WallpaperSettings thật khi handler bị gọi trực tiếp.
+- Native `desktop_smoke.py --restart --autohide-smoke --capabilities-smoke`: tự ẩn trên/dưới, edge reveal, lịch/audio/Escape/disable qua; xóa/khôi phục symlink xprop trong PATH fixture cập nhật Studio/Dock và launcher vẫn dùng được; desktop không hỗ trợ khóa lịch hình nền kèm lý do GNOME. Phiên khai báo Wayland nhưng render X11 khóa placement/auto-hide, giữ autoHide đã lưu và Dock cao đầy đủ. Không suy thành native Wayland pass.
+- 64 Rust / 38 frontend tests qua; TypeScript/Vite và offline custom-protocol build qua. Các lần script tìm sai summary/text/frame và lượt tự ẩn bị di chuyển con trỏ không được tính đạt. Test cuối qua, config khôi phục, fixture directory xóa và PID đã thoát; xác minh normal profile trong desktop namespace. Bằng chứng: [capabilities-ui-2026-10-29.json](benchmarks/capabilities-ui-2026-10-29.json).
+- Chưa thử lockdown GSettings thật hoặc native Wayland; không đổi policy desktop của người dùng. G5.8/G5.9 và các cổng Wayland/phát hành vẫn mở.

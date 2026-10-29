@@ -13,6 +13,7 @@ import { usePolling } from "./hooks/usePolling";
 import { useAsyncLifetime } from "./hooks/useAsyncLifetime";
 import { useClock } from "./hooks/useClock";
 import { formatClock } from "./dateTime";
+import { capabilityReason } from "./capabilities";
 import { groupWindows, matchesWindowClass } from "./windowGroups";
 import { listen } from "@tauri-apps/api/event";
 import {
@@ -40,7 +41,7 @@ export const Taskbar: React.FC = () => {
   const lifetime = useAsyncLifetime();
   const { t, locale, count } = useI18n();
   const { apps: installedApps, loading: appsLoading, error: appsError } = useInstalledApps();
-  const { platform } = usePlatform();
+  const { platform, error: platformError } = usePlatform();
   const [windowsError, setWindowsError] = useState<string | null>(null);
   const [retryAction, setRetryAction] = useState<(() => void) | null>(null);
   const [operationError, setOperationError] = useState<string | null>(null);
@@ -66,7 +67,8 @@ export const Taskbar: React.FC = () => {
   const rafId = useRef<number | null>(null);
 
   const { config, ready, error: configError, mutatePin, retry: configRetry } = useConfig();
-  const isHidden = Boolean(config.autoHide && !isHovered && !previewVisible && !contextMenuVisible && !popupVisible && !operationError && !configError && !windowsError);
+  const autoHideEnabled = Boolean(config.autoHide && platform?.autoHide);
+  const isHidden = Boolean(autoHideEnabled && !isHovered && !previewVisible && !contextMenuVisible && !popupVisible && !operationError && !configError && !windowsError);
   const now = useClock(ready && config.enabled && config.showClock && !isHidden);
   const outsideSince = useRef<number | null>(null);
   // Native resize can remove the edge trigger without a DOM mouseleave, or
@@ -84,7 +86,7 @@ export const Taskbar: React.FC = () => {
       outsideSince.current ??= performance.now();
       if (performance.now() - outsideSince.current >= 500) setIsHovered(false);
     }
-  }, 250, ready && config.enabled && config.autoHide && platform?.session === "x11" && !popupVisible);
+  }, 250, ready && config.enabled && autoHideEnabled && !popupVisible);
   const time = formatClock(now, locale, config);
   const date = now.toLocaleDateString(locale, { weekday: "short", month: "short", day: "numeric" });
   const dockRef = useRef<HTMLDivElement>(null);
@@ -220,13 +222,13 @@ export const Taskbar: React.FC = () => {
 
   // Sync window physical size when hidden state changes
   useEffect(() => {
-    if (!ready || !config.enabled) return;
+    if (!ready || !config.enabled || !platform?.autoHide) return;
     invoke("set_taskbar_autohide_state", {
       hidden: isHidden,
       height: currentHeight,
       position: config.position,
     }).catch(console.error);
-  }, [isHidden, currentHeight, config.position, ready, config.enabled]);
+  }, [isHidden, currentHeight, config.position, ready, config.enabled, platform?.autoHide]);
 
   // Context Menu Management
   const openContextMenu = async (
@@ -334,7 +336,7 @@ export const Taskbar: React.FC = () => {
       hideTimer.current = null;
     }
     setIsHovered(true);
-    if (config.autoHide) {
+    if (autoHideEnabled) {
       invoke("set_taskbar_autohide_state", {
         hidden: false,
         height: currentHeight,
@@ -344,7 +346,7 @@ export const Taskbar: React.FC = () => {
   };
 
   const handleMouseLeave = () => {
-    if (config.autoHide) {
+    if (autoHideEnabled) {
       if (hideTimer.current) clearTimeout(hideTimer.current);
       hideTimer.current = setTimeout(() => {
         hideTimer.current = null;
@@ -355,7 +357,7 @@ export const Taskbar: React.FC = () => {
 
   const shuffleBusy = useRef(false);
   const handleShuffle = async () => {
-    if (shuffleBusy.current) return;
+    if (shuffleBusy.current || !platform?.wallpaper) return;
     shuffleBusy.current = true; setOperationError(null); setRetryAction(null);
     const signal = lifetime.capture();
     try { await invoke("shuffle_wallpaper"); if (!signal.aborted) setOperationError(null); }
@@ -364,6 +366,7 @@ export const Taskbar: React.FC = () => {
   };
 
   const handleActivateWindow = async (id: string) => {
+    if (!platform?.windows.activate) { setOperationError(capabilityReason(platform, "windowActivation", t, platformError)); return; }
     setRetryAction(null); setOperationError(null);
     const signal = lifetime.capture();
     try {
@@ -546,7 +549,7 @@ export const Taskbar: React.FC = () => {
   // Group windows into Pinned vs Unpinned Running Apps
   const pinnedList = config.pinnedApps || DEFAULT_PINNED_APPS;
   const activePinned = pinnedList.filter((app) => app.enabled !== false);
-  const { pinnedItems, unpinnedGroups } = groupWindows(openWindows, activePinned);
+  const { pinnedItems, unpinnedGroups } = groupWindows(platform?.windows.enumerate ? openWindows : [], activePinned);
 
   useLayoutEffect(() => {
     const area = appsRef.current;
@@ -568,7 +571,7 @@ export const Taskbar: React.FC = () => {
   const scrollApps = (direction: number) => appsRef.current?.scrollBy({ left: direction * Math.max(100, appsRef.current.clientWidth * .8), behavior: reducedMotion ? "instant" : "smooth" });
 
   useLayoutEffect(() => {
-    if (!ready || !config.enabled || !dockRef.current) return;
+    if (!ready || !config.enabled || !platform?.dockPlacement || !dockRef.current) return;
     const root = dockRef.current;
     let timer: ReturnType<typeof setTimeout>;
     let lastWidth = 0;
@@ -585,7 +588,7 @@ export const Taskbar: React.FC = () => {
     elements.forEach((el) => observer.observe(el));
     measure();
     return () => { clearTimeout(timer); observer.disconnect(); };
-  }, [ready, config.enabled, config.iconSize, config.iconSpacing, config.height, config.showApps, config.showAudio, config.showBattery, config.showNetwork, config.showSystem, config.showClock, config.showStats, config.showShuffle, pinnedItems.length, unpinnedGroups.length]);
+  }, [ready, config.enabled, platform?.dockPlacement, config.iconSize, config.iconSpacing, config.height, config.showApps, config.showAudio, config.showBattery, config.showNetwork, config.showSystem, config.showClock, config.showStats, config.showShuffle, pinnedItems.length, unpinnedGroups.length]);
 
   const movePin = async (id: string, target: number) => {
     if (movingPin.current || pinnedList.findIndex((pin) => pin.id === id) === target) return;
@@ -736,7 +739,7 @@ export const Taskbar: React.FC = () => {
 
               return (
                 <button
-                  aria-label={`${pinned.name} • ${count("window", windows.length)}${missing ? ` • ${t("unavailable")}` : ""}`}
+                  aria-label={`${pinned.name} • ${platform?.windows.enumerate ? count("window", windows.length) : t("windowStatusUnavailable")}${missing ? ` • ${t("unavailable")}` : ""}`}
                   aria-keyshortcuts="Control+Shift+ArrowLeft Control+Shift+ArrowRight"
                   key={pinned.id}
                   data-pin-id={pinned.id}
@@ -806,7 +809,7 @@ export const Taskbar: React.FC = () => {
                   data-dock-tooltip={
                     missing ? `${pinned.name} • ${t("unavailable")}` : window
                       ? `${pinned.name} • ${count("window", windows.length)} • ${t("selectWindow")}`
-                      : `${pinned.name} (Đã ghim - Nhấn để mở)`
+                      : `${pinned.name} • ${platform?.windows.enumerate ? t("open") : t("windowStatusUnavailable")}`
                   }
                   style={{
                     width: `${hitWidth}px`,
@@ -984,7 +987,7 @@ export const Taskbar: React.FC = () => {
               onClick={handleShuffle}
               disabled={!platform?.wallpaper}
               aria-label={t("shuffle")}
-              data-dock-tooltip={platform?.wallpaper ? t("shuffle") : t("unsupported")}
+              data-dock-tooltip={platform?.wallpaper ? t("shuffle") : capabilityReason(platform, "wallpaper", t, platformError)}
             >
               <Shuffle size={14} />
             </button>

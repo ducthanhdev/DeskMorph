@@ -15,13 +15,13 @@ type Tab = typeof tabs[number];
 export function Studio() {
   const [activeTab, setActiveTab] = useState<Tab>("dock");
   const { config, ready, error, warning, retry } = useConfig();
-  const { platform, error: platformError } = usePlatform();
+  const { platform, error: platformError, refresh: refreshPlatform } = usePlatform();
   const { t } = useI18n();
   return <div className={`studio-app ${config.reduceMotion ? "reduce-motion" : ""}`}>
     <header className="studio-header"><div className="header-brand"><div className="logo-box"><Sparkles size={24} /></div><div><h1 className="brand-title">DeskMorph</h1><p className="brand-subtitle">{t("subtitle")}</p></div></div></header>
     {error && <div className="app-status" role="alert">{error} <button onClick={retry}>{t("retry")}</button></div>}
     {warning && <div className="app-status" role="status">{warning}</div>}
-    {platformError && <div className="app-status" role="alert">{platformError}</div>}
+    {platformError && <div className="app-status" role="alert">{platformError} <button onClick={refreshPlatform}>{t("retry")}</button></div>}
     {platform?.reasons.map((reason) => <div className="app-status" role="status" key={reason}>{reason}</div>)}
     {!ready ? <p className="app-status" role="status">{t("loading")}</p> : <div className="studio-body">
       <nav className="studio-nav" aria-label="Studio">{tabs.map((tab) => <button key={tab} className={`nav-btn ${activeTab === tab ? "active" : ""}`} aria-current={activeTab === tab ? "page" : undefined} onClick={() => setActiveTab(tab)}>{t(`${tab}Tab`)}</button>)}</nav>

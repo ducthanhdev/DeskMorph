@@ -4,9 +4,11 @@ import type { DockContextMenuState, OpenWindow } from "../types";
 import { errorMessage, useConfig } from "../config/store";
 import { groupWindows } from "../windowGroups";
 import { usePolling } from "./usePolling";
+import { usePlatform } from "./usePlatform";
 import { usePopupActive } from "./usePopupActive";
 
 export function useLiveWindows(menu: DockContextMenuState) {
+  const { platform } = usePlatform();
   const [windows, setWindows] = useState(menu.windows || []);
   const [refreshError, setRefreshError] = useState<string | null>(null);
   const active = usePopupActive(menu.popupGeneration);
@@ -21,6 +23,6 @@ export function useLiveWindows(menu: DockContextMenuState) {
       setWindows(menu.isPinned ? pinned?.windows || [] : grouped.unpinnedGroups.flat().filter((window) => classes.has(window.class_name.toLowerCase())));
       setRefreshError(null);
     } catch (error) { if (!signal.aborted) setRefreshError(errorMessage(error)); }
-  }, 1500, active && ready && (Boolean(menu.isPinned) || classes.size > 0));
+  }, 1500, active && ready && Boolean(platform?.windows.enumerate) && (Boolean(menu.isPinned) || classes.size > 0));
   return { windows, refreshError, active };
 }

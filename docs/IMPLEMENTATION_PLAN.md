@@ -125,7 +125,7 @@ Phụ thuộc G1/G4.
 - [x] G5.7 Định dạng giờ 12/24, hiện giây, ngày tháng theo locale.
 - [ ] G5.8 Gom chuỗi giao diện vào tài nguyên vi/en; lưu ngôn ngữ, hỗ trợ chuỗi dài, plural và thông báo lỗi.
 - [ ] G5.9 Focus-visible, nhãn accessible, tab order, contrast và trạng thái disabled; mọi thao tác chính dùng được bằng bàn phím.
-- [ ] G5.10 Capability được phản ánh trong UI: tính năng chưa hỗ trợ có lý do cụ thể, không nút hoạt động giả; tách mục đang phát triển khỏi chức năng dùng được.
+- [x] G5.10 Capability được phản ánh trong UI: tính năng chưa hỗ trợ có lý do cụ thể, không nút hoạt động giả; tách mục đang phát triển khỏi chức năng dùng được.
 
 Tiêu chí: preview đúng Dock; import/reset không mất dữ liệu ngoài phạm vi đã thông báo; toàn bộ luồng chính hoạt động bằng bàn phím ở vi/en và reduced-motion.
 

@@ -58,7 +58,7 @@ pub fn apply(app: &AppHandle) -> Result<bool, String> {
         .or(window.primary_monitor().map_err(|e| e.to_string())?)
         .or(monitors.into_iter().next())
         .ok_or("Không tìm thấy màn hình")?;
-    let hidden = p.hidden
+    let hidden = crate::platform::dock_placement_available() && p.hidden
         && !crate::popup::is_active(app, "dock-context-menu")
         && !crate::popup::is_active(app, "calendar-flyout");
     let rect = geometry::dock_rect(
@@ -130,6 +130,9 @@ pub fn is_pointer_over_dock(app: AppHandle) -> Result<bool, String> {
 }
 #[tauri::command]
 pub fn set_taskbar_autohide_state(app: AppHandle, hidden: bool) -> Result<bool, String> {
+    if !crate::platform::dock_placement_available() {
+        return if hidden { Err("dock_autohide_unverified".into()) } else { Ok(false) };
+    }
     app.state::<LayoutState>()
         .0
         .lock()
