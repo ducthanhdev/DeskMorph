@@ -1,0 +1,43 @@
+{
+  "observations": [
+    {
+      "language": "vi",
+      "previewFocus": true,
+      "confirmCancelTabOrder": true,
+      "cancelReturnsTrigger": true,
+      "confirmFocusesUndo": true,
+      "undoRestoresExactConfig": true,
+      "undoReturnsTrigger": true,
+      "noChangeConfirmDisabledAndSkipped": true,
+      "previewAndCancelPreserveRevision": true,
+      "chooserEscapeRestoresImportFocus": true,
+      "importReviewFocus": true,
+      "importCancelPreservesRevision": true,
+      "importConfirmUndoFocus": true
+    },
+    {
+      "language": "en",
+      "previewFocus": true,
+      "confirmCancelTabOrder": true,
+      "cancelReturnsTrigger": true,
+      "confirmFocusesUndo": true,
+      "undoRestoresExactConfig": true,
+      "undoReturnsTrigger": true,
+      "noChangeConfirmDisabledAndSkipped": true,
+      "previewAndCancelPreserveRevision": true,
+      "chooserEscapeRestoresImportFocus": true,
+      "importReviewFocus": true,
+      "importCancelPreservesRevision": true,
+      "importConfirmUndoFocus": true
+    }
+  ],
+  "fixturePids": [
+    2830943,
+    2832094
+  ],
+  "normalPid": 2833283,
+  "configRestored": true,
+  "scope": "Native X11 reset review, vi/en; initial System/reset focus through AT-SPI, subsequent Tab/Enter real; GTK import chooser Enter/Escape/path selection, review/cancel/confirm/undo",
+  "allFixturesExited": true,
+  "fixtureFilesRemoved": true
+}
