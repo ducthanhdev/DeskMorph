@@ -1,0 +1,75 @@
+{
+  "runs": [
+    {
+      "language": "vi",
+      "pid": 2957078,
+      "sequence": [
+        "Tìm ứng dụng",
+        "Google Chrome • 2 cửa sổ",
+        "VS Code / IDE • 0 cửa sổ",
+        "Terminal • 0 cửa sổ",
+        "Tệp tin (Files) • 0 cửa sổ",
+        "Cài đặt (Settings) • 0 cửa sổ",
+        "DeskMorph Smoke Fixture • 0 cửa sổ",
+        "Deskmorph • 2 cửa sổ",
+        "com.microsoft.VSCode • 1 cửa sổ",
+        "TelegramDesktop • 1 cửa sổ",
+        "cosmic-edit • 1 cửa sổ",
+        "Âm thanh",
+        "Tiện ích hệ thống",
+        "Mở lịch"
+      ],
+      "popupSources": [
+        "Tìm ứng dụng",
+        "Âm thanh",
+        "Tiện ích hệ thống",
+        "Mở lịch"
+      ],
+      "hiddenEntry": true,
+      "heldAfterPreview": true,
+      "escapeRestores": true,
+      "enterReopens": true,
+      "hidesAfterBlur": true,
+      "reverseMatches": true
+    },
+    {
+      "language": "en",
+      "pid": 2959297,
+      "sequence": [
+        "Search applications",
+        "Google Chrome • 2 windows",
+        "VS Code / IDE • 0 windows",
+        "Terminal • 0 windows",
+        "Files • 0 windows",
+        "Settings • 0 windows",
+        "DeskMorph Smoke Fixture • 0 windows",
+        "Deskmorph • 2 windows",
+        "com.microsoft.VSCode • 1 window",
+        "TelegramDesktop • 1 window",
+        "cosmic-edit • 1 window",
+        "Audio",
+        "System utilities",
+        "Open calendar"
+      ],
+      "popupSources": [
+        "Search applications",
+        "Audio",
+        "System utilities",
+        "Open calendar"
+      ],
+      "hiddenEntry": true,
+      "heldAfterPreview": true,
+      "escapeRestores": true,
+      "enterReopens": true,
+      "hidesAfterBlur": true,
+      "reverseMatches": true
+    }
+  ],
+  "configRestored": true,
+  "fixturePids": [
+    2957078,
+    2959297
+  ],
+  "normalPid": 2961495,
+  "scope": "Native X11 vi/en hidden Dock entry via Studio button, forward Tab names, four popup Enter/Escape/reopen paths; setup focus via AT-SPI. No screen reader or full popup control traversal claim."
+}

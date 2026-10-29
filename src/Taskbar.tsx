@@ -9,6 +9,7 @@ import { useInstalledApps } from "./hooks/useInstalledApps";
 import { SystemWidgets } from "./components/SystemWidgets";
 import { DockAppTile, DockStats } from "./components/DockParts";
 import { getPinnedVisual, getAppVisual } from "./dockVisuals";
+import { useFocusWithin } from "./hooks/useFocusWithin";
 import { useDockTooltip } from "./hooks/useDockTooltip";
 import { usePlatform } from "./hooks/usePlatform";
 import { usePolling } from "./hooks/usePolling";
@@ -60,8 +61,10 @@ export const Taskbar: React.FC = () => {
   const rafId = useRef<number | null>(null);
 
   const { config, ready, error: configError, mutatePin, retry: configRetry } = useConfig();
+  const dockRef = useRef<HTMLDivElement>(null);
+  const keyboardFocus = useFocusWithin(dockRef);
   const autoHideEnabled = Boolean(config.autoHide && platform?.autoHide);
-  const isHidden = Boolean(autoHideEnabled && !isHovered && !previewVisible && !contextMenuVisible && !popupVisible && !operationError && !configError && !windowsError);
+  const isHidden = Boolean(autoHideEnabled && !keyboardFocus.focused && !isHovered && !previewVisible && !contextMenuVisible && !popupVisible && !operationError && !configError && !windowsError);
   const now = useClock(ready && config.enabled && config.showClock && !isHidden);
   const outsideSince = useRef<number | null>(null);
   // Native resize can remove the edge trigger without a DOM mouseleave, or
@@ -82,7 +85,6 @@ export const Taskbar: React.FC = () => {
   }, 250, ready && config.enabled && autoHideEnabled && !popupVisible);
   const time = formatClock(now, locale, config);
   const date = now.toLocaleDateString(locale, { weekday: "short", month: "short", day: "numeric" });
-  const dockRef = useRef<HTMLDivElement>(null);
   const pointerDrag = useRef<{ id: string; pointerId: number; x: number; y: number; started: boolean; cancelled: boolean } | null>(null);
   const movingPin = useRef(false);
   const suppressClickUntil = useRef(0);
@@ -512,6 +514,8 @@ export const Taskbar: React.FC = () => {
 
       <div
         {...tooltip}
+        onFocusCapture={(event) => { tooltip.onFocusCapture(event); keyboardFocus.onFocusCapture(); }}
+        onBlurCapture={(event) => { tooltip.onBlurCapture(); keyboardFocus.onBlurCapture(event); }}
         ref={dockRef}
         className={`taskbar-container ${reducedMotion ? "reduce-motion" : ""} ${isHidden ? "dock-autohidden" : ""}`}
         onMouseEnter={handleMouseEnter}

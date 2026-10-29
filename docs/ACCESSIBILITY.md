@@ -5,6 +5,7 @@ G5.9 trong kế hoạch triển khai **chưa chốt**. Tài liệu này tách c�
 ## Các thao tác hiện có
 
 - Studio: Tab/Shift+Tab giữa nút điều hướng và các control; Enter chọn trang. Checkbox dùng Space, range/select dùng phím của control native.
+- Studio → Taskbar Studio → Điều khiển Dock bằng bàn phím: Enter chuyển sang nút launcher của Dock, kể cả khi tự ẩn. Dock giữ hiện khi DOM và cửa sổ native còn nhận focus; Tab/Shift+Tab giữa các nút, Enter mở popup, Escape đóng rồi Enter mở lại từ nút nguồn. Nút vào Dock disabled khi Dock tắt hoặc placement chưa hỗ trợ; native cũng kiểm tra Dock enabled/visible.
 - Màu chủ đạo: nhập `#RRGGBB` rồi Enter hoặc Lưu. Nút lưu vô hiệu hóa khi mã sai hoặc chưa đổi. Ô màu vẫn dùng được bằng chuột; đường bàn phím dùng ô mã màu vì input color của WebKit có thể bị bỏ qua khi Tab.
 - Preset: Đổi tên đưa focus và chọn nội dung ô tên; Enter tạo/đổi tên, Hủy trả về ô tên. Xóa preset, ghim hoặc thư mục chuyển focus sang nút xóa kế tiếp/trước; hết danh sách thì về ô nhập tương ứng. Async completion không lấy focus từ control khác.
 - Ghép lớp cửa sổ: Enter/Space mở/đóng disclosure; Tab vào textarea. Role button và aria-expanded bổ sung vì WebKit trên môi trường kiểm thử báo summary mặc định là unknown.
@@ -16,6 +17,7 @@ G5.9 trong kế hoạch triển khai **chưa chốt**. Tài liệu này tách c�
 
 | Phạm vi | Bằng chứng | Giới hạn |
 | --- | --- | --- |
+| Dock tự ẩn: nút vào từ Studio, Tab/Shift+Tab và bốn popup Enter/Escape/reopen | [Native vi/en](benchmarks/dock-keyboard-2026-10-29.json), `focusWithin.test.mjs` | 14 nút mỗi ngôn ngữ ở profile test; đặt focus nút Studio ban đầu bằng AT-SPI. Chưa kiểm toàn bộ đường từ global shortcut, control bên trong popup hoặc kích hoạt app được ghim |
 | Lịch: ngày đích, một điểm Tab, Enter/Escape và focus nhìn thấy | [Native và ảnh](benchmarks/calendar-keyboard-2026-10-29.json), `calendarNavigation.test.mjs` | Native X11, đặt focus ban đầu bằng AT-SPI; chưa chứng minh mọi đường vào lịch |
 | Focus sau xóa và Enter đổi tên preset | [Native vi/en](benchmarks/removal-focus-2026-10-29.json), `removalFocus.test.mjs` | Không thay thế kiểm tra toàn bộ thứ tự Tab |
 | Màu: định dạng, chỉ patch accentColor, disabled khi chưa đổi, theo config/picker | `appearanceColor.test.mjs`, [native vi/en](benchmarks/accent-keyboard-2026-10-29.json) | Native save qua ô mã màu; không tuyên bố chooser native hỗ trợ bàn phím |
@@ -31,6 +33,7 @@ G5.9 trong kế hoạch triển khai **chưa chốt**. Tài liệu này tách c�
 
 - Kiểm thêm trạng thái động: lỗi/conflict và concurrent review thực tế, thứ tự điều hướng đầy đủ trong hộp thoại file, thao tác wallpaper favorite/filter/paging và focus sau khi control biến mất/disabled. Import/reset review/cancel/confirm/undo đã có kiểm native vi/en.
 - Kiểm đường vào/ra Dock và popup chỉ bằng bàn phím, cùng audio/media/system/context/window actions, kể cả thiếu capability/lỗi và pending.
+  Nút vào Dock từ Studio, thứ tự Tab hai chiều và mở/đóng/mở lại launcher/audio/system/calendar trên Dock tự ẩn đã có bằng chứng vi/en. Control bên trong popup và các trạng thái lỗi/pending còn mở.
 - Tiếp tục audit contrast và focus nhìn thấy: 82 fixture chữ hiện đã qua, gồm Dock trên trắng/đen tại opacity .2/.8/.85/.92/1 và một số màu Studio/popup. Chưa bao phủ gradient, icon/artwork, màu accent tùy chỉnh, control borders, focus rings và mọi trạng thái động. Ảnh hoặc tính toán cặp màu riêng lẻ chưa chứng minh toàn bộ.
 - Kiểm trình đọc màn hình thực tế, thứ tự đọc/announcement và tác động của role/aria trên WebKit phiên bản mục tiêu. AT-SPI tree chứng minh API được expose, chưa chứng minh trải nghiệm đọc đầy đủ.
 

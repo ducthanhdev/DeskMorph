@@ -208,6 +208,24 @@ fn show_studio(app: AppHandle) -> Result<(), String> {
     window.show().and_then(|_| window.unminimize()).and_then(|_| window.set_focus()).map_err(|e| e.to_string())
 }
 #[tauri::command]
+fn focus_dock(app: AppHandle) -> Result<(), String> {
+    use gtk::prelude::*;
+    let state = app.state::<config::ConfigState>();
+    if state.0.lock().map_err(|e| e.to_string())?.snapshot.config["enabled"] != true {
+        return Err("Dock đang tắt".into());
+    }
+    let window = app.get_webview_window("taskbar").ok_or("Không tìm thấy Dock")?;
+    if !window.is_visible().map_err(|e| e.to_string())? { return Err("Dock đang tắt".into()); }
+    window.set_focus().map_err(|e| e.to_string())?;
+    window.gtk_window().map_err(|e| e.to_string())?.present();
+    window.with_webview(move |platform| {
+        // Prepare content focus in the opening gesture. GTK activation settles
+        // later; there is no deferred toplevel activation to steal newer focus.
+        platform.inner().grab_focus();
+    }).map_err(|e| e.to_string())?;
+    window.eval("document.querySelector('.taskbar-container button:not(:disabled)')?.focus()").map_err(|e| e.to_string())
+}
+#[tauri::command]
 fn quit_app(app: AppHandle) { app.exit(0); }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -313,6 +331,7 @@ fn run_app() -> Result<(), String> {
             applications::launch_installed_app,
             show_app_launcher,
             show_studio,
+            focus_dock,
             quit_app,
             platform::get_platform_info,
             platform::refresh_platform_info,

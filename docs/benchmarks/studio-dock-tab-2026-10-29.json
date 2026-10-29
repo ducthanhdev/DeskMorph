@@ -1,0 +1,110 @@
+{
+  "pid": 2961495,
+  "disclosure": null,
+  "tab": "Taskbar Studio",
+  "sequence": [
+    [
+      "button",
+      "Taskbar Studio"
+    ],
+    [
+      "button",
+      "Ứng dụng"
+    ],
+    [
+      "button",
+      "Giao diện"
+    ],
+    [
+      "button",
+      "Hình nền"
+    ],
+    [
+      "button",
+      "Hệ thống"
+    ],
+    [
+      "button",
+      "Thử hiệu ứng mở ứng dụng"
+    ],
+    [
+      "check box",
+      "Bật Dock"
+    ],
+    [
+      "button",
+      "Điều khiển Dock bằng bàn phím"
+    ],
+    [
+      "combo box",
+      "Vị trí"
+    ],
+    [
+      "combo box",
+      "Màn hình đặt Dock"
+    ],
+    [
+      "slider",
+      "Chiều cao Dock"
+    ],
+    [
+      "slider",
+      "Kích thước icon"
+    ],
+    [
+      "slider",
+      "Khoảng cách icon"
+    ],
+    [
+      "check box",
+      "Tự động ẩn Dock Chạm cạnh màn hình để hiện lại; Dock giữ hiện khi bạn thao tác popup."
+    ],
+    [
+      "check box",
+      "Ứng dụng trên Dock"
+    ],
+    [
+      "check box",
+      "Hiện pin trên Dock"
+    ],
+    [
+      "check box",
+      "Hiện mạng trên Dock"
+    ],
+    [
+      "check box",
+      "Nút tiện ích hệ thống"
+    ],
+    [
+      "check box",
+      "Âm thanh"
+    ],
+    [
+      "check box",
+      "Đồng hồ"
+    ],
+    [
+      "check box",
+      "CPU và RAM"
+    ],
+    [
+      "check box",
+      "Nút đổi hình nền"
+    ],
+    [
+      "check box",
+      "Định dạng 24 giờ"
+    ],
+    [
+      "check box",
+      "Hiện giây"
+    ]
+  ],
+  "disabledSkipped": [
+    [
+      "button",
+      "Khôi phục giao diện lúc mở Studio"
+    ]
+  ],
+  "reverseMatches": true
+}

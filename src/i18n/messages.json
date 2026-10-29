@@ -284,7 +284,9 @@
     "defaultFiles": "Tệp tin (Files)",
     "defaultSettings": "Cài đặt (Settings)",
     "notRunning": "Chưa khởi chạy",
-    "newWindow": "Mở cửa sổ mới"
+    "newWindow": "Mở cửa sổ mới",
+    "focusDock": "Điều khiển Dock bằng bàn phím",
+    "focusDockHelp": "Đưa focus vào Dock, kể cả khi tự ẩn. Dùng Tab/Shift+Tab để di chuyển, Enter để mở; Escape đóng popup. Dock giữ hiện trong lúc nhận focus."
   },
   "en": {
     "configRepaired": "Some configuration fields were repaired or reset to defaults; the original was kept in a recovery file.",
@@ -571,6 +573,8 @@
     "defaultFiles": "Files",
     "defaultSettings": "Settings",
     "notRunning": "Not running",
-    "newWindow": "Open a new window"
+    "newWindow": "Open a new window",
+    "focusDock": "Control Dock with keyboard",
+    "focusDockHelp": "Focus the Dock, including when auto-hidden. Use Tab/Shift+Tab to move and Enter to open; Escape closes popups. The Dock stays visible while focused."
   }
 }

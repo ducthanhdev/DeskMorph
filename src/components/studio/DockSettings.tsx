@@ -1,4 +1,7 @@
-import { useConfig } from "../../config/store";
+import { useState } from "react";
+import { invoke } from "../../ipc";
+import { ErrorText } from "../ErrorText";
+import { useConfig, errorMessage } from "../../config/store";
 import { usePlatform } from "../../hooks/usePlatform";
 import { useI18n } from "../../i18n/useI18n";
 import { Card, Range, Toggle } from "./Controls";
@@ -7,9 +10,16 @@ export function DockSettings() {
   const { config, updateConfig } = useConfig();
   const { platform, error: platformError } = usePlatform();
   const { t } = useI18n();
+  const [focusError, setFocusError] = useState("");
   return <>
     <Card title={t("dockTab")}>
       <Toggle label={t("enabled")} value={config.enabled} onChange={(enabled) => updateConfig({ enabled })} />
+      <button type="button" disabled={!config.enabled || !platform?.dockPlacement} onClick={() => {
+        setFocusError("");
+        void invoke("focus_dock").catch(error => setFocusError(errorMessage(error)));
+      }}>{t("focusDock")}</button>
+      <p className="settings-help">{t("focusDockHelp")}</p>
+      {focusError && <p role="alert"><ErrorText error={focusError} /></p>}
       <label className="settings-field">{t("position")}<select aria-label={t("position")} disabled={!platform?.dockPlacement} value={config.position} onChange={(e) => void updateConfig({ position: e.target.value as "top" | "bottom" })}><option value="bottom">{t("bottom")}</option><option value="top">{t("top")}</option></select></label>
       <label className="settings-field">{t("monitor")}<select aria-label={t("monitor")} disabled={!platform?.dockPlacement} value={config.monitor || ""} onChange={(e) => void updateConfig({ monitor: e.target.value || null })}>
         <option value="">{t("primary")}</option>{platform?.monitors.map((m) => <option key={`${m.name}:${m.x}:${m.y}`} value={m.name}>{m.name} • {m.width}×{m.height}</option>)}
