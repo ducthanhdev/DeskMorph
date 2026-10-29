@@ -16,23 +16,59 @@ struct Background<'a> {
 #[derive(Deserialize)]
 enum Source {
     Path(String),
+    Color(Color),
 }
 
-fn source_range(document: &str) -> Result<(Range<usize>, String), String> {
+#[derive(Deserialize)]
+enum Color {
+    Single([f32; 3]),
+    Gradient(Gradient),
+}
+
+#[derive(Deserialize)]
+struct Gradient {
+    colors: Vec<[f32; 3]>,
+    radius: f32,
+}
+
+fn source_range(
+    document: &str,
+    expected_output: &str,
+) -> Result<(Range<usize>, Option<String>), String> {
     if document.len() > MAX_DOCUMENT {
         return Err("COSMIC background document exceeds 64 KiB".into());
     }
     let background: Background<'_> = ron::from_str(document).map_err(|e| e.to_string())?;
-    if background.output != "all" {
-        return Err("Per-output COSMIC background is not verified".into());
+    if background.output != expected_output {
+        return Err("COSMIC output does not match its config key".into());
     }
-    let Source::Path(path) = background
+    let source = background
         .source
         .into_rust::<Source>()
         .map_err(|e| e.to_string())?;
-    if path.contains('\0') || !Path::new(&path).is_absolute() {
-        return Err("COSMIC image must have an absolute path".into());
-    }
+    let path = match source {
+        Source::Path(path) => {
+            if path.contains('\0') || !Path::new(&path).is_absolute() {
+                return Err("COSMIC source must have an absolute path".into());
+            }
+            Some(path)
+        }
+        Source::Color(color) => {
+            // Accept the installed COSMIC color schema, but reject non-finite
+            // floats rather than treating a malformed source as a valid image.
+            let valid = match color {
+                Color::Single(rgb) => rgb.iter().all(|v| v.is_finite()),
+                Color::Gradient(gradient) => {
+                    gradient.radius.is_finite()
+                        && gradient.colors.iter().flatten().all(|v| v.is_finite())
+                }
+            };
+            if !valid {
+                return Err("COSMIC color contains non-finite values".into());
+            }
+            None
+        }
+    };
     let raw = background.source.get_ron();
     let start = (raw.as_ptr() as usize)
         .checked_sub(document.as_ptr() as usize)
@@ -47,28 +83,84 @@ fn source_range(document: &str) -> Result<(Range<usize>, String), String> {
 }
 
 pub fn replace_source(document: &str, path: &Path) -> Result<String, String> {
+    replace_output_source(document, "all", path)
+}
+
+pub fn replace_output_source(document: &str, output: &str, path: &Path) -> Result<String, String> {
     let path = path
         .to_str()
         .filter(|value| path.is_absolute() && !value.contains('\0'))
         .ok_or("COSMIC image path must be absolute UTF-8")?;
-    let (range, _) = source_range(document)?;
+    let (range, _) = source_range(document, output)?;
     let replacement = format!("Path({})", ron::to_string(path).map_err(|e| e.to_string())?);
     let mut result = document.to_owned();
     result.replace_range(range, &replacement);
-    if source_range(&result)?.1 != path {
+    if source_range(&result, output)?.1.as_deref() != Some(path) {
         return Err("COSMIC source replacement did not roundtrip".into());
     }
     Ok(result)
+}
+
+/// Resolve the existing COSMIC entries affected by the application's global
+/// wallpaper action. Include `all` so a later connected output uses the same
+/// image, while retaining the user's same-on-all setting and output list.
+/// This is planning only: callers must load/validate every target before writes.
+pub fn target_outputs(same_on_all: &str, backgrounds: Option<&str>) -> Result<Vec<String>, String> {
+    if same_on_all.len() > MAX_DOCUMENT {
+        return Err("COSMIC same-on-all document exceeds 64 KiB".into());
+    }
+    let same: bool = ron::from_str(same_on_all).map_err(|e| e.to_string())?;
+    let mut outputs = vec!["all".to_owned()];
+    if same {
+        return Ok(outputs);
+    }
+    let backgrounds = backgrounds.ok_or("COSMIC per-output list is missing")?;
+    if backgrounds.len() > MAX_DOCUMENT {
+        return Err("COSMIC output list exceeds 64 KiB".into());
+    }
+    let names: Vec<String> = ron::from_str(backgrounds).map_err(|e| e.to_string())?;
+    if names.len() > 64 {
+        return Err("COSMIC output list exceeds 64 entries".into());
+    }
+    let mut seen = std::collections::HashSet::new();
+    for name in names {
+        if name.is_empty()
+            || name == "all"
+            || name.len() > 255
+            || name
+                .chars()
+                .any(|c| c == '/' || c == '\\' || c.is_control())
+        {
+            return Err("Invalid COSMIC output name".into());
+        }
+        if !seen.insert(name.clone()) {
+            return Err("Duplicate COSMIC output name".into());
+        }
+        outputs.push(name);
+    }
+    Ok(outputs)
+}
+
+pub fn config_key(output: &str) -> String {
+    if output == "all" {
+        "all".into()
+    } else {
+        format!("output.{output}")
+    }
 }
 
 pub struct Document {
     file: gio::File,
     original: String,
     etag: String,
+    output: String,
 }
 
 impl Document {
     pub fn load(path: &Path) -> Result<Self, String> {
+        Self::load_output(path, "all")
+    }
+    pub fn load_output(path: &Path, output: &str) -> Result<Self, String> {
         let metadata = std::fs::symlink_metadata(path).map_err(|e| e.to_string())?;
         if !metadata.is_file() || metadata.len() > MAX_DOCUMENT as u64 {
             return Err("COSMIC config must be a regular file at most 64 KiB".into());
@@ -78,7 +170,7 @@ impl Document {
             .load_contents(None::<&gio::Cancellable>)
             .map_err(|e| e.to_string())?;
         let original = String::from_utf8(bytes.to_vec()).map_err(|e| e.to_string())?;
-        source_range(&original)?;
+        source_range(&original, output)?;
         let etag = etag
             .ok_or("COSMIC config has no concurrency token")?
             .to_string();
@@ -86,13 +178,14 @@ impl Document {
             file,
             original,
             etag,
+            output: output.to_owned(),
         })
     }
-    pub fn source(&self) -> Result<String, String> {
-        Ok(source_range(&self.original)?.1)
+    pub fn source(&self) -> Result<Option<String>, String> {
+        Ok(source_range(&self.original, &self.output)?.1)
     }
     pub fn write_source(self, path: &Path) -> Result<(), String> {
-        let replacement = replace_source(&self.original, path)?;
+        let replacement = replace_output_source(&self.original, &self.output, path)?;
         self.file
             .replace_contents(
                 replacement.as_bytes(),
@@ -121,9 +214,12 @@ mod tests {
     fn preserves_unknown_fields_comments_and_escaped_paths() {
         let path = Path::new("/ảnh có khoảng trắng/quote\"slash\\.png");
         let replaced = replace_source(ORIGINAL, path).unwrap();
-        assert_eq!(source_range(&replaced).unwrap().1, path.to_str().unwrap());
-        let (before, _) = source_range(ORIGINAL).unwrap();
-        let (after, _) = source_range(&replaced).unwrap();
+        assert_eq!(
+            source_range(&replaced, "all").unwrap().1.as_deref(),
+            path.to_str()
+        );
+        let (before, _) = source_range(ORIGINAL, "all").unwrap();
+        let (after, _) = source_range(&replaced, "all").unwrap();
         assert_eq!(&ORIGINAL[..before.start], &replaced[..after.start]);
         assert_eq!(&ORIGINAL[before.end..], &replaced[after.end..]);
     }
@@ -152,6 +248,103 @@ mod tests {
         assert!(replace_source(&" ".repeat(MAX_DOCUMENT + 1), Path::new("/new.png")).is_err());
     }
     #[test]
+    fn per_output_and_color_sources_preserve_other_settings() {
+        for source in [
+            "Color(Single((0.1, 0.2, 0.3)))",
+            "Color(Gradient((colors: [(0.1, 0.2, 0.3), (1.0, 0.0, 0.5)], radius: 0.5)))",
+            "Path(\"/image directory\")",
+        ] {
+            let document = format!("(output: \"WINIT-0\", source: {source}, filter_by_theme: true, rotation_frequency: 3600, filter_method: Lanczos, scaling_mode: Fit((0.0, 0.0, 0.0)), sampling_method: Alphanumeric,)");
+            let replaced =
+                replace_output_source(&document, "WINIT-0", Path::new("/new image.png")).unwrap();
+            assert_eq!(
+                source_range(&replaced, "WINIT-0").unwrap().1.as_deref(),
+                Some("/new image.png")
+            );
+            let (before, _) = source_range(&document, "WINIT-0").unwrap();
+            let (after, _) = source_range(&replaced, "WINIT-0").unwrap();
+            assert_eq!(&document[..before.start], &replaced[..after.start]);
+            assert_eq!(&document[before.end..], &replaced[after.end..]);
+            assert!(replace_output_source(&document, "HDMI-A-1", Path::new("/new.png")).is_err());
+        }
+        assert!(replace_source(
+            "(output: \"all\", source: Color(Single((NaN, 0.0, 0.0))))",
+            Path::new("/new.png")
+        )
+        .is_err());
+    }
+    #[test]
+    fn global_action_plans_existing_outputs_without_changing_mode_or_list() {
+        assert_eq!(target_outputs("true", None).unwrap(), ["all"]);
+        assert_eq!(
+            target_outputs("true", Some("invalid inactive list")).unwrap(),
+            ["all"]
+        );
+        assert_eq!(
+            target_outputs("false", Some("[\"WINIT-0\", \"HDMI-A-1\"]")).unwrap(),
+            ["all", "WINIT-0", "HDMI-A-1"]
+        );
+        assert_eq!(target_outputs("false", Some("[]")).unwrap(), ["all"]);
+        assert_eq!(config_key("WINIT-0"), "output.WINIT-0");
+        for (same, list) in [
+            ("false", None),
+            ("bad", None),
+            ("false", Some("[\"../../all\"]")),
+            ("false", Some("[\"all\"]")),
+            ("false", Some("[\"\"]")),
+            ("false", Some("[\"DP-1\",\"DP-1\"]")),
+        ] {
+            assert!(target_outputs(same, list).is_err());
+        }
+        let names: Vec<_> = (0..65).map(|i| format!("DP-{i}")).collect();
+        assert!(target_outputs("false", Some(&ron::to_string(&names).unwrap())).is_err());
+    }
+    #[test]
+    #[ignore = "requires owned COSMIC compositor lab; invoked by wayland_lab.py --cosmic-test"]
+    fn native_lab_edit() {
+        let root = std::path::PathBuf::from(
+            std::env::var_os("DESKMORPH_COMPOSITOR_LAB").expect("lab marker required"),
+        );
+        assert!(
+            root.is_absolute()
+                && root.parent() == Some(Path::new("/tmp"))
+                && root
+                    .file_name()
+                    .unwrap()
+                    .to_str()
+                    .unwrap()
+                    .starts_with("deskmorph-wayland-lab-")
+        );
+        assert_eq!(
+            std::env::var_os("XDG_CONFIG_HOME").unwrap(),
+            root.join("config")
+        );
+        assert_eq!(
+            std::env::var_os("XDG_STATE_HOME").unwrap(),
+            root.join("state")
+        );
+        let output = std::env::var("DESKMORPH_COSMIC_EDIT_OUTPUT").unwrap();
+        assert!(output == "all" || output == "WINIT-0");
+        let image = root.join("blue.png");
+        assert!(image.is_file());
+        let path = root
+            .join("config/cosmic/com.system76.CosmicBackground/v1")
+            .join(config_key(&output));
+        let document = Document::load_output(&path, &output).unwrap();
+        let original = document.original.clone();
+        let expected = replace_output_source(&original, &output, &image).unwrap();
+        document.write_source(&image).unwrap();
+        assert_eq!(std::fs::read_to_string(&path).unwrap(), expected);
+        assert_eq!(
+            Document::load_output(&path, &output)
+                .unwrap()
+                .source()
+                .unwrap()
+                .as_deref(),
+            image.to_str()
+        );
+    }
+    #[test]
     fn etag_conflict_preserves_external_config_and_normal_write_preserves_mode() {
         use std::os::unix::fs::PermissionsExt;
         let root = std::env::temp_dir().join(format!(
@@ -164,7 +357,7 @@ mod tests {
         std::fs::write(&path, ORIGINAL).unwrap();
         std::fs::set_permissions(&path, std::fs::Permissions::from_mode(0o600)).unwrap();
         let document = Document::load(&path).unwrap();
-        assert_eq!(document.source().unwrap(), "/old.png");
+        assert_eq!(document.source().unwrap().as_deref(), Some("/old.png"));
         let external = ORIGINAL.replace("/old.png", "/externally-edited-longer.png");
         std::fs::write(&path, &external).unwrap();
         assert!(document.write_source(Path::new("/new.png")).is_err());

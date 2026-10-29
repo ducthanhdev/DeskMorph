@@ -1,0 +1,180 @@
+{
+  "command": "/usr/bin/python3 tests/wayland_lab.py --cosmic-test --output /tmp/deskmorph-cosmic-native-edit/results.json",
+  "cosmicProbe": {
+    "nativeEdits": [
+      {
+        "output": "all",
+        "rustTestPassed": true
+      },
+      {
+        "output": "WINIT-0",
+        "rustTestPassed": true
+      }
+    ],
+    "perOutputOverridePixelsVerified": true,
+    "livePerOutputPixelsVerified": true,
+    "sameOnAllStartupPixelsVerified": true,
+    "observedOutput": "WINIT-0",
+    "upstreamCommit": "9520e16758693bc2f6845d52680f236d548edda2",
+    "versions": [
+      "cosmic-bg\t1.11.0~1792526117~24.04~9520e16",
+      "cosmic-comp\t0.1~1792508925~24.04~8cb1802"
+    ],
+    "binarySha256": {
+      "cosmic-comp": "2399b768cc6a4599a6495d0865cf4dc6807cfee2c6e46b3d7466a800f903be5e",
+      "cosmic-bg": "dcfaf79907ef5031fa40799bbd56dd33ee19135c90c3580cf2eb98579894bf3a"
+    },
+    "compositorPid": 3723835,
+    "backgroundPid": 3724567,
+    "privateStateVerified": true,
+    "stateContents": "[\n    (\"WINIT-0\", Path(\"/tmp/deskmorph-wayland-lab-awhdsh8h/pink.png\")),\n]",
+    "nestedSocket": "wayland-1",
+    "window": {
+      "id": 1,
+      "pid": 3723835,
+      "appId": null,
+      "title": "Smithay",
+      "focused": false,
+      "clientType": 0,
+      "frame": {
+        "x": 0,
+        "y": 32,
+        "width": 1280,
+        "height": 688
+      }
+    },
+    "captures": [
+      {
+        "file": "background-1.png",
+        "sha256": "199d4df7f83bc35cb6640b93c0d83ac9659d3baf6a12cb76af17138d8ef859b1",
+        "samples": [
+          [
+            209,
+            55,
+            105
+          ],
+          [
+            209,
+            55,
+            105
+          ],
+          [
+            209,
+            55,
+            105
+          ]
+        ],
+        "phase": "all-startup",
+        "fileRetainedInCommit": false
+      },
+      {
+        "file": "background-2.png",
+        "sha256": "be854a8924b2fa46b7c10bf596de08ee9e766ccef940ef920328b50f1137d819",
+        "samples": [
+          [
+            52,
+            86,
+            120
+          ],
+          [
+            52,
+            86,
+            120
+          ],
+          [
+            52,
+            86,
+            120
+          ]
+        ],
+        "phase": "all-native-write",
+        "fileRetainedInCommit": false
+      },
+      {
+        "file": "background-3.png",
+        "sha256": "50842b929be2ce89817bf0a7cfdb9a0c277bee39db69630687c4ba09b7258bab",
+        "samples": [
+          [
+            209,
+            55,
+            105
+          ],
+          [
+            209,
+            55,
+            105
+          ],
+          [
+            209,
+            55,
+            105
+          ]
+        ],
+        "phase": "per-output-override",
+        "fileRetainedInCommit": false
+      },
+      {
+        "file": "background-4.png",
+        "sha256": "a97464ad5c0f4c0ffcb705ea22b92e9fe99c0a847893c3959fef30a3fa997100",
+        "samples": [
+          [
+            52,
+            86,
+            120
+          ],
+          [
+            52,
+            86,
+            120
+          ],
+          [
+            52,
+            86,
+            120
+          ]
+        ],
+        "phase": "per-output-native-write",
+        "fileRetainedInCommit": false
+      },
+      {
+        "file": "background-5.png",
+        "sha256": "a9e78b3d33798db010efab51858d3e25c8975f61315a7c17e301387f72ddbca7",
+        "samples": [
+          [
+            209,
+            55,
+            105
+          ],
+          [
+            209,
+            55,
+            105
+          ],
+          [
+            209,
+            55,
+            105
+          ]
+        ],
+        "phase": "same-on-all-startup",
+        "fileRetainedInCommit": false
+      }
+    ],
+    "initialConfigPixelsVerified": true,
+    "liveConfigPixelsVerified": true,
+    "scope": "Actual cosmic-bg watcher/pixels after RON/GIO native writes invoked through guarded Rust test. Not UI/IPC, multi-file transaction, default fallback, ownership hardening or full COSMIC support."
+  },
+  "hostCosmicStateUnchanged": true,
+  "hostCosmicStateSha256": "815cc04454b6e8d190d14c1364708ebcbf1ecfb1e67c689c87426872febf7cc1",
+  "ownedProcessesExited": true,
+  "ownedPortalMountRemoved": true,
+  "hostDisplayUsed": false,
+  "hostInputInjected": false,
+  "sourceSha256": {
+    "src-tauri/src/cosmic_background.rs": "31c12296ed7b5e5a58ca54679b6a320115949a47a415c146fd974a028fecb2d2",
+    "tests/cosmic_background_probe.py": "1542cf95a62ca96b9117bf19c5658c10e3a28606bb9ede34e7771e014a9ac4a7",
+    "tests/wayland_lab.py": "2c150e1c597a4912b3e3fd366dcdf9d507c7bfd4fadc9e13e5d9c90c0549965f",
+    "tests/wayland_prototype/launcher_extension.js": "e96b0d0a7612c850725066e6aea84e59815592eedfe233761b409175e7b68d8c"
+  },
+  "imageRetention": "Không thêm ảnh màu trùng vào commit; hash/sample ghi ở đây, ảnh lượt chạy ở/tmp. Đã xem native per-output blue. Hình dạng/color tương ứng có ảnh ở cosmic-per-output-2026-10-29 nhưng không coi ảnh cũ là ảnh lượt này."
+}

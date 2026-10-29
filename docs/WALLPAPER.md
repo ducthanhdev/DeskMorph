@@ -59,3 +59,14 @@ Nguồn [config/src/lib.rs](https://github.com/pop-os/cosmic-bg/blob/9520e167586
 [Bằng chứng per-output](benchmarks/cosmic-per-output-2026-10-29/results.json) dùng tên WINIT-0 đọc từ state riêng: fallback xanh + entry riêng hồng hiển thị hồng; thay riêng sang xanh hiển thị xanh mà không restart; dừng background, đặt all hồng/same-on-all=true rồi khởi động lại hiển thị hồng dù entry riêng vẫn xanh. Chưa chứng minh live toggle same-on-all, nhiều output hoặc hotplug.
 
 Audit phát hiện lượt COSMIC cũ chưa đặt XDG_STATE_HOME: cosmic-bg đã thêm WINIT-0 trỏ ảnh lab vào file state wallpapers host. Không có snapshot trước nên không tự sửa/xóa state hoặc tuyên bố phục hồi nguyên trạng. Chưa phát hiện thay config wallpaper host; không dùng điều đó để phủ nhận tác động state. Harness nay tạo state riêng, truyền cả vào môi trường D-Bus activation, kiểm cosmic-bg thực sự ghi dưới root lab và so hash riêng file wallpapers host trước/sau. Báo cáo cũ được bổ sung đính chính, không xóa bằng chứng pixel. Lượt mới xác nhận state host không đổi trong thời gian chạy; không đại diện cho mọi file host.
+
+
+### Native RON/GIO write đã qua cosmic-bg watcher (29/10/2026)
+
+Bộ sửa giờ nhận expected output, đối chiếu `Entry.output` trước sửa, hỗ trợ Path (ảnh hoặc thư mục), Color/Single và Color/Gradient theo schema cài thực tế. Color trả None khi hỏi đường nguồn, không giả một đường ảnh. Thay sang Path mới vẫn chỉ sửa đúng vùng source; giữ scaling/filter/rotation và byte khác. Màu non-finite/cú pháp lạ bị từ chối. Các float RGB array trong RON dùng tuple `(r, g, b)`, không phải list; fixture đầu dùng nhầm list đã bị parser từ chối và được sửa theo serialization của schema.
+
+`target_outputs` lập danh sách cho thao tác đổi toàn bộ nền của app: same-on-all=true chỉ all; false gồm all và danh sách backgrounds, giữ nguyên mode/list người dùng. Giới hạn64 output và64KiB/document, từ chối tên trống/trùng/all/đường dẫn hoặc ký tự điều khiển. Đây là hàm lập kế hoạch thuần, chưa đọc defaults, chưa điều phối ghi nhiều file hoặc bảo đảm transaction.
+
+[Bằng chứng mới](benchmarks/cosmic-native-edit-2026-10-29.json) chạy lại5 pha pixel trên cosmic-bg thật; hai lần đổi sống all và output.WINIT-0 nay dùng chính Document::load_output/write_source Rust/GIO, không dùng regex fixture để ghi. Harness gọi một Rust test opt-in có guard root/tmp/config/state/output; assert byte đọc lại khớp trước khi kiểm compositor. Rust71 qua/5 ignored ở suite thường; riêng native_lab_edit được gọi và qua2 lần trong lab. Không suy đây là UI/IPC DeskMorph. State host wallpapers hash giữ nguyên và process/mount riêng đã dọn.
+
+Adapter vẫn unsupported. Còn ownership/parent symlink và race đọc/ghi, cấu hình mặc định khi user file thiếu, preflight + lỗi/khôi phục nhiều file, rồi nối command/capability và kiểm Apply/Retry/Shuffle/scheduler qua UI trước bật. Không tự restart cosmic-bg của người dùng; restart trong harness chỉ tác động tiến trình lab.

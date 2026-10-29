@@ -54,6 +54,18 @@ def run():
         temporary.write_text(document); temporary.replace(config_dir / key)
     (config_dir / 'same-on-all').write_text('true')
     set_source(images[0])
+    native_edits = []
+    def native_edit(output):
+        repo = Path(__file__).resolve().parents[1]
+        result = subprocess.run(['cargo', 'test', '--locked', '--offline',
+            '--manifest-path', str(repo / 'src-tauri/Cargo.toml'),
+            '--target-dir', str(repo / 'src-tauri/target/agent'), '--lib',
+            'cosmic_background::tests::native_lab_edit', '--', '--ignored', '--exact'],
+            env=dict(env, DESKMORPH_COSMIC_EDIT_OUTPUT=output),
+            capture_output=True, text=True, timeout=60)
+        (root / ('cosmic-native-' + output + '.log')).write_text(result.stdout + result.stderr)
+        assert result.returncode == 0 and '1 passed' in result.stdout, result.stdout + result.stderr
+        native_edits.append(dict(output=output, rustTestPassed=True))
     children = []
     try:
         with (root / 'deskmorph-launcher.log').open('w') as log:
@@ -83,7 +95,7 @@ def run():
                 captures.append(dict(file=capture.name, sha256=hashlib.sha256(capture.read_bytes()).hexdigest(), samples=samples))
                 return all(max(abs(a-b) for a,b in zip(rgb, expected)) <= 2 for rgb in samples)
             assert capture_pixels([209,55,105]), captures
-            set_source(images[1])
+            native_edit("all")
             time.sleep(2)
             live_updated = capture_pixels([52,86,120])
             assert live_updated, 'COSMIC background did not react to config replacement'
@@ -102,7 +114,7 @@ def run():
             time.sleep(3)
             assert background.poll() is None
             assert capture_pixels([209,55,105]), 'Per-output source did not override blue default'
-            set_source(images[1], 'output.' + output, output)
+            native_edit(output)
             time.sleep(2)
             assert capture_pixels([52,86,120]), 'Live per-output source update not displayed'
             background.terminate(); background.wait(timeout=5)
@@ -113,7 +125,7 @@ def run():
             time.sleep(3)
             assert background.poll() is None
             assert capture_pixels([209,55,105]), 'same-on-all startup did not ignore blue per-output source'
-            report = dict(perOutputOverridePixelsVerified=True, livePerOutputPixelsVerified=True,
+            report = dict(nativeEdits=native_edits, perOutputOverridePixelsVerified=True, livePerOutputPixelsVerified=True,
                 sameOnAllStartupPixelsVerified=True, observedOutput=output,
                 upstreamCommit='9520e16758693bc2f6845d52680f236d548edda2',
                 versions=subprocess.check_output(['dpkg-query', '-W', 'cosmic-comp', 'cosmic-bg'], text=True).splitlines(),
@@ -121,7 +133,7 @@ def run():
                 compositorPid=compositor.pid, backgroundPid=background.pid,
                 privateStateVerified=state_file.is_file(), stateContents=state_file.read_text(),
                 nestedSocket=socket.name, window=window, captures=captures, initialConfigPixelsVerified=True, liveConfigPixelsVerified=live_updated,
-                scope='Actual COSMIC nested winit and cosmic-bg, private config RON path update and outer stage pixels. Research only; no production adapter or general COSMIC desktop support claim.')
+                scope='Actual COSMIC nested winit and cosmic-bg, private config RON path update and outer stage pixels. RON/GIO native edit primitive exercised through guarded Rust test, not DeskMorph UI/IPC. No enabled production adapter or general COSMIC desktop support claim.')
             (root / 'launcher-result.json').write_text(json.dumps(dict(cosmicProbe=report), indent=2))
     finally:
         for child in reversed(children):
