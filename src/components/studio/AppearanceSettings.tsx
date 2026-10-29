@@ -1,3 +1,4 @@
+import { ErrorText } from "../ErrorText";
 import { useState } from "react";
 import { useConfig } from "../../config/store";
 import { appearanceOf, BUILTIN_PRESETS, type Appearance } from "../../dockAppearance";
@@ -37,7 +38,7 @@ export function AppearanceSettings() {
       {!config.presets.length && <p className="settings-help">{t("noPresets")}</p>}
       {config.presets.map((preset) => <div className="preset-saved" key={preset.id}><span>{preset.name}</span><button onClick={() => void apply(preset.appearance)}>{t("apply")}</button><button onClick={() => { setEditing(preset.id); setName(preset.name); }}>{t("rename")}</button><button onClick={() => void updateConfig({ presets: config.presets.filter((p) => p.id !== preset.id) })}>{t("remove")}</button></div>)}
       <div className="settings-inline"><input aria-label={t("presetName")} placeholder={t("presetName")} maxLength={60} value={name} onChange={(e) => setName(e.target.value)} /><button className="studio-button" disabled={!editing && config.presets.length >= 32} onClick={() => void save()}>{editing ? t("rename") : t("savePreset")}</button>{editing && <button onClick={() => { setEditing(null); setName(""); }}>{t("cancel")}</button>}</div>
-      {error && <p role="alert">{error}</p>}
+      {error && <p role="alert"><ErrorText error={error} /></p>}
     </Card>
   </>;
 }

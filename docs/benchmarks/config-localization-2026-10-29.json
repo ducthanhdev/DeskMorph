@@ -1,0 +1,18 @@
+{
+  "passed": [
+    "real invalid-height config recovers with a backup; stable warning persists and translates en/vi live",
+    "native restart retains language and translatable warning code",
+    "open import review translates fields/scalar values en/vi, preserves long path and cancels without applying data"
+  ],
+  "fixturePids": [
+    2486771,
+    2487172
+  ],
+  "normalPid": 2487816,
+  "configRestored": true,
+  "allFixturesExited": true,
+  "recoveryFilesRestored": true,
+  "frontendTests": 43,
+  "rustConfigTests": 15,
+  "scope": "G5.8 partial: config warning codes, legacy warning display, translated review fields/scalars and long data; full localization/layout audit remains open"
+}

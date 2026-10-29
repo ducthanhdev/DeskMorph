@@ -1,5 +1,12 @@
 export const messages = {
   vi: {
+    configRepaired: "Một số trường cấu hình được sửa hoặc dùng giá trị mặc định; bản gốc được giữ trong file recovery.",
+    configRecovered: "File cấu hình hỏng đã được giữ trong file recovery; đang dùng cấu hình mặc định.",
+    configLegacyRepaired: "Đã chuyển cấu hình cũ; trường trùng được gộp, trường không hợp lệ dùng giá trị mặc định. Bản gốc vẫn còn trong localStorage.",
+    configLegacyUnreadable: "Không đọc được cấu hình cũ; bản gốc vẫn còn trong localStorage.",
+    configDurability: "Cấu hình đã được thay thế nhưng chưa xác nhận được đồng bộ thư mục; hãy xuất bản dự phòng trước khi tắt máy.",
+    configWarningUnknown: "Cấu hình có cảnh báo cần kiểm tra. Mở Chi tiết trước khi tiếp tục chỉnh sửa.",
+    on: "Bật", off: "Tắt", notSet: "Chưa đặt", savedPresets: "Preset đã lưu", savedFolders: "Thư mục hình nền đã lưu", savedFavorites: "Ảnh nền yêu thích",
     operationFailed: "Không thực hiện được thao tác. Hãy thử lại hoặc kiểm tra khả năng hỗ trợ của desktop.",
     configNotReady: "Cấu hình chưa tải xong. Hãy thử lại.", configConflict: "Cấu hình đã thay đổi. Hãy tải lại và kiểm tra trước khi áp dụng.",
     configWriteError: "Không lưu được cấu hình. Kiểm tra quyền ghi và dung lượng ổ đĩa rồi thử lại.", configReadError: "Không đọc được cấu hình. Kiểm tra quyền truy cập rồi thử lại.",
@@ -45,6 +52,13 @@ export const messages = {
     unknown: "Chưa xác định", today: "Hôm nay", previousMonth: "Tháng trước", nextMonth: "Tháng sau", details: "Chi tiết", themeNord: "Nord tối giản", themeNeon: "Neon tím", themePop: "Pop Teal",
   },
   en: {
+    configRepaired: "Some configuration fields were repaired or reset to defaults; the original was kept in a recovery file.",
+    configRecovered: "The damaged configuration was kept in a recovery file; defaults are being used.",
+    configLegacyRepaired: "Legacy configuration was migrated; duplicates were merged and invalid fields reset to defaults. The original remains in localStorage.",
+    configLegacyUnreadable: "Unable to read legacy configuration; the original remains in localStorage.",
+    configDurability: "Configuration was replaced, but directory sync could not be confirmed; export a backup before shutting down.",
+    configWarningUnknown: "The configuration has a warning to review. Open Details before making more changes.",
+    on: "On", off: "Off", notSet: "Not set", savedPresets: "Saved presets", savedFolders: "Saved wallpaper folders", savedFavorites: "Favorite wallpapers",
     operationFailed: "Unable to complete this action. Retry or check the supported desktop capabilities.",
     configNotReady: "Configuration is still loading. Please retry.", configConflict: "Configuration has changed. Reload and review it before applying changes.",
     configWriteError: "Unable to save configuration. Check write permissions and free disk space, then retry.", configReadError: "Unable to read configuration. Check access permissions, then retry.",

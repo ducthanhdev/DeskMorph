@@ -51,7 +51,7 @@ export function AppsSettings() {
   const [operationError, setOperationError] = useState("");
   return <>
     <Card title={t("pinnedApps")}>
-      {configError && <p role="alert">{configError}</p>}
+      {configError && <p role="alert"><ErrorText error={configError} /></p>}
       {config.pinnedApps?.map((pin, index) => {
         const app = installedForPin(pin, apps);
         return <div className="studio-app-row" key={pin.id}><AppIcon path={app?.iconPath} size={28} /><span><strong>{pin.name}</strong>{desktopIsMissing(desktopIdForPin(pin), app, { loading, error }) && <small>{t("unavailable")}</small>}</span>

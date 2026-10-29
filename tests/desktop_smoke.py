@@ -74,6 +74,7 @@ if __name__ == '__main__':
     parser.add_argument('--icon-render-smoke', action='store_true')
     parser.add_argument('--preview-smoke', action='store_true')
     parser.add_argument('--capabilities-smoke', action='store_true')
+    parser.add_argument('--localization-smoke', action='store_true')
     parser.add_argument('--clock-smoke', action='store_true')
     parser.add_argument('--catalogue-refresh-smoke', action='store_true')
     parser.add_argument('--force-close-smoke', action='store_true')
@@ -143,7 +144,7 @@ if __name__ == '__main__':
             raise RuntimeError('Cannot verify GNOME lock state; no native input will be sent')
         if re.search(r'\btrue\b', result.stdout):
             raise RuntimeError('GNOME desktop is locked; unlock it before native UI tests. No input was sent.')
-    input_tests = any((args.performance_matrix, args.preview_smoke, args.capabilities_smoke, args.clock_smoke, args.icon_render_smoke, args.launcher_keyboard_smoke, args.missing_app_smoke, args.pinning_smoke, args.pin_identity_smoke, args.catalogue_refresh_smoke, args.exports_smoke, args.action, args.screenshot, args.basic, args.popup_smoke, args.focus_smoke, args.autohide_smoke, args.shortcut_smoke, args.lifecycle_smoke, args.registration_smoke, args.window_list_smoke, args.reorder_smoke, args.tooltip_smoke, args.launch_smoke, args.overflow_smoke, args.layout_smoke, args.indicator_smoke, args.mapping_smoke, args.internal_smoke, args.polling_smoke, args.launcher_smoke, args.studio_smoke, args.config_smoke, args.command_errors_smoke,
+    input_tests = any((args.localization_smoke, args.performance_matrix, args.preview_smoke, args.capabilities_smoke, args.clock_smoke, args.icon_render_smoke, args.launcher_keyboard_smoke, args.missing_app_smoke, args.pinning_smoke, args.pin_identity_smoke, args.catalogue_refresh_smoke, args.exports_smoke, args.action, args.screenshot, args.basic, args.popup_smoke, args.focus_smoke, args.autohide_smoke, args.shortcut_smoke, args.lifecycle_smoke, args.registration_smoke, args.window_list_smoke, args.reorder_smoke, args.tooltip_smoke, args.launch_smoke, args.overflow_smoke, args.layout_smoke, args.indicator_smoke, args.mapping_smoke, args.internal_smoke, args.polling_smoke, args.launcher_smoke, args.studio_smoke, args.config_smoke, args.command_errors_smoke,
                        args.wallpaper_smoke, args.scheduler_smoke, args.library_stress, args.audio_smoke, args.media_smoke,
                        args.audio_exit, args.audio_unavailable, args.system_smoke, args.system_unavailable, args.system_open_smoke, args.system_locations_smoke))
     if input_tests or args.geometry_smoke: require_unlocked_desktop()
@@ -708,6 +709,9 @@ if __name__ == '__main__':
     if args.preview_smoke:
         from preview_smoke import run
         app = run(app, TEST_CONFIG, click, focus_studio, native_keys, test_app, start_isolated_app, lambda current: globals().__setitem__('app', current), require_unlocked_desktop, assert_pointer_over_test_app)
+    if args.localization_smoke:
+        from localization_smoke import run
+        app = run(app, TEST_CONFIG, click, focus_studio, native_keys, test_app, start_isolated_app, lambda current: globals().__setitem__('app', current))
     if args.capabilities_smoke:
         from capabilities_smoke import run
         app = run(app, TEST_CONFIG, click, focus_studio, native_keys, test_app, start_isolated_app, lambda current: globals().__setitem__('app', current))

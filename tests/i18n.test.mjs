@@ -68,3 +68,37 @@ test('diagnostic disclosure follows keyboard button semantics and translates a r
     assert.equal([...nodes(tree)].find(node => node.props?.className === 'error-diagnostics').props.children, raw);
   } finally { delete globalThis.__errorTextTest; }
 });
+
+test('configuration warnings translate stable codes and legacy persisted text without treating a committed save as a failure', () => {
+  for (const language of ['vi', 'en']) {
+    for (const [code, key] of [ ['config_repaired', 'configRepaired'], ['config_recovered', 'configRecovered'],
+      ['config_legacy_repaired', 'configLegacyRepaired'], ['config_legacy_unreadable', 'configLegacyUnreadable'],
+      ['config_durability: directory sync failure', 'configDurability'] ]) {
+      assert.equal(describeError(language, code).summary, messages[language][key]);
+      assert.equal(describeError(language, messages.vi[key]).summary, messages[language][key]);
+    }
+    const legacy = messages.vi.configDurability.replace(/\.$/, '') + ': original OS detail';
+    assert.equal(describeError(language, legacy).summary, messages[language].configDurability);
+    assert.equal(describeError(language, 'future warning', 'configWarningUnknown').summary, messages[language].configWarningUnknown);
+  }
+});
+
+const fieldsSource = ts.transpileModule(fs.readFileSync(new URL('../src/i18n/configFields.ts', import.meta.url), 'utf8'), {
+  compilerOptions: { module: ts.ModuleKind.ESNext },
+}).outputText.replace('"./messages"', JSON.stringify('data:text/javascript;base64,' + Buffer.from(source).toString('base64')));
+const { configFieldLabels, configFieldLabel, configReviewValue } = await import('data:text/javascript;base64,' + Buffer.from(fieldsSource).toString('base64'));
+test('import review covers every config field and translates scalar values while preserving user data', () => {
+  const defaults = JSON.parse(fs.readFileSync(new URL('../src/config/defaults.json', import.meta.url)));
+  assert.deepEqual(Object.keys(configFieldLabels).sort(), Object.keys(defaults).sort());
+  for (const language of ['vi', 'en']) {
+    for (const field of Object.keys(defaults)) assert.ok(configFieldLabel(language, field));
+    assert.equal(configReviewValue(language, 'enabled', true), messages[language].on);
+    assert.equal(configReviewValue(language, 'enabled', false), messages[language].off);
+    assert.equal(configReviewValue(language, 'monitor', null), messages[language].notSet);
+    assert.equal(configReviewValue(language, 'position', 'bottom'), messages[language].bottom);
+    assert.equal(configReviewValue(language, 'language', 'en'), 'English');
+    assert.equal(configReviewValue(language, 'wallpaperFolders', ['/tmp/User_Name']), '[\n  "/tmp/User_Name"\n]');
+    assert.equal(configFieldLabel(language, '__proto__'), '__proto__');
+    assert.equal(configFieldLabel(language, 'futureField'), 'futureField');
+  }
+});

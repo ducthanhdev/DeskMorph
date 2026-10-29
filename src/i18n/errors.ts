@@ -1,6 +1,8 @@
 import { messages, translate, type Language, type MessageKey } from "./messages";
 
 const errors: Record<string, MessageKey> = {
+  config_repaired: "configRepaired", config_recovered: "configRecovered", config_legacy_repaired: "configLegacyRepaired",
+  config_legacy_unreadable: "configLegacyUnreadable", config_durability: "configDurability",
   config_not_ready: "configNotReady", config_conflict: "configConflict", config_write: "configWriteError",
   config_read: "configReadError", config_version: "configVersionError", invalid_config: "configInvalidError",
   config_document: "configInvalidError", config_export: "configExportError",
@@ -23,14 +25,16 @@ const commands: Record<string, MessageKey> = {
 };
 
 /** Localize at render time so an error already on screen follows a language change. */
-export function describeError(language: Language, raw: string): { summary: string; code?: string } {
+export function describeError(language: Language, raw: string, fallback: MessageKey = "operationFailed"): { summary: string; code?: string } {
   for (const catalog of Object.values(messages)) {
     const known = (Object.keys(catalog) as MessageKey[]).find(key => catalog[key] === raw);
     if (known) return { summary: translate(language, known) };
   }
+  // Compatibility with warnings persisted by versions before stable warning codes.
+  if (raw.startsWith(messages.vi.configDurability.split(";")[0] + ";")) return { summary: translate(language, "configDurability") };
   // Structured CommandError.toString(), legacy "code: message", or code-only audio errors.
   const code = /\[([a-z][a-z0-9_]+);\s*[a-z][a-z0-9_]*\]$/.exec(raw)?.[1]
     || /^(?:Error:\s*)?([a-z][a-z0-9]*_[a-z0-9_]+)(?::|$)/.exec(raw)?.[1];
   const command = /\[[a-z][a-z0-9_]+;\s*([a-z][a-z0-9_]*)\]$/.exec(raw)?.[1];
-  return { summary: translate(language, code && errors[code] || command && commands[command] || "operationFailed"), code };
+  return { summary: translate(language, code && errors[code] || command && commands[command] || fallback), code };
 }

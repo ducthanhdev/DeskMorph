@@ -1,3 +1,4 @@
+import { configFieldLabel, configReviewValue } from "../../i18n/configFields";
 import { ErrorText } from "../ErrorText";
 import { Fragment, useEffect, useRef, useState } from "react";
 import { invoke } from "../../ipc";
@@ -12,7 +13,7 @@ interface Review { config: TaskbarConfig; changedFields: string[]; expectedRevis
 export function SystemSettings() {
   const { config, revision, updateConfig, replaceConfigDocument } = useConfig();
   const { platform, error: platformError, refresh: refreshPlatform } = usePlatform();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const [autostart, setAutostart] = useState(false);
   const [error, setError] = useState("");
   const [status, setStatus] = useState("");
@@ -54,7 +55,7 @@ export function SystemSettings() {
         try { await prepare(JSON.parse(await file.text()), "import", request); } catch (e) { if (request === reviewRequest.current) setError(errorMessage(e)); }
       }} />
       <p className="settings-help">{t("resetHelp")}</p><button className="studio-button danger" onClick={() => { void prepare({ schemaVersion: 1, config: { ...DEFAULT_CONFIG, presets: config.presets, language: config.language } }, "reset"); }}>{t("reset")}</button>
-      {review && <section className="config-review" aria-label={t("importReview")}><h3>{t("importReview")}</h3><p>{review.changedFields.length ? t("changedFields") : t("noChanges")}</p><ul>{review.changedFields.map((field) => <li key={field}><strong>{field}</strong><pre>{JSON.stringify(review.config[field as keyof TaskbarConfig], null, 2)}</pre></li>)}</ul>
+      {review && <section className="config-review" aria-label={t("importReview")}><h3>{t("importReview")}</h3><p>{review.changedFields.length ? t("changedFields") : t("noChanges")}</p><ul>{review.changedFields.map((field) => <li key={field}><strong>{configFieldLabel(language, field)}</strong><pre>{configReviewValue(language, field, review.config[field as keyof TaskbarConfig])}</pre></li>)}</ul>
         <div className="settings-inline"><button className="studio-button" disabled={!review.changedFields.length} onClick={async () => {
           const old = config;
           if (await replaceConfigDocument({ schemaVersion: 1, config: review.config }, review.expectedRevision)) { setPrevious({ config: old, revision: review.expectedRevision + 1 }); setReview(null); setStatus(t("configSaved")); }

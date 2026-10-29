@@ -153,7 +153,7 @@ fn persist_with_directory_sync(path: &Path, snapshot: &Snapshot, sync_directory:
     result.map_err(|e| ConfigError::new("config_write", e))?;
     // Rename has committed: returning a write failure now would retain stale memory
     // while disk already contains the new revision. Surface durability as a warning.
-    Ok(sync_directory(parent).err().map(|e| format!("Cấu hình đã được thay thế nhưng chưa xác nhận được đồng bộ thư mục; hãy xuất bản dự phòng trước khi tắt máy: {e}")))
+    Ok(sync_directory(parent).err().map(|e| format!("config_durability: {e}")))
 }
 fn apply_durability_warning(snapshot: &mut Snapshot, warning: Option<String>) {
     if let Some(warning) = warning {
@@ -185,7 +185,7 @@ impl ConfigStore {
                     .unwrap_or_else(|_| (defaults(), true));
                 if repaired {
                     store.backup(&bytes)?;
-                    snapshot.warning = Some("Một số trường cấu hình được sửa hoặc dùng giá trị mặc định; bản gốc được giữ trong file recovery.".into());
+                    snapshot.warning = Some("config_repaired".into());
                 }
                 snapshot.config = config;
                 snapshot.schema_version = VERSION;
@@ -198,7 +198,7 @@ impl ConfigStore {
             }
             Err(_) => {
                 store.backup(&bytes)?;
-                store.snapshot.warning = Some("File cấu hình hỏng đã được giữ trong file recovery; đang dùng cấu hình mặc định.".into());
+                store.snapshot.warning = Some("config_recovered".into());
                 // A damaged native file must not be replaced by an unrelated stale web cache.
                 store.initialized = true;
             }
@@ -218,9 +218,9 @@ impl ConfigStore {
                 match apply_fields(&defaults(), &legacy, false) {
                     Ok((config, repaired)) => {
                         next.config = config;
-                        if repaired { next.warning = Some("Đã chuyển cấu hình cũ; trường trùng được gộp, trường không hợp lệ dùng giá trị mặc định. Bản gốc vẫn còn trong localStorage.".into()); }
+                        if repaired { next.warning = Some("config_legacy_repaired".into()); }
                     }
-                    Err(_) => next.warning = Some("Không đọc được cấu hình cũ; bản gốc vẫn còn trong localStorage.".into()),
+                    Err(_) => next.warning = Some("config_legacy_unreadable".into()),
                 }
             }
             let warning = persist(&self.path, &next)?;
@@ -484,7 +484,7 @@ mod tests {
         assert_eq!(snapshot.config["enabled"], false);
         assert_eq!(snapshot.config["autoHide"], true);
         assert_eq!(snapshot.config["height"], 52);
-        assert!(snapshot.warning.is_some());
+        assert_eq!(snapshot.warning.as_deref(), Some("config_legacy_repaired"));
         let mut loaded = ConfigStore::load(path.clone()).unwrap();
         assert_eq!(loaded.initialize(Some(json!({"enabled":true}))).unwrap().config, snapshot.config);
         fs::remove_dir_all(path.parent().unwrap()).unwrap();
@@ -494,7 +494,7 @@ mod tests {
         let path = path();
         let snapshot = Snapshot { schema_version: VERSION, revision: 7, config: defaults(), warning: None };
         let warning = persist_with_directory_sync(&path, &snapshot, |_| Err(std::io::Error::other("injected directory sync failure"))).unwrap();
-        assert!(warning.as_ref().unwrap().contains("injected directory sync failure"));
+        assert_eq!(warning.as_deref(), Some("config_durability: injected directory sync failure"));
         let disk: Snapshot = serde_json::from_slice(&fs::read(&path).unwrap()).unwrap();
         assert_eq!(disk.revision, 7); assert_eq!(disk.config, snapshot.config);
         let mut memory = snapshot; apply_durability_warning(&mut memory, warning);
