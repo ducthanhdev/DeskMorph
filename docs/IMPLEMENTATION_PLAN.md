@@ -82,7 +82,7 @@ Phụ thuộc G1–G2. Thử parser và launch desktop entry trước khi xây l
 - [x] G3.3 Lọc mục ẩn/không phù hợp môi trường; xử lý override Hidden=true và file lỗi; một file lỗi không làm hỏng toàn bộ danh mục.
 - [ ] G3.4 Launch theo desktop entry bằng cơ chế hệ thống phù hợp; xử lý field codes/Terminal/DBusActivatable, không ghép Exec từ file desktop thành chuỗi shell tùy tiện.
 - [ ] G3.5 Thống nhất model InstalledApp: desktop ID, tên, icon, cách mở, match hints; giữ tương thích app ghim cũ qua migration/fallback.
-- [ ] G3.6 Cache danh mục và refresh có kiểm soát; phát hiện app cài/gỡ/đổi entry bằng watcher hoặc refresh theo nhu cầu.
+- [x] G3.6 Cache danh mục và refresh có kiểm soát; phát hiện app cài/gỡ/đổi entry bằng watcher hoặc refresh theo nhu cầu.
 - [ ] G3.7 Bấm logo Dock mở launcher; có ô tìm kiếm, empty/loading/error state, đóng ngoài/Escape qua popup coordinator.
 - [x] G3.8 Xếp hạng exact/prefix/substring trên tên, từ khóa và tên không dấu; kết quả ổn định, giới hạn số render.
 - [ ] G3.9 Điều hướng bàn phím, Enter mở, trạng thái đang khởi chạy và báo lỗi; tránh mở lặp do nhiều lần Enter.

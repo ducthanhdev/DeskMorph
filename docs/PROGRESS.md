@@ -2,7 +2,7 @@
 
 Mục tiêu giữ nguyên toàn bộ 99 đầu việc trong IMPLEMENTATION_PLAN.md. Chưa đạt cổng hoàn thành toàn dự án. Checkbox chưa đánh dấu không đồng nghĩa chưa có code: nhiều mục đang chờ kiểm thử đủ phạm vi.
 
-Hiện đã đánh dấu 68/99 mục, gồm G3.2–G3.3 bằng fixture môi trường cô lập và G0.5/G2.1/G2.3 qua capability EWMH, kiểm thử lỗi adapter và native startup thiếu xprop. Đã bổ sung G0.4/G2.4/G2.5 qua popup/auto-hide native và G9.6/G9.9 bằng hồi quy policy/asset/force-close và ảnh Studio thật trong README. Các cổng GUI, Wayland và phát hành vẫn chưa hoàn tất.
+Hiện đã đánh dấu 69/99 mục, gồm G3.2–G3.3 bằng fixture môi trường cô lập và G0.5/G2.1/G2.3 qua capability EWMH, kiểm thử lỗi adapter và native startup thiếu xprop. Đã bổ sung G0.4/G2.4/G2.5 qua popup/auto-hide native và G9.6/G9.9 bằng hồi quy policy/asset/force-close và ảnh Studio thật trong README. Các cổng GUI, Wayland và phát hành vẫn chưa hoàn tất.
 
 ## Môi trường tham chiếu đã xác minh
 
@@ -331,3 +331,12 @@ Script cần AT-SPI, Python GI, GTK3 và libXtst. Chỉ gửi phím khi kiểm t
 - Native --exports-smoke --launcher-smoke exit 0: PID 1537980 nhận startup XDG_DATA_DIRS=/usr/local/share:/usr/share, vẫn tìm đúng một DeskMorph Export Probe trong user export và launch tạo marker. Khôi phục nguyên config, xóa fixture/marker, restart normal PID 1538444; hồi quy launcher qua bảy nhóm discovery/search/pin/GIO/group/window-list/close-confirmation, fixture PID 1538925 đã thoát.
 - Hai lần chạy harness đầu chưa đạt do AT-SPI proxy đã defunct sau SIGTERM và child đã thoát chờ reap; sửa lưu PID trước stop, nhận biết zombie và reap child. Không tính hai lượt lỗi thành bằng chứng sản phẩm. Ca cuối đã qua; thay đổi reap sau đó chỉ dọn child đã thoát.
 - [Hợp đồng catalogue](APPLICATION_CATALOGUE.md), [bản ghi](benchmarks/catalogue-exports-2026-10-29.json). G3.1 đánh dấu, tổng 68/99. Export-layout fixtures không chứng minh runtime của gói Flatpak/Snap thực tế; các cổng launch và Wayland còn mở.
+
+
+## G3.6 — Refresh catalogue xuyên GIO/IPC/UI và lần cài export đầu tiên (29/10/2026)
+
+- Audit phát hiện giới hạn ở fallback G3.1: chỉ thêm export có applications lúc startup thì lần cài đầu tiên sau đó không nằm trong đường GIO đã cache. Bỏ điều kiện tồn tại; vẫn chỉ nối đường tuyệt đối hợp lệ và loại trùng, không sửa environment sau khởi tạo. GIO có thể theo dõi ancestor của export chưa tồn tại. Quy tắc hiện tại thay phần “chỉ nối export hiện có” tại bản ghi G3.1 bên trên.
+- Thêm subprocess Rust export_monitor_observes_first_install_when_export_directory_was_absent: enumerate khi thư mục chưa có, tạo toàn cây thư mục + entry rồi xác minh callback monitor và AppInfo::all thấy desktop ID mà không khởi động lại. Fixture priority/export cũ vẫn qua; full Rust 51/51 gồm ignored, custom-protocol build qua.
+- Native --catalogue-refresh-smoke --exports-smoke exit 0: app 1556472 với FLATPAK_USER_DIR riêng chưa có; query giữ nguyên trong launcher, tự nhận install/atomic rename/Hidden/restore/uninstall. Nút refresh giữ đúng entry, đóng consumer rồi sửa entry và mở lại nhận tên mới. Tám quan sát đã qua xuyên GIO→backend dirty/event→hook→UI; không coi thời gian vòng đợi trong report là benchmark latency từ lúc ghi file.
+- Finally stop đúng isolated app, khôi phục nguyên config, xóa thư mục mkdtemp fixture; normal app 1557263. Hồi quy export discovery/launch tiếp theo app 1557481 qua, normal app cuối 1557976; mọi fixture/marker và cấu hình được khôi phục. Python compile/diff check qua.
+- Cache 30s, explicit refresh và dirty event đã có trong backend; retained monitor/disconnect qua fixture trước đó. [Hợp đồng hiện tại](APPLICATION_CATALOGUE.md), [bản ghi](benchmarks/catalogue-refresh-2026-10-29.json). G3.6 đánh dấu, tổng 69/99; icon theme/render native và packaged app launch còn ở các mục chưa đánh dấu.

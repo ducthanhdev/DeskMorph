@@ -24,11 +24,9 @@ pub(crate) fn data_dirs(
     for path in exports {
         // Keep explicitly configured order authoritative. Extra exports are
         // fallbacks, and cannot displace XDG_DATA_HOME's desktop-ID overrides.
-        if path.is_absolute()
-            && path.join("applications").is_dir()
-            && !paths.contains(path)
-            && std::env::join_paths([path]).is_ok()
-        {
+        // Keep absent roots: GIO can watch their ancestors and discover the
+        // first installation without mutating cached process paths later.
+        if path.is_absolute() && !paths.contains(path) && std::env::join_paths([path]).is_ok() {
             paths.push(path.clone());
         }
     }

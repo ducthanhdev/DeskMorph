@@ -44,14 +44,14 @@ impl Fixture {
     fn run(&self, scenario: &str) {
         let executable = std::env::current_exe().unwrap();
         let configured = std::env::join_paths([self.0.join("system"), self.0.join("fallback")]).unwrap();
-        let data_dirs = if scenario == "exports" {
+        let data_dirs = if scenario.starts_with("exports") {
             let first = self.0.join("user/flatpak/exports/share");
             let exports = [first.clone(), self.0.join("flatpak-system/exports/share"),
                 self.0.join("snap/desktop"), first.clone(), self.0.join("absent-export")];
             let dirs = crate::catalogue_paths::data_dirs(Some(&configured), &exports).unwrap();
             let paths: Vec<_> = std::env::split_paths(&dirs).collect();
             assert_eq!(paths.iter().filter(|path| **path == first).count(), 1);
-            assert_eq!(paths.len(), 5, "Only available export roots are appended once");
+            assert_eq!(paths.len(), 6, "Export roots, including future installs, are appended once");
             dirs
         } else { configured };
         let mut command = if scenario == "dbus" {
@@ -161,6 +161,12 @@ fn exports_preserve_xdg_overrides_ids_symlinks_and_launch_resolution() {
     fs::rename(&exported, &deployed).unwrap();
     std::os::unix::fs::symlink(deployed, exported).unwrap();
     f.run("exports");
+}
+
+#[test]
+fn export_monitor_observes_first_install_when_export_directory_was_absent() {
+    let f = Fixture::new("exports-monitor");
+    f.run("exports-monitor");
 }
 
 #[test]
@@ -425,6 +431,24 @@ fn isolated_child() {
                 !root.join("fallback-invoked").exists(),
                 "DBus activation must not run Exec"
             );
+        }
+        "exports-monitor" => {
+            use std::{cell::Cell, rc::Rc};
+            let changes = Rc::new(Cell::new(0));
+            let counter = changes.clone();
+            let _watch = AppInfoWatch::new(move || counter.set(counter.get() + 1));
+            let _ = gio::AppInfo::all();
+            let export = root.join("user/flatpak/exports/share/applications");
+            assert!(!export.exists());
+            fs::create_dir_all(&export).unwrap();
+            fs::write(export.join("first-install.desktop"), "[Desktop Entry]\nType=Application\nName=First Install\nExec=/bin/true\n").unwrap();
+            let context = gio::glib::MainContext::default();
+            for _ in 0..500 {
+                while context.pending() { context.iteration(false); }
+                if changes.get() > 0 && gio::AppInfo::all().iter().any(|app| app.id().as_deref() == Some("first-install.desktop")) { return; }
+                std::thread::sleep(Duration::from_millis(10));
+            }
+            panic!("First installation in an initially absent export was not detected");
         }
         "monitor" => {
             use std::{cell::Cell, rc::Rc};

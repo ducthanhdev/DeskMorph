@@ -1,0 +1,80 @@
+{
+  "pid": 1556472,
+  "observations": [
+    {
+      "case": "initially absent export",
+      "seconds": 0.04,
+      "results": []
+    },
+    {
+      "case": "first installation without restart or manual refresh",
+      "seconds": 0.039,
+      "results": [
+        "Mở DeskMorph Refresh Probe Installed"
+      ]
+    },
+    {
+      "case": "atomic entry rename",
+      "seconds": 0.058,
+      "results": [
+        "Mở DeskMorph Refresh Probe Renamed"
+      ]
+    },
+    {
+      "case": "Hidden tombstone removes result",
+      "seconds": 0.052,
+      "results": []
+    },
+    {
+      "case": "entry restored",
+      "seconds": 0.047,
+      "results": [
+        "Mở DeskMorph Refresh Probe Restored"
+      ]
+    },
+    {
+      "case": "explicit refresh preserves current entry",
+      "seconds": 0.034,
+      "results": [
+        "Mở DeskMorph Refresh Probe Restored"
+      ]
+    },
+    {
+      "case": "uninstall removes result",
+      "seconds": 0.032,
+      "results": []
+    },
+    {
+      "case": "reopened consumer receives changed catalogue",
+      "seconds": 0.034,
+      "results": [
+        "Mở DeskMorph Refresh Probe Reopened"
+      ]
+    }
+  ],
+  "scope": "Live owned export fixtures, no host package installation",
+  "normalPid": 1557263,
+  "preferencesRestored": true,
+  "fixturesRemoved": true,
+  "date": "2026-10-29",
+  "task": "G3.6",
+  "rustTests": {
+    "passed": 51,
+    "failed": 0,
+    "ignored": 0
+  },
+  "customProtocolBuild": "passed",
+  "exportRegression": {
+    "pid": 1557481,
+    "startupDataDirs": "/usr/local/share:/usr/share",
+    "export": "/tmp/deskmorph-desktop-test/data/flatpak/exports/share",
+    "passed": [
+      "production startup export fallback",
+      "one desktop-ID result",
+      "launcher desktop-ID launch marker"
+    ],
+    "scope": "Owned export-layout fixture; not a packaged Flatpak or Snap runtime",
+    "normalPid": 1557976,
+    "preferencesRestored": true
+  }
+}
