@@ -126,6 +126,13 @@ fn after_mapping(callback: impl FnOnce() + 'static) {
 pub fn show(app: &AppHandle, label: &'static str, anchor: i32, width: u32, height: u32, data: Option<serde_json::Value>) -> Result<bool, String> {
     let dock = app.get_webview_window("taskbar").ok_or("Không tìm thấy Dock")?;
     if !dock.is_visible().map_err(|e| e.to_string())? { return Err("Dock đang tắt".into()); }
+    // IPC has no current GTK input event. Reuse the originating display's
+    // native input timestamp only while the Dock owns activation, as we do
+    // for the global shortcut; a previous popup's timestamp may be stale.
+    let input_time = if dock.is_focused().unwrap_or(false) {
+        dock.gtk_window().ok().and_then(|window| window.display().downcast::<gdkx11::X11Display>().ok())
+            .map(|display| display.user_time()).filter(|time| *time != 0)
+    } else { None };
     let monitor = dock.current_monitor().map_err(|e| e.to_string())?.ok_or("Không tìm thấy màn hình")?;
     let scale = monitor.scale_factor();
     let area = super::monitor_area(&monitor);
@@ -139,7 +146,9 @@ pub fn show(app: &AppHandle, label: &'static str, anchor: i32, width: u32, heigh
     if std::env::var_os("DESKMORPH_TRACE_POPUP_DISMISS").is_some() {
         eprintln!("deskmorph-popup-placement area={area:?} dock={dock_rect:?} popup={rect:?}");
     }
-    present(app, label, Some(rect), data, None)
+    present(app, label, Some(rect), data, None)?;
+    if let Some(timestamp) = input_time { focus_at(app, label, timestamp)?; }
+    Ok(true)
 }
 /// A desktop-managed launcher is an ordinary toplevel on Wayland. Its position
 /// belongs to the compositor; it does not require Dock placement or an anchor.

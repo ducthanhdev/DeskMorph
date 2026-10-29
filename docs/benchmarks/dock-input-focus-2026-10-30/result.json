@@ -1,0 +1,75 @@
+{
+  "date": "2026-10-30",
+  "binarySha256": "1c2a54f8e3fd3e5dca7ece576d6301f714853ee996f352b6340a3a1b37b77f4b",
+  "runs": [
+    {
+      "pid": 929894,
+      "fixturePid": 932700,
+      "nativeContentFocusDelayMs": 500,
+      "liveUnfocusedCallbacksSkipped": 4,
+      "inactiveCallbacksSkipped": 14,
+      "passed": [
+        "Tìm ứng dụng: keyboard Enter / Escape returns exact Dock XID and Enter reopens same source without helper refocus",
+        "Âm thanh: keyboard Enter / Escape returns exact Dock XID and Enter reopens same source without helper refocus",
+        "Tiện ích hệ thống: keyboard Enter / Escape returns exact Dock XID and Enter reopens same source without helper refocus",
+        "Mở lịch: keyboard Enter / Escape returns exact Dock XID and Enter reopens same source without helper refocus",
+        "four popup modes: real outside click retains selected Studio XID across delayed callbacks",
+        "audio/system scoped Close buttons return Dock keyboard focus and Enter reopens original source",
+        "four popup modes: selecting owned external GTK window dismisses and retains exact external XID",
+        "window list Escape returns source and Enter reopens; activating second row keeps exact external target focus",
+        "right-click context menu Escape returns exact source Dock XID",
+        "launcher global shortcut from external GTK window: Escape returns exact original external XID",
+        "shortcut popup: external user selection wins over original source, without delayed restore"
+      ],
+      "date": "2026-10-30",
+      "command": "python3 tests/desktop_smoke.py --focus-delay",
+      "exitCode": 0,
+      "normalPidAfterCleanup": 935087,
+      "configRestored": true,
+      "binarySha256": "1c2a54f8e3fd3e5dca7ece576d6301f714853ee996f352b6340a3a1b37b77f4b",
+      "baseline": {
+        "failure": "Mapped launcher did not become active after shortcut dismissal and Enter from Dock",
+        "reproducedWithoutPostMapCorrection": true
+      },
+      "limits": [
+        "Native GNOME X11 only; no Wayland activation certification",
+        "No accessibility speech/contrast certification"
+      ]
+    },
+    {
+      "pid": 937494,
+      "fixturePid": 940259,
+      "nativeContentFocusDelayMs": 0,
+      "liveUnfocusedCallbacksSkipped": 26,
+      "inactiveCallbacksSkipped": 0,
+      "passed": [
+        "Tìm ứng dụng: keyboard Enter / Escape returns exact Dock XID and Enter reopens same source without helper refocus",
+        "Âm thanh: keyboard Enter / Escape returns exact Dock XID and Enter reopens same source without helper refocus",
+        "Tiện ích hệ thống: keyboard Enter / Escape returns exact Dock XID and Enter reopens same source without helper refocus",
+        "Mở lịch: keyboard Enter / Escape returns exact Dock XID and Enter reopens same source without helper refocus",
+        "four popup modes: real outside click retains selected Studio XID across delayed callbacks",
+        "audio/system scoped Close buttons return Dock keyboard focus and Enter reopens original source",
+        "four popup modes: selecting owned external GTK window dismisses and retains exact external XID",
+        "window list Escape returns source and Enter reopens; activating second row keeps exact external target focus",
+        "right-click context menu Escape returns exact source Dock XID",
+        "launcher global shortcut from external GTK window: Escape returns exact original external XID",
+        "shortcut popup: external user selection wins over original source, without delayed restore"
+      ],
+      "command": "python3 tests/desktop_smoke.py --focus-smoke",
+      "exitCode": 0,
+      "normalPidAfterCleanup": 942099,
+      "configRestored": true
+    }
+  ],
+  "rust": {
+    "passed": 85,
+    "ignored": 5,
+    "failed": 0
+  },
+  "scope": "Native GNOME X11; Dock timestamp activation, popup keyboard continuity, outside-click, external window selection, window list and global shortcut",
+  "limits": [
+    "No native Wayland activation certification",
+    "No screen-reader speech/contrast certification",
+    "Separate sleep/hotplug/soak gates remain open"
+  ]
+}

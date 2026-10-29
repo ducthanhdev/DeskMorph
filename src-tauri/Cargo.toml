@@ -24,6 +24,7 @@ tauri-build = { version = "2", features = [] }
 [dependencies]
 gio = "0.18"
 gtk = "0.18"
+gdkx11 = "0.18"
 tauri = { version = "2", features = ["protocol-asset", "tray-icon"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
