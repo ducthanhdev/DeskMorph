@@ -93,7 +93,7 @@ Phụ thuộc G1–G2. Thử parser và launch desktop entry trước khi xây l
 
 Tiêu chí: tìm được và mở đúng app thực tế gồm terminal, app có đường dẫn khoảng trắng, Flatpak/Snap nếu máy có; ghim giữ sau restart; file sai và icon thiếu không làm app crash. Test parser bằng fixtures, XDG precedence, lọc locale/environment, normalization tìm kiếm và migration pin; kiểm thử launch thực tế trên một tập app đại diện.
 
-Bằng chứng G3.2–G3.3: `application_fixtures.rs` chạy mỗi scenario trong tiến trình mới với XDG/locale/desktop riêng; kiểm tra metadata và model InstalledApp, override user/system/fallback, desktop ID thư mục con, Hidden tombstone, NoDisplay, OnlyShowIn/NotShowIn, TryExec có/thiếu, sai Type/file hỏng và icon không resolve được. Fixture launch đã qua field codes/Terminal/Desktop Action và DBusActivatable trên bus riêng; G3.4 vẫn chờ hoàn tất tập ứng dụng thực tế, G3.6 chờ kiểm tra refresh xuyên IPC/UI sau sửa giữ monitor.
+Bằng chứng G3.2–G3.3: `application_fixtures.rs` chạy mỗi scenario trong tiến trình mới với XDG/locale/desktop riêng; kiểm tra metadata và model InstalledApp, override user/system/fallback, desktop ID thư mục con, Hidden tombstone, NoDisplay, OnlyShowIn/NotShowIn, TryExec có/thiếu, sai Type/file hỏng và icon không resolve được. Fixture launch đã qua field codes/Terminal/Desktop Action và DBusActivatable trên bus riêng; G3.4 vẫn chờ hoàn tất tập ứng dụng thực tế, G3.6 đã qua refresh xuyên GIO/IPC/UI, gồm lần cài đầu tiên khi export chưa tồn tại lúc startup; xem APPLICATION_CATALOGUE.md và PROGRESS.md.
 
 ## 7. G4 — Hoàn thiện trải nghiệm Dock
 
