@@ -1,0 +1,11 @@
+{
+  "scope": "Pop!_OS 24.04 GNOME 46/X11, i5-12450HX, GTK 3.24.41, WebKitGTK 2.52.6; warm desktop, 15-second samples; reference regression gates, not product guarantees",
+  "startupSeconds": {"debug": 3, "release": 2.5},
+  "phases": {
+    "studio": {"cpuPercentOfOneCore": 22, "peakPssMiB": 480, "maxManagedClients": 9},
+    "dock": {"cpuPercentOfOneCore": 12, "peakPssMiB": 470, "maxManagedClients": 8},
+    "autohidden": {"cpuPercentOfOneCore": 3, "peakPssMiB": 460, "maxManagedClients": 8},
+    "system": {"cpuPercentOfOneCore": 16, "peakPssMiB": 500, "maxManagedClients": 10},
+    "many": {"cpuPercentOfOneCore": 25, "peakPssMiB": 480, "maxManagedClients": 21}
+  }
+}

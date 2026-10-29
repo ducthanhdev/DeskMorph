@@ -1,5 +1,7 @@
 //! Backend-independent window contract. IDs are opaque outside their adapter.
 pub mod x11;
+mod snapshots;
+pub use snapshots::WindowSnapshots;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]

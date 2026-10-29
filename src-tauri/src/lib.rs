@@ -144,13 +144,25 @@ fn install_app_icon() -> Result<bool, String> {
 }
 
 #[tauri::command]
-fn get_open_windows() -> Result<Vec<OpenWindow>, WindowError> { let _trace = diagnostics::command("get_open_windows"); window_manager::backend()?.list() }
+fn get_open_windows(state: tauri::State<window_manager::WindowSnapshots>) -> Result<Vec<OpenWindow>, WindowError> { let _trace = diagnostics::command("get_open_windows"); state.get() }
 #[tauri::command]
-fn activate_window(window_id: WindowId) -> Result<bool, WindowError> { window_manager::backend()?.activate(&window_id) }
+fn activate_window(window_id: WindowId, state: tauri::State<window_manager::WindowSnapshots>) -> Result<bool, WindowError> {
+    let result = window_manager::backend()?.activate(&window_id);
+    state.invalidate();
+    result
+}
 #[tauri::command]
-fn close_window(xid: WindowId) -> Result<bool, WindowError> { window_manager::backend()?.close(&xid) }
+fn close_window(xid: WindowId, state: tauri::State<window_manager::WindowSnapshots>) -> Result<bool, WindowError> {
+    let result = window_manager::backend()?.close(&xid);
+    state.invalidate();
+    result
+}
 #[tauri::command]
-fn force_kill_window(xid: WindowId) -> Result<bool, WindowError> { window_manager::backend()?.force_kill(&xid) }
+fn force_kill_window(xid: WindowId, state: tauri::State<window_manager::WindowSnapshots>) -> Result<bool, WindowError> {
+    let result = window_manager::backend()?.force_kill(&xid);
+    state.invalidate();
+    result
+}
 
 #[tauri::command]
 fn spawn_app(exec_cmd: String) -> Result<bool, String> {
@@ -216,6 +228,7 @@ fn run_app() -> Result<(), String> {
     sys.refresh_all();
 
     tauri::Builder::default()
+        .manage(window_manager::WindowSnapshots::default())
         .manage(shortcuts::ShortcutState::default())
         .manage(system_widgets::SystemStatusState::default())
         .manage(media::MediaState::default())

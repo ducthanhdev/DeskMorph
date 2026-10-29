@@ -22,6 +22,8 @@ def test_app():
     desktop = Atspi.get_desktop(0)
     for i in range(desktop.get_child_count()):
         app = desktop.get_child_at_index(i)
+        if app is None:
+            continue
         if app.get_name() != 'deskmorph':
             continue
         try:
@@ -105,6 +107,7 @@ if __name__ == '__main__':
     parser.add_argument('--mapping-fixture', action='store_true')
     parser.add_argument('--internal-fixture', action='store_true')
     parser.add_argument('--internal-smoke', action='store_true')
+    parser.add_argument('--performance-matrix', action='store_true')
     parser.add_argument('--performance-smoke', action='store_true')
     parser.add_argument('--polling-smoke', action='store_true')
     parser.add_argument('--performance-trace', action='store_true')
@@ -140,7 +143,7 @@ if __name__ == '__main__':
             raise RuntimeError('Cannot verify GNOME lock state; no native input will be sent')
         if re.search(r'\btrue\b', result.stdout):
             raise RuntimeError('GNOME desktop is locked; unlock it before native UI tests. No input was sent.')
-    input_tests = any((args.preview_smoke, args.capabilities_smoke, args.clock_smoke, args.icon_render_smoke, args.launcher_keyboard_smoke, args.missing_app_smoke, args.pinning_smoke, args.pin_identity_smoke, args.catalogue_refresh_smoke, args.exports_smoke, args.action, args.screenshot, args.basic, args.popup_smoke, args.focus_smoke, args.autohide_smoke, args.shortcut_smoke, args.lifecycle_smoke, args.registration_smoke, args.window_list_smoke, args.reorder_smoke, args.tooltip_smoke, args.launch_smoke, args.overflow_smoke, args.layout_smoke, args.indicator_smoke, args.mapping_smoke, args.internal_smoke, args.polling_smoke, args.launcher_smoke, args.studio_smoke, args.config_smoke, args.command_errors_smoke,
+    input_tests = any((args.performance_matrix, args.preview_smoke, args.capabilities_smoke, args.clock_smoke, args.icon_render_smoke, args.launcher_keyboard_smoke, args.missing_app_smoke, args.pinning_smoke, args.pin_identity_smoke, args.catalogue_refresh_smoke, args.exports_smoke, args.action, args.screenshot, args.basic, args.popup_smoke, args.focus_smoke, args.autohide_smoke, args.shortcut_smoke, args.lifecycle_smoke, args.registration_smoke, args.window_list_smoke, args.reorder_smoke, args.tooltip_smoke, args.launch_smoke, args.overflow_smoke, args.layout_smoke, args.indicator_smoke, args.mapping_smoke, args.internal_smoke, args.polling_smoke, args.launcher_smoke, args.studio_smoke, args.config_smoke, args.command_errors_smoke,
                        args.wallpaper_smoke, args.scheduler_smoke, args.library_stress, args.audio_smoke, args.media_smoke,
                        args.audio_exit, args.audio_unavailable, args.system_smoke, args.system_unavailable, args.system_open_smoke, args.system_locations_smoke))
     if input_tests or args.geometry_smoke: require_unlocked_desktop()
@@ -759,6 +762,9 @@ if __name__ == '__main__':
             os.kill(app.get_process_id(), signal.SIGTERM)
             process.wait(timeout=5)
             app = start_isolated_app()
+    if args.performance_matrix:
+        from performance_matrix import run
+        app = run(app, TEST_CONFIG, click, focus_studio, native_keys, test_app, start_isolated_app, lambda current: globals().__setitem__('app', current), close_studio_native, reopen_studio, require_unlocked_desktop, assert_pointer_over_test_app)
     if args.performance_smoke:
         from performance_smoke import run
         try:
@@ -1371,9 +1377,12 @@ if __name__ == '__main__':
             pinned = any(pin.get('desktopId') == 'deskmorph-window-fixture.desktop' for pin in window_config()['pinnedApps'])
             name = 'DeskMorph Window Fixture' if pinned else 'DeskMorphWindowFixture'
             return f'{name} • {count} cửa sổ'
+        def group_node(count):
+            dock = next(n for n, _ in descendants(app) if n.get_role_name() == 'frame' and n.get_name() == 'DeskMorph Taskbar')
+            return next((n for n, _ in descendants(dock) if n.get_role_name() == 'button' and n.get_name() == group_button(count)), None)
         def open_windows(count):
-            wait_windows(lambda: any(n.get_name() == group_button(count) for n, _ in descendants(app)), 'Dock did not reconcile fixture group count')
-            node = next(n for n, _ in descendants(app) if n.get_name() == group_button(count))
+            wait_windows(lambda: group_node(count) is not None, 'Dock did not reconcile fixture group count')
+            node = group_node(count)
             native_click_node(node)
             wait_windows(lambda: popup_visible() and row_button('DeskMorph Window Test 1') is not None, 'Window list did not open')
             wait_windows(lambda: popup_xid() is not None and popup_xid() in subprocess.check_output(['xprop', '-root', '_NET_ACTIVE_WINDOW'], text=True), 'Opened window list did not receive native focus')
@@ -1420,8 +1429,7 @@ if __name__ == '__main__':
             window_passed.append('open list refreshes title, adds window and removes external close; nearest-row focus survives')
             # Pin via the real context menu, then repeat native group operations.
             focus_studio()
-            group_node = next(n for n, _ in descendants(app) if n.get_name() == group_button(3))
-            native_click_node(group_node, button=3)
+            native_click_node(group_node(3), button=3)
             click('Ghim')
             wait_windows(lambda: any(pin.get('desktopId') == 'deskmorph-window-fixture.desktop' for pin in window_config()['pinnedApps']), 'Pinning fixture group failed')
             open_windows(3)
@@ -1440,7 +1448,7 @@ if __name__ == '__main__':
             wait_windows(lambda: row_button('DeskMorph Window Test 3') is None and row_button('DeskMorph Window Test 4') is None, 'List did not reconcile one remaining window')
             native_keys(chord=[0xff1b]); wait_windows(lambda: not popup_visible(), 'Escape did not dismiss one-window list')
             focus_studio()
-            node = next(n for n, _ in descendants(app) if n.get_name() == group_button(1))
+            node = group_node(1)
             native_click_node(node)
             wait_windows(lambda: fixture_state['1']['xid'] in subprocess.check_output(['xprop', '-root', '_NET_ACTIVE_WINDOW'], text=True), 'Single-window pin did not activate its exact XID')
             assert not popup_visible(), 'Single-window activation unexpectedly opened a list'
@@ -1448,7 +1456,7 @@ if __name__ == '__main__':
             fixture_command('add', 5)
             wait_windows(lambda: any(n.get_name() == group_button(2) for n, _ in descendants(app)), 'Second window did not update pinned group')
             focus_studio()
-            node = next(n for n, _ in descendants(app) if n.get_name() == group_button(2))
+            node = group_node(2)
             native_click_node(node, button=3)
             wait_windows(lambda: row_button('DeskMorph Window Test 5') is not None, 'Context menu did not list fixture windows')
             context_state = fixture_command('title', 5, title='DeskMorph Context Renamed 5')
@@ -1462,7 +1470,7 @@ if __name__ == '__main__':
             wait_windows(lambda: context_state['5']['xid'] in subprocess.check_output(['xprop', '-root', '_NET_ACTIVE_WINDOW'], text=True), 'Context row did not activate exact selected XID')
             wait_windows(lambda: not popup_visible(), 'Context activation did not dismiss popup')
             focus_studio()
-            node = next(n for n, _ in descendants(app) if n.get_name() == group_button(2))
+            node = group_node(2)
             native_click_node(node, button=3)
             click('Đóng DeskMorph Context Renamed 5')
             wait_windows(lambda: context_state['5']['xid'] not in managed_fixture(), 'Context close did not remove exact target window')
@@ -1485,7 +1493,7 @@ if __name__ == '__main__':
             # Removing the test-only pin keeps every pre-existing pin and order.
             if any(pin.get('desktopId') == 'deskmorph-window-fixture.desktop' for pin in window_config()['pinnedApps']):
                 wait_windows(lambda: any(n.get_name() == group_button(0) for n, _ in descendants(app)), 'Test-only pin did not reach zero windows for cleanup')
-                node = next(n for n, _ in descendants(app) if n.get_name() == group_button(0))
+                node = group_node(0)
                 native_click_node(node, button=3); click('Bỏ ghim')
             assert window_config()['pinnedApps'] == original_pins, 'Window test changed original pins'
             wait_windows(lambda: not any(n.get_name() in ('DeskMorph Window Fixture • 0 cửa sổ', 'DeskMorphWindowFixture • 0 cửa sổ') for n, _ in descendants(app)), 'Unpinned group did not disappear at zero windows')

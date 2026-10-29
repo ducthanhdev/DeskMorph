@@ -66,6 +66,7 @@ pub fn executable_available(name: &str) -> bool {
 }
 #[tauri::command]
 pub fn refresh_platform_info(app: AppHandle) -> Result<(), String> {
+    app.state::<crate::window_manager::WindowSnapshots>().invalidate();
     app.emit("deskmorph:platform-changed", ()).map_err(|error| error.to_string())
 }
 #[tauri::command]

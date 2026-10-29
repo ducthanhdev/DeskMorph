@@ -187,7 +187,7 @@ Phần tài liệu/kiểm thử bắt đầu từ G0; cổng phát hành tổng 
 - [ ] G9.4 Chạy lại luồng cốt lõi trên mỗi tổ hợp được tuyên bố hỗ trợ; tách verified/experimental/unsupported với phiên bản cụ thể.
 - [x] G9.5 Tích hợp lệnh test vào package scripts/CI: config/migration, desktop parser, grouping, geometry, tìm kiếm; build TS/Vite và cargo check/test phù hợp.
 - [x] G9.6 Kiểm tra policy IPC/capabilities và asset scope theo tính năng thật; hạn chế quyền dư sau khi thay shell launch bằng desktop launcher.
-- [ ] G9.7 So sánh CPU/RAM, polling/process spawn với đường cơ sở; đặt ngân sách dựa trên số đo môi trường tham chiếu và điều tra regression.
+- [x] G9.7 So sánh CPU/RAM, polling/process spawn với đường cơ sở; đặt ngân sách dựa trên số đo môi trường tham chiếu và điều tra regression.
 - [ ] G9.8 Kiểm tra vòng đời dài: mở/đóng popup lặp, sleep/resume, service restart, rút/cắm màn hình; tìm leak và thread/timer không kết thúc.
 - [x] G9.9 README: mục tiêu, ảnh minh họa, môi trường hỗ trợ, dev/build/install/uninstall, dependencies, cấu hình và troubleshooting.
 - [x] G9.10 Cập nhật tài liệu kiến trúc cũ theo code thực; changelog, giới hạn và danh sách tính năng chưa hỗ trợ.
