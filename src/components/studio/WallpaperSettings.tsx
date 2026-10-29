@@ -122,7 +122,7 @@ export function WallpaperSettings() {
     {scan.limited && <p role="status">{t("scanLimited")}</p>}
     {scan.issues.length > 0 && <details className="wallpaper-issues" onToggle={(event) => setIssuesOpen(event.currentTarget.open)}><summary role="button" aria-expanded={issuesOpen}>{t("scanIssues")} ({scan.issues.length})</summary><ul>{scan.issues.map((issue, i) => <li key={i}><code>{issue.path}</code>: {issue.message}</li>)}</ul></details>}
     {loading ? <p role="status">{t("loading")}</p> : !filtered.length ? <p role="status">{t("noWallpapers")}</p> : <>
-      <p className="settings-help">{filtered.length} • {t("page")} {currentPage + 1}/{pages}</p>
+      <p className="settings-help" role="status" aria-atomic="true">{filtered.length} • {t("page")} {currentPage + 1}/{pages}</p>
       <div className="wallpaper-grid">{visible.map((image) => <article key={image.path} className={`wallpaper-library-card ${current === image.path ? "is-current" : ""}`}>
         <button className="wallpaper-apply" aria-label={`${t("apply")} ${image.filename}`} aria-pressed={current === image.path} disabled={!platform?.wallpaper || applying} onClick={() => void apply(image.path)}>
           {thumbnails[image.path]?.thumbnail ? <img className="wallpaper-thumb-img" loading="lazy" src={convertFileSrc(thumbnails[image.path].thumbnail!)} alt="" onError={() => setThumbnails((previous) => ({ ...previous, [image.path]: { path: image.path, thumbnail: null, error: "unavailable" } }))} /> : <div className="wallpaper-thumb-placeholder">{thumbnails[image.path]?.error ? t("thumbnailError") : t("loading")}</div>}

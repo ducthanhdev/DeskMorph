@@ -39,6 +39,8 @@ def run():
     pixel = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, False, 8, 8, 8)
     pixel.fill(0x345678ff)
     for i in range(26): pixel.savev(str(images / f'image-{i:02}.png'), 'png', [], [])
+    other = root / 'other'; other.mkdir()
+    pixel.savev(str(other / 'other.jpg'), 'jpeg', [], [])
     observations = []
     dispatch(op='prepare')
     for language in ('vi', 'en'):
@@ -47,7 +49,7 @@ def run():
         config_file.parent.mkdir(parents=True)
         config = json.loads((repo / 'src/config/defaults.json').read_text())
         config.update(language=language, enabled=False, reduceMotion=True,
-            wallpaperFolders=[str(images)], wallpaperFavorites=[str(images / 'image-00.png')],
+            wallpaperFolders=[str(images), str(other)], wallpaperFavorites=[str(images / 'image-00.png')],
             wallpaperScheduleEnabled=False)
         config_file.write_text(json.dumps(dict(schemaVersion=1, revision=0, config=config)))
         env = dict(os.environ, DESKMORPH_CONFIG_HOME=str(config_home), WEBKIT_DISABLE_DMABUF_RENDERER='1')
@@ -60,8 +62,8 @@ def run():
             studio = wait(lambda: next((w for w in dispatch(op='state')['windows'] if w['title'] == 'DeskMorph Studio'), None), 'Studio did not map')
             dispatch(op='activate', id=studio['id'], pid=process.pid)
             wait(lambda: any(w['focused'] for w in dispatch(op='state')['windows']), 'Studio did not focus')
-            labels = dict(tab='Hình nền', next='Trang sau', previous='Trang trước', favorites='Chỉ ảnh yêu thích', favorite='Yêu thích', search='Tìm hình nền') if language == 'vi' else dict(tab='Wallpapers', next='Next page', previous='Previous page', favorites='Favorites only', favorite='Favorite', search='Search wallpapers')
-            def find(name): return next((n for n in descendants(app) if n.get_name() == name and n.get_role_name() in ('button', 'toggle button', 'entry', 'check box')), None)
+            labels = dict(tab='Hình nền', next='Trang sau', previous='Trang trước', favorites='Chỉ ảnh yêu thích', favorite='Yêu thích', search='Tìm hình nền', folder='Lọc theo thư mục', format='Định dạng') if language == 'vi' else dict(tab='Wallpapers', next='Next page', previous='Previous page', favorites='Favorites only', favorite='Favorite', search='Search wallpapers', folder='Filter by folder', format='Format')
+            def find(name): return next((n for n in descendants(app) if n.get_name() == name and n.get_role_name() in ('button', 'toggle button', 'entry', 'check box', 'combo box')), None)
             def focus(name):
                 node = wait(lambda: find(name), 'Missing control: ' + name)
                 assert node.get_component_iface().grab_focus()
@@ -75,6 +77,26 @@ def run():
             wait(lambda: focused(labels['previous']), 'Last-page disabled Next lost keyboard focus')
             key(28)
             wait(lambda: focused(labels['next']), 'First-page disabled Previous lost keyboard focus')
+            def favorite_count():
+                return sum(n.get_role_name() in ('button', 'toggle button') and n.get_name().startswith(labels['favorite'] + ' ')
+                    for n in descendants(app))
+            wait(lambda: favorite_count() == 24, 'First page did not contain 24 images')
+            # Native select keys; no AT-SPI set-value or renderer injection.
+            focus(labels['folder']); key(107)
+            wait(lambda: favorite_count() == 1, 'Folder End did not select the second image root')
+            wait(lambda: focused(labels['folder']), 'Folder filtering lost focus')
+            focus(labels['format']); key(107)
+            wait(lambda: favorite_count() == 0, 'Format filter did not intersect folder filter')
+            wait(lambda: focused(labels['format']), 'Empty format result lost focus')
+            key(102)
+            wait(lambda: favorite_count() == 1, 'Format Home did not restore all formats')
+            focus(labels['folder']); key(102)
+            wait(lambda: favorite_count() == 24, 'Folder Home did not restore first page')
+            focus(labels['search']); key(44)
+            wait(lambda: favorite_count() == 0, 'Typed Z did not filter images to empty')
+            wait(lambda: focused(labels['search']), 'Empty search result lost focus')
+            key(14)
+            wait(lambda: favorite_count() == 24, 'Backspace did not restore the first page')
             focus(labels['favorites']); key(57)
             favorite = labels['favorite'] + ' image-00.png'
             wait(lambda: find(favorite), 'Favorite filter lost its only image')
@@ -85,13 +107,14 @@ def run():
             assert saved['reduceMotion'] is True
             observations.append(dict(language=language, reducedMotion=True, lastPageFocusPrevious=True,
                 firstPageFocusNext=True, favoriteFilterSpace=True, unfavoriteEnterFocusSearch=True,
-                persistedFavoriteRemoval=True, noWallpaperApply=True))
+                persistedFavoriteRemoval=True, folderEndHome=True, formatEndHomeIntersection=True,
+                searchZBackspace=True, filterFocusRetained=True, noWallpaperApply=True))
         finally:
             process.terminate()
             try: process.wait(timeout=8)
             except subprocess.TimeoutExpired: process.kill(); process.wait(timeout=5)
     (root / 'launcher-result.json').write_text(json.dumps(dict(wallpaperKeyboard=observations,
-        binarySha256=hashlib.sha256(binary.read_bytes()).hexdigest(), scope='Private GNOME46 native Wayland Studio, actual Enter/Space keys after AT-SPI focus seeds. vi/en with reduced motion. No wallpaper apply, host input, full Tab order, chooser or screen-reader claim.'), indent=2))
+        binarySha256=hashlib.sha256(binary.read_bytes()).hexdigest(), scope='Private GNOME46 native Wayland Studio, actual Enter/Space/Home/End/Z/Backspace keys after AT-SPI focus seeds. vi/en with reduced motion. No wallpaper apply, host input, full Tab order, chooser or screen-reader claim.'), indent=2))
 
 
 if __name__ == '__main__': run()

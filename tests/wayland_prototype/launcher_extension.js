@@ -52,7 +52,7 @@ export default class LauncherLab extends Base {
             return super.Dispatch(token, '{"op":"state"}');
         }
         if (command.op === 'key') {
-            const allowed = GLib.getenv('DESKMORPH_WALLPAPER_TEST') === '1' ? [1, 15, 28, 44, 57] : [1, 28, 44];
+            const allowed = GLib.getenv('DESKMORPH_WALLPAPER_TEST') === '1' ? [1, 14, 15, 28, 44, 57, 102, 103, 107, 108] : [1, 28, 44];
             if (!allowed.includes(command.code) || !this._windows().some(w => w.has_focus())) throw new Error('Only Escape/Enter/Z in a focused lab window are allowed');
             this._keyboard.notify_key(GLib.get_monotonic_time(), command.code, Clutter.KeyState.PRESSED);
             this._keyboard.notify_key(GLib.get_monotonic_time(), command.code, Clutter.KeyState.RELEASED);

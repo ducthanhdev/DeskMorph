@@ -87,6 +87,9 @@ test('wallpaper scan effects cancel only their request, ignore stale results, re
     scans[0].resolve({ images: [{ path: '/first/stale.png', filename: 'stale.png', folder: '/first', format: 'png' }], issues: [], limited: false });
     await flush(); assert.deepEqual(states, beforeStale, 'Old completion/finally cannot replace scan or loading state');
     let tree = render();
+    const resultCount = [...nodes(tree)].find(node => node.type === 'p' && node.props.children?.includes?.('page'));
+    assert.equal(resultCount?.props.role, 'status', 'Changing result count must expose a polite status');
+    assert.equal(resultCount?.props['aria-atomic'], 'true');
     const disclosure = () => [...nodes(tree)].find(node => node.type === 'summary');
     assert.equal(disclosure().props.role, 'button');
     assert.equal(disclosure().props['aria-expanded'], false);

@@ -323,6 +323,18 @@ def run(output, prototype=False, launcher=False, shortcut=False, binary=None, te
             for name in ('launcher-probe', 'deskmorph-launcher', 'accessibility', 'media-keys', 'shortcut-background'):
                 if (root / (name + '.log')).exists(): output.with_suffix('.' + name + '.log').write_text((root / (name + '.log')).read_text())
             assert not any(active(pid) for pid in pids), 'Owned lab process did not exit'
+            # xdg-document-portal may leave a disconnected FUSE mount after its
+            # process exits. Never recurse into it or touch the host portal.
+            document_mount = root / 'runtime/doc'
+            def portal_mounted():
+                return any(line.split()[4] == str(document_mount)
+                    for line in Path('/proc/self/mountinfo').read_text().splitlines())
+            for _ in range(4):
+                if not portal_mounted(): break
+                subprocess.run(['fusermount3', '-uz', str(document_mount)], check=True,
+                    capture_output=True, text=True, timeout=5)
+            assert not portal_mounted(), 'Owned portal mount did not detach'
+            if result: result['ownedPortalMountRemoved'] = True
             if snap_gui:
                 for endpoint in (socket_path, Path(str(socket_path) + '.lock')):
                     if endpoint.exists():

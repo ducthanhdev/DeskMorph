@@ -62,3 +62,6 @@ Audit 29/10/2026 bổ sung tương phản phi văn bản: 105 fixture tổng, g�
 
 
 Thư viện wallpaper nay phục hồi focus khi favorite đang focus bị gỡ khỏi danh sách lọc: tới favorite cùng vị trí/cái trước, hết ảnh thì về tìm kiếm. Nút phân trang thành disabled chuyển tới nút phân trang enabled còn lại. Nếu người dùng chuyển focus sang control khác hoặc native window blur, không lấy focus lại. Ca native vi/en với reduced motion đã qua phân trang hai chiều và bỏ favorite cuối; chưa thay thế kiểm apply pending/failure, mọi bộ lọc hoặc toàn bộ luồng bằng Tab.
+
+
+Bổ sung bộ lọc wallpaper: [native vi/en, reduced motion](benchmarks/wallpaper-filters-keyboard-2026-10-29.json) dùng27 ảnh PNG/JPEG ở hai thư mục. Home/End trên select thư mục và định dạng kiểm cả giao không có kết quả; Z/Backspace trong tìm kiếm kiểm rỗng/khôi phục. Focus giữ ở control đang lọc; chạy lại các ca pagination/favorite. Số ảnh/trang có role=status và aria-atomic=true; đây là contract live region, chưa là bằng chứng trình đọc màn hình đã phát announcement. AT-SPI seed focus cho từng control, chưa chứng minh đường Tab toàn luồng.
