@@ -1,4 +1,5 @@
 import { ErrorText } from "../ErrorText";
+import { useRemovalFocus } from "../../hooks/useRemovalFocus";
 import { useState } from "react";
 import { useConfig } from "../../config/store";
 import { appearanceOf, BUILTIN_PRESETS, type Appearance } from "../../dockAppearance";
@@ -7,6 +8,8 @@ import { Card, Range, Toggle } from "./Controls";
 export function AppearanceSettings() {
   const { config, updateConfig } = useConfig();
   const { t } = useI18n();
+  const removalFocus = useRemovalFocus();
+  const nameInput = removalFocus.fallback;
   const [name, setName] = useState("");
   const [editing, setEditing] = useState<string | null>(null);
   const [error, setError] = useState("");
@@ -19,7 +22,7 @@ export function AppearanceSettings() {
     const presets = editing ? config.presets.map((p) => p.id === editing ? { ...p, name: trimmed } : p) : [...config.presets, { id: crypto.randomUUID(), name: trimmed, appearance: appearanceOf(config) }];
     if (await updateConfig({ presets })) { setName(""); setEditing(null); setError(""); }
   };
-  return <>
+  return <div ref={removalFocus.root} onFocusCapture={removalFocus.onFocusCapture}>
     <Card title={t("appearanceTab")}>
       <label className="settings-field">{t("accent")}<input type="color" aria-label={t("accent")} value={config.accentColor} onChange={(e) => void updateConfig({ accentColor: e.target.value })} /></label>
       <Range label={t("opacity")} min={.2} max={1} step={.01} unit="" value={config.opacity} onChange={(opacity) => updateConfig({ opacity })} />
@@ -36,9 +39,9 @@ export function AppearanceSettings() {
       {previous && <button className="studio-button" onClick={async () => { if (await updateConfig(previous)) setPrevious(null); }}>{t("undo")}</button>}
       <h3>{t("customPresets")}</h3>
       {!config.presets.length && <p className="settings-help">{t("noPresets")}</p>}
-      {config.presets.map((preset) => <div className="preset-saved" key={preset.id}><span>{preset.name}</span><button aria-label={`${t("apply")} ${preset.name}`} onClick={() => void apply(preset.appearance)}>{t("apply")}</button><button aria-label={`${t("rename")} ${preset.name}`} onClick={() => { setEditing(preset.id); setName(preset.name); }}>{t("rename")}</button><button aria-label={`${t("remove")} ${preset.name}`} onClick={() => void updateConfig({ presets: config.presets.filter((p) => p.id !== preset.id) })}>{t("remove")}</button></div>)}
-      <div className="settings-inline"><input aria-label={t("presetName")} placeholder={t("presetName")} maxLength={60} value={name} onChange={(e) => setName(e.target.value)} /><button className="studio-button" disabled={!editing && config.presets.length >= 32} onClick={() => void save()}>{editing ? t("rename") : t("savePreset")}</button>{editing && <button onClick={() => { setEditing(null); setName(""); }}>{t("cancel")}</button>}</div>
+      {config.presets.map((preset) => <div className="preset-saved" key={preset.id}><span>{preset.name}</span><button aria-label={`${t("apply")} ${preset.name}`} onClick={() => void apply(preset.appearance)}>{t("apply")}</button><button aria-label={`${t("rename")} ${preset.name}`} onClick={() => { setEditing(preset.id); setName(preset.name); nameInput.current?.focus(); nameInput.current?.select(); }}>{t("rename")}</button><button data-remove-focus aria-label={`${t("remove")} ${preset.name}`} onClick={() => void updateConfig({ presets: config.presets.filter((p) => p.id !== preset.id) })}>{t("remove")}</button></div>)}
+      <form className="settings-inline" onSubmit={(event) => { event.preventDefault(); void save(); }}><input ref={nameInput} aria-label={t("presetName")} placeholder={t("presetName")} maxLength={60} value={name} onChange={(e) => setName(e.target.value)} /><button className="studio-button" disabled={!editing && config.presets.length >= 32} type="submit">{editing ? t("rename") : t("savePreset")}</button>{editing && <button type="button" onClick={() => { setEditing(null); setName(""); nameInput.current?.focus(); }}>{t("cancel")}</button>}</form>
       {error && <p role="alert"><ErrorText error={error} /></p>}
     </Card>
-  </>;
+  </div>;
 }

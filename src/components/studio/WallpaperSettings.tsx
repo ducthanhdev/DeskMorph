@@ -1,4 +1,5 @@
 import { ErrorText } from "../ErrorText";
+import { useRemovalFocus } from "../../hooks/useRemovalFocus";
 import { useEffect, useRef, useState } from "react";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { invoke } from "../../ipc";
@@ -18,6 +19,7 @@ export function WallpaperSettings() {
   const { config, updateConfig } = useConfig();
   const { t, locale, text } = useI18n();
   const { platform, error: platformError } = usePlatform();
+  const removalFocus = useRemovalFocus();
   const [folder, setFolder] = useState("");
   const [scan, setScan] = useState<Scan>({ images: [], issues: [], limited: false });
   const [current, setCurrent] = useState("");
@@ -84,16 +86,16 @@ export function WallpaperSettings() {
     } catch (e) { if (mounted.current) { setError(errorMessage(e)); setFailedApply({ path }); } }
     finally { applyLock.current = false; if (mounted.current) setApplying(false); }
   };
-  return <Card title={t("wallpaperTab")}>
+  return <div ref={removalFocus.root} onFocusCapture={removalFocus.onFocusCapture}><Card title={t("wallpaperTab")}>
     <p className="settings-help">{t("wallpaperHelp")}</p>
     {!platform?.wallpaper && <p role="status">{capabilityReason(platform, "wallpaper", t, platformError)}</p>}
     <form className="settings-inline" onSubmit={async (e) => {
       e.preventDefault(); const path = folder.trim();
       if (!path.startsWith("/")) { setError(t("absoluteFolder")); return; }
       if (await updateConfig({ wallpaperFolders: [...new Set([...config.wallpaperFolders, path])] })) setFolder("");
-    }}><input aria-label={t("folder")} placeholder={t("folder")} value={folder} onChange={(e) => setFolder(e.target.value)} /><button className="studio-button" type="submit">{t("addFolder")}</button></form>
+    }}><input ref={removalFocus.fallback} aria-label={t("folder")} placeholder={t("folder")} value={folder} onChange={(e) => setFolder(e.target.value)} /><button className="studio-button" type="submit">{t("addFolder")}</button></form>
     {!config.wallpaperFolders.length && <p className="settings-help">{t("defaultFolders")}</p>}
-    {config.wallpaperFolders.map((path) => <div className="settings-inline" key={path}><code className="wallpaper-folder-path">{path}</code><button aria-label={`${t("remove")} ${path}`} onClick={() => void updateConfig({ wallpaperFolders: config.wallpaperFolders.filter((item) => item !== path) })}>{t("remove")}</button></div>)}
+    {config.wallpaperFolders.map((path) => <div className="settings-inline" key={path}><code className="wallpaper-folder-path">{path}</code><button data-remove-focus aria-label={`${t("remove")} ${path}`} onClick={() => void updateConfig({ wallpaperFolders: config.wallpaperFolders.filter((item) => item !== path) })}>{t("remove")}</button></div>)}
     <Toggle label={t("recursive")} help={t("recursiveHelp")} value={config.wallpaperRecursive} onChange={(wallpaperRecursive) => updateConfig({ wallpaperRecursive })} />
     <div className="settings-inline"><button onClick={() => setRefresh((value) => value + 1)}>{t("scan")}</button><button disabled={!platform?.wallpaper || applying || !scan.images.length} onClick={() => void apply()}>{t("shuffleNow")}</button></div>
     <section className="wallpaper-schedule" aria-label={t("schedule")}>
@@ -127,5 +129,5 @@ export function WallpaperSettings() {
       </article>)}</div>
       <div className="settings-inline"><button disabled={currentPage === 0} onClick={() => setPage(currentPage - 1)}>{t("previousPage")}</button><button disabled={currentPage >= pages - 1} onClick={() => setPage(currentPage + 1)}>{t("nextPage")}</button></div>
     </>}
-  </Card>;
+  </Card></div>;
 }

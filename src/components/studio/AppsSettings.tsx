@@ -1,4 +1,5 @@
 import { ErrorText } from "../ErrorText";
+import { useRemovalFocus } from "../../hooks/useRemovalFocus";
 import { useState } from "react";
 import { invoke } from "../../ipc";
 import { useConfig, errorMessage } from "../../config/store";
@@ -47,9 +48,10 @@ export function AppsSettings() {
   const { config, mutatePin, error: configError } = useConfig();
   const { apps, loading, error, refresh } = useInstalledApps();
   const { t, pinName } = useI18n();
+  const removalFocus = useRemovalFocus();
   const [query, setQuery] = useState("");
   const [operationError, setOperationError] = useState("");
-  return <>
+  return <div ref={removalFocus.root} onFocusCapture={removalFocus.onFocusCapture}>
     <Card title={t("pinnedApps")}>
       {configError && <p role="alert"><ErrorText error={configError} /></p>}
       {config.pinnedApps?.map((pin, index) => {
@@ -58,13 +60,13 @@ export function AppsSettings() {
           <input type="checkbox" aria-label={`${t("pin")} ${pinName(pin)}`} checked={pin.enabled !== false} onChange={() => void mutatePin("toggleEnabled", pin.id)} />
           <button aria-label={`${t("moveLeft")} ${pinName(pin)}`} disabled={index === 0} onClick={() => void mutatePin("move", pin.id, undefined, index - 1)}>←</button>
           <button aria-label={`${t("moveRight")} ${pinName(pin)}`} disabled={index === config.pinnedApps!.length - 1} onClick={() => void mutatePin("move", pin.id, undefined, index + 1)}>→</button>
-          <button aria-label={`${t("unpin")} ${pinName(pin)}`} onClick={() => void mutatePin("remove", pin.id)}>{t("unpin")}</button>
+          <button data-remove-focus aria-label={`${t("unpin")} ${pinName(pin)}`} onClick={() => void mutatePin("remove", pin.id)}>{t("unpin")}</button>
           <ClassMapping key={JSON.stringify(pin.matchClasses)} pin={pin} platform={platform} platformError={platformError} />
         </div>;
       })}
     </Card>
     <Card title={t("appsTab")}>
-      <div className="settings-inline"><input aria-label={t("searchApps")} placeholder={t("searchApps")} value={query} onChange={(e) => setQuery(e.target.value)} /><button className="studio-button" onClick={refresh}>{t("refresh")}</button></div>
+      <div className="settings-inline"><input ref={removalFocus.fallback} aria-label={t("searchApps")} placeholder={t("searchApps")} value={query} onChange={(e) => setQuery(e.target.value)} /><button className="studio-button" onClick={refresh}>{t("refresh")}</button></div>
       {(error || operationError) && <p role="alert"><ErrorText error={error || operationError} /></p>}{loading && <p role="status">{t("scanningApps")}</p>}
       {!loading && !error && !searchApps(apps, query).length && <p role="status">{t("noApps")}</p>}
       <div className="studio-app-list">{searchApps(apps, query).slice(0, 60).map((app) => {
@@ -76,5 +78,5 @@ export function AppsSettings() {
         </div>;
       })}</div>
     </Card>
-  </>;
+  </div>;
 }

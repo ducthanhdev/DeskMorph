@@ -1,0 +1,73 @@
+{
+  "observations": [
+    {
+      "language": "vi",
+      "operation": "unpin 1",
+      "focus": "Bỏ ghim Focus Pin 2"
+    },
+    {
+      "language": "vi",
+      "operation": "unpin 2",
+      "focus": "Tìm ứng dụng"
+    },
+    {
+      "language": "vi",
+      "operation": "remove Focus Renamed",
+      "focus": "Xóa Focus Preset 2"
+    },
+    {
+      "language": "vi",
+      "operation": "remove Focus Preset 2",
+      "focus": "Tên preset"
+    },
+    {
+      "language": "vi",
+      "operation": "remove folder 1",
+      "focus": "Xóa /tmp/deskmorph-focus-folder-2"
+    },
+    {
+      "language": "vi",
+      "operation": "remove folder 2",
+      "focus": "Thư mục ảnh"
+    },
+    {
+      "language": "en",
+      "operation": "unpin 1",
+      "focus": "Unpin Focus Pin 2"
+    },
+    {
+      "language": "en",
+      "operation": "unpin 2",
+      "focus": "Search applications"
+    },
+    {
+      "language": "en",
+      "operation": "remove Focus Renamed",
+      "focus": "Delete Focus Preset 2"
+    },
+    {
+      "language": "en",
+      "operation": "remove Focus Preset 2",
+      "focus": "Preset name"
+    },
+    {
+      "language": "en",
+      "operation": "remove folder 1",
+      "focus": "Delete /tmp/deskmorph-focus-folder-2"
+    },
+    {
+      "language": "en",
+      "operation": "remove folder 2",
+      "focus": "Image folder"
+    }
+  ],
+  "fixturePids": [
+    2684507,
+    2685129
+  ],
+  "normalPid": 2685826,
+  "configRestored": true,
+  "renameEnterSubmits": true,
+  "allFixturesExited": true,
+  "scope": "Native X11; initial targets focused with AT-SPI, actions by real Enter; verifies focused deletion and preset form, not complete Studio tab order."
+}
