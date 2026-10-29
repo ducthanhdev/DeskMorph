@@ -1,0 +1,49 @@
+{
+  "environment": "Pop!_OS 24.04, GNOME 46, X11, scale 1; isolated custom-protocol debug build",
+  "wallpaper": {
+    "passed": [
+      "saved library folder",
+      "bounded recursive scan and corrupt-image filtering",
+      "background thumbnail cache",
+      "rendered thumbnail pixels through production asset/CSP policy",
+      "favorite persistence and filter",
+      "filename search",
+      "GNOME applies escaped URI in both color schemes",
+      "shuffle excludes current image",
+      "two external GNOME changes reflected by normal polling",
+      "favorites survive removed folder",
+      "one native deadline while Studio closed",
+      "second launch reopens the same instance",
+      "scheduler disable stops changes"
+    ],
+    "pid": 1896337
+  },
+  "scheduler": {
+    "pid": 1896337,
+    "kind": "owned-process-pause; not system sleep",
+    "passed": [
+      "one observed change after two missed intervals; stable for 10 seconds",
+      "deleted library reports native error and preserves both wallpaper URIs",
+      "restored images recover on next scheduled tick and clear error without toggling",
+      "disable preserves wallpaper"
+    ],
+    "pauseSeconds": 125.01,
+    "imagesRestored": true
+  },
+  "cleanup": {
+    "appRunningNotStopped": true,
+    "schedulerDisabled": true,
+    "fixtureLibraryAndFavoriteRemoved": true,
+    "intervalMinutes": 15,
+    "wallpaperUris": {
+      "picture-uri": "'file:///home/ducthanhdev/.local/share/backgrounds/Sonoma-dark.jpg'",
+      "picture-uri-dark": "'file:///home/ducthanhdev/.local/share/backgrounds/Sonoma-dark.jpg'"
+    },
+    "librarySettingsRestored": "asserted by outer harness finally"
+  },
+  "limits": [
+    "Process SIGSTOP/CONT is not real system sleep; G6.7 remains open.",
+    "Backend settings readback is not compositor pixel verification.",
+    "Earlier selector failures were harness failures; only final exit-0 run is counted."
+  ]
+}

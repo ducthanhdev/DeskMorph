@@ -85,6 +85,7 @@ if __name__ == '__main__':
     parser.add_argument('--command-errors-smoke', action='store_true')
     parser.add_argument('--wallpaper-smoke', action='store_true')
     parser.add_argument('--scheduler-smoke', action='store_true')
+    parser.add_argument('--scheduler-recovery-smoke', action='store_true')
     parser.add_argument('--system-open-smoke', action='store_true')
     parser.add_argument('--system-unavailable', action='store_true')
     parser.add_argument('--system-smoke', action='store_true')
@@ -122,6 +123,7 @@ if __name__ == '__main__':
     if args.geometry_smoke: args.restart = True
     if args.window_list_smoke or args.reorder_smoke or args.tooltip_smoke or args.launch_smoke or args.overflow_smoke or args.layout_smoke or args.indicator_smoke or args.mapping_smoke or args.internal_smoke or args.performance_smoke or args.polling_smoke: args.restart = True
     if args.platform_tool_missing: args.restart = True
+    if args.scheduler_recovery_smoke: args.scheduler_smoke = True
     if args.scheduler_smoke: args.wallpaper_smoke = True
     if args.environment:
         for command in (['xprop', '-root', '_NET_ACTIVE_WINDOW'], ['gdbus', 'call', '--session', '--dest', 'org.gnome.ScreenSaver', '--object-path', '/org/gnome/ScreenSaver', '--method', 'org.gnome.ScreenSaver.GetActive']):
@@ -2568,6 +2570,18 @@ if __name__ == '__main__':
                 click('Đổi ngẫu nhiên')
                 for key in previous:
                     wait(lambda: subprocess.check_output(['gsettings', 'get', 'org.gnome.desktop.background', key], text=True).strip().strip("'") == (root / relative).as_uri(), 'Repeated shuffle used a stale current image')
+            # Change settings outside DeskMorph and observe its normal polling,
+            # without refreshing the page or invoking a DeskMorph apply command.
+            def wallpaper_texts():
+                for node, _ in descendants(app):
+                    try: yield Atspi.Text.get_text(node, 0, -1)
+                    except Exception: pass
+            for relative in ('one image.png', 'nested/two.png'):
+                external = root / relative
+                for key in previous:
+                    subprocess.run(['gsettings', 'set', 'org.gnome.desktop.background', key, external.as_uri()], check=True)
+                wait(lambda: any('Hình nền hiện tại:' in text and str(external) in text for text in wallpaper_texts()),
+                     'External wallpaper change was not reflected by normal polling')
             if args.scheduler_smoke:
                 assert not original['wallpaperScheduleEnabled'], 'Scheduler test requires an initially disabled isolated scheduler'
                 assert config()['keepDockOnClose'], 'Scheduler test requires keep-Dock lifecycle option'
@@ -2598,11 +2612,16 @@ if __name__ == '__main__':
                 time.sleep(3)
                 assert subprocess.check_output(['gsettings', 'get', 'org.gnome.desktop.background', 'picture-uri'], text=True).strip() == value, 'Scheduler changed wallpaper after disable'
                 print('Scheduler test: background deadline, Studio reopen, and disable passed', flush=True)
+                if args.scheduler_recovery_smoke:
+                    from desktop_scheduler_recovery import run_scheduler_recovery
+                    run_scheduler_recovery(app, root, config, toggle_schedule, descendants,
+                                           require_unlocked_desktop)
             click('Xóa ' + str(root))
             assert str(root / 'one image.png') in config()['wallpaperFavorites'], 'Removing a folder lost its favorites'
             report = {'passed': ['saved library folder', 'bounded recursive scan and corrupt-image filtering', 'background thumbnail cache', 'rendered thumbnail pixels through production asset/CSP policy',
                                  'favorite persistence and filter', 'filename search', 'GNOME applies escaped URI in both color schemes',
-                                 'shuffle excludes current image', 'favorites survive removed folder'], 'pid': app.get_process_id()}
+                                 'shuffle excludes current image', 'two external GNOME changes reflected by normal polling',
+                                 'favorites survive removed folder'], 'pid': app.get_process_id()}
             if args.scheduler_smoke: report['passed'].extend(['one native deadline while Studio closed', 'second launch reopens the same instance', 'scheduler disable stops changes'])
         finally:
             if args.scheduler_smoke:

@@ -22,6 +22,8 @@ Có `DISPLAY`, XWayland hoặc file XML protocol trên đĩa không chứng minh
 
 ## Bằng chứng hiện có
 
+- Hình nền GNOME: backend kiểm tra transaction light/dark và đọc lại trước success; lỗi ảnh bị xóa không báo thành công. Studio đã phản ánh hai thay đổi từ bên ngoài qua polling. Scheduler đã qua xóa/khôi phục ảnh ở deadline thật và SIGSTOP/CONT riêng app qua hai chu kỳ; chưa kiểm thử system sleep. Xem [WALLPAPER.md](WALLPAPER.md) và [bản ghi](benchmarks/wallpaper-recovery-2026-10-29.json).
+
 - `xprop -root _NET_SUPPORTED _NET_CLIENT_LIST` trên máy tham chiếu: ba API cửa sổ nêu trên hiện diện; danh sách root có XID thật. Đây là kiểm tra chỉ đọc.
 - Rust fixtures chạy `xprop` giả trong subprocess có PATH riêng: thiếu executable, exit khác 0, thiếu/sai property, danh sách rỗng hợp lệ và từ chối action chưa được công bố. Không dùng X server thật cho các ca lỗi này.
 - Native `desktop_smoke.py --platform-tool-missing --inspect`: khởi động profile test với PATH rỗng, đọc được lỗi `xprop_unavailable` trong Studio và nút launcher vẫn tồn tại; không gửi input. Báo cáo `platform-tool-missing-result.json` trong thư mục test. Sau ca này khởi động lại profile với PATH thông thường.

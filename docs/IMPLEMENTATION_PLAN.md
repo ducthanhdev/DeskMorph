@@ -140,7 +140,7 @@ Phụ thuộc G1/G2; capability backend cho từng desktop được xác minh tr
 - [x] G6.5 Tìm theo tên, lọc thư mục/định dạng và ảnh yêu thích; favorite không mất khi thư mục tạm không truy cập được.
 - [x] G6.6 Shuffle không chọn lại ảnh hiện tại khi có lựa chọn khác; xử lý thư viện 0/1 ảnh.
 - [ ] G6.7 Lịch đổi ảnh theo chu kỳ, bật/tắt rõ ràng, một scheduler duy nhất; xử lý resume sau sleep và ảnh bị xóa.
-- [ ] G6.8 Kiểm tra exit status/kết quả backend trước báo thành công; phản ánh hình nền đổi từ bên ngoài nếu adapter hỗ trợ.
+- [x] G6.8 Kiểm tra exit status/kết quả backend trước báo thành công; phản ánh hình nền đổi từ bên ngoài nếu adapter hỗ trợ.
 - [ ] G6.9 Adapter GNOME/COSMIC/KDE được bổ sung riêng sau thử nghiệm API thực tế; chỉ bật adapter đã xác minh, có unsupported state.
 
 Tiêu chí: thư viện lớn không chặn UI; ảnh hỏng/quyền thiếu có thể xử lý; chu kỳ không chạy trùng; mỗi desktop được tuyên bố hỗ trợ có kiểm thử áp dụng thực tế.

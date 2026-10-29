@@ -2,7 +2,7 @@
 
 Mục tiêu giữ nguyên toàn bộ 99 đầu việc trong IMPLEMENTATION_PLAN.md. Chưa đạt cổng hoàn thành toàn dự án. Checkbox chưa đánh dấu không đồng nghĩa chưa có code: nhiều mục đang chờ kiểm thử đủ phạm vi.
 
-Hiện đã đánh dấu 76/99 mục, gồm G3.2–G3.3 bằng fixture môi trường cô lập và G0.5/G2.1/G2.3 qua capability EWMH, kiểm thử lỗi adapter và native startup thiếu xprop. Đã bổ sung G0.4/G2.4/G2.5 qua popup/auto-hide native và G9.6/G9.9 bằng hồi quy policy/asset/force-close và ảnh Studio thật trong README. Các cổng GUI, Wayland và phát hành vẫn chưa hoàn tất.
+Hiện đã đánh dấu 77/99 mục, gồm G3.2–G3.3 bằng fixture môi trường cô lập và G0.5/G2.1/G2.3 qua capability EWMH, kiểm thử lỗi adapter và native startup thiếu xprop. Đã bổ sung G0.4/G2.4/G2.5 qua popup/auto-hide native và G9.6/G9.9 bằng hồi quy policy/asset/force-close và ảnh Studio thật trong README. Các cổng GUI, Wayland và phát hành vẫn chưa hoàn tất.
 
 ## Môi trường tham chiếu đã xác minh
 
@@ -388,3 +388,12 @@ Script cần AT-SPI, Python GI, GTK3 và libXtst. Chỉ gửi phím khi kiểm t
 - Native --icon-render-smoke exit 0 app 1879707/GTK 1879914: 8 quan sát pixel đúng màu, gồm absolute SVG và hicolor PNG trên pinned Dock/launcher/window row, thêm PNG trên unpinned Dock/window row. 470 pixel Dock, 1024 launcher, 324 mỗi row; missing icon vẫn giữ app; 66 cache PNG đều ≤64 px/32 KiB. Finally config/fixture restored=true. Scale tham chiếu X11, không suy thành native mixed DPI.
 - Lượt pixel đầu qua phần pinned/launcher/row nhưng unpinned gặp trùng WM_CLASS với desktop fixture cũ nên đúng quy tắc dùng fallback. Đổi fixture sang class riêng, có profile guard và validation; không đổi product để chọn nhầm icon. Một bước sửa harness thay chuỗi rộng gây SyntaxError đã được sửa trước chạy lại, Python compile qua; không tính các lượt lỗi là đạt.
 - Hồi quy --window-list-smoke exit 0 app 1885786/GTK 1886051 qua bảy nhóm keyboard/activate/rename/add/remove/close-confirmation/exact-target/empty-list. Sau build cleanup cuối, restart/inspect normal 1896337; kiểm /proc ngoài sandbox xác minh cả GTK fixture đã thoát, profile đúng và không có timing env. [Bản ghi](benchmarks/application-icons-2026-10-29.json). G3.11/G3.12 đánh dấu, tổng 76/99; G3.4 packaged app runtime vẫn chưa chốt.
+
+
+## G6.8 — Kết quả backend và thay đổi hình nền bên ngoài (29/10/2026)
+
+- Audit apply_manual/prepare_wallpaper/write_wallpaper_uri: canonical local path, kiểm giới hạn/decode trước ghi; quyền ghi, transaction light/dark, apply/sync và đọc lại trước trả true. UI chỉ báo thành công sau IPC, giữ lỗi/retry nếu thất bại. Native command-errors trước đó PID 1038378 đã chứng minh ảnh bị xóa sau scan không đổi URI/không báo thành công, khôi phục rồi Retry đúng path; bằng chứng vẫn trong benchmarks/command-errors-2026-10-29.json. Không đổi product code ở lượt audit này.
+- Mở rộng --wallpaper-smoke: đổi hai lần bằng gsettings từ ngoài ứng dụng, Studio phản ánh đúng current path qua polling thường, không refresh trang hay gọi apply của app. Bộ đọc AT-SPI phải dùng Atspi.Text.get_text trên paragraph; các lần thử selector trước không đạt không tính thành bằng chứng.
+- --scheduler-recovery-smoke cuối exit 0, PID 1896337: hồi quy thumbnail pixels/favorite/filter/shuffle/light-dark, lịch một phút khi Studio đóng, mở lại cùng instance/tắt lịch. SIGSTOP riêng app 125,01 giây rồi CONT → một thay đổi quan sát được và ổn định 10 giây. Xóa hai PNG fixture → deadline sau báo No readable images và giữ cả hai URI; khôi phục ảnh → deadline sau tự chạy, xóa lỗi mà không bật/tắt lại. Watchdog CONT riêng được terminate/wait trong finally, ảnh fixture khôi phục.
+- Outer finally khôi phục library/favorites/recursive và chu kỳ 15 phút, tắt lịch, phục hồi hai URI Sonoma-dark.jpg gốc. Kiểm /proc ngoài sandbox xác minh PID đúng profile, không còn stopped; fixture folder/favorite không còn trong config. Python compile/diff check qua; không đổi Rust/TS nên không lặp full build/test đã xanh ở mốc G3.11/G3.12.
+- [Hợp đồng](WALLPAPER.md), [bản ghi](benchmarks/wallpaper-recovery-2026-10-29.json). G6.8 đánh dấu, tổng 77/99. G6.7 vẫn mở: SIGSTOP là ngừng thực thi tiến trình, không chứng minh sleep thật của máy/session/compositor. Readback backend cũng không chứng minh compositor vẽ mọi pixel hình nền.
