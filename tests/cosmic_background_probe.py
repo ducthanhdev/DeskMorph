@@ -114,7 +114,7 @@ def run():
             time.sleep(3)
             assert background.poll() is None
             assert capture_pixels([209,55,105]), 'Per-output source did not override blue default'
-            native_edit(output)
+            native_edit("batch")
             time.sleep(2)
             assert capture_pixels([52,86,120]), 'Live per-output source update not displayed'
             background.terminate(); background.wait(timeout=5)
@@ -125,7 +125,7 @@ def run():
             time.sleep(3)
             assert background.poll() is None
             assert capture_pixels([209,55,105]), 'same-on-all startup did not ignore blue per-output source'
-            report = dict(nativeEdits=native_edits, perOutputOverridePixelsVerified=True, livePerOutputPixelsVerified=True,
+            report = dict(nativeEdits=native_edits, nativeMultiFileWriteVerified=True, perOutputOverridePixelsVerified=True, livePerOutputPixelsVerified=True,
                 sameOnAllStartupPixelsVerified=True, observedOutput=output,
                 upstreamCommit='9520e16758693bc2f6845d52680f236d548edda2',
                 versions=subprocess.check_output(['dpkg-query', '-W', 'cosmic-comp', 'cosmic-bg'], text=True).splitlines(),

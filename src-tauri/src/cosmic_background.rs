@@ -1,6 +1,6 @@
 //! COSMIC RON edit primitive. Not enabled as a desktop adapter until integration
 //! verifies per-output configuration, ownership and failure recovery.
-use gio::prelude::*;
+use crate::cosmic_profile::{commit, Snapshot};
 use ron::value::RawValue;
 use serde::Deserialize;
 use std::{ops::Range, path::Path};
@@ -150,59 +150,27 @@ pub fn config_key(output: &str) -> String {
 }
 
 pub struct Document {
-    file: gio::File,
-    original: String,
-    etag: String,
+    snapshot: Snapshot,
     output: String,
 }
-
 impl Document {
     pub fn load(path: &Path) -> Result<Self, String> {
         Self::load_output(path, "all")
     }
     pub fn load_output(path: &Path, output: &str) -> Result<Self, String> {
-        let metadata = std::fs::symlink_metadata(path).map_err(|e| e.to_string())?;
-        if !metadata.is_file() || metadata.len() > MAX_DOCUMENT as u64 {
-            return Err("COSMIC config must be a regular file at most 64 KiB".into());
-        }
-        let file = gio::File::for_path(path);
-        let (bytes, etag) = file
-            .load_contents(None::<&gio::Cancellable>)
-            .map_err(|e| e.to_string())?;
-        let original = String::from_utf8(bytes.to_vec()).map_err(|e| e.to_string())?;
-        source_range(&original, output)?;
-        let etag = etag
-            .ok_or("COSMIC config has no concurrency token")?
-            .to_string();
+        let snapshot = Snapshot::load(path)?;
+        source_range(&snapshot.original, output)?;
         Ok(Self {
-            file,
-            original,
-            etag,
+            snapshot,
             output: output.to_owned(),
         })
     }
     pub fn source(&self) -> Result<Option<String>, String> {
-        Ok(source_range(&self.original, &self.output)?.1)
+        Ok(source_range(&self.snapshot.original, &self.output)?.1)
     }
     pub fn write_source(self, path: &Path) -> Result<(), String> {
-        let replacement = replace_output_source(&self.original, &self.output, path)?;
-        self.file
-            .replace_contents(
-                replacement.as_bytes(),
-                Some(&self.etag),
-                false,
-                gio::FileCreateFlags::NONE,
-                None::<&gio::Cancellable>,
-            )
-            .map_err(|e| e.to_string())?;
-        let (bytes, _) = self
-            .file
-            .load_contents(None::<&gio::Cancellable>)
-            .map_err(|e| e.to_string())?;
-        if bytes.as_slice() != replacement.as_bytes() {
-            return Err("COSMIC config changed after replacement".into());
-        }
-        Ok(())
+        let replacement = replace_output_source(&self.snapshot.original, &self.output, path)?;
+        commit(vec![(self.snapshot, replacement)], &[])
     }
 }
 
@@ -324,14 +292,32 @@ mod tests {
             root.join("state")
         );
         let output = std::env::var("DESKMORPH_COSMIC_EDIT_OUTPUT").unwrap();
-        assert!(output == "all" || output == "WINIT-0");
+        assert!(output == "all" || output == "WINIT-0" || output == "batch");
         let image = root.join("blue.png");
         assert!(image.is_file());
+        if output == "batch" {
+            let directory = root.join("config/cosmic/com.system76.CosmicBackground/v1");
+            crate::cosmic_profile::Plan::load_existing(&directory)
+                .unwrap()
+                .apply(&image)
+                .unwrap();
+            for name in ["all", "WINIT-0"] {
+                assert_eq!(
+                    Document::load_output(&directory.join(config_key(name)), name)
+                        .unwrap()
+                        .source()
+                        .unwrap()
+                        .as_deref(),
+                    image.to_str()
+                );
+            }
+            return;
+        }
         let path = root
             .join("config/cosmic/com.system76.CosmicBackground/v1")
             .join(config_key(&output));
         let document = Document::load_output(&path, &output).unwrap();
-        let original = document.original.clone();
+        let original = document.snapshot.original.clone();
         let expected = replace_output_source(&original, &output, &image).unwrap();
         document.write_source(&image).unwrap();
         assert_eq!(std::fs::read_to_string(&path).unwrap(), expected);

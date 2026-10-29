@@ -1,0 +1,190 @@
+{
+  "command": "/usr/bin/python3 tests/wayland_lab.py --cosmic-test --output /tmp/deskmorph-cosmic-batch/final.json",
+  "cosmicProbe": {
+    "nativeEdits": [
+      {
+        "output": "all",
+        "rustTestPassed": true
+      },
+      {
+        "output": "batch",
+        "rustTestPassed": true
+      }
+    ],
+    "nativeMultiFileWriteVerified": true,
+    "perOutputOverridePixelsVerified": true,
+    "livePerOutputPixelsVerified": true,
+    "sameOnAllStartupPixelsVerified": true,
+    "observedOutput": "WINIT-0",
+    "upstreamCommit": "9520e16758693bc2f6845d52680f236d548edda2",
+    "versions": [
+      "cosmic-bg\t1.11.0~1792526117~24.04~9520e16",
+      "cosmic-comp\t0.1~1792508925~24.04~8cb1802"
+    ],
+    "binarySha256": {
+      "cosmic-comp": "2399b768cc6a4599a6495d0865cf4dc6807cfee2c6e46b3d7466a800f903be5e",
+      "cosmic-bg": "dcfaf79907ef5031fa40799bbd56dd33ee19135c90c3580cf2eb98579894bf3a"
+    },
+    "compositorPid": 3761006,
+    "backgroundPid": 3761620,
+    "privateStateVerified": true,
+    "stateContents": "[\n    (\"WINIT-0\", Path(\"/tmp/deskmorph-wayland-lab-qltpn1up/pink.png\")),\n]",
+    "nestedSocket": "wayland-1",
+    "window": {
+      "id": 1,
+      "pid": 3761006,
+      "appId": null,
+      "title": "Smithay",
+      "focused": false,
+      "clientType": 0,
+      "frame": {
+        "x": 0,
+        "y": 32,
+        "width": 1280,
+        "height": 688
+      }
+    },
+    "captures": [
+      {
+        "file": "background-1.png",
+        "sha256": "cecb92f2f6e3dca3b55be33f541f48473a7110ecf0a0852db120c562fd70212a",
+        "samples": [
+          [
+            209,
+            55,
+            105
+          ],
+          [
+            209,
+            55,
+            105
+          ],
+          [
+            209,
+            55,
+            105
+          ]
+        ],
+        "phase": "all-startup",
+        "fileRetainedInCommit": false
+      },
+      {
+        "file": "background-2.png",
+        "sha256": "13ece0c9f2290effe3a8ca20e25ceb43f1475c95ae7c963dc260f730ff720e3a",
+        "samples": [
+          [
+            52,
+            86,
+            120
+          ],
+          [
+            52,
+            86,
+            120
+          ],
+          [
+            52,
+            86,
+            120
+          ]
+        ],
+        "phase": "all-native-write",
+        "fileRetainedInCommit": false
+      },
+      {
+        "file": "background-3.png",
+        "sha256": "82baab2b373c583cbd07788b21e6770b8bc90c6215135114494ae89a069d331f",
+        "samples": [
+          [
+            209,
+            55,
+            105
+          ],
+          [
+            209,
+            55,
+            105
+          ],
+          [
+            209,
+            55,
+            105
+          ]
+        ],
+        "phase": "per-output-override",
+        "fileRetainedInCommit": false
+      },
+      {
+        "file": "background-4.png",
+        "sha256": "7f9cc9b89bf1549b75ab1e71f9e5a93f11e6250efc8ffd300f8680c71a53e965",
+        "samples": [
+          [
+            52,
+            86,
+            120
+          ],
+          [
+            52,
+            86,
+            120
+          ],
+          [
+            52,
+            86,
+            120
+          ]
+        ],
+        "phase": "all-and-output-native-batch-write",
+        "fileRetainedInCommit": false
+      },
+      {
+        "file": "background-5.png",
+        "sha256": "a2d50857e831f1194aa0a84f9f5ba4a1eab2068eb2e8ff905f528e527cadcb87",
+        "samples": [
+          [
+            209,
+            55,
+            105
+          ],
+          [
+            209,
+            55,
+            105
+          ],
+          [
+            209,
+            55,
+            105
+          ]
+        ],
+        "phase": "same-on-all-startup",
+        "fileRetainedInCommit": false
+      }
+    ],
+    "initialConfigPixelsVerified": true,
+    "liveConfigPixelsVerified": true,
+    "scope": "Actual cosmic-bg startup/live pixel checks after Rust single and existing-config multi-file writes. Unit fixtures separately cover rollback/conflicts/permission failure. Not UI/IPC, atomic filesystem transaction, default config creation, crash recovery or full COSMIC support."
+  },
+  "hostCosmicStateUnchanged": true,
+  "hostCosmicStateSha256": "815cc04454b6e8d190d14c1364708ebcbf1ecfb1e67c689c87426872febf7cc1",
+  "ownedProcessesExited": true,
+  "ownedPortalMountRemoved": true,
+  "hostDisplayUsed": false,
+  "hostInputInjected": false,
+  "sourceSha256": {
+    "src-tauri/src/cosmic_background.rs": "771f1db1efff1879aed05ea409427ca28a09b92c12bea547c55e0ab49aa7d25c",
+    "src-tauri/src/cosmic_profile.rs": "5460a118b4b50807d2ff8f1421bf584644f06475e19a6c96b1c5367305a8f62e",
+    "tests/cosmic_background_probe.py": "517ff69d71e49d300f0882850d45c7e254133cfab4cdc9aa7a9703f295553745",
+    "tests/wayland_lab.py": "2c150e1c597a4912b3e3fd366dcdf9d507c7bfd4fadc9e13e5d9c90c0549965f",
+    "tests/wayland_prototype/launcher_extension.js": "e96b0d0a7612c850725066e6aea84e59815592eedfe233761b409175e7b68d8c"
+  },
+  "unitSuite": {
+    "command": "cargo test --locked --offline --manifest-path src-tauri/Cargo.toml --target-dir src-tauri/target/agent --lib",
+    "passed": 79,
+    "failed": 0,
+    "ignored": 5,
+    "nativeLabTestInvocationsPassed": 2,
+    "limits": "4 other environment tests not rerun. COSMIC native test run explicitly twice by private lab."
+  },
+  "imageRetention": "Hash/sample retained; duplicate solid-color captures remain in/tmp. Viewed batch-write blue screenshot; earlier report has representative color images but is not substituted for this run."
+}

@@ -8,6 +8,8 @@ mod wallpaper;
 // COSMIC edit primitive is not yet wired to capability or commands.
 #[allow(dead_code)]
 mod cosmic_background;
+#[allow(dead_code)]
+mod cosmic_profile;
 mod tooltip;
 mod layout;
 mod applications;
