@@ -2,7 +2,7 @@
 
 Mục tiêu giữ nguyên toàn bộ 99 đầu việc trong IMPLEMENTATION_PLAN.md. Chưa đạt cổng hoàn thành toàn dự án. Checkbox chưa đánh dấu không đồng nghĩa chưa có code: nhiều mục đang chờ kiểm thử đủ phạm vi.
 
-Hiện đã đánh dấu 71/99 mục, gồm G3.2–G3.3 bằng fixture môi trường cô lập và G0.5/G2.1/G2.3 qua capability EWMH, kiểm thử lỗi adapter và native startup thiếu xprop. Đã bổ sung G0.4/G2.4/G2.5 qua popup/auto-hide native và G9.6/G9.9 bằng hồi quy policy/asset/force-close và ảnh Studio thật trong README. Các cổng GUI, Wayland và phát hành vẫn chưa hoàn tất.
+Hiện đã đánh dấu 72/99 mục, gồm G3.2–G3.3 bằng fixture môi trường cô lập và G0.5/G2.1/G2.3 qua capability EWMH, kiểm thử lỗi adapter và native startup thiếu xprop. Đã bổ sung G0.4/G2.4/G2.5 qua popup/auto-hide native và G9.6/G9.9 bằng hồi quy policy/asset/force-close và ảnh Studio thật trong README. Các cổng GUI, Wayland và phát hành vẫn chưa hoàn tất.
 
 ## Môi trường tham chiếu đã xác minh
 
@@ -359,3 +359,12 @@ Script cần AT-SPI, Python GI, GTK3 và libXtst. Chỉ gửi phím khi kiểm t
 - Full Rust 53/53 gồm ignored và custom-protocol build qua. Native --pinning-smoke --pin-identity-smoke exit 0: app 1787772, restart 1788316/1788848, gộp cấu hình test trùng có recovery đúng bytes, launcher re-enable giữ custom name/id, unpin xóa id cũ, re-pin tạo một pin canonical, cả hai kiểu mở từ Dock đúng marker và giữ sau restart. Finally phục hồi config và xóa đúng fixture/recovery thuộc test.
 - Hồi quy legacy app 1789432/restart 1790317 vẫn qua 6 lượt argv/desktop left-middle-context; normal app cuối 1790543, preferencesRestored/fixturesRemoved=true. Hai lần harness trước chưa đạt vì chỉ xét role button, bỏ sót toggle button của nút ghim; AT-SPI chứng minh entry/result đã có, sửa bộ lọc và lượt cuối qua. Không coi hai lượt đó là đạt.
 - Frontend production không đổi ở G3.10 (27/27 và TS/Vite ở G3.5). Python compile/diff check qua. [Bản ghi](benchmarks/pinning-2026-10-29.json). G3.10 đánh dấu, tổng 71/99. G3.13 trạng thái ứng dụng đã gỡ vẫn chưa chốt.
+
+
+## G3.13 — Pin khi ứng dụng không còn trong danh mục (29/10/2026)
+
+- Dock thêm badge/viền đứt/icon mờ, accessible label và tooltip cho desktop identity thiếu sau lần đọc catalogue thành công. Pin vẫn giữ nguyên id/name/command/order. Nếu còn cửa sổ đang chạy, click vẫn chọn cửa sổ; thao tác khởi chạy mới khi catalogue xác nhận thiếu hiển thị unavailable thay vì đổi sang ứng dụng khác. Menu có status, nút launch disabled và bỏ ghim vẫn dùng được.
+- Studio dùng cùng desktopIsMissing cho cả explicit desktopId và legacy command desktop:ID/ID.desktop; không kết luận thiếu trong loading/error. ContextActions hiển thị lỗi catalogue riêng. Reinstall/live AppInfoMonitor khôi phục trạng thái và nút launch mà không sửa pin.
+- Frontend 29/29: kiểm successful absence/loading/error/restore/custom legacy; test hook thật với adapter React/IPC mô phỏng xác minh lỗi quét giữ nguyên array snapshot, coalesce nhiều event thành một pending reload, recovery clear error, dispose bỏ late completion/listener, chỉ gọi get_installed_apps và không gọi mutation config. TS/Vite/custom-protocol build qua; không đổi Rust ở mục này nên dùng kết quả 53/53 tại G3.10.
+- Native --missing-app-smoke --pinning-smoke exit 0: app 1818301/restart 1818672, gỡ cả hai entry cập nhật Dock, menu thiếu vô hiệu launch nhưng còn unpin; cài lại khi menu đang mở enable launch và ghi đúng marker. Gỡ lần nữa, restart giữ nguyên hai pin; Studio báo thiếu; unpin menu/Studio lần lượt đúng pin được chọn. Finally khôi phục config và dọn fixture, normal 1819232.
+- Hồi quy pinning app 1819426/restarts 1819858/1820382 qua duplicate recovery/enable/unpin/re-pin/launch/persistence, normal cuối 1820744; config/fixture restored=true. Python compile/diff check qua. [Hợp đồng](APPLICATION_CATALOGUE.md), [bản ghi](benchmarks/missing-app-2026-10-29.json). G3.13 đánh dấu, tổng 72/99; chưa suy fixture này thành packaged app runtime hay icon theme certification.

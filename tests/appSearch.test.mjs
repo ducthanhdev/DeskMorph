@@ -5,7 +5,7 @@ import ts from 'typescript';
 const source = ts.transpileModule(fs.readFileSync(new URL('../src/appSearch.ts', import.meta.url), 'utf8'), {
   compilerOptions: { module: ts.ModuleKind.ESNext },
 }).outputText;
-const { searchApps, normalizeSearch, installedForPin, pinFromApp, desktopIdForPin, launchCommandForPin } = await import('data:text/javascript;base64,' + Buffer.from(source).toString('base64'));
+const { searchApps, normalizeSearch, installedForPin, pinFromApp, desktopIdForPin, launchCommandForPin, desktopIsMissing } = await import('data:text/javascript;base64,' + Buffer.from(source).toString('base64'));
 const app = (id, name, extra = {}) => ({ id, name, genericName: '', keywords: [], matchClasses: [], executable: '/bin/true', iconPath: null, actions: [], ...extra });
 
 test('Vietnamese search ignores accents, case and extra spaces', () => {
@@ -50,4 +50,17 @@ test('legacy commands keep arguments while explicit desktop identity determines 
   assert.equal(launchCommandForPin({ ...pin, desktopId: 'editor.desktop' }), 'desktop:editor.desktop');
   assert.equal(launchCommandForPin({ ...pin, command: 'editor.desktop' }), 'desktop:editor.desktop');
   assert.equal(launchCommandForPin(pinFromApp(apps[0])), 'desktop:editor.desktop');
+});
+
+test('only successful catalogue absence marks an explicit desktop pin missing; scan errors preserve its identity', () => {
+  const pin = { id: 'custom', desktopId: 'removed.desktop', command: 'desktop:removed.desktop', matchClasses: ['editor'] };
+  const original = JSON.stringify(pin);
+  const id = desktopIdForPin(pin);
+  assert.equal(desktopIsMissing(id, undefined, { loading: false, error: null }), true);
+  assert.equal(desktopIsMissing(id, undefined, { loading: true, error: null }), false);
+  assert.equal(desktopIsMissing(id, undefined, { loading: false, error: 'temporary scan failure' }), false);
+  assert.equal(desktopIsMissing(id, app(id, 'Restored'), { loading: false, error: null }), false);
+  assert.equal(desktopIsMissing(undefined, undefined, { loading: false, error: null }), false);
+  assert.equal(JSON.stringify(pin), original);
+  assert.equal(launchCommandForPin(pin), 'desktop:removed.desktop');
 });

@@ -56,3 +56,16 @@ Load/migration dữ liệu từ bản cũ gộp duplicate explicit identity, gi�
 ```
 
 Ca native bao phủ duplicate recovery/re-enable/unpin/re-pin/Dock launch/restart, khôi phục config và chỉ xóa recovery có đúng bytes fixture. [Bản ghi](benchmarks/pinning-2026-10-29.json).
+
+
+## Entry mất và lỗi quét
+
+Pin được giữ khi entry bị gỡ hoặc không hiển thị trong catalogue. Sau lần đọc thành công, desktop identity thiếu có badge/accessible label/tooltip ở Dock và trạng thái trong Studio/menu. Menu không cho launch một entry đã xác nhận thiếu nhưng vẫn cho bỏ ghim. Cửa sổ còn chạy vẫn được activate/chọn; legacy custom command không có desktop identity không bị coi là app đã gỡ chỉ vì không tìm thấy metadata.
+
+Loading/lỗi quét không chứng minh entry mất: giữ snapshot gần nhất, không gỡ pin và không tự chọn app khác bằng WM_CLASS. Reinstall cùng desktop ID khôi phục trạng thái tự động qua monitor, kể cả menu đang mở. Chỉ thao tác unpin rõ ràng của người dùng mới xóa pin.
+
+```sh
+/usr/bin/python3 tests/desktop_smoke.py --missing-app-smoke --pinning-smoke
+```
+
+Native bao phủ gỡ/cài lại entry, menu disabled/enable, restart giữ pin thiếu, và unpin từ menu/Studio. Lỗi IPC tạm thời được kiểm ở hook test có invoke rejection thật trong adapter mô phỏng; không tuyên bố đã gây lỗi quét GIO trên desktop. [Bản ghi](benchmarks/missing-app-2026-10-29.json).

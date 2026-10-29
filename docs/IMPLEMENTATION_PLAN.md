@@ -89,7 +89,7 @@ Phụ thuộc G1–G2. Thử parser và launch desktop entry trước khi xây l
 - [x] G3.10 Ghim/bỏ ghim trực tiếp từ kết quả; cùng desktop ID không tạo nhiều pin; mở từ Dock dùng cơ chế launch thống nhất.
 - [ ] G3.11 Resolve icon: đường dẫn tuyệt đối, icon theme hiện tại, inheritance/hicolor và fallback; kiểm soát kích thước/cache và định dạng SVG/PNG.
 - [ ] G3.12 Dùng icon thật cho Dock, launcher, danh sách cửa sổ khi nhận diện được; icon dự phòng cho app không xác định.
-- [ ] G3.13 App bị gỡ có trạng thái không khả dụng và thao tác bỏ ghim; không tự xóa pin khi lỗi quét tạm thời.
+- [x] G3.13 App bị gỡ có trạng thái không khả dụng và thao tác bỏ ghim; không tự xóa pin khi lỗi quét tạm thời.
 
 Tiêu chí: tìm được và mở đúng app thực tế gồm terminal, app có đường dẫn khoảng trắng, Flatpak/Snap nếu máy có; ghim giữ sau restart; file sai và icon thiếu không làm app crash. Test parser bằng fixtures, XDG precedence, lọc locale/environment, normalization tìm kiếm và migration pin; kiểm thử launch thực tế trên một tập app đại diện.
 

@@ -3,7 +3,7 @@ import { invoke } from "./ipc";
 import { useConfig } from "./config/store";
 import { dockMetrics, dockSurface } from "./dockAppearance";
 import { useI18n } from "./i18n/useI18n";
-import { desktopIdForPin, installedForPin, launchCommandForPin } from "./appSearch";
+import { desktopIdForPin, desktopIsMissing, installedForPin, launchCommandForPin } from "./appSearch";
 import { useInstalledApps } from "./hooks/useInstalledApps";
 import { SystemWidgets } from "./components/SystemWidgets";
 import { AppIcon } from "./components/AppIcon";
@@ -37,7 +37,7 @@ import {
 export const Taskbar: React.FC = () => {
   const lifetime = useAsyncLifetime();
   const { t, locale, count } = useI18n();
-  const { apps: installedApps } = useInstalledApps();
+  const { apps: installedApps, loading: appsLoading, error: appsError } = useInstalledApps();
   const { platform } = usePlatform();
   const [windowsError, setWindowsError] = useState<string | null>(null);
   const [retryAction, setRetryAction] = useState<(() => void) | null>(null);
@@ -721,6 +721,11 @@ export const Taskbar: React.FC = () => {
             {pinnedItems.map(({ pinned, windows }) => {
               const visual = getPinnedVisual(pinned);
               const installed = installedForPin(pinned, installedApps);
+              const missing = desktopIsMissing(desktopIdForPin(pinned), installed, { loading: appsLoading, error: appsError });
+              const launchPinned = () => {
+                if (missing) { setOperationError(t("unavailable")); setRetryAction(null); }
+                else void handleLaunchApp(pinned.id, launchCommandForPin(pinned));
+              };
               const window = windows.find((w) => w.is_active) || windows[0];
               const isRunning = windows.length > 0;
               const isActive = windows.some((w) => w.is_active);
@@ -729,7 +734,7 @@ export const Taskbar: React.FC = () => {
 
               return (
                 <button
-                  aria-label={`${pinned.name} • ${count("window", windows.length)}`}
+                  aria-label={`${pinned.name} • ${count("window", windows.length)}${missing ? ` • ${t("unavailable")}` : ""}`}
                   aria-keyshortcuts="Control+Shift+ArrowLeft Control+Shift+ArrowRight"
                   key={pinned.id}
                   data-pin-id={pinned.id}
@@ -764,12 +769,12 @@ export const Taskbar: React.FC = () => {
                       void movePin(pinned.id, Math.max(0, Math.min(pinnedList.length - 1, index + (e.key === "ArrowLeft" ? -1 : 1))));
                     }
                   }}
-                  onAuxClick={(e) => { if (e.button === 1) { e.preventDefault(); void handleLaunchApp(pinned.id, launchCommandForPin(pinned)); } }}
+                  onAuxClick={(e) => { if (e.button === 1) { e.preventDefault(); launchPinned(); } }}
                   ref={(el) => {
                     if (el) iconRefs.current.set(pinned.id, el);
                     else iconRefs.current.delete(pinned.id);
                   }}
-                  className={`running-app-icon-btn ${isRunning ? "app-running" : "app-idle"} ${
+                  className={`running-app-icon-btn ${isRunning ? "app-running" : "app-idle"} ${missing ? "app-unavailable" : ""} ${
                     isActive ? "app-active" : ""
                   } ${isLaunching ? "app-launching" : ""} ${draggingId === pinned.id ? "is-dragging" : ""} ${dropTargetId === pinned.id ? "is-drop-target" : ""}`}
                   onClick={(e) => {
@@ -777,7 +782,7 @@ export const Taskbar: React.FC = () => {
                     if (window) {
                       void selectWindows(e, windows, pinned.name, pinned.id);
                     } else {
-                      handleLaunchApp(pinned.id, launchCommandForPin(pinned));
+                      launchPinned();
                     }
                   }}
                   onContextMenu={(e) =>
@@ -797,7 +802,7 @@ export const Taskbar: React.FC = () => {
                     })
                   }
                   data-dock-tooltip={
-                    window
+                    missing ? `${pinned.name} • ${t("unavailable")}` : window
                       ? `${pinned.name} • ${count("window", windows.length)} • ${t("selectWindow")}`
                       : `${pinned.name} (Đã ghim - Nhấn để mở)`
                   }
@@ -829,6 +834,8 @@ export const Taskbar: React.FC = () => {
                   >
                     {installed?.iconPath ? <AppIcon path={installed.iconPath} size={Math.round(btnSize * .68)} /> : visual.icon}
                   </span></span>
+
+                  {missing && <span className="app-unavailable-mark" aria-hidden="true">!</span>}
 
                   {/* Dynamic Floor Shadow / Glow beneath bouncing icon */}
                   {isLaunching && config.dynamicShadow !== false && !reducedMotion && (

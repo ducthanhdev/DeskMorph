@@ -39,3 +39,8 @@ export function installedForPin(pin: PinnedApp, apps: InstalledApp[]) {
 export function pinFromApp(app: InstalledApp): PinnedApp {
   return { id: app.id, desktopId: app.id, name: app.name, command: `desktop:${app.id}`, matchClasses: app.matchClasses, iconType: "custom", enabled: true };
 }
+
+/** Absence is meaningful only after a successful catalogue read. */
+export function desktopIsMissing(id: string | undefined, app: InstalledApp | undefined, status: { loading: boolean; error: string | null }): boolean {
+  return id !== undefined && !app && !status.loading && !status.error;
+}

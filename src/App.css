@@ -1842,3 +1842,20 @@ button:focus-visible { outline: 2px solid #48b9c7; outline-offset: -2px; }
 }
 .taskbar-wrapper > .app-status .dock-error-message { flex: 1; min-width: 0; max-height: 100%; overflow: auto; }
 .taskbar-wrapper > .app-status button { flex: none; margin-left: 0; padding: 6px 10px; }
+
+/* Missing desktop entries keep their pin and context actions available. */
+.app-unavailable .app-icon-glyph { opacity: .45; }
+.app-unavailable .app-icon-tile { border-style: dashed; }
+.app-unavailable-mark {
+  position: absolute;
+  right: -2px;
+  top: -2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #3b2930;
+  color: #ffd5a0;
+  font: bold 11px/14px sans-serif;
+  text-align: center;
+  pointer-events: none;
+}

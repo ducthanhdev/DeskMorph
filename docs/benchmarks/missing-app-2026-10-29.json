@@ -1,0 +1,39 @@
+{
+  "initialPid": 1818301,
+  "restartPid": 1818672,
+  "passed": [
+    "uninstall updates Dock status for explicit and command-only desktop IDs without deleting pins",
+    "missing menu disables launch and keeps unpin available",
+    "reinstall restores live menu and Dock launch with original pins",
+    "missing pins survive restart and remain manageable in Studio",
+    "explicit context and Studio unpin remove only selected unavailable pin"
+  ],
+  "scope": "Owned desktop entry uninstall/reinstall fixtures; temporary scan errors covered by frontend hook test",
+  "normalPid": 1819232,
+  "preferencesRestored": true,
+  "fixturesRemoved": true,
+  "date": "2026-10-29",
+  "task": "G3.13",
+  "frontendTests": {
+    "passed": 29,
+    "failed": 0
+  },
+  "frontendBuild": "passed",
+  "customProtocolBuild": "passed",
+  "pinningRegression": {
+    "initialPid": 1819426,
+    "firstRestartPid": 1819858,
+    "secondRestartPid": 1820382,
+    "passed": [
+      "duplicate old desktop identities repaired with recovery copy; pin re-enables original ID/name",
+      "Dock launches re-enabled desktop pin",
+      "unpin removes old ID; re-pin creates one canonical desktop ID and launches from Dock",
+      "both legacy and canonical pins survive restart with one launcher pin action"
+    ],
+    "recoveryOriginalVerified": true,
+    "scope": "Owned desktop fixture and isolated config only",
+    "normalPid": 1820744,
+    "preferencesRestored": true,
+    "fixturesRemoved": true
+  }
+}

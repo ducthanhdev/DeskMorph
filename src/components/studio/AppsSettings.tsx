@@ -2,7 +2,7 @@ import { useState } from "react";
 import { invoke } from "../../ipc";
 import { useConfig, errorMessage } from "../../config/store";
 import { useInstalledApps } from "../../hooks/useInstalledApps";
-import { installedForPin, pinFromApp, searchApps } from "../../appSearch";
+import { desktopIdForPin, desktopIsMissing, installedForPin, pinFromApp, searchApps } from "../../appSearch";
 import { useI18n } from "../../i18n/useI18n";
 import { AppIcon } from "../AppIcon";
 import type { OpenWindow, PinnedApp } from "../../types";
@@ -48,7 +48,7 @@ export function AppsSettings() {
       {configError && <p role="alert">{configError}</p>}
       {config.pinnedApps?.map((pin, index) => {
         const app = installedForPin(pin, apps);
-        return <div className="studio-app-row" key={pin.id}><AppIcon path={app?.iconPath} size={28} /><span><strong>{pin.name}</strong>{pin.desktopId && !loading && !error && !app && <small>{t("unavailable")}</small>}</span>
+        return <div className="studio-app-row" key={pin.id}><AppIcon path={app?.iconPath} size={28} /><span><strong>{pin.name}</strong>{desktopIsMissing(desktopIdForPin(pin), app, { loading, error }) && <small>{t("unavailable")}</small>}</span>
           <input type="checkbox" aria-label={`${t("pin")} ${pin.name}`} checked={pin.enabled !== false} onChange={() => void mutatePin("toggleEnabled", pin.id)} />
           <button aria-label={`${t("moveLeft")} ${pin.name}`} disabled={index === 0} onClick={() => void mutatePin("move", pin.id, undefined, index - 1)}>←</button>
           <button aria-label={`${t("moveRight")} ${pin.name}`} disabled={index === config.pinnedApps!.length - 1} onClick={() => void mutatePin("move", pin.id, undefined, index + 1)}>→</button>
