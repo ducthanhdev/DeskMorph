@@ -85,14 +85,15 @@ def run():
             state_file = root / 'state/cosmic/com.system76.CosmicBackground/v1/wallpapers'
             wait(lambda: state_file.exists(), 'COSMIC did not write private wallpaper state')
             captures = []
-            def capture_pixels(expected):
+            def capture_pixels(expected, label=None):
                 capture = Path(dispatch(op='stageScreenshot')['path'])
                 wait(lambda: Path(str(capture) + '.json').exists(), 'Nested compositor screenshot missing')
                 assert json.loads(Path(str(capture) + '.json').read_text()).get('ok')
                 image = GdkPixbuf.Pixbuf.new_from_file(str(capture))
                 data = image.get_pixels(); stride = image.get_rowstride(); channels = image.get_n_channels()
                 samples = [list(data[y*stride+x*channels:y*stride+x*channels+3]) for x,y in [(200,200),(640,360),(1000,500)]]
-                captures.append(dict(file=capture.name, sha256=hashlib.sha256(capture.read_bytes()).hexdigest(), samples=samples))
+                captures.append(dict(label=label, file=capture.name, sha256=hashlib.sha256(capture.read_bytes()).hexdigest(), samples=samples))
+                if expected is None: return True  # retained UI frame; no solid-color assertion
                 return all(max(abs(a-b) for a,b in zip(rgb, expected)) <= 2 for rgb in samples)
             assert capture_pixels([209,55,105]), captures
             native_edit("all")
@@ -125,7 +126,23 @@ def run():
             time.sleep(3)
             assert background.poll() is None
             assert capture_pixels([209,55,105]), 'same-on-all startup did not ignore blue per-output source'
-            report = dict(nativeEdits=native_edits, nativeMultiFileWriteVerified=True, perOutputOverridePixelsVerified=True, livePerOutputPixelsVerified=True,
+            from cosmic_wallpaper_ui_probe import verify_ui
+            def prepare_ui_case(language):
+                nonlocal background
+                if language == 'vi':
+                    (config_dir / 'all').unlink()
+                    return
+                background.terminate(); background.wait(timeout=5)
+                (config_dir / 'same-on-all').write_text('false')
+                (config_dir / 'backgrounds').write_text(json.dumps(['WINIT-0']))
+                (config_dir / 'output.WINIT-0').unlink()
+                set_source(images[1])
+                background = subprocess.Popen(['cosmic-bg'], env=dict(env, WAYLAND_DISPLAY=socket.name), stdout=log, stderr=log)
+                children.append(background)
+                time.sleep(2)
+                assert background.poll() is None
+            ui = verify_ui(root, dict(env, WAYLAND_DISPLAY=socket.name), capture_pixels, children, log, prepare_ui_case)
+            report = dict(studioUi=ui, nativeEdits=native_edits, nativeMultiFileWriteVerified=True, perOutputOverridePixelsVerified=True, livePerOutputPixelsVerified=True,
                 sameOnAllStartupPixelsVerified=True, observedOutput=output,
                 upstreamCommit='9520e16758693bc2f6845d52680f236d548edda2',
                 versions=subprocess.check_output(['dpkg-query', '-W', 'cosmic-comp', 'cosmic-bg'], text=True).splitlines(),
@@ -133,7 +150,7 @@ def run():
                 compositorPid=compositor.pid, backgroundPid=background.pid,
                 privateStateVerified=state_file.is_file(), stateContents=state_file.read_text(),
                 nestedSocket=socket.name, window=window, captures=captures, initialConfigPixelsVerified=True, liveConfigPixelsVerified=live_updated,
-                scope='Actual COSMIC nested winit and cosmic-bg, private config RON path update and outer stage pixels. RON/GIO native edit primitive exercised through guarded Rust test, not DeskMorph UI/IPC. No enabled production adapter or general COSMIC desktop support claim.')
+                scope='Actual COSMIC nested winit and cosmic-bg, private config RON path update and outer stage pixels. Native RON/GIO single/batch writes plus actual DeskMorph Studio Apply/error/Retry/Shuffle IPC and pixels in vi/en. Missing all/per-output entry creation verified. One nested COSMIC version/output; not whole COSMIC desktop certification.')
             (root / 'launcher-result.json').write_text(json.dumps(dict(cosmicProbe=report), indent=2))
     finally:
         for child in reversed(children):

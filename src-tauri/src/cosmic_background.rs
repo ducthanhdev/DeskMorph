@@ -1,8 +1,8 @@
-//! COSMIC RON edit primitive. Not enabled as a desktop adapter until integration
-//! verifies per-output configuration, ownership and failure recovery.
+//! COSMIC RON source editing and schema validation for the background adapter.
+#[cfg(test)]
 use crate::cosmic_profile::{commit, Snapshot};
 use ron::value::RawValue;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use std::{ops::Range, path::Path};
 
 const MAX_DOCUMENT: usize = 64 * 1024;
@@ -13,23 +13,80 @@ struct Background<'a> {
     #[serde(borrow)]
     source: &'a RawValue,
 }
-#[derive(Deserialize)]
+#[derive(Deserialize, Serialize)]
 enum Source {
     Path(String),
     Color(Color),
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Serialize)]
 enum Color {
     Single([f32; 3]),
     Gradient(Gradient),
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Serialize)]
 struct Gradient {
     colors: Vec<[f32; 3]>,
     radius: f32,
 }
+
+// Schema of the installed cosmic-bg 1.11.0 (9520e16). Keep the permissive
+// byte-preserving editor separate: the adapter must validate the consumer's
+// complete schema before claiming a write can be consumed.
+#[derive(Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+struct Entry {
+    output: String,
+    source: Source,
+    filter_by_theme: bool,
+    rotation_frequency: u64,
+    #[serde(default)]
+    filter_method: FilterMethod,
+    #[serde(default)]
+    scaling_mode: ScalingMode,
+    #[serde(default)]
+    sampling_method: SamplingMethod,
+}
+#[derive(Deserialize, Serialize, Default)]
+enum FilterMethod {
+    Nearest,
+    Linear,
+    #[default]
+    Lanczos,
+}
+#[derive(Deserialize, Serialize, Default)]
+enum ScalingMode {
+    Fit([f32; 3]),
+    Stretch,
+    #[default]
+    Zoom,
+}
+#[derive(Deserialize, Serialize, Default)]
+enum SamplingMethod {
+    #[default]
+    Alphanumeric,
+    Random,
+}
+
+pub fn validate_entry(document: &str, output: &str) -> Result<(), String> {
+    source_range(document, output)?;
+    let _: Entry = ron::from_str(document).map_err(|e| e.to_string())?;
+    Ok(())
+}
+pub fn entry_for_output(document: &str, output: &str) -> Result<String, String> {
+    validate_entry(document, "all")?;
+    let mut entry: Entry = ron::from_str(document).map_err(|e| e.to_string())?;
+    entry.output = output.to_owned();
+    ron::to_string(&entry).map_err(|e| e.to_string())
+}
+pub fn configured_source(document: &str, output: &str) -> Result<Option<String>, String> {
+    validate_entry(document, output)?;
+    Ok(source_range(document, output)?.1)
+}
+// Mirrors Entry::fallback in the verified cosmic-bg source, including theme,
+// rotation and scaling defaults. Used when its system Entry cannot be parsed.
+pub const FALLBACK: &str = r#"(output: "all", source: Path("/usr/share/backgrounds/cosmic/orion_nebula_nasa_heic0601a.jpg"), filter_by_theme: true, rotation_frequency: 3600, filter_method: Lanczos, scaling_mode: Zoom, sampling_method: Alphanumeric,)"#;
 
 fn source_range(
     document: &str,
@@ -82,6 +139,7 @@ fn source_range(
     Ok((start..end, path))
 }
 
+#[cfg(test)]
 pub fn replace_source(document: &str, path: &Path) -> Result<String, String> {
     replace_output_source(document, "all", path)
 }
@@ -149,10 +207,12 @@ pub fn config_key(output: &str) -> String {
     }
 }
 
+#[cfg(test)]
 pub struct Document {
     snapshot: Snapshot,
     output: String,
 }
+#[cfg(test)]
 impl Document {
     pub fn load(path: &Path) -> Result<Self, String> {
         Self::load_output(path, "all")
@@ -178,6 +238,25 @@ impl Document {
 mod tests {
     use super::*;
     const ORIGINAL: &str = "(\n output: \"all\",\n // preserve this comment and unknown enum\n custom: Future(Some((nested: [1, 2]))),\n source: Path(\"/old.png\"),\n scaling_mode: Zoom,\n)";
+    #[test]
+    fn adapter_requires_complete_known_consumer_schema() {
+        validate_entry(FALLBACK, "all").unwrap();
+        for document in [
+            FALLBACK.replace("filter_by_theme: true,", ""),
+            FALLBACK.replace("rotation_frequency: 3600", "rotation_frequency: -1"),
+            FALLBACK.replace("Lanczos", "FutureFilter"),
+            FALLBACK.replace("filter_by_theme: true", "filter_by_theme: #true"),
+            FALLBACK.replace(
+                "sampling_method: Alphanumeric,",
+                "sampling_method: Alphanumeric, future: Something,",
+            ),
+        ] {
+            assert!(validate_entry(&document, "all").is_err(), "{document}");
+        }
+        let per_output = entry_for_output(FALLBACK, "DP-1").unwrap();
+        validate_entry(&per_output, "DP-1").unwrap();
+        assert!(validate_entry(&per_output, "all").is_err());
+    }
     #[test]
     fn preserves_unknown_fields_comments_and_escaped_paths() {
         let path = Path::new("/ảnh có khoảng trắng/quote\"slash\\.png");

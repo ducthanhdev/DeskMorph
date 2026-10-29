@@ -1,0 +1,478 @@
+{
+  "command": "/usr/bin/python3 tests/wayland_lab.py --cosmic-test --output /tmp/deskmorph-cosmic-ui/reviewed.json",
+  "baseCommit": "d07f36ab9eccc912d0dd04668582a1f1989aeb8a",
+  "cosmicProbe": {
+    "studioUi": {
+      "observations": [
+        {
+          "language": "vi",
+          "applyPixelsVerified": true,
+          "createdMissingUserEntry": true,
+          "createdMissingPerOutputEntry": false,
+          "ipcCompletionStatusObserved": true,
+          "invalidConfigDisabledAndPreserved": true,
+          "readOnlyConfigDisabledAndPreserved": true,
+          "missingFilePreservedPreviousSource": true,
+          "retryPixelsVerified": true,
+          "shuffleExcludedCurrentAndPixelsVerified": true,
+          "ownedAppExited": true,
+          "input": "AT-SPI actions, actual app on nested COSMIC Wayland socket; no keyboard claim"
+        },
+        {
+          "language": "en",
+          "applyPixelsVerified": true,
+          "createdMissingUserEntry": false,
+          "createdMissingPerOutputEntry": true,
+          "ipcCompletionStatusObserved": true,
+          "invalidConfigDisabledAndPreserved": true,
+          "readOnlyConfigDisabledAndPreserved": true,
+          "missingFilePreservedPreviousSource": true,
+          "retryPixelsVerified": true,
+          "shuffleExcludedCurrentAndPixelsVerified": true,
+          "ownedAppExited": true,
+          "input": "AT-SPI actions, actual app on nested COSMIC Wayland socket; no keyboard claim"
+        }
+      ],
+      "binarySha256": "bbb3a7d70a7675a1b9e4a9780824282d62cd81ca141de0587ccd511641bfd180"
+    },
+    "nativeEdits": [
+      {
+        "output": "all",
+        "rustTestPassed": true
+      },
+      {
+        "output": "batch",
+        "rustTestPassed": true
+      }
+    ],
+    "nativeMultiFileWriteVerified": true,
+    "perOutputOverridePixelsVerified": true,
+    "livePerOutputPixelsVerified": true,
+    "sameOnAllStartupPixelsVerified": true,
+    "observedOutput": "WINIT-0",
+    "upstreamCommit": "9520e16758693bc2f6845d52680f236d548edda2",
+    "versions": [
+      "cosmic-bg\t1.11.0~1792526117~24.04~9520e16",
+      "cosmic-comp\t0.1~1792508925~24.04~8cb1802"
+    ],
+    "binarySha256": {
+      "cosmic-comp": "2399b768cc6a4599a6495d0865cf4dc6807cfee2c6e46b3d7466a800f903be5e",
+      "cosmic-bg": "dcfaf79907ef5031fa40799bbd56dd33ee19135c90c3580cf2eb98579894bf3a"
+    },
+    "compositorPid": 3861778,
+    "backgroundPid": 3863872,
+    "privateStateVerified": true,
+    "stateContents": "[\n    (\"WINIT-0\", Path(\"/tmp/deskmorph-wayland-lab-_kr9m8ef/ui-images/pink.png\")),\n]",
+    "nestedSocket": "wayland-1",
+    "window": {
+      "id": 1,
+      "pid": 3861778,
+      "appId": null,
+      "title": "Smithay",
+      "focused": false,
+      "clientType": 0,
+      "frame": {
+        "x": 0,
+        "y": 32,
+        "width": 1280,
+        "height": 688
+      }
+    },
+    "captures": [
+      {
+        "label": "all-startup",
+        "sha256": "1a2903da42b760575db64d0ad7f6551df149b93bc800a5a7c6863b9fc1acdfe5",
+        "samples": [
+          [
+            209,
+            55,
+            105
+          ],
+          [
+            209,
+            55,
+            105
+          ],
+          [
+            209,
+            55,
+            105
+          ]
+        ],
+        "solidColorAssertion": true
+      },
+      {
+        "label": "all-native-write",
+        "sha256": "6fe2fc32273bacf7ee6d4b5a9defd3350e8270714b81cc4b0f06cb20159c331c",
+        "samples": [
+          [
+            52,
+            86,
+            120
+          ],
+          [
+            52,
+            86,
+            120
+          ],
+          [
+            52,
+            86,
+            120
+          ]
+        ],
+        "solidColorAssertion": true
+      },
+      {
+        "label": "per-output-override",
+        "sha256": "e987d0c65521493f992b625c0d9f52b4b6eb1c73234bc30916afed433e10f597",
+        "samples": [
+          [
+            209,
+            55,
+            105
+          ],
+          [
+            209,
+            55,
+            105
+          ],
+          [
+            209,
+            55,
+            105
+          ]
+        ],
+        "solidColorAssertion": true
+      },
+      {
+        "label": "batch-native-write",
+        "sha256": "5c097b44691e92ab2eb6adbc8e3b01e7e13a25bcfd662a8635a4e5e12b0732ea",
+        "samples": [
+          [
+            52,
+            86,
+            120
+          ],
+          [
+            52,
+            86,
+            120
+          ],
+          [
+            52,
+            86,
+            120
+          ]
+        ],
+        "solidColorAssertion": true
+      },
+      {
+        "label": "same-on-all-startup",
+        "sha256": "ff426b21ec1d408f5671c6bd7a2b43b0fcfd28a94400f93af84f8063d786627f",
+        "samples": [
+          [
+            209,
+            55,
+            105
+          ],
+          [
+            209,
+            55,
+            105
+          ],
+          [
+            209,
+            55,
+            105
+          ]
+        ],
+        "solidColorAssertion": true
+      },
+      {
+        "label": "vi-ui-apply",
+        "sha256": "e0ea75e4b7cb29e08f189f0a7ce1e4b898649efd73fec722457973cd0c4875f3",
+        "samples": [
+          [
+            209,
+            55,
+            105
+          ],
+          [
+            209,
+            55,
+            105
+          ],
+          [
+            209,
+            55,
+            105
+          ]
+        ],
+        "solidColorAssertion": true
+      },
+      {
+        "label": "vi-ui-retry",
+        "sha256": "fbfbd8df5f3429401c5ea50508aa860b8b9d406c6b6360210eda6f84cae13057",
+        "samples": [
+          [
+            52,
+            86,
+            120
+          ],
+          [
+            52,
+            86,
+            120
+          ],
+          [
+            52,
+            86,
+            120
+          ]
+        ],
+        "solidColorAssertion": true
+      },
+      {
+        "label": "vi-ui-shuffle",
+        "sha256": "683d8587ceb3b52651d173d917dafca2209e28a19dfb74e668658f7daa68fc88",
+        "samples": [
+          [
+            209,
+            55,
+            105
+          ],
+          [
+            209,
+            55,
+            105
+          ],
+          [
+            209,
+            55,
+            105
+          ]
+        ],
+        "solidColorAssertion": true
+      },
+      {
+        "label": "en-seeded-default-blue",
+        "sha256": "a7ed3c80259b6905f85fd4c75b94ca04b24dcad102728375b057b489386fc2d5",
+        "samples": [
+          [
+            52,
+            86,
+            120
+          ],
+          [
+            52,
+            86,
+            120
+          ],
+          [
+            52,
+            86,
+            120
+          ]
+        ],
+        "solidColorAssertion": true
+      },
+      {
+        "label": "en-ui-studio",
+        "sha256": "5007f8b61cdcdb51a4c985d0141fc2409f6cf5d47ab907dfe1bd11cd408bf78d",
+        "samples": [
+          [
+            192,
+            51,
+            96
+          ],
+          [
+            16,
+            22,
+            38
+          ],
+          [
+            209,
+            55,
+            105
+          ]
+        ],
+        "attachment": "en-ui-studio.png",
+        "solidColorAssertion": false
+      },
+      {
+        "label": "en-ui-apply",
+        "sha256": "1de64a74a81c8b9a07d297076ecec4613f99c8fd6cba3722b0886338e6a850b1",
+        "samples": [
+          [
+            209,
+            55,
+            105
+          ],
+          [
+            209,
+            55,
+            105
+          ],
+          [
+            209,
+            55,
+            105
+          ]
+        ],
+        "solidColorAssertion": true
+      },
+      {
+        "label": "en-ui-retry",
+        "sha256": "2015773df4621273843c31cdd75d411ffef22c3b7f4a222e1e1b5420c8eaf181",
+        "samples": [
+          [
+            52,
+            86,
+            120
+          ],
+          [
+            52,
+            86,
+            120
+          ],
+          [
+            52,
+            86,
+            120
+          ]
+        ],
+        "attachment": "en-ui-retry.png",
+        "solidColorAssertion": true
+      },
+      {
+        "label": "en-ui-shuffle",
+        "sha256": "3c9123894f549718252a800c0621488d7fb990e3e2a8814fee6f53983fafcc1d",
+        "samples": [
+          [
+            209,
+            55,
+            105
+          ],
+          [
+            209,
+            55,
+            105
+          ],
+          [
+            209,
+            55,
+            105
+          ]
+        ],
+        "solidColorAssertion": true
+      }
+    ],
+    "initialConfigPixelsVerified": true,
+    "liveConfigPixelsVerified": true,
+    "scope": "Actual COSMIC nested winit and cosmic-bg, private config RON path update and outer stage pixels. Native RON/GIO single/batch writes plus actual DeskMorph Studio Apply/error/Retry/Shuffle IPC and pixels in vi/en. Missing all/per-output entry creation verified. One nested COSMIC version/output; not whole COSMIC desktop certification."
+  },
+  "outerPackages": [
+    "gnome-settings-daemon\t46.0-1ubuntu1.24.04.1",
+    "gnome-shell\t46.0-0ubuntu6~24.04.16",
+    "libmutter-14-0:amd64\t46.2-1ubuntu0.24.04.18",
+    "xdg-desktop-portal\t1.18.4-1ubuntu2.24.04.3",
+    "xdg-desktop-portal-gnome\t",
+    "xdg-desktop-portal-gtk\t1.15.1-1build2"
+  ],
+  "hostCosmicStateUnchanged": true,
+  "hostCosmicStateSha256": "815cc04454b6e8d190d14c1364708ebcbf1ecfb1e67c689c87426872febf7cc1",
+  "ownedProcessesExited": true,
+  "ownedPortalMountRemoved": true,
+  "hostDisplayUsed": false,
+  "hostInputInjected": false,
+  "gnomeRegression": {
+    "command": "/usr/bin/python3 tests/wayland_lab.py --wallpaper-test --output /tmp/deskmorph-cosmic-ui/gnome-final.json",
+    "binarySha256": "bbb3a7d70a7675a1b9e4a9780824282d62cd81ca141de0587ccd511641bfd180",
+    "observations": [
+      {
+        "language": "vi",
+        "reducedMotion": true,
+        "lastPageFocusPrevious": true,
+        "firstPageFocusNext": true,
+        "favoriteFilterSpace": true,
+        "unfavoriteEnterFocusSearch": true,
+        "persistedFavoriteRemoval": true,
+        "folderEndHome": true,
+        "formatEndHomeIntersection": true,
+        "searchZBackspace": true,
+        "filterFocusRetained": true,
+        "successfulApplyFocus": true,
+        "failedApplyFocus": true,
+        "shuffleFocus": true,
+        "shuffleUsesPrivateFixture": true,
+        "retryRestoredFile": true,
+        "privateLightDarkSettingsVerified": true,
+        "compositorLightDarkPixelsVerified": true,
+        "failedApplyKeepsPrevious": true,
+        "removedRetryFocusSearch": true,
+        "onlyPrivateWallpaperSettings": true
+      },
+      {
+        "language": "en",
+        "reducedMotion": true,
+        "lastPageFocusPrevious": true,
+        "firstPageFocusNext": true,
+        "favoriteFilterSpace": true,
+        "unfavoriteEnterFocusSearch": true,
+        "persistedFavoriteRemoval": true,
+        "folderEndHome": true,
+        "formatEndHomeIntersection": true,
+        "searchZBackspace": true,
+        "filterFocusRetained": true,
+        "successfulApplyFocus": true,
+        "failedApplyFocus": true,
+        "shuffleFocus": true,
+        "shuffleUsesPrivateFixture": true,
+        "retryRestoredFile": true,
+        "privateLightDarkSettingsVerified": true,
+        "compositorLightDarkPixelsVerified": true,
+        "failedApplyKeepsPrevious": true,
+        "removedRetryFocusSearch": true,
+        "onlyPrivateWallpaperSettings": true
+      }
+    ],
+    "ownedProcessesExited": true,
+    "ownedPortalMountRemoved": true,
+    "scope": "Private GNOME46 native Wayland Studio, actual Enter/Space/Home/End/Z/Backspace keys after AT-SPI focus seeds. vi/en with reduced motion. Wallpaper applies only to private keyfile GNOME settings; no host input/settings, full Tab order, chooser or screen-reader claim."
+  },
+  "checks": {
+    "frontendPassed": 55,
+    "rustPassed": 85,
+    "rustFailed": 0,
+    "rustIgnored": 5,
+    "nativeRustLabInvocationsPassed": 2,
+    "frontendAndCustomProtocolBuildPassed": true,
+    "limits": "4 other environment Rust tests not rerun; native ignored test explicitly run twice. No COSMIC scheduler deadline/sleep, multi-monitor/hotplug or full desktop certification."
+  },
+  "sourceSha256": {
+    "src-tauri/src/cosmic_background.rs": "d05faf2e0ca61a495d0a3f0e7564b7fbd0b24d535d2cd8f1200f944d00e98c2d",
+    "src-tauri/src/cosmic_profile.rs": "697723ebf34baf6c1f90fe94593fa4bdf8cc921d50afecff204274ab0ed24712",
+    "src-tauri/src/wallpaper.rs": "1f5d9dc016b970b58de708a01227d564e504550b0b8b79c178a0cf4766a91d99",
+    "src-tauri/src/lib.rs": "ba4041b46d4fd1bb1d9293b125739c9648ed640ccda80567a10391dfb10a1427",
+    "src/i18n/messages.json": "88977de1e9dcde0c896a6440b3464610dc84d078724eafd080f3b2c4e8f96657",
+    "src/i18n/errors.ts": "33f7490b3dcce2550a992bd7429e3584abc6a3d2a0a5096c499cb9eefded8256",
+    "src/capabilities.ts": "641d9841124c373cf8499e204dac679e17c09737f97cd53f9c977389a9f9c667",
+    "tests/cosmic_background_probe.py": "2ebdfbaed6d1d2e3e5b239f133d4425040e3e8b64d82cd8535ff37b3eea4cebf",
+    "tests/cosmic_wallpaper_ui_probe.py": "f13813c856006f003e6005172d6380fcf9e298371c290b4665011a1ec6e7fa07",
+    "tests/wayland_lab.py": "2c150e1c597a4912b3e3fd366dcdf9d507c7bfd4fadc9e13e5d9c90c0549965f",
+    "tests/wayland_prototype/launcher_extension.js": "e96b0d0a7612c850725066e6aea84e59815592eedfe233761b409175e7b68d8c",
+    "tests/i18n.test.mjs": "a59571f45a01ee005c07366a55984a799a428a1f4c9efc91e54e93959b6ec810"
+  },
+  "upstreamSources": [
+    {
+      "url": "https://github.com/pop-os/cosmic-bg/blob/9520e16758693bc2f6845d52680f236d548edda2/config/src/lib.rs",
+      "sha256": "df6d8e8b94f0f7c05713f72275615582a37f19432f4e69be841d2b5b68b3d45f"
+    },
+    {
+      "url": "https://github.com/pop-os/libcosmic/blob/430f3d48a97d8779f9c1985473912e594ccca1ae/cosmic-config/src/lib.rs",
+      "sha256": "9919a87c00203c1ef47a6f5da1d0f3b7f6d6b14f4dcaf7d451eda941955c3f58"
+    }
+  ],
+  "imageRetention": "One reviewed Studio frame with pink background and one blue Retry background retained. Other duplicate solid-color captures/logs stay in/tmp; hash/sample retained. Studio frame has no solid-color assertion."
+}

@@ -362,8 +362,20 @@ fn gnome_settings() -> Result<gio::Settings, String> {
     if !settings.settings_schema().is_some_and(|schema| schema.has_key("picture-uri")) { return Err("wallpaper_setting_unavailable: GNOME picture-uri setting is unavailable".into()); }
     Ok(settings)
 }
+fn is_cosmic() -> bool {
+    std::env::var("XDG_CURRENT_DESKTOP").unwrap_or_default().split(':').any(|name| name.eq_ignore_ascii_case("COSMIC"))
+}
+fn cosmic_plan() -> Result<crate::cosmic_profile::Plan, String> {
+    if !crate::platform::executable_available("cosmic-bg") {
+        return Err("wallpaper_adapter_unsupported: cosmic-bg is unavailable".into());
+    }
+    crate::cosmic_profile::from_environment()
+}
 pub fn availability() -> Result<(), String> {
     use gio::prelude::*;
+    if is_cosmic() {
+        return cosmic_plan()?.writable().map_err(|error| format!("wallpaper_read_only: {error}"));
+    }
     let settings = gnome_settings()?;
     let has_dark = settings.settings_schema().is_some_and(|schema| schema.has_key("picture-uri-dark"));
     if !settings.is_writable("picture-uri") || (has_dark && !settings.is_writable("picture-uri-dark")) {
@@ -373,6 +385,7 @@ pub fn availability() -> Result<(), String> {
 }
 pub fn current_wallpaper() -> Result<String, String> {
     use gio::prelude::*;
+    if is_cosmic() { return cosmic_plan()?.current(); }
     let settings = gnome_settings()?;
     let dark = settings_for("org.gnome.desktop.interface").ok().filter(|settings| settings.settings_schema().is_some_and(|schema| schema.has_key("color-scheme")))
         .is_some_and(|settings| settings.string("color-scheme") == "prefer-dark");
@@ -392,6 +405,13 @@ fn prepare_wallpaper(path: &str) -> Result<String, String> {
 }
 fn write_wallpaper_uri(uri: &str) -> Result<bool, String> {
     use gio::prelude::*;
+    if is_cosmic() {
+        let image = gio::File::for_uri(uri).path().ok_or("Not a local image URI")?;
+        let plan = cosmic_plan()?;
+        plan.writable().map_err(|error| format!("wallpaper_read_only: {error}"))?;
+        plan.apply(&image).map_err(|error| format!("wallpaper_write_unverified: {error}"))?;
+        return Ok(true);
+    }
     let settings = gnome_settings()?;
     let has_dark = settings.settings_schema().is_some_and(|schema| schema.has_key("picture-uri-dark"));
     if !settings.is_writable("picture-uri") || (has_dark && !settings.is_writable("picture-uri-dark")) { return Err("Wallpaper settings are read-only".into()); }
@@ -408,6 +428,11 @@ fn on_main<T: Send + 'static>(app: &AppHandle, task: impl FnOnce() -> Result<T, 
     app.run_on_main_thread(move || { let _ = send.send(task()); }).map_err(|e| e.to_string())?;
     receive.recv().map_err(|e| e.to_string())?
 }
+fn on_wallpaper_context<T: Send + 'static>(app: &AppHandle, task: impl FnOnce() -> Result<T, String> + Send + 'static) -> Result<T, String> {
+    // GNOME objects retain their GTK main context; COSMIC filesystem work stays
+    // on the calling worker instead of blocking that context.
+    if is_cosmic() { task() } else { on_main(app, task) }
+}
 pub fn choose_image<'a>(images: &'a [Image], current: &str) -> Option<&'a Image> {
     use rand::seq::IteratorRandom;
     images.iter().filter(|image| image.path != current).choose(&mut rand::thread_rng()).or_else(|| images.first())
@@ -420,10 +445,10 @@ pub async fn shuffle_wallpaper(app: AppHandle) -> Result<String, String> {
         let _worker = library.worker.lock().map_err(|e| e.to_string())?;
         let scan = scan_paths(configured_folders(&config), config["wallpaperRecursive"] == true, || false)?;
         let _apply = library.apply.lock().map_err(|e| e.to_string())?;
-        let current = on_main(&app, current_wallpaper)?;
+        let current = on_wallpaper_context(&app, current_wallpaper)?;
         let image = choose_image(&scan.images, &current).ok_or("No readable images in the configured wallpaper folders")?;
         let uri = prepare_wallpaper(&image.path)?;
-        on_main(&app, move || write_wallpaper_uri(&uri))?;
+        on_wallpaper_context(&app, move || write_wallpaper_uri(&uri))?;
         Ok(image.path.clone())
     }).await.map_err(|e| e.to_string())?
 }
@@ -470,7 +495,7 @@ pub fn schedule_changed(app: &AppHandle) {
 pub fn apply_manual(app: &AppHandle, library: &Library, path: &str) -> Result<bool, String> {
     let _apply = library.apply.lock().map_err(|e| e.to_string())?;
     let uri = prepare_wallpaper(path)?;
-    on_main(app, move || write_wallpaper_uri(&uri))
+    on_wallpaper_context(app, move || write_wallpaper_uri(&uri))
 }
 #[tauri::command]
 pub fn get_wallpaper_schedule_status(state: tauri::State<WallpaperState>) -> Result<ScheduleStatus, String> {
@@ -506,7 +531,7 @@ pub fn start_scheduler(app: &AppHandle) {
                         let scan = scan_paths(configured_folders(&config), config["wallpaperRecursive"] == true, cancelled)?;
                         if cancelled() { return Ok(None); }
                         let _apply = library.apply.lock().map_err(|e| e.to_string())?;
-                        let current = on_main(&app, current_wallpaper)?;
+                        let current = on_wallpaper_context(&app, current_wallpaper)?;
                         let image = choose_image(&scan.images, &current).ok_or("No readable images in the configured wallpaper folders")?;
                         let path = image.path.clone();
                         let uri = prepare_wallpaper(&path)?;
@@ -515,7 +540,7 @@ pub fn start_scheduler(app: &AppHandle) {
                         let key = schedule_key(&config);
                         // Only the small native settings transaction runs on GTK's
                         // main context. Decode and filesystem work stay off the UI.
-                        on_main(&app, move || {
+                        on_wallpaper_context(&app, move || {
                             let state = app_for_apply.state::<crate::config::ConfigState>();
                             let store = state.0.lock().map_err(|e| e.to_string())?;
                             if library_for_apply.scheduler.stopped.load(Ordering::SeqCst) || library_for_apply.scheduler.epoch.load(Ordering::SeqCst) != epoch || !store.initialized || store.snapshot.config["wallpaperScheduleEnabled"] != true || schedule_key(&store.snapshot.config) != key { return Ok(None); }

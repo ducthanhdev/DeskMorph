@@ -143,6 +143,8 @@ Phụ thuộc G1/G2; capability backend cho từng desktop được xác minh tr
 - [x] G6.8 Kiểm tra exit status/kết quả backend trước báo thành công; phản ánh hình nền đổi từ bên ngoài nếu adapter hỗ trợ.
 - [ ] G6.9 Adapter GNOME/COSMIC/KDE được bổ sung riêng sau thử nghiệm API thực tế; chỉ bật adapter đã xác minh, có unsupported state.
 
+G6.9 đang thực hiện: GNOME đã có UI/pixel; COSMIC RON v1 nay có adapter và [Studio/IPC/pixel vi/en](benchmarks/cosmic-studio-2026-10-29/results.json), gồm defaults và entry per-output thiếu, lỗi/read-only/Retry/Shuffle. KDE chưa có runtime nên giữ unsupported và checkbox vẫn mở; không suy scheduler/hotplug/multi-output từ output WINIT-0 của compositor lồng.
+
 Tiêu chí: thư viện lớn không chặn UI; ảnh hỏng/quyền thiếu có thể xử lý; chu kỳ không chạy trùng; mỗi desktop được tuyên bố hỗ trợ có kiểm thử áp dụng thực tế.
 
 ## 10. G7 — Âm thanh và media

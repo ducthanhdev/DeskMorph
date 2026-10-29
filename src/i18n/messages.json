@@ -37,7 +37,7 @@
     "x11DisplayMissing": "Phiên X11 chưa cung cấp kết nối hiển thị.",
     "xpropMissing": "Không tìm thấy công cụ xprop để đọc cửa sổ X11.",
     "enumerateUnavailable": "Desktop không cung cấp danh sách cửa sổ cho adapter hiện tại.",
-    "wallpaperAdapterUnavailable": "Chưa có adapter hình nền được xác minh cho desktop này; hiện chỉ hỗ trợ GNOME.",
+    "wallpaperAdapterUnavailable": "Chưa có adapter hình nền được xác minh cho desktop này.",
     "wallpaperSchemaUnavailable": "Desktop GNOME thiếu thiết lập hình nền cần thiết.",
     "wallpaperReadOnly": "Thiết lập hình nền đang bị khóa chỉ đọc.",
     "dockPlacementUnavailable": "Đặt Dock ở cạnh và chọn màn hình hiện chỉ được xác minh trên X11; adapter Wayland chưa được triển khai.",
@@ -291,7 +291,9 @@
     "shortcutDesktopSteps": "Mở Settings → Keyboard → View and Customize Shortcuts → Custom Shortcuts → Add. Đặt tên DeskMorph Launcher, chọn tổ hợp còn trống và lưu. Không dùng Ctrl+Alt+F1–F12.",
     "shortcutDesktopCommand": "Trong ô Command, thay /absolute/path/deskmorph bằng đường dẫn tuyệt đối tới executable đã cài ở vị trí cố định. Giữ dấu ngoặc kép nếu đường dẫn có khoảng trắng; không nhập ~ hoặc $HOME thay đường dẫn.",
     "shortcutDesktopLimits": "Thêm --launcher để mở cửa sổ tìm ứng dụng của cùng profile, kể cả khi Dock tắt. GNOME quản lý tổ hợp phím, vị trí và focus; nếu chưa nhận focus, chọn DeskMorph Launcher từ trình chuyển cửa sổ. Hướng dẫn này đã kiểm trên GNOME 46, chưa xác minh desktop khác.",
-    "shortcutDesktopRemove": "Để gỡ, xóa riêng mục DeskMorph Launcher trong Custom Shortcuts. Tắt phím tắt trong DeskMorph không xóa phím do GNOME quản lý."
+    "shortcutDesktopRemove": "Để gỡ, xóa riêng mục DeskMorph Launcher trong Custom Shortcuts. Tắt phím tắt trong DeskMorph không xóa phím do GNOME quản lý.",
+    "wallpaperConfigInvalid": "Cấu hình hình nền không hợp lệ hoặc không thể đọc được; dữ liệu hiện có được giữ nguyên.",
+    "wallpaperWriteUnverified": "Chưa thể xác nhận đổi hình nền hoàn tất. Hãy kiểm tra hình nền và thiết lập từng màn hình trước khi thử lại."
   },
   "en": {
     "configRepaired": "Some configuration fields were repaired or reset to defaults; the original was kept in a recovery file.",
@@ -331,7 +333,7 @@
     "x11DisplayMissing": "The X11 session has no display connection.",
     "xpropMissing": "The xprop tool needed to read X11 windows was not found.",
     "enumerateUnavailable": "The desktop does not expose a window list to the current adapter.",
-    "wallpaperAdapterUnavailable": "No wallpaper adapter has been verified for this desktop; GNOME is currently supported.",
+    "wallpaperAdapterUnavailable": "No wallpaper adapter has been verified for this desktop.",
     "wallpaperSchemaUnavailable": "Required GNOME wallpaper settings are missing.",
     "wallpaperReadOnly": "Wallpaper settings are locked read-only.",
     "dockPlacementUnavailable": "Edge placement and monitor selection have only been verified on X11; a Wayland adapter has not been implemented.",
@@ -585,6 +587,8 @@
     "shortcutDesktopSteps": "Open Settings → Keyboard → View and Customize Shortcuts → Custom Shortcuts → Add. Name it DeskMorph Launcher, choose an unused key combination, and save. Avoid Ctrl+Alt+F1–F12.",
     "shortcutDesktopCommand": "In Command, replace /absolute/path/deskmorph with the absolute path to the installed executable in a stable location. Keep quotes around paths containing spaces; do not use ~ or $HOME instead of the path.",
     "shortcutDesktopLimits": "Add --launcher to open application search for the same profile, even when the Dock is disabled. GNOME manages the shortcut, placement and focus; if needed, select DeskMorph Launcher in the window switcher. This guide was tested on GNOME 46; other desktops are not verified.",
-    "shortcutDesktopRemove": "To remove it, delete only DeskMorph Launcher in Custom Shortcuts. Disabling the shortcut inside DeskMorph does not remove GNOME-managed shortcuts."
+    "shortcutDesktopRemove": "To remove it, delete only DeskMorph Launcher in Custom Shortcuts. Disabling the shortcut inside DeskMorph does not remove GNOME-managed shortcuts.",
+    "wallpaperConfigInvalid": "Wallpaper configuration is invalid or unreadable; existing data is preserved.",
+    "wallpaperWriteUnverified": "The wallpaper change could not be fully verified. Check the wallpaper and per-display settings before retrying."
   }
 }

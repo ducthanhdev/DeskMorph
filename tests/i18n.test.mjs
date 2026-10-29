@@ -128,3 +128,12 @@ test('stored success status follows language changes while paths and application
   assert.equal(translateStoredText('vi', messages.en.wallpaperApplied), messages.vi.wallpaperApplied);
   assert.equal(translateStoredText('en', '/tmp/Tên-của-tôi.json'), '/tmp/Tên-của-tôi.json');
 });
+
+
+test('COSMIC config preflight and unverified write errors retain distinct localized recovery guidance', () => {
+  for (const language of ['vi', 'en']) {
+    assert.equal(describeError(language, 'wallpaper_config_invalid: malformed entry').summary, messages[language].wallpaperConfigInvalid);
+    assert.equal(describeError(language, 'wallpaper_write_unverified: partial COSMIC state').summary, messages[language].wallpaperWriteUnverified);
+    assert.notEqual(messages[language].wallpaperConfigInvalid, messages[language].wallpaperWriteUnverified);
+  }
+});

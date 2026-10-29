@@ -14,6 +14,8 @@ const errors: Record<string, MessageKey> = {
   system_monitor_missing: "systemMonitorMissing", file_manager_missing: "fileManagerMissing",
   pin_class_conflict: "pinClassConflict", pin_identity_conflict: "pinIdentityConflict", pin_missing: "pinMissingError",
   app_missing: "unavailable", app_launch_failed: "launchError", set_wallpaper_failed: "wallpaperError",
+  wallpaper_write_unverified: "wallpaperWriteUnverified",
+  wallpaper_config_invalid: "wallpaperConfigInvalid",
   wallpaper_schema_unavailable: "wallpaperSchemaUnavailable", wallpaper_setting_unavailable: "wallpaperSchemaUnavailable",
   trash_unsupported: "trashUnavailable", x11_display_missing: "x11DisplayMissing",
 };

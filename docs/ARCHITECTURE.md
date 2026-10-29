@@ -164,3 +164,10 @@ Cold launcher giữ Studio ẩn, chờ surface đăng ký listener và cấu hì
 ## Đóng gói Linux
 
 `tauri.linux.conf.json` chọn deb cho Ubuntu/Pop!_OS24.04 amd64. Tauri phát hiện GTK/WebKit/appindicator runtime dependencies; cấu hình thêm libX11/libXi/libxcb và khuyến nghị x11-utils/pulseaudio-utils. Desktop template dùng binary cài `deskmorph`, workaround WebKit đồng nhất và action --launcher; không tự bật autostart. `tests/deb_package_smoke.py` chạy dpkg vào root/database riêng bằng bwrap namespaces, kiểm cài/upgrade metadata tổng hợp/reinstall/remove/purge và bảo toàn config. GUI lab có --binary để kiểm executable trích từ gói, SHA256 khớp payload dpkg. Xem [PACKAGING.md](PACKAGING.md); chưa phải chứng nhận clean account hoặc release.
+
+
+## Hình nền COSMIC
+
+`wallpaper.rs` chọn COSMIC khi XDG_CURRENT_DESKTOP có token COSMIC, kiểm cosmic-bg và Plan hợp lệ/ghi được; nhánh GNOME giữ GSettings main context. Apply/shuffle/scheduler COSMIC dùng worker gọi `cosmic_profile`, không chạy filesystem transaction trên GTK main context. `cosmic_background` giữ phần RON source/validation schema consumer; `cosmic_profile` resolve defaults, snapshot/preflight/create/conditional recovery, không expose đường file tùy ý qua IPC. Ảnh đi qua canonical/decode/resource limits chung trước ghi.
+
+Không nguyên tử nhiều file hoặc chống mọi syscall race; error sau ghi có thể là partial state, có thông báo vi/en riêng. Probe không tạo file, malformed user config không bị reset. Xem [WALLPAPER.md](WALLPAPER.md) và [bằng chứng UI](benchmarks/cosmic-studio-2026-10-29/results.json) cho version/scope/giới hạn. Scheduler COSMIC đã dispatch chung nhưng chưa được runtime chứng nhận.

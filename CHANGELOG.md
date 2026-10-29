@@ -2,6 +2,8 @@
 
 ## Unreleased — development 0.1.0
 
+- Tích hợp hình nền COSMIC RON v1: resolve user/system/builtin, giữ thiết lập khác, preflight/etag/rollback có điều kiện, tạo file thiếu không thay thế đích và refresh per-output list. Studio vi/en Apply/error/Retry/Shuffle đã qua cosmic-bg1.11.0/cosmic-comp8cb1802 lồng với pixel thật; GNOME hồi quy qua. KDE, scheduler COSMIC và ma trận desktop đầy đủ chưa chứng nhận.
+
 - Thêm recipe `.deb` development cho Ubuntu/Pop!_OS24.04 amd64, dependency runtime và desktop action Launcher. Kiểm dpkg root riêng, nâng version metadata tổng hợp/cài lại/gỡ giữ dữ liệu; binary release trích từ gói qua GUI Wayland và GIO desktop entry/action. Chưa qua cài sạch hoặc đủ cổng release.
 
 - Kiểm chứng fallback phím launcher GNOME46 Wayland qua gsd-media-keys thật: cold/warm, focus/input, từ chối grab trùng và gỡ phím. Portal chưa triển khai; giữ giới hạn theo compositor.

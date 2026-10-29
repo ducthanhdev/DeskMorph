@@ -1,6 +1,9 @@
-//! Existing COSMIC config preflight and recoverable multi-file writes.
+//! COSMIC user/default config resolution and recoverable multi-file writes.
 //! Not a filesystem transaction: the compositor can observe intermediate files.
-use crate::cosmic_background::{config_key, replace_output_source, target_outputs};
+use crate::cosmic_background::{
+    config_key, configured_source, entry_for_output, replace_output_source, target_outputs,
+    validate_entry, FALLBACK,
+};
 use gio::prelude::*;
 use std::{
     fs,
@@ -16,7 +19,8 @@ pub(super) struct Snapshot {
     path: PathBuf,
     pub original: String,
     etag: String,
-    identity: Identity,
+    identity: Option<Identity>,
+    user_owned: bool,
     parents: Vec<(PathBuf, u64, u64)>,
 }
 #[derive(Clone, PartialEq, Eq)]
@@ -48,7 +52,11 @@ struct WriteError {
     message: String,
     uncertain: bool,
 }
-fn check_parent(path: &Path) -> Result<Vec<(PathBuf, u64, u64)>, String> {
+fn check_parent(
+    path: &Path,
+    owned: bool,
+    allow_missing: bool,
+) -> Result<Vec<(PathBuf, u64, u64)>, String> {
     if !path.is_absolute()
         || path
             .components()
@@ -58,16 +66,20 @@ fn check_parent(path: &Path) -> Result<Vec<(PathBuf, u64, u64)>, String> {
     }
     let mut parents = Vec::new();
     for parent in path.ancestors().skip(1) {
-        let metadata = fs::symlink_metadata(parent).map_err(|e| e.to_string())?;
+        let metadata = match fs::symlink_metadata(parent) {
+            Ok(metadata) => metadata,
+            Err(error) if allow_missing && error.kind() == std::io::ErrorKind::NotFound => continue,
+            Err(error) => return Err(error.to_string()),
+        };
         if !metadata.is_dir() {
             return Err("COSMIC config ancestor must be a real directory".into());
         }
         parents.push((parent.to_owned(), metadata.dev(), metadata.ino()));
     }
-    let parent = fs::metadata(path.parent().ok_or("Missing COSMIC config parent")?)
-        .map_err(|e| e.to_string())?;
+    let nearest = parents.first().ok_or("Missing COSMIC config parent")?;
+    let parent = fs::metadata(&nearest.0).map_err(|e| e.to_string())?;
     // SAFETY: geteuid has no arguments or memory ownership requirements.
-    if parent.uid() != unsafe { libc::geteuid() } || parent.mode() & 0o002 != 0 {
+    if (owned && parent.uid() != unsafe { libc::geteuid() }) || parent.mode() & 0o002 != 0 {
         return Err(
             "COSMIC config parent must be owned by this user and not world-writable".into(),
         );
@@ -76,7 +88,10 @@ fn check_parent(path: &Path) -> Result<Vec<(PathBuf, u64, u64)>, String> {
 }
 impl Snapshot {
     pub fn load(path: &Path) -> Result<Self, String> {
-        let parents = check_parent(path)?;
+        Self::load_kind(path, true)
+    }
+    fn load_kind(path: &Path, user_owned: bool) -> Result<Self, String> {
+        let parents = check_parent(path, user_owned, false)?;
         // O_NONBLOCK prevents a swapped FIFO from hanging before fstat.
         let file = fs::OpenOptions::new()
             .read(true)
@@ -87,7 +102,7 @@ impl Snapshot {
         if !before.is_file()
             || before.len() > MAX_DOCUMENT
             || before.nlink() != 1
-            || before.uid() != unsafe { libc::geteuid() }
+            || (user_owned && before.uid() != unsafe { libc::geteuid() })
             || before.mode() & 0o002 != 0
         {
             return Err("COSMIC config must be an owned, unshared regular file at most 64 KiB, not world-writable".into());
@@ -115,7 +130,7 @@ impl Snapshot {
             .to_string();
         if identity != self::identity(&file.metadata().map_err(|e| e.to_string())?)
             || identity != self::identity(&fs::symlink_metadata(path).map_err(|e| e.to_string())?)
-            || parents != check_parent(path)?
+            || parents != check_parent(path, user_owned, false)?
         {
             return Err("COSMIC config changed during read".into());
         }
@@ -123,12 +138,47 @@ impl Snapshot {
             path: path.to_owned(),
             original: String::from_utf8(bytes).map_err(|e| e.to_string())?,
             etag,
-            identity,
+            identity: Some(identity),
+            user_owned,
             parents,
         })
     }
+    fn absent(path: &Path, original: String) -> Result<Self, String> {
+        Self::absent_kind(path, original, true)
+    }
+    fn absent_kind(path: &Path, original: String, user_owned: bool) -> Result<Self, String> {
+        match fs::symlink_metadata(path) {
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => (),
+            _ => {
+                return Err(format!(
+                    "COSMIC config appeared or is inaccessible: {}",
+                    path.display()
+                ))
+            }
+        }
+        Ok(Self {
+            path: path.to_owned(),
+            original,
+            etag: String::new(),
+            identity: None,
+            user_owned,
+            parents: check_parent(path, user_owned, true)?,
+        })
+    }
+    fn parents_match(&self, fresh: &Snapshot) -> bool {
+        self.parents
+            .iter()
+            .all(|parent| fresh.parents.contains(parent))
+    }
     fn unchanged(&self) -> Result<(), String> {
-        let fresh = Self::load(&self.path)?;
+        if self.identity.is_none() {
+            let fresh = Self::absent_kind(&self.path, self.original.clone(), self.user_owned)?;
+            if !self.parents_match(&fresh) {
+                return Err("COSMIC config ancestor changed".into());
+            }
+            return Ok(());
+        }
+        let fresh = Self::load_kind(&self.path, self.user_owned)?;
         if fresh.original != self.original
             || fresh.etag != self.etag
             || fresh.identity != self.identity
@@ -141,11 +191,72 @@ impl Snapshot {
         }
         Ok(())
     }
+    fn create(&self, replacement: &str) -> Result<Receipt, WriteError> {
+        use std::io::Write;
+        let failure = |message: String, uncertain| WriteError { message, uncertain };
+        // Create missing parents one at a time; inspect existing directories
+        // instead of following symlinks through create_dir_all.
+        let mut missing = Vec::new();
+        for parent in self.path.ancestors().skip(1) {
+            match fs::symlink_metadata(parent) {
+                Ok(_) => break,
+                Err(error) if error.kind() == std::io::ErrorKind::NotFound => missing.push(parent),
+                Err(error) => return Err(failure(error.to_string(), false)),
+            }
+        }
+        for parent in missing.into_iter().rev() {
+            use std::os::unix::fs::DirBuilderExt;
+            match fs::DirBuilder::new().mode(0o700).create(parent) {
+                Ok(()) => (),
+                Err(error) if error.kind() == std::io::ErrorKind::AlreadyExists => (),
+                Err(error) => return Err(failure(error.to_string(), false)),
+            }
+            check_parent(&parent.join("preflight"), true, false).map_err(|e| failure(e, false))?;
+        }
+        self.unchanged().map_err(|e| failure(e, false))?;
+        let parent = self.path.parent().unwrap();
+        let temp = parent.join(format!(
+            ".deskmorph-{}-{}.tmp",
+            std::process::id(),
+            rand::random::<u64>()
+        ));
+        let mut file = fs::OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .mode(0o600)
+            .custom_flags(libc::O_NOFOLLOW)
+            .open(&temp)
+            .map_err(|e| failure(e.to_string(), false))?;
+        let result = (|| {
+            file.write_all(replacement.as_bytes())
+                .map_err(|e| failure(e.to_string(), false))?;
+            file.sync_all().map_err(|e| failure(e.to_string(), false))?;
+            self.unchanged().map_err(|e| failure(e, false))?;
+            // Same-directory hard-link publication is atomic and cannot replace
+            // any destination, even when another writer creates it after check.
+            fs::hard_link(&temp, &self.path).map_err(|e| failure(e.to_string(), false))?;
+            fs::remove_file(&temp).map_err(|e| failure(e.to_string(), true))?;
+            let fresh = Self::load(&self.path).map_err(|e| failure(e, true))?;
+            if fresh.original != replacement {
+                return Err(failure("COSMIC newly created config changed".into(), true));
+            }
+            Ok(Receipt {
+                before: self.clone(),
+                after: replacement.to_owned(),
+                token: Some(fresh.etag),
+            })
+        })();
+        let _ = fs::remove_file(&temp);
+        result
+    }
     fn write(&self, replacement: &str) -> Result<Receipt, WriteError> {
         self.unchanged().map_err(|message| WriteError {
             message,
             uncertain: false,
         })?;
+        if self.identity.is_none() {
+            return self.create(replacement);
+        }
         let token = gio::File::for_path(&self.path)
             .replace_contents(
                 replacement.as_bytes(),
@@ -173,13 +284,22 @@ struct Receipt {
 impl Receipt {
     fn current(&self) -> Result<Snapshot, String> {
         let fresh = Snapshot::load(&self.before.path)?;
+        let metadata_match = match (&self.before.identity, &fresh.identity) {
+            (Some(before), Some(after)) => {
+                before.owner == after.owner
+                    && before.group == after.group
+                    && before.mode == after.mode
+                    && before.links == after.links
+            }
+            (None, Some(after)) => {
+                after.owner == unsafe { libc::geteuid() } && after.mode & 0o777 == 0o600
+            }
+            _ => false,
+        };
         if self.token.as_deref() != Some(fresh.etag.as_str())
             || fresh.original != self.after
-            || fresh.parents != self.before.parents
-            || fresh.identity.owner != self.before.identity.owner
-            || fresh.identity.group != self.before.identity.group
-            || fresh.identity.mode != self.before.identity.mode
-            || fresh.identity.links != self.before.identity.links
+            || !self.before.parents_match(&fresh)
+            || !metadata_match
         {
             return Err(format!(
                 "COSMIC post-write state cannot be verified: {}",
@@ -191,6 +311,12 @@ impl Receipt {
     fn restore(&self) -> Result<(), String> {
         // Never overwrite a newer external edit during recovery.
         let fresh = self.current()?;
+        if self.before.identity.is_none() {
+            fresh.unchanged()?;
+            fs::remove_file(&fresh.path).map_err(|e| e.to_string())?;
+            self.before.unchanged()?;
+            return Ok(());
+        }
         let recovery = fresh.write(&self.before.original).map_err(|e| e.message)?;
         recovery.current()?;
         Ok(())
@@ -263,10 +389,12 @@ fn commit_with(
 pub struct Plan {
     controls: Vec<Snapshot>,
     entries: Vec<(String, Snapshot)>,
+    refresh: Option<Snapshot>,
 }
 impl Plan {
     /// Only existing user config is handled here. Defaults/creation are separate
     /// work; missing or invalid entries fail before any write.
+    #[cfg(test)]
     pub fn load_existing(directory: &Path) -> Result<Self, String> {
         let same = Snapshot::load(&directory.join("same-on-all"))?;
         let mut controls = vec![same];
@@ -281,14 +409,165 @@ impl Plan {
         let mut entries = Vec::new();
         for output in outputs {
             let snapshot = Snapshot::load(&directory.join(config_key(&output)))?;
-            // Validate every target before returning a writable plan.
-            replace_output_source(&snapshot.original, &output, Path::new("/preflight.png"))?;
+            validate_entry(&snapshot.original, &output)?;
             entries.push((output, snapshot));
         }
-        Ok(Self { controls, entries })
+        Ok(Self {
+            controls,
+            entries,
+            refresh: None,
+        })
+    }
+    /// Resolve user overrides, then the selected XDG system directory, then
+    /// cosmic-bg's built-in fallback. Never fall back over an invalid user file.
+    pub fn load_with_defaults(directory: &Path, system: Option<&Path>) -> Result<Self, String> {
+        fn resolve(
+            directory: &Path,
+            system: Option<&Path>,
+            key: &str,
+            fallback: &str,
+            validate: impl Fn(&str) -> Result<(), String>,
+            controls: &mut Vec<Snapshot>,
+        ) -> Result<Snapshot, String> {
+            let path = directory.join(key);
+            match fs::symlink_metadata(&path) {
+                Ok(_) => {
+                    let local = Snapshot::load(&path)?;
+                    validate(&local.original)?;
+                    return Ok(local);
+                }
+                Err(error) if error.kind() == std::io::ErrorKind::NotFound => (),
+                Err(error) => return Err(error.to_string()),
+            }
+            let mut text = fallback.to_owned();
+            if let Some(system) = system {
+                let source = system.join(key);
+                match fs::symlink_metadata(&source) {
+                    Ok(_) => {
+                        let snapshot = Snapshot::load_kind(&source, false)?;
+                        if validate(&snapshot.original).is_ok() {
+                            text = snapshot.original.clone();
+                        }
+                        controls.push(snapshot);
+                    }
+                    Err(error) if error.kind() == std::io::ErrorKind::NotFound => {
+                        controls.push(Snapshot::absent_kind(&source, String::new(), false)?);
+                    }
+                    Err(error) => return Err(error.to_string()),
+                }
+            }
+            validate(&text)?;
+            Snapshot::absent(&path, text)
+        }
+        let mut controls = Vec::new();
+        let same = resolve(
+            directory,
+            system,
+            "same-on-all",
+            "true",
+            |s| {
+                ron::from_str::<bool>(s)
+                    .map(|_| ())
+                    .map_err(|e| e.to_string())
+            },
+            &mut controls,
+        )?;
+        let enabled: bool = ron::from_str(&same.original).map_err(|e| e.to_string())?;
+        let mut backgrounds = None;
+        let mut list_snapshot = None;
+        if !enabled {
+            let list = resolve(
+                directory,
+                system,
+                "backgrounds",
+                "[]",
+                |s| target_outputs("false", Some(s)).map(|_| ()),
+                &mut controls,
+            )?;
+            backgrounds = Some(list.original.clone());
+            list_snapshot = Some(list);
+        }
+        let outputs = target_outputs(&same.original, backgrounds.as_deref())?;
+        controls.push(same);
+        let all = resolve(
+            directory,
+            system,
+            "all",
+            FALLBACK,
+            |s| validate_entry(s, "all"),
+            &mut controls,
+        )?;
+        let mut entries = Vec::new();
+        for output in outputs.iter().skip(1) {
+            let fallback = entry_for_output(&all.original, output)?;
+            let entry = resolve(
+                directory,
+                system,
+                &config_key(output),
+                &fallback,
+                |s| validate_entry(s, output),
+                &mut controls,
+            )?;
+            entries.push((output.clone(), entry));
+        }
+        let refresh = if entries.iter().any(|(_, entry)| entry.identity.is_none()) {
+            // cosmic-bg ignores new output.* keys absent from its loaded map.
+            // Re-publish the unchanged list last so it reloads the new entries.
+            list_snapshot.take()
+        } else {
+            None
+        };
+        if let Some(list) = list_snapshot {
+            controls.push(list);
+        }
+        entries.insert(0, ("all".into(), all));
+        Ok(Self {
+            controls,
+            entries,
+            refresh,
+        })
+    }
+    pub fn current(&self) -> Result<String, String> {
+        let mut common = None;
+        for (output, entry) in &self.entries {
+            let source = configured_source(&entry.original, output)?;
+            if let Some(previous) = &common {
+                if previous != &source {
+                    return Ok(String::new());
+                }
+            } else {
+                common = Some(source);
+            }
+        }
+        Ok(common.flatten().unwrap_or_default())
+    }
+    pub fn writable(&self) -> Result<(), String> {
+        use std::os::unix::ffi::OsStrExt;
+        for snapshot in self
+            .entries
+            .iter()
+            .map(|(_, snapshot)| snapshot)
+            .chain(self.refresh.iter())
+        {
+            let parent = &snapshot.parents[0].0;
+            for path in std::iter::once(parent.as_path())
+                .chain(snapshot.identity.as_ref().map(|_| snapshot.path.as_path()))
+            {
+                let path = std::ffi::CString::new(path.as_os_str().as_bytes())
+                    .map_err(|e| e.to_string())?;
+                // SAFETY: CString lives through syscall; no output pointer.
+                if unsafe {
+                    libc::faccessat(libc::AT_FDCWD, path.as_ptr(), libc::W_OK, libc::AT_EACCESS)
+                } != 0
+                {
+                    return Err("COSMIC wallpaper config is read-only".into());
+                }
+            }
+        }
+        Ok(())
     }
     pub fn apply(self, image: &Path) -> Result<(), String> {
-        let writes = self
+        let mut writes = self
             .entries
             .into_iter()
             .map(|(output, snapshot)| {
@@ -296,8 +575,37 @@ impl Plan {
                     .map(|replacement| (snapshot, replacement))
             })
             .collect::<Result<Vec<_>, _>>()?;
+        if let Some(list) = self.refresh {
+            let text = list.original.clone();
+            writes.push((list, text));
+        }
         commit(writes, &self.controls)
     }
+}
+
+const PROFILE: &str = "cosmic/com.system76.CosmicBackground/v1";
+pub fn from_environment() -> Result<Plan, String> {
+    let absolute = |name: &str| {
+        std::env::var_os(name)
+            .map(PathBuf::from)
+            .filter(|p| p.is_absolute())
+    };
+    let home = absolute("HOME");
+    let config = absolute("XDG_CONFIG_HOME")
+        .or_else(|| home.as_ref().map(|p| p.join(".config")))
+        .ok_or("COSMIC config home is unavailable")?;
+    let data_home =
+        absolute("XDG_DATA_HOME").or_else(|| home.as_ref().map(|p| p.join(".local/share")));
+    let data_dirs = std::env::var_os("XDG_DATA_DIRS")
+        .filter(|s| !s.is_empty())
+        .unwrap_or_else(|| "/usr/local/share:/usr/share".into());
+    let system = data_home
+        .into_iter()
+        .chain(std::env::split_paths(&data_dirs).filter(|p| p.is_absolute()))
+        .map(|p| p.join(PROFILE))
+        .find(|p| p.is_dir());
+    Plan::load_with_defaults(&config.join(PROFILE), system.as_deref())
+        .map_err(|error| format!("wallpaper_config_invalid: {error}"))
 }
 
 #[cfg(test)]
@@ -357,6 +665,138 @@ mod tests {
         fn drop(&mut self) {
             let _ = fs::remove_dir_all(&self.0);
         }
+    }
+    #[test]
+    fn defaults_probe_does_not_write_and_apply_creates_only_missing_entry() {
+        let fixture = Fixture::new();
+        let directory = fixture
+            .0
+            .join("new-config/cosmic/com.system76.CosmicBackground/v1");
+        let system = fixture.0.join("system");
+        fs::create_dir(&system).unwrap();
+        let default = FALLBACK.replace("3600", "73").replace("Lanczos", "Nearest");
+        fs::write(system.join("all"), &default).unwrap();
+        let plan = Plan::load_with_defaults(&directory, Some(&system)).unwrap();
+        plan.writable().unwrap();
+        assert!(!directory.exists());
+        assert!(plan.current().unwrap().contains("orion_nebula"));
+        plan.apply(Path::new("/new.png")).unwrap();
+        let actual = fs::read_to_string(directory.join("all")).unwrap();
+        assert_eq!(
+            actual,
+            replace_output_source(&default, "all", Path::new("/new.png")).unwrap()
+        );
+        assert_eq!(
+            fs::metadata(directory.join("all")).unwrap().mode() & 0o777,
+            0o600
+        );
+        assert!(!directory.join("same-on-all").exists());
+        assert_eq!(fs::read_to_string(system.join("all")).unwrap(), default);
+        assert_eq!(fs::read_dir(&directory).unwrap().count(), 1);
+    }
+    #[test]
+    fn invalid_system_default_uses_builtin_but_invalid_user_config_is_preserved() {
+        let fixture = Fixture::new();
+        let directory = fixture.0.join("new-config");
+        let system = fixture.0.join("system");
+        fs::create_dir(&system).unwrap();
+        fs::write(system.join("all"), FALLBACK.replace("true", "#true")).unwrap();
+        Plan::load_with_defaults(&directory, Some(&system))
+            .unwrap()
+            .apply(Path::new("/new.png"))
+            .unwrap();
+        assert_eq!(
+            fs::read_to_string(directory.join("all")).unwrap(),
+            replace_source_for_test()
+        );
+        fs::write(directory.join("all"), "invalid local override").unwrap();
+        assert!(Plan::load_with_defaults(&directory, Some(&system)).is_err());
+        assert_eq!(
+            fs::read_to_string(directory.join("all")).unwrap(),
+            "invalid local override"
+        );
+        fn replace_source_for_test() -> String {
+            replace_output_source(FALLBACK, "all", Path::new("/new.png")).unwrap()
+        }
+    }
+    #[test]
+    fn absent_output_entries_are_created_with_output_identity_and_list_refresh() {
+        let fixture = Fixture::new();
+        for key in ["all", "output.DP-1", "output.HDMI-1"] {
+            fs::remove_file(fixture.0.join(key)).unwrap();
+        }
+        let before_list = fs::read(fixture.0.join("backgrounds")).unwrap();
+        let plan = Plan::load_with_defaults(&fixture.0, None).unwrap();
+        assert!(plan.refresh.is_some());
+        plan.apply(Path::new("/new.png")).unwrap();
+        for output in ["all", "DP-1", "HDMI-1"] {
+            let document = fs::read_to_string(fixture.0.join(config_key(output))).unwrap();
+            assert_eq!(
+                configured_source(&document, output).unwrap().as_deref(),
+                Some("/new.png")
+            );
+        }
+        assert_eq!(
+            fs::read(fixture.0.join("backgrounds")).unwrap(),
+            before_list
+        );
+        assert_eq!(
+            fs::read_to_string(fixture.0.join("same-on-all")).unwrap(),
+            "false"
+        );
+    }
+    #[test]
+    fn creation_conflict_and_failed_creation_rollback_preserve_external_data() {
+        let fixture = Fixture::new();
+        let path = fixture.0.join("new-entry");
+        let absent = Snapshot::absent(&path, "virtual default".into()).unwrap();
+        fs::write(&path, "new external file").unwrap();
+        assert!(commit(vec![(absent, "replacement".into())], &[]).is_err());
+        assert_eq!(fs::read_to_string(&path).unwrap(), "new external file");
+        fs::remove_file(&path).unwrap();
+        let absent = Snapshot::absent(&path, "virtual default".into()).unwrap();
+        let error = commit_with(vec![(absent, "replacement".into())], &[], |index| {
+            if index == 1 {
+                Err("post-create failure".into())
+            } else {
+                Ok(())
+            }
+        })
+        .unwrap_err();
+        assert!(error.contains("rollback verified"), "{error}");
+        assert!(!path.exists());
+        let absent = Snapshot::absent(&path, "virtual default".into()).unwrap();
+        let error = commit_with(vec![(absent, "replacement".into())], &[], |index| {
+            if index == 1 {
+                fs::write(&path, "new external file").unwrap();
+                Err("post-create external edit".into())
+            } else {
+                Ok(())
+            }
+        })
+        .unwrap_err();
+        assert!(error.contains("partial COSMIC state"), "{error}");
+        assert_eq!(fs::read_to_string(&path).unwrap(), "new external file");
+        assert!(!fs::read_dir(&fixture.0).unwrap().any(|e| e
+            .unwrap()
+            .file_name()
+            .to_string_lossy()
+            .starts_with(".deskmorph-")));
+    }
+    #[test]
+    fn default_change_and_read_only_probe_fail_without_overwriting() {
+        let fixture = Fixture::new();
+        let system = fixture.0.join("system");
+        fs::create_dir(&system).unwrap();
+        let directory = fixture.0.join("new-config");
+        let plan = Plan::load_with_defaults(&directory, Some(&system)).unwrap();
+        fs::write(system.join("all"), FALLBACK).unwrap();
+        assert!(plan.apply(Path::new("/new.png")).is_err());
+        assert!(!directory.exists());
+        let plan = fixture.load();
+        fs::set_permissions(fixture.0.join("all"), fs::Permissions::from_mode(0o400)).unwrap();
+        assert!(plan.writable().is_err());
+        assert!(fixture.contents().iter().all(|s| s.contains("/old.png")));
     }
     #[test]
     fn existing_outputs_apply_and_preflight_errors_write_nothing() {

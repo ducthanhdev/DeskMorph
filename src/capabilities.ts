@@ -7,6 +7,7 @@ const reasonKeys: Record<string, MessageKey> = {
   window_activation_unsupported: "activateUnavailable", window_close_unsupported: "closeUnavailable",
   xkill_unavailable: "forceUnavailable", wallpaper_adapter_unsupported: "wallpaperAdapterUnavailable",
   wallpaper_schema_unavailable: "wallpaperSchemaUnavailable", wallpaper_setting_unavailable: "wallpaperSchemaUnavailable",
+  wallpaper_config_invalid: "wallpaperConfigInvalid",
   wallpaper_read_only: "wallpaperReadOnly", dock_placement_unverified: "dockPlacementUnavailable",
   dock_autohide_unverified: "autoHideUnavailable", workspaces_not_implemented: "workspacesDevelopment",
 };

@@ -14,7 +14,7 @@ Dock tùy biến cho Linux, xây bằng React 19, TypeScript và Tauri 2/Rust. M
 | --- | --- |
 | Pop!_OS 24.04, GNOME 46, X11, x86_64 | Môi trường kiểm thử tham chiếu; chưa qua toàn bộ cổng phát hành |
 | Quản lý cửa sổ X11 | Adapter X11; cần `xprop` và DISPLAY hợp lệ |
-| GNOME wallpaper | GSettings; gallery/shuffle/scheduler đã có native tests |
+| Hình nền GNOME / COSMIC | GNOME GSettings; COSMIC RON v1 qua UI Apply/error/Retry/Shuffle trên cosmic-bg1.11.0 và compositor lồng; xem [phạm vi](docs/WALLPAPER.md). KDE chưa bật |
 | Audio | `pactl` JSON + PulseAudio hoặc PipeWire PulseAudio; native test bằng null sink |
 | Media | MPRIS trên session bus; hai fixture players đã qua test; ảnh bìa chỉ nhận file cục bộ |
 | Pin/mạng | UPower display aggregate và NetworkManager; có trạng thái thiếu service |
@@ -130,7 +130,7 @@ Stress popup tự restart profile test và dùng Hidden overrides trong XDG_DATA
 - Không thấy Dock: mở lại Studio; kiểm tra “Bật Dock”, màn hình đã chọn và session X11/xprop. Wayland native hiện chưa có adapter quản lý cửa sổ.
 - WebKit render trống trên máy có lỗi DMA-BUF: thử chạy với `WEBKIT_DISABLE_DMABUF_RENDERER=1`; desktop entry do app đăng ký đã thêm biến này.
 - Audio không khả dụng: kiểm tra `pactl info` và PulseAudio/PipeWire PulseAudio của phiên người dùng. App vẫn dùng được khi service thiếu.
-- Hình nền không đổi: adapter hiện chỉ cho GNOME, kiểm tra schema/writable settings; lỗi được hiển thị trong gallery/lịch.
+- Hình nền không đổi: GNOME cần schema/writable settings; COSMIC cần cosmic-bg và cấu hình RON v1 hợp lệ, target ghi được. Không ghi đè user config lỗi. Nếu kết quả ghi chưa xác minh, kiểm hình nền và thiết lập từng màn hình trước thử lại. Xem [WALLPAPER.md](docs/WALLPAPER.md).
 - Test bị chặn focus hoặc active XID là `0x0`: kiểm tra desktop có khóa màn hình hay không; không bỏ qua PID guard.
 - Mở app lần nữa chỉ hiện Studio: đó là hành vi single-instance. Dùng profile riêng nếu cần chạy instance kiểm thử.
 - Lỗi instance không xác nhận mở Studio: instance development cũ có thể chưa hỗ trợ ACK của giao thức mới. Thoát instance đó bình thường rồi mở lại; không xóa lock/socket khi tiến trình còn chạy. Các lỗi startup trả exit code 1 và thông điệp trên stderr.
