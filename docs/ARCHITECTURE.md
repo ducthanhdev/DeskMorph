@@ -152,3 +152,10 @@ Thông báo lỗi hiển thị qua `ErrorText`/`i18n/errors.ts` được dịch 
 ## Wayland: ranh giới prototype và sản phẩm
 
 Sản phẩm giữ capability placement/auto-hide/window management tắt trên GNOME Wayland. `tests/wayland_lab.py --prototype` nạp extension GNOME 46 vào compositor/bus/runtime/settings riêng: actor St thay cho UI Tauri, Meta.Window để enumerate/activate/close hai GTK native fixture. Pointer ảo chỉ thuộc compositor lab. Token và PID/ID fixture hạn chế endpoint thử nghiệm; không coi đây là giao thức production. Disable gỡ actor/timer/endpoint; supervisor dọn toàn bộ lab. G9.2 chứng minh đường Shell extension có thể thực hiện các primitive; [quyết định G9.3](WAYLAND_ADAPTER_DECISION.md) công bố giới hạn và giữ G9.4 mở cho kiểm thử sản phẩm. Không cài extension lab lên desktop thường.
+
+
+## CLI launcher và vòng đời startup
+
+`deskmorph --launcher` dùng request có kiểu, giữ wire `studio` cho lệnh mặc định và thêm JSON launcher/token giới hạn 4096 byte, deadline đọc 500ms. Token không rỗng, tối đa 1024 byte, không control characters; lấy từ XDG_ACTIVATION_TOKEN hoặc DESKTOP_STARTUP_ID, chuyển cho GTK startup ID. Socket ACK chỉ xác nhận dispatch/queue, không xác nhận compositor cấp focus.
+
+Cold launcher giữ Studio ẩn, chờ surface đăng ký listener và cấu hình publish xong trước dispatch qua GTK idle. Dock không chủ động lấy focus khi map. Launcher CLI dùng cùng WebView nhưng là toplevel thường: titlebar, task switcher, không keep-above, không anchor/set_position, không outside-click watcher và không tự ẩn khi blur. Mở popup từ Dock khôi phục title/hints/blur policy cũ. Generation vẫn bảo vệ launch completion và Escape. Vị trí Wayland do compositor quyết định; layout chỉ áp position khi adapter có capability. Native Wayland lab đã qua CLI/search/Escape với explicit lab activation; chưa chứng minh shortcut/token thực.

@@ -173,7 +173,7 @@ Phụ thuộc G2/G4; mỗi tiện ích là module có thể bật/tắt.
 - [x] G8.6 Phím tắt launcher có thể tùy chỉnh; phát hiện đăng ký thất bại/xung đột, cho đổi/tắt; không chiếm Super/Alt+Space mặc định khi chưa kiểm tra môi trường.
 - [ ] G8.7 Trên Wayland, thử global shortcuts portal theo compositor; nếu thiếu thì cung cấp hướng dẫn gán phím trong desktop.
 
-G8 hiện đã kiểm thử UPower/NetworkManager và CPU/RAM trên máy tham chiếu, gồm service không khả dụng. G8.4/G8.5 có fixture GIO/native cho monitor fallback, custom/missing Downloads và Trash handler; Downloads thật mở đúng qua COSMIC Files. Trash trên desktop tham chiếu vẫn tắt vì thiếu handler đã xác minh. G8.7 Wayland portal/hướng dẫn desktop vẫn chưa hoàn tất.
+G8 hiện đã kiểm thử UPower/NetworkManager và CPU/RAM trên máy tham chiếu, gồm service không khả dụng. G8.4/G8.5 có fixture GIO/native cho monitor fallback, custom/missing Downloads và Trash handler; Downloads thật mở đúng qua COSMIC Files. Trash trên desktop tham chiếu vẫn tắt vì thiếu handler đã xác minh. G8.7 đã có CLI `--launcher` và hướng dẫn vi/en; native cold/warm/search/Escape, Dock tắt và close đã qua trong [Wayland lab](benchmarks/wayland-launcher-command-2026-10-29.json). Phím desktop gán/gỡ/xung đột và activation token thực chưa kiểm, nên G8.7 vẫn mở.
 
 Tiêu chí: widget không có phần cứng/service tự ẩn hoặc báo thiếu rõ; phím tắt không làm mất thao tác desktop đã có; trạng thái tiếp tục đúng sau suspend/resume.
 

@@ -17,7 +17,34 @@ use std::{
     },
     time::Duration,
 };
-use tauri::{AppHandle, Manager};
+use tauri::AppHandle;
+use serde::{Deserialize, Serialize};
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub enum Request { Studio, Launcher { activation_token: Option<String> } }
+impl Request {
+    pub fn from_args(args: impl IntoIterator<Item = String>) -> Result<Self, String> {
+        let args: Vec<_> = args.into_iter().collect();
+        match args.as_slice() {
+            [] => Ok(Self::Studio),
+            [flag] if flag == "--launcher" => {
+                let activation_token = std::env::var("XDG_ACTIVATION_TOKEN").or_else(|_| std::env::var("DESKTOP_STARTUP_ID")).ok();
+                let request = Self::Launcher { activation_token };
+                request.validate()?; Ok(request)
+            }
+            _ => Err("Usage: deskmorph [--launcher]".into()),
+        }
+    }
+    fn validate(&self) -> Result<(), String> {
+        if let Self::Launcher { activation_token: Some(token) } = self {
+            if token.is_empty() || token.len() > 1024 || token.chars().any(char::is_control) { return Err("instance_activation_token_invalid".into()); }
+        }
+        Ok(())
+    }
+    fn bytes(&self) -> Vec<u8> {
+        if *self == Self::Studio { b"studio".to_vec() } else { serde_json::to_vec(self).expect("serializable request") }
+    }
+}
 extern "C" {
     fn flock(fd: i32, operation: i32) -> i32;
     fn geteuid() -> u32;
@@ -30,7 +57,7 @@ pub struct InstanceGuard {
     worker: std::sync::Mutex<Option<std::thread::JoinHandle<()>>>,
 }
 
-fn read_request(stream: &mut UnixStream) -> Result<(), String> {
+fn read_request(stream: &mut UnixStream) -> Result<Request, String> {
     let deadline = std::time::Instant::now() + Duration::from_millis(500);
     let mut request = Vec::new();
     loop {
@@ -40,12 +67,12 @@ fn read_request(stream: &mut UnixStream) -> Result<(), String> {
         stream
             .set_read_timeout(Some(remaining))
             .map_err(|e| e.to_string())?;
-        let mut chunk = [0; 17];
+        let mut chunk = [0; 256];
         match stream.read(&mut chunk) {
             Ok(0) => break,
             Ok(n) => {
                 request.extend_from_slice(&chunk[..n]);
-                if request.len() > 16 {
+                if request.len() > 4096 {
                     return Err("instance_request_invalid".into());
                 }
             }
@@ -53,23 +80,21 @@ fn read_request(stream: &mut UnixStream) -> Result<(), String> {
             Err(e) => return Err(format!("instance_request_read: {e}")),
         }
     }
-    if request == b"studio" {
-        Ok(())
-    } else {
-        Err("instance_request_invalid".into())
-    }
+    let request = if request == b"studio" { Request::Studio }
+        else { serde_json::from_slice::<Request>(&request).map_err(|_| "instance_request_invalid")? };
+    request.validate()?; Ok(request)
 }
 impl InstanceGuard {
     /// None means a running instance accepted the request.
-    pub fn acquire(key: &str) -> Result<Option<Self>, String> {
+    pub fn acquire(key: &str, request: &Request) -> Result<Option<Self>, String> {
         let uid = unsafe { geteuid() };
         let root = std::env::var_os("XDG_RUNTIME_DIR")
             .map(PathBuf::from)
             .unwrap_or_else(std::env::temp_dir)
             .join(format!("deskmorph-{uid}"));
-        Self::acquire_in(key, root, uid)
+        Self::acquire_in(key, root, uid, request)
     }
-    fn acquire_in(key: &str, root: PathBuf, uid: u32) -> Result<Option<Self>, String> {
+    fn acquire_in(key: &str, root: PathBuf, uid: u32, request: &Request) -> Result<Option<Self>, String> {
         match fs::create_dir(&root) {
             Ok(()) => fs::set_permissions(&root, fs::Permissions::from_mode(0o700))
                 .map_err(|e| e.to_string())?,
@@ -105,7 +130,7 @@ impl InstanceGuard {
                     stream
                         .set_write_timeout(Some(Duration::from_secs(1)))
                         .map_err(|e| e.to_string())?;
-                    stream.write_all(b"studio").map_err(|e| e.to_string())?;
+                    stream.write_all(&request.bytes()).map_err(|e| e.to_string())?;
                     stream
                         .shutdown(std::net::Shutdown::Write)
                         .map_err(|e| e.to_string())?;
@@ -121,7 +146,7 @@ impl InstanceGuard {
                         return Err(format!(
                             "instance_forward_failed: {}",
                             if response.is_empty() {
-                                "Phiên đang chạy chưa xác nhận mở Studio"
+                                "Phiên đang chạy chưa xác nhận yêu cầu"
                             } else {
                                 &response
                             }
@@ -131,7 +156,7 @@ impl InstanceGuard {
                 }
                 std::thread::sleep(Duration::from_millis(50));
             }
-            return Err("Phiên DeskMorph hiện tại chưa nhận được yêu cầu mở Studio".into());
+            return Err("Phiên DeskMorph hiện tại chưa nhận được yêu cầu".into());
         }
         match fs::remove_file(&path) {
             Ok(()) => (),
@@ -150,7 +175,7 @@ impl InstanceGuard {
     }
     pub fn start(self, app: AppHandle) -> Result<Self, String> {
         let shutdown = self.shutdown.clone();
-        self.start_with(move || {
+        self.start_with(move |request| {
             let (tx, rx) = std::sync::mpsc::sync_channel(1);
             let handle = app.clone();
             let stopping = shutdown.clone();
@@ -159,12 +184,7 @@ impl InstanceGuard {
                     if stopping.load(Ordering::Relaxed) {
                         return Err("instance_stopping".into());
                     }
-                    let window = handle
-                        .get_webview_window("main")
-                        .ok_or("instance_window_missing")?;
-                    window.show().map_err(|e| e.to_string())?;
-                    window.unminimize().map_err(|e| e.to_string())?;
-                    window.set_focus().map_err(|e| e.to_string())
+                    super::dispatch_request(handle, request)
                 })();
                 let _ = tx.send(result);
             })
@@ -175,7 +195,7 @@ impl InstanceGuard {
     }
     fn start_with(
         self,
-        open_studio: impl Fn() -> Result<(), String> + Send + 'static,
+        dispatch: impl Fn(Request) -> Result<(), String> + Send + 'static,
     ) -> Result<Self, String> {
         let listener = self.listener.try_clone().map_err(|e| e.to_string())?;
         let shutdown = self.shutdown.clone();
@@ -185,11 +205,11 @@ impl InstanceGuard {
                 while !shutdown.load(Ordering::Relaxed) {
                     match listener.accept() {
                         Ok((mut stream, _)) => {
-                            let result = read_request(&mut stream).and_then(|_| {
+                            let result = read_request(&mut stream).and_then(|request| {
                                 if shutdown.load(Ordering::Relaxed) {
                                     Err("instance_stopping".into())
                                 } else {
-                                    open_studio()
+                                    dispatch(request)
                                 }
                             });
                             let response = match result {
@@ -227,18 +247,33 @@ impl Drop for InstanceGuard {
 mod tests {
     use super::*;
     #[test]
+    fn request_arguments_and_activation_tokens_are_bounded() {
+        assert_eq!(Request::from_args(Vec::<String>::new()).unwrap(), Request::Studio);
+        assert!(Request::from_args(["--unknown".into()]).is_err());
+        assert!(Request::from_args(["--launcher".into(), "--unknown".into()]).is_err());
+        for token in ["".into(), "a\nb".into(), "x".repeat(1025)] {
+            assert!(Request::Launcher { activation_token: Some(token) }.validate().is_err());
+        }
+        let expected = Request::Launcher { activation_token: Some("owned-lab-token".into()) };
+        assert_eq!(serde_json::from_slice::<Request>(&expected.bytes()).unwrap(), expected);
+        assert!(serde_json::from_str::<Request>(r#"{"Launcher":{"activation_token":null,"extra":"no"}}"#).is_err());
+    }
+    #[test]
     #[ignore = "requires native Unix socket access; run cargo test -- --include-ignored outside sandbox"]
     fn second_instance_forwards_without_acquiring_lock_and_stale_socket_recovers() {
         let key = format!("test-instance-{}", std::process::id());
         let root =
             std::env::temp_dir().join(format!("deskmorph-instance-test-{}", std::process::id()));
-        let acquire = || InstanceGuard::acquire_in(&key, root.clone(), unsafe { geteuid() });
+        let acquire = || InstanceGuard::acquire_in(&key, root.clone(), unsafe { geteuid() }, &Request::Studio);
         let opened = Arc::new(std::sync::atomic::AtomicUsize::new(0));
         let count = opened.clone();
+        let received = Arc::new(std::sync::Mutex::new(Vec::new()));
+        let observed = received.clone();
         let first = acquire()
             .unwrap()
             .unwrap()
-            .start_with(move || {
+            .start_with(move |request| {
+                observed.lock().unwrap().push(request);
                 count.fetch_add(1, Ordering::SeqCst);
                 Ok(())
             })
@@ -254,6 +289,10 @@ mod tests {
         stream.read_to_string(&mut response).unwrap();
         assert_eq!(response, "ok");
         assert_eq!(opened.load(Ordering::SeqCst), 2);
+        let launcher = Request::Launcher { activation_token: Some("lab-token".into()) };
+        assert!(InstanceGuard::acquire_in(&key, root.clone(), unsafe { geteuid() }, &launcher).unwrap().is_none());
+        assert_eq!(opened.load(Ordering::SeqCst), 3);
+        assert_eq!(*received.lock().unwrap(), vec![Request::Studio, Request::Studio, launcher]);
         for bytes in [b"stu".as_slice(), b"studio-unrecognized", b"".as_slice()] {
             let mut stream = UnixStream::connect(&first.path).unwrap();
             stream.write_all(bytes).unwrap();
@@ -265,14 +304,14 @@ mod tests {
                     || read.is_err_and(|e| e.kind() == std::io::ErrorKind::ConnectionReset)
             );
         }
-        assert_eq!(opened.load(Ordering::SeqCst), 2);
+        assert_eq!(opened.load(Ordering::SeqCst), 3);
         let path = first.path.clone();
         drop(first);
         assert!(!path.exists());
         let second = acquire()
             .unwrap()
             .unwrap()
-            .start_with(|| Err("fixture window error".into()))
+            .start_with(|_| Err("fixture window error".into()))
             .unwrap();
         assert!(second.path.exists());
         assert!(acquire().err().unwrap().contains("fixture window error"));

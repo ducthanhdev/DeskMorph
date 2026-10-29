@@ -207,6 +207,53 @@ fn show_studio(app: AppHandle) -> Result<(), String> {
     let window = app.get_webview_window("main").ok_or("Không tìm thấy Studio")?;
     window.show().and_then(|_| window.unminimize()).and_then(|_| window.set_focus()).map_err(|e| e.to_string())
 }
+#[derive(Default)]
+struct LauncherStartup(Mutex<(bool, Option<instance::Request>)>);
+fn dispatch_request(app: AppHandle, request: instance::Request) -> Result<(), String> {
+    match request {
+        instance::Request::Studio => {
+            app.state::<LauncherStartup>().0.lock().map_err(|_| "launcher_startup_lock")?.1 = None;
+            show_studio(app)
+        }
+        instance::Request::Launcher { activation_token } => {
+            let config_ready = app.state::<config::ConfigState>().0.lock().map_err(|_| "config_lock")?.initialized;
+            let state = app.state::<LauncherStartup>();
+            let mut startup = state.0.lock().map_err(|_| "launcher_startup_lock")?;
+            if !startup.0 || !config_ready {
+                startup.1 = Some(instance::Request::Launcher { activation_token });
+                return Ok(());
+            }
+            drop(startup);
+            popup::show_unanchored_launcher(&app, activation_token.as_deref()).map(|_| ())
+        }
+    }
+}
+#[tauri::command]
+fn launcher_surface_ready(app: AppHandle, window: tauri::WebviewWindow) -> Result<(), String> {
+    if window.label() != "dock-context-menu" { return Err("launcher_surface_invalid".into()); }
+    {
+        let state = app.state::<LauncherStartup>();
+        let mut startup = state.0.lock().map_err(|_| "launcher_startup_lock")?;
+        startup.0 = true;
+    }
+    flush_launcher_startup(&app);
+    Ok(())
+}
+fn flush_launcher_startup(app: &AppHandle) {
+    let handle = app.clone();
+    // Defer within the GTK loop until config publish has mapped the Dock. No
+    // delayed activation timer may steal focus from a newer user choice.
+    gio::glib::idle_add_local_once(move || {
+        let pending = {
+            let state = handle.state::<LauncherStartup>();
+            let mut startup = match state.0.lock() { Ok(value) => value, Err(_) => return };
+            if startup.0 { startup.1.take() } else { None }
+        };
+        if let Some(request) = pending {
+            if let Err(error) = dispatch_request(handle, request) { eprintln!("launcher_startup: {error}"); }
+        }
+    });
+}
 #[tauri::command]
 fn focus_dock(app: AppHandle) -> Result<(), String> {
     use gtk::prelude::*;
@@ -237,9 +284,15 @@ pub fn run() {
 }
 
 fn run_app() -> Result<(), String> {
+    let args: Vec<_> = std::env::args().skip(1).collect();
+    if args == ["--help"] || args == ["-h"] {
+        println!("Usage: deskmorph [--launcher]\n\nOpen Studio, or open the application launcher with --launcher.\nRequests target the running instance of the same profile.\nOn Wayland, the compositor decides placement and activation.");
+        return Ok(());
+    }
+    let request = instance::Request::from_args(args)?;
     catalogue_paths::prepare()?;
     let key = registration::config_root()?.join("com.ducthanhdev.deskmorph").to_string_lossy().into_owned();
-    let instance = match instance::InstanceGuard::acquire(&key)? {
+    let instance = match instance::InstanceGuard::acquire(&key, &request)? {
         Some(instance) => instance,
         None => return Ok(()),
     };
@@ -247,6 +300,7 @@ fn run_app() -> Result<(), String> {
     sys.refresh_all();
 
     tauri::Builder::default()
+        .manage(LauncherStartup(Mutex::new((false, if request == instance::Request::Studio { None } else { Some(request.clone()) }))))
         .manage(window_manager::WindowSnapshots::default())
         .manage(shortcuts::ShortcutState::default())
         .manage(system_widgets::SystemStatusState::default())
@@ -261,6 +315,13 @@ fn run_app() -> Result<(), String> {
             sys: Mutex::new(SystemSampler { sys, last: None }),
         })
         .setup(move |app| {
+            // Mapping the Dock is background UI. Keyboard entry uses an
+            // explicit focus_dock/shortcut request instead.
+            use gtk::prelude::*;
+            app.get_webview_window("taskbar").ok_or("instance_window_missing")?.gtk_window()?.set_focus_on_map(false);
+            if request != instance::Request::Studio {
+                app.get_webview_window("main").ok_or("instance_window_missing")?.hide()?;
+            }
             shortcuts::start(app.handle());
             popup::install_keyboard(app.handle()).map_err(std::io::Error::other)?;
             tooltip::install(app.handle()).map_err(std::io::Error::other)?;
@@ -295,7 +356,7 @@ fn run_app() -> Result<(), String> {
                 } else { api.prevent_close(); let _ = popup::hide(window.app_handle(), window.label(), None); }
             }
             if let tauri::WindowEvent::Focused(false) = event {
-                if matches!(window.label(), "dock-context-menu" | "calendar-flyout") && !window.is_focused().unwrap_or(false) {
+                if popup::dismiss_on_blur(window.app_handle(), window.label()) && !window.is_focused().unwrap_or(false) {
                     if let Some(generation) = popup::active_generation(window.app_handle(), window.label()) {
                         let window = window.clone();
                         std::thread::spawn(move || {
@@ -303,7 +364,7 @@ fn run_app() -> Result<(), String> {
                             std::thread::sleep(std::time::Duration::from_millis(120));
                             let check = window.clone();
                             let _ = window.run_on_main_thread(move || {
-                                if !check.is_focused().unwrap_or(false) {
+                                if popup::dismiss_on_blur(check.app_handle(), check.label()) && !check.is_focused().unwrap_or(false) {
                                     let _ = popup::hide(check.app_handle(), check.label(), Some(generation));
                                 }
                             });
@@ -330,6 +391,7 @@ fn run_app() -> Result<(), String> {
             applications::get_installed_apps,
             applications::launch_installed_app,
             show_app_launcher,
+            launcher_surface_ready,
             show_studio,
             focus_dock,
             quit_app,

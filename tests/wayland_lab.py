@@ -109,7 +109,7 @@ def session(root):
         '--virtual-monitor=1280x720', '--wayland-display=' + SOCKET])
 
 
-def probe(root, metadata):
+def probe(root, metadata, launcher=False):
     assert owned(metadata['gnomePid'], root)
     assert Path(f'/proc/{metadata["gnomePid"]}/exe').resolve().name == 'gnome-shell'
     bus = connection(metadata['busAddress'])
@@ -165,7 +165,32 @@ def probe(root, metadata):
             if owned(pid, root): pids.add(pid)
         except GLib.Error: pass  # A private helper may exit between ListNames and PID lookup.
     result['ownedBusPids'] = sorted(pids)
-    if metadata.get('DESKMORPH_PROTOTYPE_TOKEN'):
+    if launcher:
+        # The distro launcher may choose a systemd-backed accessibility broker,
+        # unavailable on this private session. Use a dedicated daemon/registry.
+        address = 'unix:path=' + str(root / 'a11y.sock')
+        config = root / 'a11y.conf'
+        config.write_text('<busconfig><type>accessibility</type><listen>' + address + '</listen><auth>EXTERNAL</auth><policy context="default"><allow user="*"/><allow own="*"/><allow send_destination="*"/><allow receive_sender="*"/></policy></busconfig>')
+        env['AT_SPI_BUS_ADDRESS'] = address
+        with (root / 'accessibility.log').open('w') as log:
+            a11y = subprocess.Popen(['dbus-daemon', '--nofork', '--config-file=' + str(config)], env=env, stdout=log, stderr=log)
+            registry = None
+            try:
+                deadline = time.monotonic() + 5
+                while not (root / 'a11y.sock').exists():
+                    assert a11y.poll() is None and time.monotonic() < deadline
+                    time.sleep(.1)
+                registry = subprocess.Popen(['/usr/libexec/at-spi2-registryd'], env=env, stdout=log, stderr=log)
+                with (root / 'launcher-probe.log').open('w') as output:
+                    subprocess.run(['/usr/bin/python3', str(Path(__file__).with_name('wayland_launcher_probe.py'))], env=env, stdout=output, stderr=output, timeout=120, check=True)
+            finally:
+                for child in (registry, a11y):
+                    if child and child.poll() is None:
+                        child.terminate()
+                        try: child.wait(timeout=5)
+                        except subprocess.TimeoutExpired: child.kill(); child.wait(timeout=5)
+        result['launcher'] = json.loads((root / 'launcher-result.json').read_text())
+    elif metadata.get('DESKMORPH_PROTOTYPE_TOKEN'):
         sys.path.insert(0, str(Path(__file__).with_name('wayland_prototype')))
         from probe import run as run_prototype
         result['prototype'] = run_prototype(root, metadata, bus, call)
@@ -173,7 +198,7 @@ def probe(root, metadata):
     return result
 
 
-def run(output, prototype=False):
+def run(output, prototype=False, launcher=False):
     # Reap private D-Bus service grandchildren as well as the direct supervisor.
     libc = C.CDLL(None)
     assert libc.prctl(36, 1, 0, 0, 0) == 0, 'Cannot establish child subreaper'
@@ -187,10 +212,13 @@ def run(output, prototype=False):
             GDK_BACKEND='wayland', WAYLAND_DISPLAY=SOCKET, LIBGL_ALWAYS_SOFTWARE='1')
         for key in ['DISPLAY', 'AT_SPI_BUS_ADDRESS', 'SESSION_MANAGER', 'DESKTOP_STARTUP_ID', 'XDG_SESSION_ID']:
             env.pop(key, None)
-        if prototype:
+        if prototype or launcher:
             env['DESKMORPH_PROTOTYPE_TOKEN'] = secrets.token_hex(32)
             extension = root / 'data/gnome-shell/extensions/deskmorph-lab@deskmorph.local'
             shutil.copytree(Path(__file__).with_name('wayland_prototype'), extension)
+            if launcher:
+                (extension / 'extension.js').rename(extension / 'base_extension.js')
+                shutil.copyfile(extension / 'launcher_extension.js', extension / 'extension.js')
             for key, value in [('enabled-extensions', "['deskmorph-lab@deskmorph.local']"), ('disable-user-extensions', 'false')]:
                 subprocess.run(['gsettings', 'set', 'org.gnome.shell', key, value], env=env, check=True)
         result = None
@@ -214,8 +242,8 @@ def run(output, prototype=False):
                     except GLib.Error: pass
                 time.sleep(.1)
             else: raise AssertionError('Owned compositor readiness timed out')
-            result = probe(root, metadata)
-            result.update(kind='GNOME headless extension prototype' if prototype else 'GNOME headless capability probe', hostDisplayUsed=False, inputInjected=prototype, hostInputInjected=False,
+            result = probe(root, metadata, launcher)
+            result.update(kind='GNOME headless launcher probe' if launcher else 'GNOME headless extension prototype' if prototype else 'GNOME headless capability probe', hostDisplayUsed=False, inputInjected=prototype or launcher, hostInputInjected=False,
                 unsafeModeEnabled=False, privateSettings=True, elapsedSeconds=round(time.monotonic() - started, 3))
         finally:
             if process:
@@ -253,6 +281,8 @@ def run(output, prototype=False):
             output.with_suffix('.log').write_text(log)
             if (root / 'fixture.log').exists():
                 output.with_suffix('.fixture.log').write_text((root / 'fixture.log').read_text())
+            for name in ('launcher-probe', 'deskmorph-launcher', 'accessibility'):
+                if (root / (name + '.log')).exists(): output.with_suffix('.' + name + '.log').write_text((root / (name + '.log')).read_text())
             assert not any(active(pid) for pid in pids), 'Owned lab process did not exit'
             if result:
                 result['ownedChildPids'] = sorted(pids)
@@ -270,7 +300,8 @@ if __name__ == '__main__':
     parser.add_argument('--output', type=Path)
     parser.add_argument('--session', type=Path, help=argparse.SUPPRESS)
     parser.add_argument('--prototype', action='store_true', help='Run lab-only GNOME extension and native window prototype')
+    parser.add_argument('--launcher-test', action='store_true', help='Exercise the actual DeskMorph CLI launcher on private Wayland')
     args = parser.parse_args()
     if args.session: session(args.session)
-    elif args.output: run(args.output.resolve(), args.prototype)
+    elif args.output: run(args.output.resolve(), args.prototype, args.launcher_test)
     else: parser.error('--output is required')

@@ -52,7 +52,7 @@ unsafe fn raw_buttons(display: *mut std::ffi::c_void, root: std::os::raw::c_ulon
 #[derive(Default)]
 pub struct PopupState(pub Mutex<Coordinator>);
 #[derive(Default)]
-pub struct Coordinator { generation: u64, active: Option<(&'static str, Rect)>, audio: bool }
+pub struct Coordinator { generation: u64, active: Option<(&'static str, Rect)>, audio: bool, dismiss_on_blur: bool }
 
 fn hidden_events(app: &AppHandle, label: &str, generation: u64) {
     let event = if label == "calendar-flyout" { "deskmorph:calendar-visibility" } else { "deskmorph:context-menu-visibility" };
@@ -89,6 +89,9 @@ pub fn is_audio_active(app: &AppHandle) -> bool {
 pub fn is_active(app: &AppHandle, label: &str) -> bool {
     app.state::<PopupState>().0.lock().map(|c| c.active.is_some_and(|(active, _)| active == label)).unwrap_or(false)
 }
+pub fn dismiss_on_blur(app: &AppHandle, label: &str) -> bool {
+    app.state::<PopupState>().0.lock().map(|c| c.dismiss_on_blur && c.active.is_some_and(|(active, _)| active == label)).unwrap_or(false)
+}
 /// Use the timestamp of the native shortcut event so the WM can distinguish
 /// explicit keyboard activation from a background application's focus request.
 pub fn focus_at(app: &AppHandle, label: &'static str, timestamp: u32) -> Result<(), String> {
@@ -116,9 +119,6 @@ fn after_mapping(callback: impl FnOnce() + 'static) {
     else { gio::glib::timeout_add_local_once(std::time::Duration::from_millis(delay), callback); }
 }
 pub fn show(app: &AppHandle, label: &'static str, anchor: i32, width: u32, height: u32, data: Option<serde_json::Value>) -> Result<bool, String> {
-    let state = app.state::<PopupState>();
-    let mut c = state.0.lock().map_err(|e| e.to_string())?;
-    if let Some(tooltip) = app.get_webview_window("dock-tooltip") { let _ = tooltip.hide(); }
     let dock = app.get_webview_window("taskbar").ok_or("Không tìm thấy Dock")?;
     if !dock.is_visible().map_err(|e| e.to_string())? { return Err("Dock đang tắt".into()); }
     let monitor = dock.current_monitor().map_err(|e| e.to_string())?.ok_or("Không tìm thấy màn hình")?;
@@ -130,6 +130,17 @@ pub fn show(app: &AppHandle, label: &'static str, anchor: i32, width: u32, heigh
     let top = position.y < area.y + area.height as i32 / 2;
     let anchor = geometry::anchor_x(dock_rect, anchor, dock.scale_factor().map_err(|e| e.to_string())?);
     let rect = geometry::popup_rect(area, dock_rect, scale, anchor, width, height, top);
+    present(app, label, Some(rect), data, None)
+}
+/// A desktop-managed launcher is an ordinary toplevel on Wayland. Its position
+/// belongs to the compositor; it does not require Dock placement or an anchor.
+pub fn show_unanchored_launcher(app: &AppHandle, token: Option<&str>) -> Result<bool, String> {
+    present(app, "dock-context-menu", None, Some(serde_json::json!({"mode":"launcher","appName":"Ứng dụng"})), token)
+}
+fn present(app: &AppHandle, label: &'static str, placement: Option<Rect>, data: Option<serde_json::Value>, token: Option<&str>) -> Result<bool, String> {
+    let state = app.state::<PopupState>();
+    let mut c = state.0.lock().map_err(|e| e.to_string())?;
+    if let Some(tooltip) = app.get_webview_window("dock-tooltip") { let _ = tooltip.hide(); }
     if let Some((old, _)) = c.active.take() {
         if let Some(window) = app.get_webview_window(old) { window.hide().map_err(|e| e.to_string())?; }
         hidden_events(app, old, c.generation);
@@ -137,10 +148,29 @@ pub fn show(app: &AppHandle, label: &'static str, anchor: i32, width: u32, heigh
     c.generation = c.generation.wrapping_add(1);
     let generation = c.generation;
     let window = app.get_webview_window(label).ok_or("Không tìm thấy popup")?;
+    if label == "dock-context-menu" {
+        // Reused by anchored popups and the ordinary CLI launcher. Reset all
+        // shell hints on every open so one mode cannot leak into the next.
+        let gtk = window.gtk_window().map_err(|e| e.to_string())?;
+        gtk.set_decorated(placement.is_none());
+        gtk.set_skip_taskbar_hint(placement.is_some());
+        gtk.set_keep_above(placement.is_some());
+        window.set_title(if placement.is_some() { "DeskMorph Context Menu" } else { "DeskMorph Launcher" }).map_err(|e| e.to_string())?;
+    }
     window.set_min_size(Some(PhysicalSize::new(1, 1))).map_err(|e| e.to_string())?;
-    window.set_size(PhysicalSize::new(rect.width, rect.height)).map_err(|e| e.to_string())?;
-    window.set_position(PhysicalPosition::new(rect.x, rect.y)).map_err(|e| e.to_string())?;
+    let rect = if let Some(rect) = placement {
+        window.set_size(PhysicalSize::new(rect.width, rect.height)).map_err(|e| e.to_string())?;
+        window.set_position(PhysicalPosition::new(rect.x, rect.y)).map_err(|e| e.to_string())?;
+        rect
+    } else {
+        window.set_size(tauri::LogicalSize::new(500., 580.)).map_err(|e| e.to_string())?;
+        Rect { x: 0, y: 0, width: 500, height: 580 }
+    };
+    if let Some(token) = token { window.gtk_window().map_err(|e| e.to_string())?.set_startup_id(token); }
     c.audio = data.as_ref().is_some_and(|data| data["mode"] == "audio");
+    // A compositor may deny activation to a command without an input token.
+    // Keep the ordinary launcher available for explicit user activation.
+    c.dismiss_on_blur = placement.is_some();
     if let Some(mut data) = data {
         data["popupGeneration"] = generation.into();
         window.emit("deskmorph:context-menu-data", data).map_err(|e| e.to_string())?;
@@ -172,7 +202,7 @@ pub fn show(app: &AppHandle, label: &'static str, anchor: i32, width: u32, heigh
             view.grab_focus();
         });
     }).map_err(|e| e.to_string())?;
-    watch_outside(app.clone(), label, generation, rect);
+    if placement.is_some() { watch_outside(app.clone(), label, generation, rect); }
     Ok(true)
 }
 /// Handle dismissal at the native toplevel as well as in the web document.

@@ -115,7 +115,10 @@ export const DockContextMenuStandalone = () => {
     let disposed = false;
     let stop: (() => void) | undefined;
     listen<DockContextMenuState>("deskmorph:context-menu-data", (event) => { if (!disposed) setMenu(event.payload); })
-      .then((unlisten) => { if (disposed) unlisten(); else stop = unlisten; }).catch(console.error);
+      .then((unlisten) => {
+        if (disposed) unlisten();
+        else { stop = unlisten; void invoke("launcher_surface_ready").catch(console.error); }
+      }).catch(console.error);
     // Native coordinator owns Escape and focus loss, using the active generation.
     return () => { disposed = true; stop?.(); };
   }, []);

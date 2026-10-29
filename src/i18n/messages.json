@@ -287,11 +287,11 @@
     "newWindow": "Mở cửa sổ mới",
     "focusDock": "Điều khiển Dock bằng bàn phím",
     "focusDockHelp": "Đưa focus vào Dock, kể cả khi tự ẩn. Dùng Tab/Shift+Tab để di chuyển, Enter để mở; Escape đóng popup. Dock giữ hiện trong lúc nhận focus.",
-    "shortcutDesktopTitle": "Mở Studio bằng phím của GNOME",
-    "shortcutDesktopSteps": "Mở Settings → Keyboard → View and Customize Shortcuts → Custom Shortcuts → Add. Đặt tên DeskMorph Studio, chọn tổ hợp còn trống và lưu. Không dùng Ctrl+Alt+F1–F12.",
+    "shortcutDesktopTitle": "Mở launcher bằng phím của GNOME",
+    "shortcutDesktopSteps": "Mở Settings → Keyboard → View and Customize Shortcuts → Custom Shortcuts → Add. Đặt tên DeskMorph Launcher, chọn tổ hợp còn trống và lưu. Không dùng Ctrl+Alt+F1–F12.",
     "shortcutDesktopCommand": "Trong ô Command, thay /absolute/path/deskmorph bằng đường dẫn tuyệt đối tới executable đã cài ở vị trí cố định. Giữ dấu ngoặc kép nếu đường dẫn có khoảng trắng; không nhập ~ hoặc $HOME thay đường dẫn.",
-    "shortcutDesktopLimits": "Lệnh này mở hoặc hiện lại Studio của cùng profile, chưa mở trực tiếp launcher. Compositor Wayland quyết định việc chuyển focus; đường phím này chưa được kiểm chứng trên Wayland.",
-    "shortcutDesktopRemove": "Để gỡ, xóa riêng mục DeskMorph Studio trong Custom Shortcuts. Tắt phím tắt trong DeskMorph không xóa phím do GNOME quản lý."
+    "shortcutDesktopLimits": "Thêm --launcher để mở cửa sổ tìm ứng dụng của cùng profile, kể cả khi Dock tắt. GNOME quyết định vị trí và focus; nếu chưa nhận focus, chọn cửa sổ DeskMorph Launcher từ trình chuyển cửa sổ. Đường phím desktop và activation token vẫn cần kiểm chứng trên Wayland.",
+    "shortcutDesktopRemove": "Để gỡ, xóa riêng mục DeskMorph Launcher trong Custom Shortcuts. Tắt phím tắt trong DeskMorph không xóa phím do GNOME quản lý."
   },
   "en": {
     "configRepaired": "Some configuration fields were repaired or reset to defaults; the original was kept in a recovery file.",
@@ -581,10 +581,10 @@
     "newWindow": "Open a new window",
     "focusDock": "Control Dock with keyboard",
     "focusDockHelp": "Focus the Dock, including when auto-hidden. Use Tab/Shift+Tab to move and Enter to open; Escape closes popups. The Dock stays visible while focused.",
-    "shortcutDesktopTitle": "Open Studio with a GNOME shortcut",
-    "shortcutDesktopSteps": "Open Settings → Keyboard → View and Customize Shortcuts → Custom Shortcuts → Add. Name it DeskMorph Studio, choose an unused key combination, and save. Avoid Ctrl+Alt+F1–F12.",
+    "shortcutDesktopTitle": "Open the launcher with a GNOME shortcut",
+    "shortcutDesktopSteps": "Open Settings → Keyboard → View and Customize Shortcuts → Custom Shortcuts → Add. Name it DeskMorph Launcher, choose an unused key combination, and save. Avoid Ctrl+Alt+F1–F12.",
     "shortcutDesktopCommand": "In Command, replace /absolute/path/deskmorph with the absolute path to the installed executable in a stable location. Keep quotes around paths containing spaces; do not use ~ or $HOME instead of the path.",
-    "shortcutDesktopLimits": "This command opens or restores Studio for the same profile; it does not open the launcher directly. The Wayland compositor decides focus activation; this shortcut path has not been verified on Wayland.",
-    "shortcutDesktopRemove": "To remove it, delete only DeskMorph Studio in Custom Shortcuts. Disabling the shortcut inside DeskMorph does not remove GNOME-managed shortcuts."
+    "shortcutDesktopLimits": "Add --launcher to open application search for the same profile, even when the Dock is disabled. GNOME controls placement and focus; if it is not focused, select DeskMorph Launcher in the window switcher. Desktop keybinding activation and tokens still need Wayland verification.",
+    "shortcutDesktopRemove": "To remove it, delete only DeskMorph Launcher in Custom Shortcuts. Disabling the shortcut inside DeskMorph does not remove GNOME-managed shortcuts."
   }
 }

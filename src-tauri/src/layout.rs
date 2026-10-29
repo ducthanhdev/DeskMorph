@@ -73,16 +73,17 @@ pub fn apply(app: &AppHandle) -> Result<bool, String> {
     // Once the requested size is acknowledged, correct position once. A newer
     // apply replaces this target; no timer or unbounded configure loop is used.
     let width_changes = window.outer_size().map_err(|e| e.to_string())?.width != rect.width;
-    app.state::<LayoutState>().0.lock().map_err(|e| e.to_string())?.pending_position = width_changes.then_some(rect);
+    let placement_available = crate::platform::dock_placement_available();
+    app.state::<LayoutState>().0.lock().map_err(|e| e.to_string())?.pending_position = (width_changes && placement_available).then_some(rect);
     window
         .set_min_size(Some(PhysicalSize::new(1, 1)))
         .map_err(|e| e.to_string())?;
     window
         .set_size(PhysicalSize::new(rect.width, rect.height))
         .map_err(|e| e.to_string())?;
-    window
-        .set_position(PhysicalPosition::new(rect.x, rect.y))
-        .map_err(|e| e.to_string())?;
+    if placement_available {
+        window.set_position(PhysicalPosition::new(rect.x, rect.y)).map_err(|e| e.to_string())?;
+    }
     Ok(true)
 }
 pub fn settle_size(app: &AppHandle, size: &PhysicalSize<u32>) -> Result<(), String> {

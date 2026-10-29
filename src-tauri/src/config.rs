@@ -343,7 +343,11 @@ pub fn get_config(app: AppHandle, state: tauri::State<ConfigState>, legacy: Opti
     let mut store = state.0.lock().map_err(|e| ConfigError::new("config_lock", e))?;
     let was_initialized = store.initialized;
     let snapshot = store.initialize(legacy)?;
-    if !was_initialized { publish(&app, &snapshot, None)?; }
+    if !was_initialized {
+        publish(&app, &snapshot, None)?;
+        let handle = app.clone();
+        app.run_on_main_thread(move || super::flush_launcher_startup(&handle)).map_err(|e| ConfigError::new("launcher_startup", e))?;
+    }
     Ok(snapshot)
 }
 fn check_retry_revision(expected: Option<u64>, current: u64) -> Result<()> {

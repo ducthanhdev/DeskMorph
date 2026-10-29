@@ -27,7 +27,7 @@ Supervisor chạy trong process group riêng; harness làm child subreaper, gi�
 
 [Bản ghi đầy đủ](benchmarks/wayland-survey-2026-10-29.json). G9.1 hoàn thành khảo sát. G9.2 đã bổ sung prototype Shell bên dưới; G9.3 chốt công bố giới hạn qua [quyết định adapter](WAYLAND_ADAPTER_DECISION.md). G9.4 chưa qua luồng sản phẩm. Scale phân số và hotplug của Dock thực vẫn thuộc G2.10–G2.11; một output headless scale 1 không thay thế các ca đó.
 
-Đã bổ sung [hướng dẫn GNOME gán/gỡ phím mở Studio](WAYLAND_SHORTCUTS.md), đối chiếu GNOME Help và schema cài trên máy; Studio cũng hiện hướng dẫn ngắn khi nhận diện GNOME Wayland. Chưa có CLI mở launcher hoặc bằng chứng custom shortcut/activation Wayland, nên G8.7 vẫn mở.
+Đã có [hướng dẫn GNOME gán/gỡ phím](WAYLAND_SHORTCUTS.md), đối chiếu GNOME Help/schema và hướng dẫn vi/en trong Studio. CLI `--launcher` đã qua native cold/warm trên Wayland lab; desktop shortcut/activation token thực chưa được kiểm, G8.7 vẫn mở.
 
 
 ## Prototype GNOME Shell — G9.2/G9.3

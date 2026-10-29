@@ -2,6 +2,8 @@
 
 ## Unreleased — development 0.1.0
 
+- Thêm `--launcher` cold/warm theo profile, mở tìm ứng dụng khi Dock tắt; cửa sổ thường có titlebar và compositor quản lý trên Wayland. Sửa thứ tự startup và Dock lấy focus khi map; giữ popup Dock dùng policy riêng.
+
 - Bổ sung prototype extension GNOME 46 trong compositor Wayland riêng: placement/auto-hide, enumerate/activate/close native fixture, kiểm identity và disable cleanup. Công bố giới hạn: chưa tích hợp adapter Wayland trong sản phẩm.
 - Sửa reconnect media khi session D-Bus restart; ghép owner với GUID bus, xóa controls stale và kiểm thử service PipeWire/Pulse thật trong lab riêng.
 

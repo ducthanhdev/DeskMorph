@@ -39,7 +39,7 @@ export function ShortcutSettings() {
       <summary role="button" aria-expanded={desktopGuideExpanded}>{t("shortcutDesktopTitle")}</summary>
       <p>{t("shortcutDesktopSteps")}</p>
       <p>{t("shortcutDesktopCommand")}</p>
-      <pre><code>env WEBKIT_DISABLE_DMABUF_RENDERER=1 "/absolute/path/deskmorph"</code></pre>
+      <pre><code>env WEBKIT_DISABLE_DMABUF_RENDERER=1 "/absolute/path/deskmorph" --launcher</code></pre>
       <p>{t("shortcutDesktopLimits")}</p>
       <p>{t("shortcutDesktopRemove")}</p>
     </details>}

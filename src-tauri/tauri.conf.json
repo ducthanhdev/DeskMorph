@@ -24,6 +24,7 @@
       {
         "label": "taskbar",
         "title": "DeskMorph Taskbar",
+        "focus": false,
         "url": "/?window=taskbar",
         "width": 1100,
         "height": 54,
