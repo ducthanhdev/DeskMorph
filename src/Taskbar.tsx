@@ -3,7 +3,7 @@ import { invoke } from "./ipc";
 import { useConfig } from "./config/store";
 import { dockMetrics, dockSurface } from "./dockAppearance";
 import { useI18n } from "./i18n/useI18n";
-import { desktopIdForPin, desktopIsMissing, installedForPin, launchCommandForPin } from "./appSearch";
+import { desktopIdForPin, desktopIsMissing, installedForClass, installedForPin, launchCommandForPin } from "./appSearch";
 import { useInstalledApps } from "./hooks/useInstalledApps";
 import { SystemWidgets } from "./components/SystemWidgets";
 import { AppIcon } from "./components/AppIcon";
@@ -18,6 +18,7 @@ import {
   SystemStats,
   OpenWindow,
   PinnedApp,
+  InstalledApp,
   DEFAULT_PINNED_APPS,
 } from "./types";
 import {
@@ -611,7 +612,7 @@ export const Taskbar: React.FC = () => {
     if (target >= 0 && targetId !== drag.id) void movePin(drag.id, target);
   };
 
-  const selectWindows = async (e: React.MouseEvent, windows: OpenWindow[], appName: string, appId?: string) => {
+  const selectWindows = async (e: React.MouseEvent, windows: OpenWindow[], appName: string, appId?: string, installed?: InstalledApp) => {
     const signal = lifetime.capture();
     if (windows.length === 1) {
       await handleActivateWindow(windows[0].id);
@@ -624,7 +625,7 @@ export const Taskbar: React.FC = () => {
     try {
       await invoke("show_dock_context_menu", {
         iconCenterX: Math.round(rect.left + rect.width / 2),
-        menuData: { mode: "windows", appName, windows, appId, isPinned: Boolean(appId) },
+        menuData: { mode: "windows", appName, windows, appId, desktopId: installed?.id, iconPath: installed?.iconPath, isPinned: Boolean(appId) },
       });
     } catch (err) {
       if (!signal.aborted) setContextMenuVisible(false);
@@ -780,7 +781,7 @@ export const Taskbar: React.FC = () => {
                   onClick={(e) => {
                     if (Date.now() < suppressClickUntil.current) return;
                     if (window) {
-                      void selectWindows(e, windows, pinned.name, pinned.id);
+                      void selectWindows(e, windows, pinned.name, pinned.id, installed);
                     } else {
                       launchPinned();
                     }
@@ -877,7 +878,7 @@ export const Taskbar: React.FC = () => {
                 const groupId = win.class_name.toLowerCase();
                 const isActive = windows.some((w) => w.is_active);
                 const visual = getAppVisual(win.class_name);
-                const installed = installedApps.find((app) => app.matchClasses.includes(win.class_name.toLowerCase()));
+                const installed = installedForClass(win.class_name, installedApps);
                 const magnifyScale = isMagnifyActive ? (magnifyScales[groupId] ?? 1) : 1;
 
                 return (
@@ -889,7 +890,7 @@ export const Taskbar: React.FC = () => {
                       else iconRefs.current.delete(groupId);
                     }}
                     className={`running-app-icon-btn ${isActive ? "app-active" : ""}`}
-                    onClick={(e) => void selectWindows(e, windows, win.class_name)}
+                    onClick={(e) => void selectWindows(e, windows, win.class_name, undefined, installed)}
                     onAuxClick={(e) => { if (e.button === 1 && installed) { e.preventDefault(); void handleLaunchApp(installed.id, `desktop:${installed.id}`); } }}
                     onContextMenu={(e) =>
                       openContextMenu(e, {

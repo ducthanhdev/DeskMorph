@@ -44,3 +44,12 @@ export function pinFromApp(app: InstalledApp): PinnedApp {
 export function desktopIsMissing(id: string | undefined, app: InstalledApp | undefined, status: { loading: boolean; error: string | null }): boolean {
   return id !== undefined && !app && !status.loading && !status.error;
 }
+
+/** Native class hints must identify one catalogue app before borrowing its icon. */
+export function installedForClass(className: string, apps: InstalledApp[]) {
+  const key = className.toLowerCase();
+  const exact = apps.filter((app) => app.id.replace(/\.desktop$/, "").toLowerCase() === key);
+  if (exact.length) return exact.length === 1 ? exact[0] : undefined;
+  const matches = apps.filter((app) => app.matchClasses.some((hint) => hint.toLowerCase() === key));
+  return matches.length === 1 ? matches[0] : undefined;
+}

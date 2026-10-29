@@ -73,14 +73,6 @@ pub struct Catalogue {
 #[derive(Default)]
 pub struct AppCatalogue(pub Mutex<Catalogue>);
 
-fn describe(app: gio::DesktopAppInfo) -> Option<InstalledApp> {
-    describe_with_icon(app, |icon| {
-        gtk::IconTheme::default()
-            .and_then(|theme| theme.lookup_by_gicon(icon, 64, gtk::IconLookupFlags::FORCE_SIZE))
-            .and_then(|info| info.filename())
-            .map(|p| p.to_string_lossy().into_owned())
-    })
-}
 fn describe_with_icon(
     app: gio::DesktopAppInfo,
     resolve_icon: impl FnOnce(&gio::Icon) -> Option<String>,
@@ -136,10 +128,19 @@ pub fn get_installed_apps(
             .refreshed
             .is_none_or(|t| t.elapsed() > Duration::from_secs(30))
     {
-        cache.apps = gio::AppInfo::all()
-            .into_iter()
-            .filter_map(|app| app.downcast::<gio::DesktopAppInfo>().ok())
-            .filter_map(describe)
+        let mut icons = app.path().app_cache_dir().ok().and_then(|root| {
+            let root = root.join("application-icons-v1");
+            let icons = crate::application_icons::IconCache::new(root.clone()).ok()?;
+            app.asset_protocol_scope().allow_directory(&root, false).ok()?;
+            Some(icons)
+        });
+        let theme = gtk::IconTheme::default();
+        let mut entries: Vec<_> = gio::AppInfo::all().into_iter()
+            .filter_map(|app| app.downcast::<gio::DesktopAppInfo>().ok()).collect();
+        // Capacity fallback must be stable even if GIO enumeration order changes.
+        entries.sort_by_key(|entry| entry.id());
+        cache.apps = entries.into_iter()
+            .filter_map(|app| describe_with_icon(app, |icon| icons.as_mut()?.resolve(icon, theme.as_ref())))
             .collect();
         cache.apps.sort_by(|a, b| {
             a.name
@@ -149,13 +150,6 @@ pub fn get_installed_apps(
         });
         cache.refreshed = Some(Instant::now());
         cache.dirty = false;
-    }
-    for info in &cache.apps {
-        if let Some(path) = &info.icon_path {
-            app.asset_protocol_scope()
-                .allow_file(path)
-                .map_err(|e| e.to_string())?;
-        }
     }
     Ok(cache.apps.clone())
 }

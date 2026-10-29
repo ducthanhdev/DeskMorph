@@ -83,3 +83,22 @@ Một launch lock theo instance chặn nhiều Enter/click/retry khi IPC chưa x
 ```
 
 Chạy hai ca riêng; mỗi ca khôi phục profile/process. Native chứng minh chọn/mở đúng ID, empty/Escape, lỗi executable bị xóa và retry sau restore, cùng outside/focus/shortcut. Component test điều khiển IPC pending để chứng minh chặn Enter/retry lặp và kiểm loading/error/render; không dùng executable chạy chậm làm bằng chứng IPC pending. [Bản ghi](benchmarks/launcher-2026-10-29.json).
+
+
+## Icon theme, raster và giới hạn cache
+
+GTK IconTheme chọn icon theo theme hiện tại, inheritance và hicolor; absolute FileIcon đọc trực tiếp từ đường native. application_icons.rs tạo PNG tối đa 64×64, giữ tỷ lệ, thay vì cấp WebView quyền đọc file icon gốc. Nguồn phải là file tuyệt đối có thể đọc, không quá 2 MiB và 16 triệu pixel theo metadata GdkPixbuf. SVG/PNG đã kiểm; format khác phụ thuộc loader GdkPixbuf cài trên máy. Nguồn thiếu/hỏng/quá lớn, cache không ghi được hoặc vượt capacity trả iconPath=null để app vẫn dùng được với icon dự phòng.
+
+Cache application-icons-v1 trong app cache có tối đa 512 PNG, mỗi file không quá 32 KiB (tối đa 16 MiB PNG, cộng file ghi tạm đang hoạt động). Key gồm canonical source path/size/mtime/ctime; thay nguồn hoặc theme resolve sang file khác tạo URL mới. Một lượt catalogue giữ các file đã trả, không evict chúng giữa lượt. Tới capacity thì icon dư dùng fallback; desktop ID được sort trước khi phân cache để lựa chọn ổn định. Lượt refresh sau có thể bỏ file cũ chưa dùng. Startup dọn file tạm đúng định dạng có producer PID đã thoát và PNG thuộc cache vượt giới hạn; không dọn file ngoài namespace quản lý.
+
+Asset scope khởi đầu rỗng. Khi đọc catalogue, native cho phép riêng thư mục cache icon không đệ quy; không thêm từng source icon hoặc từng version URL vào allow-list. Thumbnail wallpaper vẫn được cấp từng file, artwork dùng PNG data URL. GTK theme changed và AppInfoMonitor đánh dấu dirty/refresh metadata.
+
+Dock ghim dùng desktop identity/legacy mapping; Dock chưa ghim chỉ mượn icon khi class khớp desktop identity hoặc hints duy nhất. Class mơ hồ/không rõ dùng icon dự phòng. WindowList nhận desktop ID từ Dock, lấy icon mới từ catalogue cho header/row; không luôn vẽ AppWindow khi đã nhận diện được. AppIcon xử lý lỗi load và có thể phục hồi khi cache URL đổi.
+
+```sh
+cargo test --offline --manifest-path src-tauri/Cargo.toml --target-dir src-tauri/target/agent --lib -- --include-ignored
+/usr/bin/python3 tests/desktop_smoke.py --icon-render-smoke
+/usr/bin/python3 tests/desktop_smoke.py --window-list-smoke
+```
+
+Ca GTK chạy subprocess với IconTheme tùy chỉnh riêng (không đổi theme desktop), chứng minh inheritance/hicolor/absolute/missing/theme switch. Native đo pixel màu riêng trên launcher, pinned/unpinned Dock và row cửa sổ từ absolute SVG và hicolor PNG; kiểm app vẫn hiện khi icon thiếu và kiểm kích thước/cache thực. Đây là pixel ở scale tham chiếu X11, chưa chứng nhận native mixed DPI. [Bản ghi](benchmarks/application-icons-2026-10-29.json).

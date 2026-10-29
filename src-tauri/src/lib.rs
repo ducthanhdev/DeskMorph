@@ -7,6 +7,7 @@ mod wallpaper;
 mod tooltip;
 mod layout;
 mod applications;
+mod application_icons;
 mod catalogue_paths;
 mod instance;
 mod registration;

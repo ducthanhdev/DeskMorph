@@ -5,7 +5,7 @@ import ts from 'typescript';
 const source = ts.transpileModule(fs.readFileSync(new URL('../src/appSearch.ts', import.meta.url), 'utf8'), {
   compilerOptions: { module: ts.ModuleKind.ESNext },
 }).outputText;
-const { searchApps, normalizeSearch, installedForPin, pinFromApp, desktopIdForPin, launchCommandForPin, desktopIsMissing } = await import('data:text/javascript;base64,' + Buffer.from(source).toString('base64'));
+const { searchApps, normalizeSearch, installedForPin, pinFromApp, desktopIdForPin, launchCommandForPin, desktopIsMissing, installedForClass } = await import('data:text/javascript;base64,' + Buffer.from(source).toString('base64'));
 const app = (id, name, extra = {}) => ({ id, name, genericName: '', keywords: [], matchClasses: [], executable: '/bin/true', iconPath: null, actions: [], ...extra });
 
 test('Vietnamese search ignores accents, case and extra spaces', () => {
@@ -63,4 +63,12 @@ test('only successful catalogue absence marks an explicit desktop pin missing; s
   assert.equal(desktopIsMissing(undefined, undefined, { loading: false, error: null }), false);
   assert.equal(JSON.stringify(pin), original);
   assert.equal(launchCommandForPin(pin), 'desktop:removed.desktop');
+});
+
+test('window icons require unique class hints and prefer canonical desktop identity over overlapping executable hints', () => {
+  const apps = [app('org.example.Editor.desktop', 'Editor', { matchClasses: ['shared', 'editor'] }), app('other.desktop', 'Other', { matchClasses: ['shared', 'org.example.editor'] })];
+  assert.equal(installedForClass('SHARED', apps), undefined);
+  assert.equal(installedForClass('unknown', apps), undefined);
+  assert.equal(installedForClass('Editor', apps)?.id, 'org.example.Editor.desktop');
+  assert.equal(installedForClass('ORG.EXAMPLE.EDITOR', apps)?.id, 'org.example.Editor.desktop');
 });

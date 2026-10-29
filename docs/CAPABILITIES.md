@@ -27,3 +27,6 @@ Có `DISPLAY`, XWayland hoặc file XML protocol trên đĩa không chứng minh
 - Native `desktop_smoke.py --platform-tool-missing --inspect`: khởi động profile test với PATH rỗng, đọc được lỗi `xprop_unavailable` trong Studio và nút launcher vẫn tồn tại; không gửi input. Báo cáo `platform-tool-missing-result.json` trong thư mục test. Sau ca này khởi động lại profile với PATH thông thường.
 
 Đã có lab GNOME Wayland headless độc lập để khảo sát G9.1, ghi tại [WAYLAND_RESEARCH.md](WAYLAND_RESEARCH.md). Không đổi session desktop thật hoặc bật GNOME unsafe mode. Khảo sát compositor không chứng minh sản phẩm đã qua Wayland; G9.2–G9.4 và các ô chưa kiểm thử vẫn chưa đạt.
+
+
+Icon catalogue trên GNOME/X11 tham chiếu đã qua GTK theme inheritance/hicolor/absolute SVG/PNG và theme switch trên IconTheme riêng; native pixels đã xác minh launcher, Dock ghim/chưa ghim, window rows. Nguồn được rasterize tối đa 64 px vào cache 512 PNG/32 KiB mỗi file; nguồn lỗi/vượt giới hạn hoặc class mơ hồ dùng fallback. Scope asset chỉ thêm cache icon riêng không đệ quy, không thêm source file. Xem APPLICATION_CATALOGUE.md và benchmarks/application-icons-2026-10-29.json; không suy phép đo scale 1 thành mixed-DPI hoặc native Wayland.

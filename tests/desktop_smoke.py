@@ -69,6 +69,7 @@ if __name__ == '__main__':
     parser.add_argument('--pinning-smoke', action='store_true')
     parser.add_argument('--missing-app-smoke', action='store_true')
     parser.add_argument('--launcher-keyboard-smoke', action='store_true')
+    parser.add_argument('--icon-render-smoke', action='store_true')
     parser.add_argument('--catalogue-refresh-smoke', action='store_true')
     parser.add_argument('--force-close-smoke', action='store_true')
     parser.add_argument('--popup-smoke', action='store_true')
@@ -133,7 +134,7 @@ if __name__ == '__main__':
             raise RuntimeError('Cannot verify GNOME lock state; no native input will be sent')
         if re.search(r'\btrue\b', result.stdout):
             raise RuntimeError('GNOME desktop is locked; unlock it before native UI tests. No input was sent.')
-    input_tests = any((args.launcher_keyboard_smoke, args.missing_app_smoke, args.pinning_smoke, args.pin_identity_smoke, args.catalogue_refresh_smoke, args.exports_smoke, args.action, args.screenshot, args.basic, args.popup_smoke, args.focus_smoke, args.autohide_smoke, args.shortcut_smoke, args.lifecycle_smoke, args.registration_smoke, args.window_list_smoke, args.reorder_smoke, args.tooltip_smoke, args.launch_smoke, args.overflow_smoke, args.layout_smoke, args.indicator_smoke, args.mapping_smoke, args.internal_smoke, args.polling_smoke, args.launcher_smoke, args.studio_smoke, args.config_smoke, args.command_errors_smoke,
+    input_tests = any((args.icon_render_smoke, args.launcher_keyboard_smoke, args.missing_app_smoke, args.pinning_smoke, args.pin_identity_smoke, args.catalogue_refresh_smoke, args.exports_smoke, args.action, args.screenshot, args.basic, args.popup_smoke, args.focus_smoke, args.autohide_smoke, args.shortcut_smoke, args.lifecycle_smoke, args.registration_smoke, args.window_list_smoke, args.reorder_smoke, args.tooltip_smoke, args.launch_smoke, args.overflow_smoke, args.layout_smoke, args.indicator_smoke, args.mapping_smoke, args.internal_smoke, args.polling_smoke, args.launcher_smoke, args.studio_smoke, args.config_smoke, args.command_errors_smoke,
                        args.wallpaper_smoke, args.scheduler_smoke, args.library_stress, args.audio_smoke, args.media_smoke,
                        args.audio_exit, args.audio_unavailable, args.system_smoke, args.system_unavailable, args.system_open_smoke))
     if input_tests or args.geometry_smoke: require_unlocked_desktop()
@@ -144,10 +145,14 @@ if __name__ == '__main__':
         from gi.repository import Gtk, GLib, GdkX11
         import sys
         fixture_windows = {}
+        window_fixture_class = os.environ.get('DESKMORPH_WINDOW_FIXTURE_CLASS', 'DeskMorphWindowFixture') if args.window_fixture else 'DeskMorphWindowFixture'
+        if window_fixture_class != 'DeskMorphWindowFixture':
+            assert os.environ.get('DESKMORPH_CONFIG_HOME') == TEST_CONFIG
+            assert re.fullmatch(r'[A-Za-z][A-Za-z0-9]{0,63}', window_fixture_class)
         def new_fixture_window(index):
             assert 1 <= index <= (12 if args.indicator_fixture else 8) and index not in fixture_windows
             window = Gtk.Window(title=f'DeskMorph {"Indicator" if args.indicator_fixture else "Window"} Test {index}')
-            window.set_wmclass('deskmorph' if args.internal_fixture else 'deskmorph-mapping' if args.mapping_fixture else 'deskmorph-layout' if args.indicator_fixture else 'deskmorph-window-fixture', 'Deskmorph' if args.internal_fixture else 'DecodeTool' if args.mapping_fixture else 'DeskMorphLayout' if args.indicator_fixture else 'DeskMorphWindowFixture')
+            window.set_wmclass('deskmorph' if args.internal_fixture else 'deskmorph-mapping' if args.mapping_fixture else 'deskmorph-layout' if args.indicator_fixture else 'deskmorph-window-fixture', 'Deskmorph' if args.internal_fixture else 'DecodeTool' if args.mapping_fixture else 'DeskMorphLayout' if args.indicator_fixture else window_fixture_class)
             window.set_default_size(320, 180)
             window.set_focus_on_map(False)
             window.add(Gtk.Label(label=f'Cửa sổ kiểm thử {index}'))
@@ -691,6 +696,9 @@ if __name__ == '__main__':
         report = {'passed': passed, 'pid': app.get_process_id(), 'preferencesRestored': True}
         Path('/tmp/deskmorph-desktop-test/autohide-result.json').write_text(json.dumps(report, indent=2))
         print(json.dumps(report))
+    if args.icon_render_smoke:
+        from icon_render_smoke import run
+        app = run(app, TEST_CONFIG, click, focus_studio, native_keys, test_app, start_isolated_app, lambda current: globals().__setitem__('app', current))
     if args.launcher_keyboard_smoke:
         from launcher_keyboard_smoke import run
         app = run(app, TEST_CONFIG, click, focus_studio, native_keys, test_app, start_isolated_app, lambda current: globals().__setitem__('app', current))

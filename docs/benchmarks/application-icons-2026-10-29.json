@@ -1,0 +1,135 @@
+{
+  "date": "2026-10-29",
+  "tasks": [
+    "G3.11",
+    "G3.12"
+  ],
+  "frontendTests": {
+    "passed": 32,
+    "failed": 0
+  },
+  "rustTests": {
+    "passed": 57,
+    "failed": 0,
+    "ignored": 0
+  },
+  "frontendBuild": "passed",
+  "customProtocolBuild": "passed",
+  "limits": {
+    "sidePx": 64,
+    "sourceBytes": 2097152,
+    "sourcePixels": 16000000,
+    "cacheFiles": 512,
+    "pngBytesPerFile": 32768
+  },
+  "nativePixels": {
+    "pid": 1879707,
+    "fixturePid": 1879914,
+    "observations": [
+      {
+        "surface": "absolute SVG pinned Dock",
+        "rgb": [
+          241,
+          37,
+          169
+        ],
+        "matchingPixels": 470
+      },
+      {
+        "surface": "absolute SVG launcher",
+        "rgb": [
+          241,
+          37,
+          169
+        ],
+        "matchingPixels": 1024
+      },
+      {
+        "surface": "absolute SVG window row",
+        "rgb": [
+          241,
+          37,
+          169
+        ],
+        "matchingPixels": 324
+      },
+      {
+        "surface": "hicolor PNG pinned Dock",
+        "rgb": [
+          31,
+          219,
+          87
+        ],
+        "matchingPixels": 470
+      },
+      {
+        "surface": "hicolor PNG launcher",
+        "rgb": [
+          31,
+          219,
+          87
+        ],
+        "matchingPixels": 1024
+      },
+      {
+        "surface": "hicolor PNG window row",
+        "rgb": [
+          31,
+          219,
+          87
+        ],
+        "matchingPixels": 324
+      },
+      {
+        "surface": "hicolor PNG unpinned Dock",
+        "rgb": [
+          31,
+          219,
+          87
+        ],
+        "matchingPixels": 470
+      },
+      {
+        "surface": "hicolor PNG unpinned window row",
+        "rgb": [
+          31,
+          219,
+          87
+        ],
+        "matchingPixels": 324
+      }
+    ],
+    "missingIconKeepsApplication": true,
+    "cachedFiles": 66,
+    "cacheBoundsVerified": true,
+    "scope": "Native reference-scale X11 pixel checks; custom theme switching separately tested in private IconTheme",
+    "normalPid": 1881004,
+    "preferencesRestored": true,
+    "fixturesRemoved": true,
+    "ownedWindowFixtureExited": true
+  },
+  "windowListRegression": {
+    "passed": [
+      "unpinned three-window group; active initial focus, Home/End/arrows and Enter activate exact XID",
+      "open list refreshes title, adds window and removes external close; nearest-row focus survives",
+      "pinned group remains present through app-owned close confirmation and cancel",
+      "one-window pin activates exact XID directly",
+      "right-click menu refreshes renamed, added and externally closed windows while open",
+      "context rows activate exact selected XID and close only the selected window",
+      "external close updates 3 to 1 to 0; empty popup hides and pinned app remains"
+    ],
+    "pid": 1885786,
+    "fixturePid": 1886051,
+    "pinsRestored": true
+  },
+  "hostNamespaceCleanup": {
+    "normalPid": 1896337,
+    "testProfile": true,
+    "debugTimingRemoved": true,
+    "fixturePidsAbsent": {
+      "1879914": true,
+      "1886051": true
+    }
+  },
+  "privateThemeTest": "GTK IconTheme in fresh child process: inheritance, hicolor, absolute, missing, theme switch; user theme unchanged"
+}
