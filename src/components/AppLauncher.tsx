@@ -52,14 +52,15 @@ export function AppLauncher({ generation }: { generation?: number }) {
       <button onClick={refresh} aria-label={t("refresh")} title={t("refresh")}><RefreshCw size={16} /></button></header>
     {(error || configError || launchError) && <p role="alert">{error || configError || launchError} {launchError && failedApp && <button disabled={!!launching} onClick={() => void launch(failedApp)}>{t("retry")}</button>}</p>}
     {loading && <p role="status">{t("scanningApps")}</p>}
-    {!loading && !results.length && <p role="status">{t("noApps")}</p>}
+    {!loading && !error && !results.length && <p role="status">{t("noApps")}</p>}
+    {launching && <p role="status" aria-live="polite">{t("launching")} {apps.find((app) => app.id === launching)?.name}</p>}
     <div className="app-launcher-results" aria-label={t("appsTab")}>
       {results.map((app, index) => {
         const existing = config.pinnedApps?.find((pin) => installedForPin(pin, apps)?.id === app.id);
         const pinned = existing?.enabled !== false && Boolean(existing);
         return <div className={`app-launcher-row ${index === current ? "is-selected" : ""}`} key={app.id}>
           <button className="app-launcher-open" ref={(el) => { if (el) rows.current.set(app.id, el); else rows.current.delete(app.id); }}
-            onFocus={() => setSelected(index)} disabled={launching === app.id} onClick={() => void launch(app)} aria-label={`${t("open")} ${app.name}`}>
+            aria-current={index === current ? "true" : undefined} onFocus={() => setSelected(index)} disabled={launching === app.id} onClick={() => void launch(app)} aria-label={`${t("open")} ${app.name}`}>
             <AppIcon path={app.iconPath} size={32} /><span><strong>{app.name}</strong><small>{launching === app.id ? t("launching") : app.genericName || app.id}</small></span>
           </button>
           <button className="app-launcher-pin" aria-label={`${pinned ? t("unpin") : t("pin")} ${app.name}`} aria-pressed={pinned}

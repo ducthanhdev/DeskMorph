@@ -69,3 +69,17 @@ Loading/lỗi quét không chứng minh entry mất: giữ snapshot gần nhất
 ```
 
 Native bao phủ gỡ/cài lại entry, menu disabled/enable, restart giữ pin thiếu, và unpin từ menu/Studio. Lỗi IPC tạm thời được kiểm ở hook test có invoke rejection thật trong adapter mô phỏng; không tuyên bố đã gây lỗi quét GIO trên desktop. [Bản ghi](benchmarks/missing-app-2026-10-29.json).
+
+
+## Launcher và bàn phím
+
+Logo Dock mở launcher qua popup coordinator. Có loading, error/retry và empty state riêng; lỗi quét không đồng thời thông báo không tìm thấy app. Query native input đi qua React; kết quả giới hạn 60, Up/Down wrap, CtrlHome/CtrlEnd chọn đầu/cuối phần đang render, Enter mở desktop ID hiện tại. aria-current thể hiện mục đang chọn; live status báo tên đang mở.
+
+Một launch lock theo instance chặn nhiều Enter/click/retry khi IPC chưa xong. Thành công chỉ hide generation của lần mở đó; lỗi giữ popup và cho retry cùng app; callback đã dispose không đóng popup mới. Escape/outside/focus-loss do native popup coordinator quản lý.
+
+```sh
+/usr/bin/python3 tests/desktop_smoke.py --launcher-keyboard-smoke
+/usr/bin/python3 tests/desktop_smoke.py --focus-smoke
+```
+
+Chạy hai ca riêng; mỗi ca khôi phục profile/process. Native chứng minh chọn/mở đúng ID, empty/Escape, lỗi executable bị xóa và retry sau restore, cùng outside/focus/shortcut. Component test điều khiển IPC pending để chứng minh chặn Enter/retry lặp và kiểm loading/error/render; không dùng executable chạy chậm làm bằng chứng IPC pending. [Bản ghi](benchmarks/launcher-2026-10-29.json).

@@ -1,0 +1,80 @@
+{
+  "date": "2026-10-29",
+  "tasks": [
+    "G3.7",
+    "G3.9"
+  ],
+  "frontendTests": {
+    "passed": 30,
+    "failed": 0
+  },
+  "frontendBuild": "passed",
+  "customProtocolBuild": "passed",
+  "nativeKeyboard": {
+    "pid": 1832060,
+    "passed": [
+      "Dock logo opens searchable launcher; unmatched query and Escape dismissal",
+      "ArrowDown/ArrowUp/wrap/CtrlHome/CtrlEnd plus Enter launch exact desktop IDs",
+      "native missing executable error remains visible; retry after restore launches same desktop ID"
+    ],
+    "keyboard": [
+      {
+        "keys": "down",
+        "launched": 2
+      },
+      {
+        "keys": "end then up",
+        "launched": 3
+      },
+      {
+        "keys": "home",
+        "launched": 1
+      },
+      {
+        "keys": "wrap up then up",
+        "launched": 3
+      }
+    ],
+    "scope": "Owned native fixtures; in-flight Enter lock and loading/scan-error rendering verified in real component with controlled IPC",
+    "normalPid": 1833374,
+    "preferencesRestored": true,
+    "fixturesRemoved": true
+  },
+  "popupRegression": {
+    "pid": 1834336,
+    "fixturePid": 1836856,
+    "nativeContentFocusDelayMs": 0,
+    "liveUnfocusedCallbacksSkipped": 26,
+    "inactiveCallbacksSkipped": 0,
+    "passed": [
+      "Tìm ứng dụng: keyboard Enter / Escape returns exact Dock XID and Enter reopens same source without helper refocus",
+      "Âm thanh: keyboard Enter / Escape returns exact Dock XID and Enter reopens same source without helper refocus",
+      "Tiện ích hệ thống: keyboard Enter / Escape returns exact Dock XID and Enter reopens same source without helper refocus",
+      "Mở lịch: keyboard Enter / Escape returns exact Dock XID and Enter reopens same source without helper refocus",
+      "four popup modes: real outside click retains selected Studio XID across delayed callbacks",
+      "audio/system scoped Close buttons return Dock keyboard focus and Enter reopens original source",
+      "four popup modes: selecting owned external GTK window dismisses and retains exact external XID",
+      "window list Escape returns source and Enter reopens; activating second row keeps exact external target focus",
+      "right-click context menu Escape returns exact source Dock XID",
+      "launcher global shortcut from external GTK window: Escape returns exact original external XID",
+      "shortcut popup: external user selection wins over original source, without delayed restore"
+    ]
+  },
+  "hostNamespaceCleanup": {
+    "normalPid": 1838532,
+    "exists": true,
+    "fixturePid": 1836856,
+    "fixtureExited": true,
+    "testProfile": true,
+    "debugTimingRemoved": true,
+    "earlierFixturePidsAbsent": {
+      "1757930": true,
+      "1758158": true,
+      "1758349": true,
+      "1758664": true,
+      "1759152": true,
+      "1759272": true,
+      "1538925": true
+    }
+  }
+}
