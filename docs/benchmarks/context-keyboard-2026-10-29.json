@@ -1,0 +1,132 @@
+{
+  "runs": [
+    {
+      "pid": 3060142,
+      "screenshot": "context-confirm-vi-2026-10-29.png",
+      "observations": [
+        {
+          "keys": [
+            65505,
+            65479
+          ],
+          "sequence": [
+            "Mở ứng dụng",
+            "Bỏ ghim",
+            "Sang phải",
+            "DeskMorph Window Test 1",
+            "Đóng DeskMorph Window Test 1",
+            "DeskMorph Window Test 2",
+            "Đóng DeskMorph Window Test 2",
+            "DeskMorph Window Test 3",
+            "Đóng DeskMorph Window Test 3",
+            "Buộc dừng…"
+          ],
+          "disabledSkipped": [
+            "Sang trái"
+          ],
+          "reverseMatches": true,
+          "arrowWrapAndHomeEnd": true,
+          "escapeRestores": true
+        },
+        {
+          "keys": [
+            65383
+          ],
+          "sequence": [
+            "Mở ứng dụng",
+            "Bỏ ghim",
+            "Sang phải",
+            "DeskMorph Window Test 1",
+            "Đóng DeskMorph Window Test 1",
+            "DeskMorph Window Test 2",
+            "Đóng DeskMorph Window Test 2",
+            "DeskMorph Window Test 3",
+            "Đóng DeskMorph Window Test 3",
+            "Buộc dừng…"
+          ],
+          "disabledSkipped": [
+            "Sang trái"
+          ],
+          "reverseMatches": true,
+          "arrowWrapAndHomeEnd": true,
+          "escapeRestores": true
+        }
+      ],
+      "configUnchanged": true,
+      "failedLaunchFocus": true,
+      "forceReviewCancelFocus": true,
+      "removedRowFallback": true,
+      "enterClosesOwnedWindow": true,
+      "scope": "Native pinned fixture context entry/Tab/arrows/Escape, nonexistent command failure, force review/cancel only, external row removal and Enter close of owned fixture window2; no user app actions, no force kill or unpinned context coverage"
+    },
+    {
+      "pid": 3062242,
+      "screenshot": "context-confirm-en-2026-10-29.png",
+      "observations": [
+        {
+          "keys": [
+            65505,
+            65479
+          ],
+          "sequence": [
+            "Open application",
+            "Unpin",
+            "Move right",
+            "DeskMorph Window Test 1",
+            "Close DeskMorph Window Test 1",
+            "DeskMorph Window Test 2",
+            "Close DeskMorph Window Test 2",
+            "DeskMorph Window Test 3",
+            "Close DeskMorph Window Test 3",
+            "Force quit…"
+          ],
+          "disabledSkipped": [
+            "Move left"
+          ],
+          "reverseMatches": true,
+          "arrowWrapAndHomeEnd": true,
+          "escapeRestores": true
+        },
+        {
+          "keys": [
+            65383
+          ],
+          "sequence": [
+            "Open application",
+            "Unpin",
+            "Move right",
+            "DeskMorph Window Test 1",
+            "Close DeskMorph Window Test 1",
+            "DeskMorph Window Test 2",
+            "Close DeskMorph Window Test 2",
+            "DeskMorph Window Test 3",
+            "Close DeskMorph Window Test 3",
+            "Force quit…"
+          ],
+          "disabledSkipped": [
+            "Move left"
+          ],
+          "reverseMatches": true,
+          "arrowWrapAndHomeEnd": true,
+          "escapeRestores": true
+        }
+      ],
+      "configUnchanged": true,
+      "failedLaunchFocus": true,
+      "forceReviewCancelFocus": true,
+      "removedRowFallback": true,
+      "enterClosesOwnedWindow": true,
+      "scope": "Native pinned fixture context entry/Tab/arrows/Escape, nonexistent command failure, force review/cancel only, external row removal and Enter close of owned fixture window2; no user app actions, no force kill or unpinned context coverage"
+    }
+  ],
+  "fixturePids": [
+    3060142,
+    3062242
+  ],
+  "windowFixturePids": [
+    3060094,
+    3062218
+  ],
+  "normalPid": 3064325,
+  "configRestored": true
+}

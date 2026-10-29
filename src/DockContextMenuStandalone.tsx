@@ -1,5 +1,6 @@
 import { ErrorText } from "./components/ErrorText";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { usePopupFocus } from "./hooks/usePopupFocus";
 import { invoke } from "./ipc";
 import { listen } from "@tauri-apps/api/event";
 import { ArrowLeft, ArrowRight, Flame, Pin, PinOff, Plus, X } from "lucide-react";
@@ -26,23 +27,39 @@ function ContextActions({ menu }: { menu: DockContextMenuState }) {
   const { apps, loading, error: catalogueError } = useInstalledApps();
   const installed = apps.find((app) => app.id === menu.desktopId);
   const missing = desktopIsMissing(menu.desktopId, installed, { loading, error: catalogueError });
-  const { windows, refreshError } = useLiveWindows(menu);
+  const { windows, refreshError, active } = useLiveWindows(menu);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [confirmKill, setConfirmKill] = useState(false);
   const root = useRef<HTMLElement>(null);
+  const changing = useRef(false);
+  const forceButton = useRef<HTMLButtonElement>(null);
+  const cancelButton = useRef<HTMLButtonElement>(null);
+  const returnToForce = useRef(false);
+  const focus = usePopupFocus(root, active, busy, () =>
+    (returnToForce.current ? forceButton.current : null) ?? root.current?.querySelector<HTMLButtonElement>("button:not(:disabled)") ?? null);
+  useLayoutEffect(() => {
+    const restore = returnToForce.current;
+    if (!confirmKill) returnToForce.current = false;
+    if (!document.hasFocus()) return;
+    if (confirmKill && document.activeElement === forceButton.current) cancelButton.current?.focus();
+    if (!confirmKill && restore) {
+      if (document.activeElement === document.body) forceButton.current?.focus();
+    }
+  }, [confirmKill]);
   const pinIndex = config.pinnedApps?.findIndex((pin) => pin.id === menu.appId) ?? -1;
   const pinned = config.pinnedApps?.find(pin => pin.id === menu.appId);
   const appName = pinned ? pinName(pinned) : menu.appName;
   const hide = () => invoke("hide_dock_context_menu", { generation: menu.popupGeneration });
   useEffect(() => { root.current?.querySelector<HTMLButtonElement>("button:not(:disabled)")?.focus(); }, []);
   const perform = async (task: () => Promise<unknown>, close = true) => {
-    if (busy) return;
+    if (changing.current) return;
+    changing.current = true;
     const signal = lifetime.capture();
     setBusy(true); setError(null);
     try { const result = await task(); if (close && result !== false && !signal.aborted) await hide(); }
     catch (e) { if (!signal.aborted) setError(errorMessage(e)); }
-    finally { if (!signal.aborted) setBusy(false); }
+    finally { changing.current = false; if (!signal.aborted) setBusy(false); }
   };
   const togglePin = async () => {
     const id = menu.appId || menu.desktopId;
@@ -52,10 +69,9 @@ function ContextActions({ menu }: { menu: DockContextMenuState }) {
       command: menu.desktopId ? `desktop:${menu.desktopId}` : menu.command || id,
       matchClasses: menu.matchClasses || [id], iconType: "custom", enabled: true,
     };
-    const signal = lifetime.capture();
-    if (await mutatePin(menu.isPinned ? "remove" : "add", id, pin) && !signal.aborted) await hide();
+    await perform(() => mutatePin(menu.isPinned ? "remove" : "add", id, pin));
   };
-  return <section ref={root} className="context-actions" aria-label={`${t("details")} ${appName}`} onContextMenu={(e) => e.preventDefault()}
+  return <section ref={root} {...focus} className="context-actions" aria-label={`${t("details")} ${appName}`} onContextMenu={(e) => e.preventDefault()}
     onKeyDown={(e) => {
       if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(e.key)) return;
       e.preventDefault();
@@ -83,10 +99,10 @@ function ContextActions({ menu }: { menu: DockContextMenuState }) {
       </div>)}
     </div>}
     {menu.windowId && windows.some((window) => window.id === menu.windowId) && <>
-      <button className="context-danger" title={platform?.forceQuit ? undefined : capabilityReason(platform, "forceQuit", t, platformError)} disabled={busy || !platform?.forceQuit} onClick={() => setConfirmKill(true)}><Flame size={16} /> {t("forceQuit")}</button>
+      <button ref={forceButton} className="context-danger" title={platform?.forceQuit ? undefined : capabilityReason(platform, "forceQuit", t, platformError)} disabled={busy || !platform?.forceQuit} onClick={() => setConfirmKill(true)}><Flame size={16} /> {t("forceQuit")}</button>
       {confirmKill && <div className="context-confirm" role="alert">
         <p>{t("forceWarning")}</p>
-        <button disabled={busy} onClick={() => setConfirmKill(false)}>{t("cancel")}</button>
+        <button ref={cancelButton} disabled={busy} onClick={() => { returnToForce.current = document.hasFocus() && document.activeElement === cancelButton.current; setConfirmKill(false); }}>{t("cancel")}</button>
         <button className="context-danger" disabled={busy || !platform?.forceQuit} onClick={() => { if (platform?.forceQuit) void perform(() => invoke("force_kill_window", { xid: menu.windowId })); }}>{t("forceConfirm")}</button>
       </div>}
     </>}

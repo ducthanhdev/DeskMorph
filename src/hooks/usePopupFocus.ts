@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef, type FocusEvent, type RefObject } from "react";
 
 /** Keep keyboard position across disabled requests and disappearing popup controls. */
-export function usePopupFocus(root: RefObject<HTMLElement | null>, active: boolean, busy: boolean) {
+export function usePopupFocus(root: RefObject<HTMLElement | null>, active: boolean, busy: boolean, fallback?: () => HTMLElement | null) {
   const origin = useRef<HTMLElement | null>(null);
   const recovering = useRef(false);
   const onFocusCapture = (event: FocusEvent<HTMLElement>) => {
@@ -22,7 +22,7 @@ export function usePopupFocus(root: RefObject<HTMLElement | null>, active: boole
     // Native blur and an explicit move to another control always win.
     if (!document.hasFocus() || document.activeElement !== document.body) return;
     const destination = removed || disabled
-      ? root.current?.closest(".audio-popup")?.querySelector<HTMLButtonElement>("header button:not(:disabled)")
+      ? fallback?.() ?? root.current?.closest(".audio-popup")?.querySelector<HTMLButtonElement>("header button:not(:disabled)")
       : previous;
     destination?.focus();
   });

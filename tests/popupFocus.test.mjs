@@ -19,8 +19,8 @@ test('popup focus survives pending disable, falls back after removal, and respec
   const close = { focus() { document.activeElement = this; } };
   const root = { current: { closest: () => ({ querySelector: () => close }) } };
   const control = () => ({ isConnected: true, disabled: false, matches() { return this.disabled; }, closest: () => root.current, focus() { document.activeElement = this; } });
-  let active = true, busy = false;
-  const render = () => { slot = 0; return usePopupFocus(root, active, busy); };
+  let active = true, busy = false, fallback;
+  const render = () => { slot = 0; return usePopupFocus(root, active, busy, fallback); };
   const seed = element => { document.activeElement = element; render().onFocusCapture({ target: element }); };
   const commit = () => { render(); effect(); };
   try {
@@ -31,6 +31,10 @@ test('popup focus survives pending disable, falls back after removal, and respec
     assert.equal(document.activeElement, play, 'Restore same control after reenable/label change');
     const radio = control(); seed(radio); radio.isConnected = false; document.activeElement = body; commit();
     assert.equal(document.activeElement, close, 'Removed control goes to popup Close');
+    const force = control(); fallback = () => force;
+    const cancel = control(); seed(cancel); cancel.isConnected = false; document.activeElement = body; commit();
+    assert.equal(document.activeElement, force, 'Caller can restore confirmation trigger');
+    fallback = undefined;
     const unsupported = control(); seed(unsupported); unsupported.disabled = true; document.activeElement = body; commit();
     assert.equal(document.activeElement, close, 'Newly unsupported control falls back');
     const failed = control(); seed(failed); busy = true; failed.disabled = true; document.activeElement = body; commit();
