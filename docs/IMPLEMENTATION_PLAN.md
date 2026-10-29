@@ -141,9 +141,9 @@ Phụ thuộc G1/G2; capability backend cho từng desktop được xác minh tr
 - [x] G6.6 Shuffle không chọn lại ảnh hiện tại khi có lựa chọn khác; xử lý thư viện 0/1 ảnh.
 - [ ] G6.7 Lịch đổi ảnh theo chu kỳ, bật/tắt rõ ràng, một scheduler duy nhất; xử lý resume sau sleep và ảnh bị xóa.
 - [x] G6.8 Kiểm tra exit status/kết quả backend trước báo thành công; phản ánh hình nền đổi từ bên ngoài nếu adapter hỗ trợ.
-- [ ] G6.9 Adapter GNOME/COSMIC/KDE được bổ sung riêng sau thử nghiệm API thực tế; chỉ bật adapter đã xác minh, có unsupported state.
+- [x] G6.9 Adapter GNOME/COSMIC/KDE được bổ sung riêng sau thử nghiệm API thực tế; chỉ bật adapter đã xác minh, có unsupported state. GNOME và COSMIC đã kiểm UI/IPC/pixel; KDE giữ unsupported sau nghiên cứu API nhưng chưa đạt pixel/readback.
 
-G6.9 đang thực hiện: GNOME đã có UI/pixel; COSMIC RON v1 nay có adapter và [Studio/IPC/pixel vi/en](benchmarks/cosmic-studio-2026-10-29/results.json), gồm defaults và entry per-output thiếu, lỗi/read-only/Retry/Shuffle. KDE chưa có runtime nên giữ unsupported và checkbox vẫn mở; không suy scheduler/hotplug/multi-output từ output WINIT-0 của compositor lồng.
+G6.9 đã chốt theo phạm vi adapter xác minh: GNOME có UI/pixel; COSMIC RON v1 có adapter và [Studio/IPC/pixel vi/en](benchmarks/cosmic-studio-2026-10-29/results.json), gồm defaults và entry per-output thiếu, lỗi/read-only/Retry/Shuffle; KDE đã nghiên cứu API trong runtime riêng nhưng giữ unsupported vì chưa có pixel/readback. Scheduler, hotplug và multi-output vẫn là giới hạn riêng.
 
 Tiêu chí: thư viện lớn không chặn UI; ảnh hỏng/quyền thiếu có thể xử lý; chu kỳ không chạy trùng; mỗi desktop được tuyên bố hỗ trợ có kiểm thử áp dụng thực tế.
 

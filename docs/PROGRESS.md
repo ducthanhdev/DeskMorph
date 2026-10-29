@@ -750,3 +750,9 @@ Script cần AT-SPI, Python GI, GTK3 và libXtst. Chỉ gửi phím khi kiểm t
 - Lượt cuối `desktop_smoke.py --studio-tab-smoke --popup-keyboard-smoke --dock-keyboard-smoke --calendar-keyboard-smoke --contrast-native-smoke` chạy trong GNOME X11 lab; Studio năm tab/disclosure, popup vi/en và control disabled, Dock traversal xuôi/ngược, lịch và native contrast đều qua. [Bản tóm tắt](benchmarks/accessibility-audit-2026-10-30/results.json).
 - Không nâng phạm vi thành đạt toàn G5.9: AT-SPI/key assertions chưa chứng minh screen reader đã đọc mọi announcement; dynamic actions, global shortcut, toàn bộ icon/gradient/artwork contrast vẫn cần audit. G5.9 vẫn mở, tổng 92/99.
 - Đánh giá file: giữ một JSON tóm tắt có command, scope và giới hạn; không commit toàn bộ cây AT-SPI, log hoặc ảnh trùng.
+
+## G6.9 — Chốt phạm vi adapter hình nền và unsupported state (30/10/2026)
+
+- Chốt theo đúng hợp đồng: GNOME adapter đã kiểm Apply/Retry/Shuffle và pixel; COSMIC adapter đã kiểm schema/defaults, UI/IPC, lỗi/read-only/Retry/Shuffle và pixel; KDE API đã được thử trong KWin/Plasma runtime riêng nhưng không bật vì chưa chứng minh pixel/readback. UI trả unsupported state rõ ràng cho KDE.
+- Không suy kết quả này thành scheduler riêng, hotplug, multi-output hoặc toàn desktop COSMIC/KDE. Các giới hạn đó thuộc phần chưa hỗ trợ khác, còn yêu cầu G6.9 về adapter riêng, capability gate và không bật backend chưa xác minh đã đạt. Tổng 93/99.
+- Đánh giá file: dùng các benchmark GNOME/COSMIC/KDE đã commit; không thêm test/log mới vì không thay code trong lượt chốt.
