@@ -35,3 +35,5 @@ Tài liệu này ghi quyết định kỹ thuật theo yêu cầu người dùng
 - Geometry scale 200%: giữ mở rộng harness logical/physical vì phép đo native tại scale 2 cần cả tọa độ AT-SPI và GDK đúng đơn vị, kiểm clamp workarea và khôi phục config. Giữ JSON 16 rectangle có PID/lệnh/hash binary; không commit log hay profile. Bằng chứng GTK scale 2 không thay thế fractional/mixed-DPI hoặc audit nội dung popup.
 
 - Stress audio restart: giữ biến số vòng và chẩn đoán native active-owner/app-state để tái lập lỗi popup biến mất sau 6 vòng; guard focus và retry AT-SPI có timeout/owner-live giúp phân biệt lỗi phép đo. Giữ báo cáo `passed:false` cùng hồi quy 3 vòng đã qua; không nâng kết quả hẹp thành stress/soak đạt, không commit dump sinks/log/private configs.
+
+- Dismissal trace: giữ logging debug opt-in tại `hide` với caller/generation vì lỗi stress không tái hiện sau rebuild; không đổi logic để ép test qua. Giữ hai kết quả 12 vòng có/không trace cùng SHA256, giữ riêng failure cũ. Không tuyên bố fix từ kết quả không tái hiện hoặc coi lệnh lọc 0 test là regression suite.

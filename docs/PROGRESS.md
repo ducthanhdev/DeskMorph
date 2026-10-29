@@ -808,3 +808,11 @@ Script cần AT-SPI, Python GI, GTK3 và libXtst. Chỉ gửi phím khi kiểm t
 - Hai lượt stress đi qua 6 vòng rồi dừng ở vòng 7: popup không còn trong cây accessibility, không còn subscription; lượt cuối đọc native active window là Taskbar cùng PID, tiến trình app trạng thái S. [Bằng chứng chưa đạt](benchmarks/audio-restart-stress-2026-10-30/result.json). Chưa xác định nguyên nhân dismissal; không kết luận lỗi reconnect hoặc coi stress đạt. Các lượt đầu còn lỗi focus/startup và subtree AT-SPI thay thế đã được ghi nhận trong quá trình chỉnh harness.
 - Ca mặc định 3 vòng trên harness cuối qua, exit 0; mute/volume/reconnect, hide/reopen/cleanup, bytes config và host audio server/default sink được giữ; các daemon riêng đã thoát. Python compile/diff check qua. Đây là kiểm hồi quy harness, không thay thế stress 12 vòng.
 - G9.8 tiếp tục mở, tổng 94/99; còn điều tra dismissal khi stress, soak dài hạn, sleep thật và hotplug. Đánh giá file: giữ harness tham số hóa/chẩn đoán có thể tái dùng và JSON kết quả chưa đạt; không commit log daemon, cây sinks dài, profile hay binary.
+
+
+## G9.8 — Đối chiếu 12 vòng restart với trace dismissal (30/10/2026)
+
+- Thêm `DESKMORPH_TRACE_POPUP_DISMISS` chỉ ở debug build: ghi label/generation và vị trí gọi `hide` khi popup thực sự đóng. `#[track_caller]` xác định đường đóng; không đổi điều kiện đóng hoặc phục hồi dịch vụ. Build native custom-protocol offline qua.
+- [Hai lượt đối chiếu](benchmarks/audio-restart-stress-2026-10-30/recheck.json), cùng SHA256 binary vừa build: trace bật 12/12 và trace tắt 12/12 đều exit 0, mỗi lượt 8 restart Pulse và 4 restart core/Pulse, tự reconnect/volume/mute đúng null sink; một subscription khi hiện, dọn khi ẩn và reopen qua. Config khôi phục, dịch vụ riêng thoát, host server/default sink giữ nguyên.
+- Trace chỉ ghi hai dismissal native Escape (sau stress và sau reopen); không tái hiện dismissal ở vòng 7. Bằng chứng thất bại trước giữ nguyên, không coi instrumentation là sửa nguyên nhân. Cần tiếp tục theo dõi khi soak; G9.8 vẫn mở, tổng 94/99.
+- Đánh giá file: giữ trace opt-in không ghi nội dung control/path người dùng, JSON hai lượt đối chiếu có hash/lệnh/phạm vi; không thêm test hình thức cho logging. Lệnh Rust lọc `popup::tests` không chọn ca nào (0 test), chỉ có giá trị compile test binary; không tính thành suite pass. Diff check qua.

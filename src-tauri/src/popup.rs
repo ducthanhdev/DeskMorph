@@ -62,12 +62,17 @@ fn hidden_events(app: &AppHandle, label: &str, generation: u64) {
     }
     let _ = app.emit("deskmorph:popup-visible", false);
 }
+#[track_caller]
 pub fn hide(app: &AppHandle, label: &str, generation: Option<u64>) -> Result<bool, String> {
     let state = app.state::<PopupState>();
     let mut c = state.0.lock().map_err(|e| e.to_string())?;
     if generation.is_some_and(|g| g != c.generation) { return Ok(false); }
     let hidden = c.active.is_some_and(|(active, _)| active == label);
     if hidden {
+        #[cfg(debug_assertions)]
+        if std::env::var_os("DESKMORPH_TRACE_POPUP_DISMISS").is_some() {
+            eprintln!("deskmorph-popup-dismiss label={label} generation={} caller={}", c.generation, std::panic::Location::caller());
+        }
         if let Some(window) = app.get_webview_window(label) { window.hide().map_err(|e| e.to_string())?; }
         c.active = None;
         hidden_events(app, label, c.generation);
