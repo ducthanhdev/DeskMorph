@@ -65,3 +65,6 @@ Thư viện wallpaper nay phục hồi focus khi favorite đang focus bị gỡ 
 
 
 Bổ sung bộ lọc wallpaper: [native vi/en, reduced motion](benchmarks/wallpaper-filters-keyboard-2026-10-29.json) dùng27 ảnh PNG/JPEG ở hai thư mục. Home/End trên select thư mục và định dạng kiểm cả giao không có kết quả; Z/Backspace trong tìm kiếm kiểm rỗng/khôi phục. Focus giữ ở control đang lọc; chạy lại các ca pagination/favorite. Số ảnh/trang có role=status và aria-atomic=true; đây là contract live region, chưa là bằng chứng trình đọc màn hình đã phát announcement. AT-SPI seed focus cho từng control, chưa chứng minh đường Tab toàn luồng.
+
+
+Apply/Shuffle/Retry wallpaper dùng scope focus request riêng: giữ focus ở nút nguồn sau khi re-enable; Retry biến mất sau thành công thì về tìm kiếm. Favorite/pagination đặt ranh giới scope để tiếp tục dùng quy tắc cùng index/nút phân trang của thư viện. [Native vi/en, reduced motion](benchmarks/wallpaper-actions-keyboard-2026-10-29.json) qua Enter Apply thành công, file mất/error, phục hồi file/Retry và Shuffle, đối chiếu GSettings sáng/tối trong keyfile riêng. IPC native không bị chèn delay: chưa đo trạng thái pending dài hoặc thao tác chuyển focus trong lúc request thật đang chờ; các ngữ nghĩa đó có test hook riêng. Không đổi hình nền host và không khẳng định compositor đã hiển thị pixel wallpaper từ việc đọc settings.

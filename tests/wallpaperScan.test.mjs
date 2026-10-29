@@ -58,7 +58,8 @@ test('wallpaper scan effects cancel only their request, ignore stale results, re
     .replace(/import \{ Card, Toggle \} from .*;/, 'const Card="Card", Toggle="Toggle";')
     .replaceAll('"../../dateTime"', JSON.stringify(dateTimeUrl))
     .replaceAll('"../../capabilities"', JSON.stringify(capabilitiesUrl));
-  source = source.replace(/import \{ ErrorText \} from .*;/, 'const ErrorText="ErrorText";')
+  source = source.replace(/import \{ usePopupFocus \} from .*;/, 'const usePopupFocus=()=>({});')
+    .replace(/import \{ ErrorText \} from .*;/, 'const ErrorText="ErrorText";')
     .replace(/import \{ useRemovalFocus \} from .*;/, 'const useRemovalFocus=()=>({root:{current:null}, fallback:{current:null}, onFocusCapture(){}});');
   const transpiled = ts.transpileModule(source, { compilerOptions: {
     module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022, jsx: ts.JsxEmit.ReactJSX,

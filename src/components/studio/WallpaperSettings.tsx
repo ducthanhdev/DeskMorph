@@ -1,4 +1,5 @@
 import { ErrorText } from "../ErrorText";
+import { usePopupFocus } from "../../hooks/usePopupFocus";
 import { useRemovalFocus } from "../../hooks/useRemovalFocus";
 import { useEffect, useRef, useState } from "react";
 import { convertFileSrc } from "@tauri-apps/api/core";
@@ -42,6 +43,8 @@ export function WallpaperSettings() {
   const [thumbnails, setThumbnails] = useState<Record<string, Thumbnail>>({});
   const mounted = useRef(false);
   const applyLock = useRef(false);
+  const actionRoot = useRef<HTMLDivElement>(null);
+  const actionFocus = usePopupFocus(actionRoot, true, applying, () => libraryFocus.fallback.current);
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
   const roots = JSON.stringify(config.wallpaperFolders);
   useEffect(() => {
@@ -88,7 +91,8 @@ export function WallpaperSettings() {
     } catch (e) { if (mounted.current) { setError(errorMessage(e)); setFailedApply({ path }); } }
     finally { applyLock.current = false; if (mounted.current) setApplying(false); }
   };
-  return <div ref={removalFocus.root} onFocusCapture={removalFocus.onFocusCapture}><Card title={t("wallpaperTab")}>
+  return <div {...actionFocus} ref={(element) => { removalFocus.root.current = element; actionRoot.current = element; }}
+    onFocusCapture={(event) => { removalFocus.onFocusCapture(event); actionFocus.onFocusCapture(event); }}><Card title={t("wallpaperTab")}>
     <p className="settings-help">{t("wallpaperHelp")}</p>
     {!platform?.wallpaper && <p role="status">{capabilityReason(platform, "wallpaper", t, platformError)}</p>}
     <form className="settings-inline" onSubmit={async (e) => {
@@ -128,9 +132,9 @@ export function WallpaperSettings() {
           {thumbnails[image.path]?.thumbnail ? <img className="wallpaper-thumb-img" loading="lazy" src={convertFileSrc(thumbnails[image.path].thumbnail!)} alt="" onError={() => setThumbnails((previous) => ({ ...previous, [image.path]: { path: image.path, thumbnail: null, error: "unavailable" } }))} /> : <div className="wallpaper-thumb-placeholder">{thumbnails[image.path]?.error ? t("thumbnailError") : t("loading")}</div>}
           <span className="wallpaper-name">{image.filename}</span>
         </button>
-        <button data-library-focus className="wallpaper-favorite" aria-label={`${t("favorite")} ${image.filename}`} aria-pressed={favorites.has(image.path)} onClick={() => void updateConfig({ wallpaperFavorites: favorites.has(image.path) ? config.wallpaperFavorites.filter((path) => path !== image.path) : [...config.wallpaperFavorites, image.path] })}>{favorites.has(image.path) ? "★" : "☆"}</button>
+        <button data-popup-focus-scope data-library-focus className="wallpaper-favorite" aria-label={`${t("favorite")} ${image.filename}`} aria-pressed={favorites.has(image.path)} onClick={() => void updateConfig({ wallpaperFavorites: favorites.has(image.path) ? config.wallpaperFavorites.filter((path) => path !== image.path) : [...config.wallpaperFavorites, image.path] })}>{favorites.has(image.path) ? "★" : "☆"}</button>
       </article>)}</div>
-      <div className="settings-inline"><button data-library-focus data-library-page disabled={currentPage === 0} onClick={() => setPage(currentPage - 1)}>{t("previousPage")}</button><button data-library-focus data-library-page disabled={currentPage >= pages - 1} onClick={() => setPage(currentPage + 1)}>{t("nextPage")}</button></div>
+      <div className="settings-inline"><button data-popup-focus-scope data-library-focus data-library-page disabled={currentPage === 0} onClick={() => setPage(currentPage - 1)}>{t("previousPage")}</button><button data-popup-focus-scope data-library-focus data-library-page disabled={currentPage >= pages - 1} onClick={() => setPage(currentPage + 1)}>{t("nextPage")}</button></div>
     </>}
     </div>
   </Card></div>;
