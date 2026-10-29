@@ -25,6 +25,32 @@ pub struct Library {
 }
 #[derive(Default)]
 pub struct WallpaperState(pub Arc<Library>);
+impl Library {
+    fn begin_scan(&self, request_id: String) -> Result<u64, String> {
+        let mut active = self.active.lock().map_err(|e| e.to_string())?;
+        *active = Some(request_id);
+        Ok(self.generation.fetch_add(1, Ordering::SeqCst) + 1)
+    }
+    fn cancel_scan(&self, request_id: &str) -> Result<(), String> {
+        let mut active = self.active.lock().map_err(|e| e.to_string())?;
+        if active.as_deref() == Some(request_id) {
+            *active = None;
+            self.generation.fetch_add(1, Ordering::SeqCst);
+        }
+        Ok(())
+    }
+    fn scan(&self, generation: u64, folders: Vec<PathBuf>, recursive: bool) -> Result<Scan, String> {
+        let _worker = self.worker.lock().map_err(|e| e.to_string())?;
+        let cancelled = || self.generation.load(Ordering::SeqCst) != generation;
+        let scan = scan_paths(folders, recursive, cancelled)?;
+        // Publication and cancellation share the same lock: a cancelled scan
+        // must not replace the thumbnail allowlist after the final check.
+        let _active = self.active.lock().map_err(|e| e.to_string())?;
+        if cancelled() { return Err("wallpaper_scan_cancelled".into()); }
+        *self.known.lock().map_err(|e| e.to_string())? = scan.images.iter().map(|image| PathBuf::from(&image.path)).collect();
+        Ok(scan)
+    }
+}
 fn issue(issues: &mut Vec<Issue>, path: &Path, message: impl ToString) {
     if issues.len() < 100 { issues.push(Issue { path: path.to_string_lossy().into_owned(), message: message.to_string() }); }
 }
@@ -85,26 +111,15 @@ pub fn scan_paths(folders: Vec<PathBuf>, recursive: bool, cancelled: impl Fn() -
 pub async fn scan_wallpapers(app: AppHandle, state: tauri::State<'_, WallpaperState>, request_id: String) -> Result<Scan, String> {
     if request_id.len() > 128 { return Err("invalid_scan_id".into()); }
     let library = state.0.clone();
-    let generation = {
-        let mut active = library.active.lock().map_err(|e| e.to_string())?;
-        *active = Some(request_id);
-        library.generation.fetch_add(1, Ordering::SeqCst) + 1
-    };
+    let generation = library.begin_scan(request_id)?;
     let config = app.state::<crate::config::ConfigState>().0.lock().map_err(|e| e.to_string())?.snapshot.config.clone();
     tauri::async_runtime::spawn_blocking(move || {
-        let _worker = library.worker.lock().map_err(|e| e.to_string())?;
-        let cancelled = || library.generation.load(Ordering::SeqCst) != generation;
-        let scan = scan_paths(configured_folders(&config), config["wallpaperRecursive"] == true, cancelled)?;
-        if cancelled() { return Err("wallpaper_scan_cancelled".into()); }
-        *library.known.lock().map_err(|e| e.to_string())? = scan.images.iter().map(|image| PathBuf::from(&image.path)).collect();
-        Ok(scan)
+        library.scan(generation, configured_folders(&config), config["wallpaperRecursive"] == true)
     }).await.map_err(|e| e.to_string())?
 }
 #[tauri::command]
 pub fn cancel_wallpaper_scan(state: tauri::State<WallpaperState>, request_id: String) -> Result<(), String> {
-    let mut active = state.0.active.lock().map_err(|e| e.to_string())?;
-    if active.as_ref() == Some(&request_id) { *active = None; state.0.generation.fetch_add(1, Ordering::SeqCst); }
-    Ok(())
+    state.0.cancel_scan(&request_id)
 }
 #[derive(Serialize)]
 pub struct Thumbnail { path: String, thumbnail: Option<String>, error: Option<String> }
@@ -222,6 +237,91 @@ mod tests {
         for index in 0..=MAX_VISITED { fs::write(path.join(format!("entry-{index}.txt")), "").unwrap(); }
         let scan = scan_paths(vec![path.clone()], true, || false).unwrap();
         assert!(scan.limited); assert!(scan.images.is_empty());
+        fs::remove_dir_all(path).unwrap();
+    }
+    #[test]
+    fn scan_reports_permissions_and_bounds_images_files_and_issues() {
+        use std::os::unix::fs::PermissionsExt;
+        let path = fixture();
+        let denied = path.join("denied"); fs::create_dir(&denied).unwrap();
+        image(&denied.join("private.png"), 16);
+        image(&path.join("readable.png"), 16);
+        fs::set_permissions(&denied, fs::Permissions::from_mode(0o000)).unwrap();
+        let denied_result = fs::read_dir(&denied);
+        let scan = scan_paths(vec![path.clone()], true, || false).unwrap();
+        // Restore even before assertions, so failure never leaves an unreadable fixture.
+        fs::set_permissions(&denied, fs::Permissions::from_mode(0o700)).unwrap();
+        assert!(denied_result.is_err(), "Run permission fixtures as an unprivileged user");
+        assert_eq!(scan.images.len(), 1);
+        assert_eq!(scan.issues.len(), 1); assert_eq!(scan.issues[0].path, denied.to_string_lossy());
+        fs::remove_dir_all(&denied).unwrap();
+        let too_large = path.join("oversized.png");
+        fs::File::create(&too_large).unwrap().set_len(MAX_FILE_BYTES + 1).unwrap();
+        let scan = scan_paths(vec![path.clone()], true, || false).unwrap();
+        assert_eq!(scan.images.len(), 1);
+        assert!(scan.issues.iter().any(|issue| issue.message.contains("128 MB")));
+        fs::remove_file(too_large).unwrap();
+        // Keep the original small PNG payload, but give it a valid oversized
+        // IHDR/CRC. Metadata validation must reject it before full decode.
+        let oversized_dimensions = path.join("dimensions.png");
+        let mut png = fs::read(path.join("readable.png")).unwrap();
+        assert_eq!(&png[12..16], b"IHDR");
+        png[16..20].copy_from_slice(&10_001u32.to_be_bytes());
+        png[20..24].copy_from_slice(&10_000u32.to_be_bytes());
+        let mut crc = !0u32;
+        for byte in &png[12..29] {
+            crc ^= u32::from(*byte);
+            for _ in 0..8 { crc = (crc >> 1) ^ if crc & 1 != 0 { 0xedb88320 } else { 0 }; }
+        }
+        png[29..33].copy_from_slice(&(!crc).to_be_bytes());
+        fs::write(&oversized_dimensions, png).unwrap();
+        assert!(image_info(&oversized_dimensions).unwrap_err().contains("100 megapixel"));
+        fs::remove_file(oversized_dimensions).unwrap();
+        for index in 0..150 { fs::write(path.join(format!("corrupt-{index}.png")), "invalid").unwrap(); }
+        let scan = scan_paths(vec![path.clone()], true, || false).unwrap();
+        assert_eq!(scan.images.len(), 1); assert_eq!(scan.issues.len(), 100);
+        for index in 0..150 { fs::remove_file(path.join(format!("corrupt-{index}.png"))).unwrap(); }
+        let bytes = fs::read(path.join("readable.png")).unwrap();
+        for index in 0..MAX_IMAGES { fs::write(path.join(format!("valid-{index}.png")), &bytes).unwrap(); }
+        let scan = scan_paths(vec![path.clone()], true, || false).unwrap();
+        assert_eq!(scan.images.len(), MAX_IMAGES); assert!(scan.limited);
+        fs::remove_dir_all(path).unwrap();
+    }
+    #[test]
+    fn scan_cancels_during_traversal_and_superseded_requests_cannot_publish() {
+        let path = fixture(); image(&path.join("one.png"), 16);
+        for index in 0..128 { fs::write(path.join(format!("entry-{index}.txt")), "").unwrap(); }
+        let checks = std::cell::Cell::new(0);
+        let result = scan_paths(vec![path.clone()], true, || {
+            checks.set(checks.get() + 1); checks.get() > 24
+        });
+        assert_eq!(result.unwrap_err(), "wallpaper_scan_cancelled");
+        assert!(checks.get() > 24, "Cancellation occurs during traversal, not before it");
+        let library = Arc::new(Library::default());
+        let initial = library.begin_scan("initial".into()).unwrap();
+        library.scan(initial, vec![path.clone()], true).unwrap();
+        let known = library.known.lock().unwrap().clone(); assert_eq!(known.len(), 1);
+        let guard = library.worker.lock().unwrap();
+        let old = library.begin_scan("old".into()).unwrap();
+        let worker_library = library.clone(); let old_path = path.clone();
+        let (sender, receiver) = std::sync::mpsc::channel();
+        let worker = std::thread::spawn(move || {
+            sender.send(()).unwrap();
+            worker_library.scan(old, vec![old_path], true)
+        });
+        receiver.recv().unwrap();
+        let latest = library.begin_scan("latest".into()).unwrap();
+        library.cancel_scan("old").unwrap(); // Late cleanup from an old UI cannot cancel its replacement.
+        drop(guard);
+        assert_eq!(worker.join().unwrap().unwrap_err(), "wallpaper_scan_cancelled");
+        assert_eq!(*library.known.lock().unwrap(), known);
+        let empty = path.join("empty"); fs::create_dir(&empty).unwrap();
+        assert!(library.scan(latest, vec![empty], true).unwrap().images.is_empty());
+        assert!(library.known.lock().unwrap().is_empty());
+        let cancelled = library.begin_scan("cancelled".into()).unwrap();
+        library.cancel_scan("cancelled").unwrap();
+        assert_eq!(library.scan(cancelled, vec![path.clone()], true).unwrap_err(), "wallpaper_scan_cancelled");
+        assert!(library.known.lock().unwrap().is_empty());
         fs::remove_dir_all(path).unwrap();
     }
     #[test]

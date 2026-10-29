@@ -1,0 +1,73 @@
+{
+  "environment": "Pop!_OS 24.04, GNOME 46, X11, scale 1; isolated custom-protocol debug build",
+  "rust": {
+    "passed": 59,
+    "ignored": 0,
+    "newBehaviorTests": [
+      "scan_reports_permissions_and_bounds_images_files_and_issues",
+      "scan_cancels_during_traversal_and_superseded_requests_cannot_publish"
+    ],
+    "coverage": [
+      "real Unix unreadable nested directory",
+      "128 MiB sparse file rejected",
+      "PNG IHDR with valid CRC over 100 megapixels rejected before full decode",
+      "5001 images limited to 5000",
+      "150 corrupt files limited to 100 issues",
+      "existing 20001-entry limit, canonical dedup and symlink loop fixture",
+      "mid-traversal cancellation",
+      "superseded queued request cannot publish, stale cleanup does not cancel replacement",
+      "latest cancellation preserves previously published allowlist"
+    ]
+  },
+  "frontend": {
+    "passed": 33,
+    "newBehaviorTest": "real WallpaperSettings scan effect with controlled React/IPC: request cleanup, stale completion/finally, error/retry, unmount"
+  },
+  "build": [
+    "TypeScript/Vite passed",
+    "offline custom-protocol cargo build passed"
+  ],
+  "nativeLibrary": {
+    "passed": [
+      "5,001-file native library scan",
+      "5,000-image limit is visible",
+      "24-image render bound",
+      "next and previous pagination"
+    ],
+    "firstPageSeconds": 0.933,
+    "pid": 1949769
+  },
+  "nativeWallpaperRegression": {
+    "passed": [
+      "saved library folder",
+      "bounded recursive scan and corrupt-image filtering",
+      "background thumbnail cache",
+      "rendered thumbnail pixels through production asset/CSP policy",
+      "favorite persistence and filter",
+      "filename search",
+      "GNOME applies escaped URI in both color schemes",
+      "shuffle excludes current image",
+      "two external GNOME changes reflected by normal polling",
+      "favorites survive removed folder"
+    ],
+    "pid": 1949769
+  },
+  "cleanup": {
+    "previousPidState": "absent",
+    "normalPid": 1949769,
+    "profileVerified": true,
+    "testTimingEnvAbsent": true,
+    "schedulerDisabled": true,
+    "fixtureFoldersRemovedFromConfig": true,
+    "settingsRestored": "asserted by both native harness finally blocks",
+    "wallpaperUris": {
+      "picture-uri": "'file:///home/ducthanhdev/.local/share/backgrounds/Sonoma-dark.jpg'",
+      "picture-uri-dark": "'file:///home/ducthanhdev/.local/share/backgrounds/Sonoma-dark.jpg'"
+    }
+  },
+  "limits": [
+    "No real system sleep or mixed-DPI claims.",
+    "Controlled adapters do not prove IPC timing under a slow desktop.",
+    "Corrupt payloads with valid metadata can remain listed; thumbnail and apply decode report errors separately."
+  ]
+}

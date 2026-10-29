@@ -6,6 +6,14 @@ Lệnh apply kiểm tra đường dẫn local tuyệt đối, canonical path, gi
 
 Studio đọc lại hình nền mỗi ba giây khi đang hiển thị. Thay đổi bằng ứng dụng khác được phản ánh qua cùng đường đọc GSettings; ẩn Studio dừng polling UI, không dừng lịch backend.
 
+## Quét thư viện
+
+Scanner chạy trên worker ngoài UI, tối đa 20.000 mục duyệt, 5.000 ảnh và 100 issue trong một kết quả. Mỗi file tối đa 128 MiB và 100 triệu pixel; metadata được kiểm trước decode/thumbnail. Canonical path loại trùng root/file, không đi theo symlink thư mục con. Root symlink do người dùng chọn trực tiếp vẫn được canonicalize. Lỗi quyền đọc, file hỏng, symlink đứt hoặc thư mục mất được ghi thành issue, không làm mất các ảnh còn đọc được. Ảnh có metadata hợp lệ nhưng payload hỏng vẫn có thể xuất hiện trong thư viện; thumbnail/apply decode sẽ báo lỗi riêng.
+
+Mỗi scan có request ID và generation. Lượt mới hoặc hủy đúng request làm generation cũ mất hiệu lực; cleanup cũ không hủy request thay thế. Worker kiểm hủy trong traversal và trước publication. Bước kiểm cuối và ghi danh sách ảnh được phép tạo thumbnail dùng cùng khóa với begin/cancel để không công bố sau khi đã bị hủy. Danh sách của lần quét thành công trước được giữ nếu lượt mới bị hủy. UI cũng bỏ completion/finally của effect đã disposed; retry lỗi tạo request mới.
+
+Rust fixture dùng quyền Unix thật để kiểm thư mục không đọc được, sparse file >128 MiB, PNG IHDR/CRC >100 megapixel, 5.001 ảnh, trần issue và 20.001 mục. Cancellation được thử giữa traversal, request cũ đang chờ worker, cleanup cũ và hủy request mới. Test component thật với React/IPC adapter có kiểm soát chứng minh kết quả cũ không ghi đè kết quả mới, lỗi có retry và unmount không nhận completion muộn. Đây không phải đo độ trễ IPC trên desktop chậm. Native `--library-stress` kiểm thư viện 5.001 ảnh, notice giới hạn và pagination 24 ảnh mỗi trang.
+
 Scheduler khởi động một worker trong vòng đời ứng dụng. Thay đổi bật/tắt, chu kỳ hoặc thư mục đánh thức worker và đổi epoch. Trước khi ghi, worker kiểm tra lại epoch/cấu hình trên GTK main thread. Deadline dùng Unix wall clock; khi quá hạn chỉ thử một lần, sau đó tính hạn mới từ lúc hoàn tất, không chạy bù mọi chu kỳ. Khi đồng hồ lùi, hạn chạy được đặt lại. Mỗi lượt quét lại thư mục; ảnh bị xóa không được giữ làm danh sách ứng viên cũ. Lượt lỗi giữ nguyên hình nền, hiển thị lỗi và tiếp tục thử ở hạn kế tiếp.
 
 ## Kiểm thử native có chủ đích

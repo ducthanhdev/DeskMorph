@@ -134,7 +134,7 @@ Tiêu chí: preview đúng Dock; import/reset không mất dữ liệu ngoài ph
 Phụ thuộc G1/G2; capability backend cho từng desktop được xác minh trước.
 
 - [x] G6.1 Lưu danh sách thư mục đã chọn và tùy chọn quét đệ quy.
-- [ ] G6.2 Quét có giới hạn tài nguyên, hủy lượt quét cũ; xử lý quyền đọc, symlink và file hỏng; chống vòng lặp khi quét thư mục con.
+- [x] G6.2 Quét có giới hạn tài nguyên, hủy lượt quét cũ; xử lý quyền đọc, symlink và file hỏng; chống vòng lặp khi quét thư mục con.
 - [x] G6.3 Loại trùng bằng định danh đường dẫn chuẩn; nếu phát hiện ảnh trùng nội dung, thực hiện hash riêng có kiểm soát.
 - [x] G6.4 Thumbnail nền và cache có invalidation theo mtime/kích thước; lazy render/pagination cho thư viện lớn.
 - [x] G6.5 Tìm theo tên, lọc thư mục/định dạng và ảnh yêu thích; favorite không mất khi thư mục tạm không truy cập được.

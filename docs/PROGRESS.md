@@ -2,7 +2,7 @@
 
 Mục tiêu giữ nguyên toàn bộ 99 đầu việc trong IMPLEMENTATION_PLAN.md. Chưa đạt cổng hoàn thành toàn dự án. Checkbox chưa đánh dấu không đồng nghĩa chưa có code: nhiều mục đang chờ kiểm thử đủ phạm vi.
 
-Hiện đã đánh dấu 77/99 mục, gồm G3.2–G3.3 bằng fixture môi trường cô lập và G0.5/G2.1/G2.3 qua capability EWMH, kiểm thử lỗi adapter và native startup thiếu xprop. Đã bổ sung G0.4/G2.4/G2.5 qua popup/auto-hide native và G9.6/G9.9 bằng hồi quy policy/asset/force-close và ảnh Studio thật trong README. Các cổng GUI, Wayland và phát hành vẫn chưa hoàn tất.
+Hiện đã đánh dấu 78/99 mục, gồm G3.2–G3.3 bằng fixture môi trường cô lập và G0.5/G2.1/G2.3 qua capability EWMH, kiểm thử lỗi adapter và native startup thiếu xprop. Đã bổ sung G0.4/G2.4/G2.5 qua popup/auto-hide native và G9.6/G9.9 bằng hồi quy policy/asset/force-close và ảnh Studio thật trong README. Các cổng GUI, Wayland và phát hành vẫn chưa hoàn tất.
 
 ## Môi trường tham chiếu đã xác minh
 
@@ -397,3 +397,12 @@ Script cần AT-SPI, Python GI, GTK3 và libXtst. Chỉ gửi phím khi kiểm t
 - --scheduler-recovery-smoke cuối exit 0, PID 1896337: hồi quy thumbnail pixels/favorite/filter/shuffle/light-dark, lịch một phút khi Studio đóng, mở lại cùng instance/tắt lịch. SIGSTOP riêng app 125,01 giây rồi CONT → một thay đổi quan sát được và ổn định 10 giây. Xóa hai PNG fixture → deadline sau báo No readable images và giữ cả hai URI; khôi phục ảnh → deadline sau tự chạy, xóa lỗi mà không bật/tắt lại. Watchdog CONT riêng được terminate/wait trong finally, ảnh fixture khôi phục.
 - Outer finally khôi phục library/favorites/recursive và chu kỳ 15 phút, tắt lịch, phục hồi hai URI Sonoma-dark.jpg gốc. Kiểm /proc ngoài sandbox xác minh PID đúng profile, không còn stopped; fixture folder/favorite không còn trong config. Python compile/diff check qua; không đổi Rust/TS nên không lặp full build/test đã xanh ở mốc G3.11/G3.12.
 - [Hợp đồng](WALLPAPER.md), [bản ghi](benchmarks/wallpaper-recovery-2026-10-29.json). G6.8 đánh dấu, tổng 77/99. G6.7 vẫn mở: SIGSTOP là ngừng thực thi tiến trình, không chứng minh sleep thật của máy/session/compositor. Readback backend cũng không chứng minh compositor vẽ mọi pixel hình nền.
+
+
+## G6.2 — Scanner có giới hạn và hủy đúng request (29/10/2026)
+
+- Gom begin/cancel/scan vào Library để dùng chung đường chạy từ IPC và test. Publication thumbnail allowlist nay giữ khóa active trong kiểm generation cuối và ghi known; cancel/begin dùng cùng khóa, tránh cửa sổ giữa kiểm hủy và công bố. Scan worker vẫn tuần tự ngoài UI; cleanup cũ không hủy request mới. Không thay giao thức command hay giới hạn thư viện.
+- Hai test Rust mới: quyền Unix thật chmod 000 thư mục con (khôi phục trước assertion), giữ ảnh đọc được; sparse file >128 MiB; sửa PNG IHDR/CRC >100 megapixel, bị từ chối trước full decode; 5.001 ảnh → 5.000/limited; 150 file hỏng → 100 issue. Hủy sau 24 lần kiểm trong traversal; request bị thay khi đang chờ worker không publish/giữ known; cleanup cũ không hủy latest; scan empty thành công thay known; cancel latest không ghi lại ảnh. Các test cũ giữ bằng chứng 20.001 mục, canonical dedup, symlink loop/file alias và thư mục thiếu.
+- Test component WallpaperSettings thật với adapter React/IPC có kiểm soát: đổi root hủy đúng request ID; completion/finally cũ không thay scan/loading mới; render chỉ ảnh mới, lỗi có retry request mới; unmount gửi cancel và bỏ completion. Lượt đầu thiếu Fragment export trong JSX test adapter, đã sửa và chạy lại xanh; không coi đó là lỗi product. Không tuyên bố adapter mô phỏng chứng minh IPC timing trên desktop chậm.
+- Full Rust 59/59 gồm ignored, frontend 33/33, TypeScript/Vite và offline custom-protocol build qua. Native --restart --library-stress --wallpaper-smoke exit 0 app 1949769: thư viện 5.001 file có notice giới hạn 5.000, trang 24 ảnh, next/previous đúng; first-page 0,933 giây là một quan sát, không phải performance budget. Hồi quy pixels thumbnail/favorite/filter/shuffle/light-dark và hai external changes cũng qua.
+- Finally library/favorites/recursive/wallpaper khôi phục; /proc ngoài sandbox xác minh PID cũ 1896337 đã thoát, PID mới đúng profile không timing env, lịch tắt, fixture folders không còn trong config, hai URI Sonoma-dark.jpg. [Hợp đồng](WALLPAPER.md), [bản ghi](benchmarks/wallpaper-scan-2026-10-29.json). G6.2 đánh dấu, tổng 78/99; G6.7 sleep thật và G6.9 adapter ngoài GNOME vẫn mở.
