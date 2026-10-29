@@ -70,6 +70,28 @@ def fixtures():
             ('calendar-today', '<div class="calendar-flyout-card"><button class="calendar-day-cell is-today" data-target>29</button></div>'),
         ]:
             add(f'popup/{surface}/{backdrop}', f'<div style="background:{backdrop}">{markup}</div>')
+    # Non-text indicators use 3:1. Focus selectors are fixture states, rather
+    # than a claim that keyboard navigation or native focus was exercised.
+    for surface, wrapper, control in [
+        ('studio-button', '<div class="studio-app" style="background:#0d1520"><div class="studio-card">{}</div></div>', '<button data-target>Apply</button>'),
+        ('studio-input', '<div class="studio-app" style="background:#0d1520"><div class="studio-card">{}</div></div>', '<input data-target value="Name">'),
+        ('studio-textarea', '<div class="studio-app" style="background:#0d1520"><div class="studio-card">{}</div></div>', '<textarea data-target>Class</textarea>'),
+        ('launcher-button', '<div class="app-launcher">{}</div>', '<button data-target>Open</button>'),
+        ('launcher-input', '<div class="app-launcher">{}</div>', '<input data-target value="Search">'),
+        ('context-button', '<div class="context-actions">{}</div>', '<button data-target>Open</button>'),
+        ('window-button', '<div class="window-list">{}</div>', '<button data-target>Window</button>'),
+        ('audio-button', '<div class="audio-popup">{}</div>', '<button data-target>Play</button>'),
+        ('calendar-button', '<div class="calendar-flyout-card">{}</div>', '<button class="calendar-day-cell" data-target>29</button>'),
+    ]:
+        focused_control = (control.replace('data-target', 'class="test-focus" data-target')
+            if 'class=' not in control else control.replace('calendar-day-cell', 'calendar-day-cell test-focus'))
+        for backdrop in ('#000000', '#ffffff'):
+            markup = f'<div style="background:{backdrop}">' + wrapper.format(focused_control) + '</div>'
+            cases.append(dict(name=f'focus/{surface}/{backdrop}', markup=markup, threshold=3, metric='outline'))
+        if surface in ('studio-button', 'studio-input', 'studio-textarea', 'audio-button'):
+            cases.append(dict(name=f'border/{surface}', markup='<div style="background:#1e293b">' + wrapper.format(control) + '</div>', threshold=3, metric='border'))
+        if surface == 'studio-button':
+            cases.append(dict(name='border/studio-button-hover', markup=wrapper.format(control.replace('data-target', 'class="test-hover" data-target')), threshold=3, metric='border'))
     return cases
 
 
@@ -78,7 +100,7 @@ def run(output, enforce, css_path, screenshot):
     cases = fixtures()
     assert len({case["name"] for case in cases}) == len(cases)
     markup = ''.join(f'<section data-case="{i}">{case["markup"]}</section>' for i, case in enumerate(cases))
-    page = '<meta http-equiv="Content-Security-Policy" content="default-src &#39;none&#39;; style-src &#39;unsafe-inline&#39;"><style>' + css + '\n' + css.replace(':hover', '.test-hover') + '\n* {animation:none!important;transition:none!important}' + '</style>' + markup
+    page = '<meta http-equiv="Content-Security-Policy" content="default-src &#39;none&#39;; style-src &#39;unsafe-inline&#39;"><style>' + css + '\n' + css.replace(':hover', '.test-hover').replace(':focus-visible', '.test-focus') + '\n* {animation:none!important;transition:none!important}' + '</style>' + markup
     window = Gtk.OffscreenWindow()
     context = WebKit2.WebContext.new_ephemeral()
     view = WebKit2.WebView.new_with_context(context)
@@ -91,25 +113,38 @@ def run(output, enforce, css_path, screenshot):
       }; const chain=[];
       for(let element=target;element;element=element.parentElement){const s=getComputedStyle(element);
         chain.push({background:color(s.backgroundColor),opacity:Number(s.opacity),image:s.backgroundImage});}
-      return {index:Number(root.dataset.case),color:color(getComputedStyle(target).color),chain};
+      const s=getComputedStyle(target);
+      return {index:Number(root.dataset.case),color:color(s.color),outline:color(s.outlineColor),outlineWidth:parseFloat(s.outlineWidth),border:color(s.borderTopColor),borderWidth:parseFloat(s.borderTopWidth),chain};
     }))'''
     def done(webview, task, *_):
         try:
             raw = json.loads(webview.evaluate_javascript_finish(task).to_string())
             for record in raw:
-                bg = [0, 0, 0, 0]; fg = record['color']
+                case = cases[record['index']]
+                metric = case.get('metric', 'color')
+                if metric != 'color': assert record[metric + 'Width'] > 0, 'Indicator has no width'
+                bg = [0, 0, 0, 0]; fg = record[metric]
                 for layer in record['chain']:
                     assert layer['image'] == 'none', 'Gradient fixture requires a different measurement method'
                     bg, fg = over(bg, layer['background']), over(fg, layer['background'])
                     bg[3] *= layer['opacity']; fg[3] *= layer['opacity']
                 bg, fg = over(bg, [255,255,255,1]), over(fg, [255,255,255,1])
-                case = cases[record['index']]
                 case.update(ratio=contrast(fg,bg), foreground=fg, background=bg, computed=record)
+                if metric != 'color':
+                    outside_bg = [0, 0, 0, 0]; outside_fg = record[metric]
+                    for index, layer in enumerate(record['chain']):
+                        background = layer['background'] if index else [0, 0, 0, 0]
+                        outside_bg, outside_fg = over(outside_bg, background), over(outside_fg, background)
+                        outside_bg[3] *= layer['opacity']; outside_fg[3] *= layer['opacity']
+                    outside_bg = over(outside_bg, [255,255,255,1])
+                    outside_fg = over(outside_fg, [255,255,255,1])
+                    case['adjacentRatios'] = dict(interior=case['ratio'], exterior=contrast(outside_fg,outside_bg))
+                    case['ratio'] = min(case['adjacentRatios'].values())
                 case['passed'] = case['ratio'] >= case['threshold']
                 del case['markup']
             result.update(cssSha256=hashlib.sha256(css.encode()).hexdigest(), ephemeralContext=True, engine=f'WebKitGTK {WebKit2.get_major_version()}.{WebKit2.get_minor_version()}.{WebKit2.get_micro_version()}', cases=cases,
                           passed=sum(c['passed'] for c in cases), total=len(cases), inputSent=False,
-                          scope='Computed style fixtures using actual App.css in Gtk.OffscreenWindow; white/black backdrops, flat layers and group opacity. Hover selectors mapped to test-hover. No assertion of full app coverage, artwork, gradients, control borders, focus contrast, native widgets or screen-reader behavior.')
+                          scope='Computed style fixtures using actual App.css in Gtk.OffscreenWindow; white/black backdrops, flat layers and group opacity. Hover/focus selectors mapped to fixture states. Text 4.5:1; enumerated outlines/borders 3:1 against both interior and exterior flat backgrounds. Studio fixture replaces the page gradient with an explicit flat background. No assertion of full app coverage, artwork, gradients, native keyboard focus, native widgets or screen-reader behavior.')
         except Exception as error:
             result['error'] = repr(error)
         if screenshot and 'error' not in result:
@@ -153,7 +188,7 @@ def run(output, enforce, css_path, screenshot):
     assert 'error' not in result, result
     print(json.dumps(dict(passed=result['passed'],total=result['total'],failures=[dict(name=c['name'],ratio=c['ratio']) for c in cases if not c['passed']])))
     if enforce:
-        assert result['passed'] == result['total'], 'Contrast fixtures below 4.5:1'
+        assert result['passed'] == result['total'], 'Contrast fixtures below their metric threshold'
 
 
 if __name__ == '__main__':

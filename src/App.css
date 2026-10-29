@@ -1742,11 +1742,11 @@ button:focus-visible { outline: 2px solid #48b9c7; outline-offset: -2px; }
 .settings-range > span { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
 .settings-range input { width: 100%; accent-color: var(--accent-pop); }
 .settings-range output { color: var(--accent-pop); }
-.studio-card input:not([type=checkbox]):not([type=range]):not([type=color]), .studio-card select, .studio-card textarea { min-width: 0; padding: 10px; border-radius: 8px; border: 1px solid #475569; background: #111827; color: var(--text-main); font: inherit; }
+.studio-card input:not([type=checkbox]):not([type=range]):not([type=color]), .studio-card select, .studio-card textarea { min-width: 0; padding: 10px; border-radius: 8px; border: 1px solid #8291a8; background: #111827; color: var(--text-main); font: inherit; }
 .studio-card select { max-width: 65%; }
 .settings-inline { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 14px 0; }
 .settings-inline input { flex: 1; }
-.studio-card button, .studio-button { padding: 8px 12px; border: 1px solid #475569; background: #1e293b; border-radius: 8px; color: var(--text-main); font: inherit; cursor: pointer; }
+.studio-card button, .studio-button { padding: 8px 12px; border: 1px solid #8291a8; background: #1e293b; border-radius: 8px; color: var(--text-main); font: inherit; cursor: pointer; }
 .studio-card button:hover { background: #334155; }
 .studio-card button:disabled { opacity: .5; cursor: default; }
 .studio-app :focus-visible { outline: 3px solid #67e8f9; outline-offset: 3px; }
@@ -1797,7 +1797,7 @@ button:focus-visible { outline: 2px solid #48b9c7; outline-offset: -2px; }
 .audio-popup { box-sizing: border-box; height: 100vh; overflow: auto; padding: 18px; border: 1px solid #596175; border-radius: 16px; color: #f1f5f9; background: #171d2c; font-size: 14px; }
 .audio-popup header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
 .audio-popup h2 { font-size: 18px; margin: 0; }
-.audio-popup button, .audio-popup select { padding: 7px 10px; border: 1px solid #68758b; border-radius: 6px; background: #283348; color: #fff; }
+.audio-popup button, .audio-popup select { padding: 7px 10px; border: 1px solid #8291a8; border-radius: 6px; background: #283348; color: #fff; }
 .audio-popup select { display: block; width: 100%; margin-top: 6px; }
 .audio-help { font-size: 12px; color: #cbd5e1; line-height: 1.5; }
 .audio-volume { display: block; margin: 16px 0; }
