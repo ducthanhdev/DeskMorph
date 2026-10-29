@@ -1,0 +1,20 @@
+{
+  "passed": [
+    "enabled false/true persists across four normal restarts and delayed layout",
+    "closing Studio keeps enabled Dock; relaunch reopens same instance three times",
+    "four concurrent launches ACK and exit with one Studio and one Dock",
+    "closing Studio exits when Dock disabled or keep-Dock option off",
+    "explicit Quit exits even when keep-Dock option on"
+  ],
+  "pids": [
+    4040943,
+    4089367,
+    4089895,
+    4090444,
+    4090943,
+    4091905,
+    4092370,
+    4092911
+  ],
+  "preferencesRestored": true
+}

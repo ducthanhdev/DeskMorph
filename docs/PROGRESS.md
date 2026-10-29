@@ -761,3 +761,9 @@ Script cần AT-SPI, Python GI, GTK3 và libXtst. Chỉ gửi phím khi kiểm t
 
 - Kiểm tra read-only cho thấy systemd đang `running` và có `rtcwake`, nhưng `/dev/rtc0` là `root:root 0600`; `rtcwake -m mem -s 1 --dry-run` trả `Permission denied`. Không thực hiện suspend khi không có quyền RTC/cơ chế đánh thức chắc chắn.
 - Đây là blocker môi trường cho ca sleep thật, không tính SIGSTOP/CONT hiện có thành sleep. G6.7 và G9.8 vẫn mở; không thay đổi checkbox hay tuyên bố scheduler đã qua system suspend.
+
+## G9.8 — Lặp vòng đời instance và popup trong native lab (30/10/2026)
+
+- `desktop_smoke.py --lifecycle-smoke` chạy qua bốn lần bật/tắt Dock và restart, ba lần đóng/mở Studio cùng instance, bốn launch đồng thời chỉ giữ một instance, các nhánh Quit/keep-Dock và phục hồi preference. [Kết quả](benchmarks/lifecycle-smoke-2026-10-30/result.json), `preferencesRestored=true` và mọi PID test đã dọn.
+- Đây chỉ là phần lifecycle GNOME X11 đã chứng minh; G9.8 vẫn mở vì chưa có sleep/resume thật, service restart tổng thể, hotplug màn hình và soak dài hạn. Không dùng ca này để đánh dấu G9.8.
+- Đánh giá file: giữ JSON nhỏ gồm passed/pids/restore; không giữ log hoặc profile tạm.
