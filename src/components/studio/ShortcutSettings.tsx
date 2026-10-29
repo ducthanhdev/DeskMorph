@@ -14,6 +14,7 @@ export function ShortcutSettings() {
   const [status, setStatus] = useState<Status | null>(null);
   const [busy, setBusy] = useState(false);
   const [failed, setFailed] = useState(false);
+  const [desktopGuideExpanded, setDesktopGuideExpanded] = useState(false);
   useEffect(() => { if (config.launcherShortcut) setDraft(config.launcherShortcut); }, [config.launcherShortcut]);
   usePolling(async (signal) => {
     try { const value = await invoke<Status>("get_launcher_shortcut_status"); if (!signal.aborted) { setStatus(value); setFailed(false); } }
@@ -34,6 +35,14 @@ export function ShortcutSettings() {
         <button className="studio-button" type="button" disabled={busy || config.launcherShortcut === null} onClick={() => void save(null)}>{t("shortcutDisable")}</button></div>
     </form>
     {platform && platform.session !== "x11" && <p role="status">{t("shortcutUnsupported")}</p>}
+    {platform?.session === "wayland" && platform.desktop.toUpperCase().includes("GNOME") && <details onToggle={(event) => setDesktopGuideExpanded(event.currentTarget.open)}>
+      <summary role="button" aria-expanded={desktopGuideExpanded}>{t("shortcutDesktopTitle")}</summary>
+      <p>{t("shortcutDesktopSteps")}</p>
+      <p>{t("shortcutDesktopCommand")}</p>
+      <pre><code>env WEBKIT_DISABLE_DMABUF_RENDERER=1 "/absolute/path/deskmorph"</code></pre>
+      <p>{t("shortcutDesktopLimits")}</p>
+      <p>{t("shortcutDesktopRemove")}</p>
+    </details>}
     <p role="status">{config.launcherShortcut === null ? t("shortcutOff") : !config.enabled ? t("shortcutPaused") : !status || status.pending || status.requested !== config.launcherShortcut ? t("shortcutPending") : status.registered ? `${t("shortcutActive")}: ${status.requested}` : t("shortcutOff")}</p>
     {(failed || (status?.error && config.launcherShortcut !== null)) && <div role="alert"><p>{error}</p><button className="studio-button" type="button" onClick={() => { void invoke("retry_launcher_shortcut").catch(() => setFailed(true)); }}>{t("retry")}</button></div>}
   </Card>;

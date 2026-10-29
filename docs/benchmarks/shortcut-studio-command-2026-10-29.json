@@ -1,0 +1,9 @@
+{
+  "command": "env WEBKIT_DISABLE_DMABUF_RENDERER=1 \"/home/ducthanhdev/Documents/Projects/Tool-private/src-tauri/target/agent/debug/deskmorph\"",
+  "session": "x11",
+  "pid": 2999377,
+  "exitCode": 0,
+  "sameAccessiblePid": true,
+  "configUnchanged": true,
+  "scope": "Existing isolated instance accepts executable command and ACK on X11; no shortcut registered, no native Wayland activation claim, no cold-start launcher claim."
+}

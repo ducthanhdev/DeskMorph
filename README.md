@@ -47,6 +47,8 @@ Nếu cửa sổ không được nhận vào pin, mở Studio → Ứng dụng �
 
 Trong Hệ thống, bạn có thể bật phím tắt launcher như `Ctrl+Super+K`. Cú pháp dùng Ctrl/Alt/Shift/Super và chữ ASCII, số, F1–F12 hoặc Space; không nhận phím trần hay chỉ Shift. `Ctrl+Alt+F1–F12` bị từ chối vì có thể chuyển virtual console. Khi có xung đột, phím đã chọn được lưu nhưng báo chưa hoạt động; đổi phím hoặc thử lại sau khi giải phóng tổ hợp. Tắt Dock tạm ngừng đăng ký; mở lại Dock khôi phục lựa chọn. Wayland hiện chưa hỗ trợ.
 
+GNOME Wayland có thể gán phím của desktop để mở/hiện lại **Studio** bằng executable đã cài: xem [hướng dẫn gán và gỡ phím](docs/WAYLAND_SHORTCUTS.md). Cách này chưa mở thẳng launcher và chưa được kiểm activation trên Wayland. G8.7 vẫn mở; không suy việc portal thiếu trong lab thành mọi compositor đều thiếu.
+
 ## Build và cài thủ công
 
 ```sh
