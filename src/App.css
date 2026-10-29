@@ -1742,7 +1742,7 @@ button:focus-visible { outline: 2px solid #48b9c7; outline-offset: -2px; }
 .settings-range > span { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
 .settings-range input { width: 100%; accent-color: var(--accent-pop); }
 .settings-range output { color: var(--accent-pop); }
-.studio-card input:not([type=checkbox]):not([type=range]):not([type=color]), .studio-card select { min-width: 0; padding: 10px; border-radius: 8px; border: 1px solid #475569; background: #111827; color: var(--text-main); font: inherit; }
+.studio-card input:not([type=checkbox]):not([type=range]):not([type=color]), .studio-card select, .studio-card textarea { min-width: 0; padding: 10px; border-radius: 8px; border: 1px solid #475569; background: #111827; color: var(--text-main); font: inherit; }
 .studio-card select { max-width: 65%; }
 .settings-inline { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 14px 0; }
 .settings-inline input { flex: 1; }
@@ -1877,3 +1877,5 @@ button:focus-visible { outline: 2px solid #48b9c7; outline-offset: -2px; }
   outline-offset: -3px;
 }
 .app-launcher input:focus-visible { outline: 3px solid #67e8f9; outline-offset: 1px; border-radius: 3px; }
+
+.settings-inline .accent-swatch { flex: none; width: 42px; height: 34px; cursor: pointer; }

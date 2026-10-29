@@ -77,6 +77,10 @@ def run(app, config_home, click, focus_studio, native_keys, test_app, start_app,
                 wait(lambda: focused(target), 'Pin removal lost focus: ' + target)
                 observations.append(dict(language=language, operation=f'unpin {i}', focus=target))
             focus(labels['appearance']); enter()
+            color_name = 'Màu chủ đạo' if language == 'vi' else 'Accent color'
+            focus(color_name); native_keys(value='#336699'); enter()
+            wait(lambda: json.loads(path.read_text())['config']['accentColor'] == '#336699', 'Enter did not save hex accent')
+            observations.append(dict(language=language, operation='save accent with Enter', color='#336699'))
             focus(f"{labels['rename']} Focus Preset 1"); enter()
             wait(lambda: focused(labels['preset']), 'Rename did not focus preset name')
             native_keys(value='Focus Renamed'); enter()

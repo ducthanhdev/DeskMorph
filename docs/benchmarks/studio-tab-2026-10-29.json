@@ -1,0 +1,1207 @@
+{
+  "pid": 2766114,
+  "tabs": [
+    {
+      "pid": 2766114,
+      "disclosure": null,
+      "tab": "Taskbar Studio",
+      "sequence": [
+        [
+          "button",
+          "Taskbar Studio"
+        ],
+        [
+          "button",
+          "Ứng dụng"
+        ],
+        [
+          "button",
+          "Giao diện"
+        ],
+        [
+          "button",
+          "Hình nền"
+        ],
+        [
+          "button",
+          "Hệ thống"
+        ],
+        [
+          "button",
+          "Thử hiệu ứng mở ứng dụng"
+        ],
+        [
+          "check box",
+          "Bật Dock"
+        ],
+        [
+          "combo box",
+          "Vị trí"
+        ],
+        [
+          "combo box",
+          "Màn hình đặt Dock"
+        ],
+        [
+          "slider",
+          "Chiều cao Dock"
+        ],
+        [
+          "slider",
+          "Kích thước icon"
+        ],
+        [
+          "slider",
+          "Khoảng cách icon"
+        ],
+        [
+          "check box",
+          "Tự động ẩn Dock Chạm cạnh màn hình để hiện lại; Dock giữ hiện khi bạn thao tác popup."
+        ],
+        [
+          "check box",
+          "Ứng dụng trên Dock"
+        ],
+        [
+          "check box",
+          "Hiện pin trên Dock"
+        ],
+        [
+          "check box",
+          "Hiện mạng trên Dock"
+        ],
+        [
+          "check box",
+          "Nút tiện ích hệ thống"
+        ],
+        [
+          "check box",
+          "Âm thanh"
+        ],
+        [
+          "check box",
+          "Đồng hồ"
+        ],
+        [
+          "check box",
+          "CPU và RAM"
+        ],
+        [
+          "check box",
+          "Nút đổi hình nền"
+        ],
+        [
+          "check box",
+          "Định dạng 24 giờ"
+        ],
+        [
+          "check box",
+          "Hiện giây"
+        ]
+      ],
+      "disabledSkipped": [
+        [
+          "button",
+          "Khôi phục giao diện lúc mở Studio"
+        ]
+      ],
+      "reverseMatches": true
+    },
+    {
+      "pid": 2766114,
+      "disclosure": {
+        "enterExpands": true,
+        "tabReachesTextarea": true,
+        "spaceCollapses": true,
+        "screenshot": "/tmp/deskmorph-desktop-test/studio-disclosure-focus.png"
+      },
+      "tab": "Ứng dụng",
+      "sequence": [
+        [
+          "button",
+          "Taskbar Studio"
+        ],
+        [
+          "button",
+          "Ứng dụng"
+        ],
+        [
+          "button",
+          "Giao diện"
+        ],
+        [
+          "button",
+          "Hình nền"
+        ],
+        [
+          "button",
+          "Hệ thống"
+        ],
+        [
+          "check box",
+          "Ghim Google Chrome"
+        ],
+        [
+          "button",
+          "Sang phải Google Chrome"
+        ],
+        [
+          "button",
+          "Bỏ ghim Google Chrome"
+        ],
+        [
+          "button",
+          "Ghép lớp cửa sổ Google Chrome"
+        ],
+        [
+          "check box",
+          "Ghim VS Code / IDE"
+        ],
+        [
+          "button",
+          "Sang trái VS Code / IDE"
+        ],
+        [
+          "button",
+          "Sang phải VS Code / IDE"
+        ],
+        [
+          "button",
+          "Bỏ ghim VS Code / IDE"
+        ],
+        [
+          "button",
+          "Ghép lớp cửa sổ VS Code / IDE"
+        ],
+        [
+          "check box",
+          "Ghim Terminal"
+        ],
+        [
+          "button",
+          "Sang trái Terminal"
+        ],
+        [
+          "button",
+          "Sang phải Terminal"
+        ],
+        [
+          "button",
+          "Bỏ ghim Terminal"
+        ],
+        [
+          "button",
+          "Ghép lớp cửa sổ Terminal"
+        ],
+        [
+          "check box",
+          "Ghim Tệp tin (Files)"
+        ],
+        [
+          "button",
+          "Sang trái Tệp tin (Files)"
+        ],
+        [
+          "button",
+          "Sang phải Tệp tin (Files)"
+        ],
+        [
+          "button",
+          "Bỏ ghim Tệp tin (Files)"
+        ],
+        [
+          "button",
+          "Ghép lớp cửa sổ Tệp tin (Files)"
+        ],
+        [
+          "check box",
+          "Ghim Cài đặt (Settings)"
+        ],
+        [
+          "button",
+          "Sang trái Cài đặt (Settings)"
+        ],
+        [
+          "button",
+          "Sang phải Cài đặt (Settings)"
+        ],
+        [
+          "button",
+          "Bỏ ghim Cài đặt (Settings)"
+        ],
+        [
+          "button",
+          "Ghép lớp cửa sổ Cài đặt (Settings)"
+        ],
+        [
+          "check box",
+          "Ghim DeskMorph Smoke Fixture"
+        ],
+        [
+          "button",
+          "Sang trái DeskMorph Smoke Fixture"
+        ],
+        [
+          "button",
+          "Bỏ ghim DeskMorph Smoke Fixture"
+        ],
+        [
+          "button",
+          "Ghép lớp cửa sổ DeskMorph Smoke Fixture"
+        ],
+        [
+          "entry",
+          "Tìm ứng dụng"
+        ],
+        [
+          "button",
+          "Làm mới"
+        ],
+        [
+          "button",
+          "Mở Advanced Network Configuration"
+        ],
+        [
+          "button",
+          "Ghim Advanced Network Configuration"
+        ],
+        [
+          "button",
+          "Mở auto-cpufreq"
+        ],
+        [
+          "button",
+          "Ghim auto-cpufreq"
+        ],
+        [
+          "button",
+          "Mở btop++"
+        ],
+        [
+          "button",
+          "Ghim btop++"
+        ],
+        [
+          "button",
+          "Mở Character Map"
+        ],
+        [
+          "button",
+          "Ghim Character Map"
+        ],
+        [
+          "button",
+          "Mở Cheese"
+        ],
+        [
+          "button",
+          "Ghim Cheese"
+        ],
+        [
+          "button",
+          "Mở Chromium Web Browser"
+        ],
+        [
+          "button",
+          "Ghim Chromium Web Browser"
+        ],
+        [
+          "button",
+          "Mở Codex Account Studio"
+        ],
+        [
+          "button",
+          "Ghim Codex Account Studio"
+        ],
+        [
+          "button",
+          "Mở CopyQ"
+        ],
+        [
+          "button",
+          "Ghim CopyQ"
+        ],
+        [
+          "button",
+          "Mở COSMIC Files"
+        ],
+        [
+          "button",
+          "Bỏ ghim COSMIC Files"
+        ],
+        [
+          "button",
+          "Mở COSMIC Media Player"
+        ],
+        [
+          "button",
+          "Ghim COSMIC Media Player"
+        ],
+        [
+          "button",
+          "Mở COSMIC Screenshot"
+        ],
+        [
+          "button",
+          "Ghim COSMIC Screenshot"
+        ],
+        [
+          "button",
+          "Mở COSMIC Store"
+        ],
+        [
+          "button",
+          "Ghim COSMIC Store"
+        ],
+        [
+          "button",
+          "Mở COSMIC System Monitor"
+        ],
+        [
+          "button",
+          "Ghim COSMIC System Monitor"
+        ],
+        [
+          "button",
+          "Mở COSMIC Terminal"
+        ],
+        [
+          "button",
+          "Bỏ ghim COSMIC Terminal"
+        ],
+        [
+          "button",
+          "Mở COSMIC Text Editor"
+        ],
+        [
+          "button",
+          "Ghim COSMIC Text Editor"
+        ],
+        [
+          "button",
+          "Mở COSMIC Viewer"
+        ],
+        [
+          "button",
+          "Ghim COSMIC Viewer"
+        ],
+        [
+          "button",
+          "Mở Cursor"
+        ],
+        [
+          "button",
+          "Ghim Cursor"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Launch multi"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Launch multi"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Launch single"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Launch single"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Layout Fixture"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Layout Fixture"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Overflow 01"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Overflow 01"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Overflow 02"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Overflow 02"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Overflow 03"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Overflow 03"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Overflow 04"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Overflow 04"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Overflow 05"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Overflow 05"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Overflow 06"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Overflow 06"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Overflow 07"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Overflow 07"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Overflow 08"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Overflow 08"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Overflow 09"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Overflow 09"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Overflow 10"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Overflow 10"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Overflow 11"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Overflow 11"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Overflow 12"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Overflow 12"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Overflow 13"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Overflow 13"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Overflow 14"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Overflow 14"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Overflow 15"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Overflow 15"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Overflow 16"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Overflow 16"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Overflow 17"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Overflow 17"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Overflow 18"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Overflow 18"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Overflow 19"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Overflow 19"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Overflow 20"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Overflow 20"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Overflow 21"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Overflow 21"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Overflow 22"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Overflow 22"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Overflow 23"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Overflow 23"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Overflow 24"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Overflow 24"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Overflow 25"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Overflow 25"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Overflow 26"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Overflow 26"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Overflow 27"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Overflow 27"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Overflow 28"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Overflow 28"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Overflow 29"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Overflow 29"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Overflow 30"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Overflow 30"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Overflow 31"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Overflow 31"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Overflow 32"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Overflow 32"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Overflow 33"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Overflow 33"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Overflow 34"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Overflow 34"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Overflow 35"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Overflow 35"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Overflow 36"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Overflow 36"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Overflow 37"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Overflow 37"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Overflow 38"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Overflow 38"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Overflow 39"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Overflow 39"
+        ],
+        [
+          "button",
+          "Mở DeskMorph Overflow 40"
+        ],
+        [
+          "button",
+          "Ghim DeskMorph Overflow 40"
+        ]
+      ],
+      "disabledSkipped": [
+        [
+          "button",
+          "Sang trái Google Chrome"
+        ],
+        [
+          "button",
+          "Sang phải DeskMorph Smoke Fixture"
+        ]
+      ],
+      "reverseMatches": true
+    },
+    {
+      "pid": 2766114,
+      "disclosure": null,
+      "tab": "Giao diện",
+      "sequence": [
+        [
+          "button",
+          "Taskbar Studio"
+        ],
+        [
+          "button",
+          "Ứng dụng"
+        ],
+        [
+          "button",
+          "Giao diện"
+        ],
+        [
+          "button",
+          "Hình nền"
+        ],
+        [
+          "button",
+          "Hệ thống"
+        ],
+        [
+          "button",
+          "Thử hiệu ứng mở ứng dụng"
+        ],
+        [
+          "entry",
+          "Màu chủ đạo"
+        ],
+        [
+          "slider",
+          "Độ trong suốt"
+        ],
+        [
+          "slider",
+          "Bo góc"
+        ],
+        [
+          "check box",
+          "Nảy icon khi mở"
+        ],
+        [
+          "check box",
+          "Bóng đổ động"
+        ],
+        [
+          "check box",
+          "Phóng to khi rê chuột"
+        ],
+        [
+          "slider",
+          "Mức phóng to tối đa"
+        ],
+        [
+          "check box",
+          "Giảm hoạt ảnh"
+        ],
+        [
+          "button",
+          "Nord tối giản"
+        ],
+        [
+          "button",
+          "Neon tím"
+        ],
+        [
+          "button",
+          "Pop Teal"
+        ],
+        [
+          "entry",
+          "Tên preset"
+        ],
+        [
+          "button",
+          "Lưu giao diện hiện tại"
+        ]
+      ],
+      "disabledSkipped": [
+        [
+          "button",
+          "Khôi phục giao diện lúc mở Studio"
+        ],
+        [
+          "button",
+          "Lưu Màu chủ đạo"
+        ]
+      ],
+      "reverseMatches": true
+    },
+    {
+      "pid": 2766114,
+      "disclosure": null,
+      "tab": "Hình nền",
+      "sequence": [
+        [
+          "button",
+          "Taskbar Studio"
+        ],
+        [
+          "button",
+          "Ứng dụng"
+        ],
+        [
+          "button",
+          "Giao diện"
+        ],
+        [
+          "button",
+          "Hình nền"
+        ],
+        [
+          "button",
+          "Hệ thống"
+        ],
+        [
+          "entry",
+          "Thư mục ảnh"
+        ],
+        [
+          "button",
+          "Thêm thư mục"
+        ],
+        [
+          "check box",
+          "Quét cả thư mục con Không đi theo symlink thư mục. Mỗi lượt giới hạn 20.000 mục và 5.000 ảnh."
+        ],
+        [
+          "button",
+          "Quét thư mục"
+        ],
+        [
+          "button",
+          "Đổi ngẫu nhiên"
+        ],
+        [
+          "check box",
+          "Đổi hình nền tự động Đổi ngẫu nhiên trong các thư mục đã lưu. Lịch chạy khi Studio đóng và không đổi bù nhiều ảnh sau khi máy thức dậy."
+        ],
+        [
+          "combo box",
+          "Chu kỳ đổi ảnh"
+        ],
+        [
+          "entry",
+          "Tìm hình nền"
+        ],
+        [
+          "combo box",
+          "Lọc theo thư mục"
+        ],
+        [
+          "combo box",
+          "Định dạng"
+        ],
+        [
+          "check box",
+          "Chỉ ảnh yêu thích"
+        ],
+        [
+          "button",
+          "Thư mục hoặc ảnh không đọc được (2)"
+        ],
+        [
+          "toggle button",
+          "Áp dụng 2026-04-20-23-13-24-1342304.jpeg"
+        ],
+        [
+          "toggle button",
+          "Yêu thích 2026-04-20-23-13-24-1342304.jpeg"
+        ],
+        [
+          "toggle button",
+          "Áp dụng 2026-06-14-01-14-32-wallhaven-3zwkz9 (1).jpg"
+        ],
+        [
+          "toggle button",
+          "Yêu thích 2026-06-14-01-14-32-wallhaven-3zwkz9 (1).jpg"
+        ],
+        [
+          "toggle button",
+          "Áp dụng 2026-06-14-01-18-18-632051.png"
+        ],
+        [
+          "toggle button",
+          "Yêu thích 2026-06-14-01-18-18-632051.png"
+        ],
+        [
+          "toggle button",
+          "Áp dụng Monterey-dark.jpg"
+        ],
+        [
+          "toggle button",
+          "Yêu thích Monterey-dark.jpg"
+        ],
+        [
+          "toggle button",
+          "Áp dụng Monterey-light.jpg"
+        ],
+        [
+          "toggle button",
+          "Yêu thích Monterey-light.jpg"
+        ],
+        [
+          "toggle button",
+          "Áp dụng Monterey.jpg"
+        ],
+        [
+          "toggle button",
+          "Yêu thích Monterey.jpg"
+        ],
+        [
+          "toggle button",
+          "Áp dụng Sonoma-dark.jpg"
+        ],
+        [
+          "toggle button",
+          "Yêu thích Sonoma-dark.jpg"
+        ],
+        [
+          "toggle button",
+          "Áp dụng Sonoma-light.jpg"
+        ],
+        [
+          "toggle button",
+          "Yêu thích Sonoma-light.jpg"
+        ],
+        [
+          "toggle button",
+          "Áp dụng Ventura-dark.jpg"
+        ],
+        [
+          "toggle button",
+          "Yêu thích Ventura-dark.jpg"
+        ],
+        [
+          "toggle button",
+          "Áp dụng Ventura-light.jpg"
+        ],
+        [
+          "toggle button",
+          "Yêu thích Ventura-light.jpg"
+        ],
+        [
+          "toggle button",
+          "Áp dụng WhiteSur-dark.jpg"
+        ],
+        [
+          "toggle button",
+          "Yêu thích WhiteSur-dark.jpg"
+        ],
+        [
+          "toggle button",
+          "Áp dụng WhiteSur-light.jpg"
+        ],
+        [
+          "toggle button",
+          "Yêu thích WhiteSur-light.jpg"
+        ],
+        [
+          "toggle button",
+          "Áp dụng WhiteSur.jpg"
+        ],
+        [
+          "toggle button",
+          "Yêu thích WhiteSur.jpg"
+        ],
+        [
+          "toggle button",
+          "Áp dụng 2ff7ee6e-48ef-49b5-b48f-0d825c2dd372 (1).jpg"
+        ],
+        [
+          "toggle button",
+          "Yêu thích 2ff7ee6e-48ef-49b5-b48f-0d825c2dd372 (1).jpg"
+        ],
+        [
+          "toggle button",
+          "Áp dụng 2ff7ee6e-48ef-49b5-b48f-0d825c2dd372.png"
+        ],
+        [
+          "toggle button",
+          "Yêu thích 2ff7ee6e-48ef-49b5-b48f-0d825c2dd372.png"
+        ],
+        [
+          "toggle button",
+          "Áp dụng 2ff7ee6e-48ef-49b5-b48f-0d825c2dd372.webp"
+        ],
+        [
+          "toggle button",
+          "Yêu thích 2ff7ee6e-48ef-49b5-b48f-0d825c2dd372.webp"
+        ],
+        [
+          "toggle button",
+          "Áp dụng Screenshot_2026-04-14_05-28-40.png"
+        ],
+        [
+          "toggle button",
+          "Yêu thích Screenshot_2026-04-14_05-28-40.png"
+        ],
+        [
+          "toggle button",
+          "Áp dụng System76-Fractal_Mountains-by_Kate_Hazen_of_System76.png"
+        ],
+        [
+          "toggle button",
+          "Yêu thích System76-Fractal_Mountains-by_Kate_Hazen_of_System76.png"
+        ],
+        [
+          "toggle button",
+          "Áp dụng System76-Fractal_Salad-by_Kate_Hazen_of_System76.png"
+        ],
+        [
+          "toggle button",
+          "Yêu thích System76-Fractal_Salad-by_Kate_Hazen_of_System76.png"
+        ],
+        [
+          "toggle button",
+          "Áp dụng System76-Geometric-adapted_by_Kate_Hazen_of_System76.png"
+        ],
+        [
+          "toggle button",
+          "Yêu thích System76-Geometric-adapted_by_Kate_Hazen_of_System76.png"
+        ],
+        [
+          "toggle button",
+          "Áp dụng System76-Honeycomb-by_Kate_Hazen_of_System76.png"
+        ],
+        [
+          "toggle button",
+          "Yêu thích System76-Honeycomb-by_Kate_Hazen_of_System76.png"
+        ],
+        [
+          "toggle button",
+          "Áp dụng System76-Old_Man_Smoked_His_Pipe-by_Ian_Hex_of_LightSweep.jpg"
+        ],
+        [
+          "toggle button",
+          "Yêu thích System76-Old_Man_Smoked_His_Pipe-by_Ian_Hex_of_LightSweep.jpg"
+        ],
+        [
+          "toggle button",
+          "Áp dụng System76-Robot-by_Kate_Hazen_of_System76.png"
+        ],
+        [
+          "toggle button",
+          "Yêu thích System76-Robot-by_Kate_Hazen_of_System76.png"
+        ],
+        [
+          "toggle button",
+          "Áp dụng System76-System76_Brandmark_Blue-by_Kate_Hazen_of_System76.jpg"
+        ],
+        [
+          "toggle button",
+          "Yêu thích System76-System76_Brandmark_Blue-by_Kate_Hazen_of_System76.jpg"
+        ],
+        [
+          "button",
+          "Trang sau"
+        ]
+      ],
+      "disabledSkipped": [
+        [
+          "button",
+          "Trang trước"
+        ]
+      ],
+      "reverseMatches": true
+    },
+    {
+      "pid": 2766114,
+      "disclosure": null,
+      "tab": "Hệ thống",
+      "sequence": [
+        [
+          "button",
+          "Taskbar Studio"
+        ],
+        [
+          "button",
+          "Ứng dụng"
+        ],
+        [
+          "button",
+          "Giao diện"
+        ],
+        [
+          "button",
+          "Hình nền"
+        ],
+        [
+          "button",
+          "Hệ thống"
+        ],
+        [
+          "combo box",
+          "Ngôn ngữ"
+        ],
+        [
+          "check box",
+          "Giữ Dock khi đóng Studio"
+        ],
+        [
+          "check box",
+          "Khởi động cùng hệ thống"
+        ],
+        [
+          "button",
+          "Đăng ký vào menu ứng dụng"
+        ],
+        [
+          "button",
+          "Thoát DeskMorph"
+        ],
+        [
+          "entry",
+          "Tổ hợp phím"
+        ],
+        [
+          "button",
+          "Lưu phím tắt"
+        ],
+        [
+          "button",
+          "Xuất cấu hình"
+        ],
+        [
+          "button",
+          "Nhập cấu hình"
+        ],
+        [
+          "button",
+          "Khôi phục cấu hình mặc định"
+        ],
+        [
+          "button",
+          "Kiểm tra lại khả năng desktop"
+        ]
+      ],
+      "disabledSkipped": [
+        [
+          "button",
+          "Tắt phím tắt"
+        ]
+      ],
+      "reverseMatches": true
+    }
+  ],
+  "totalControls": 279,
+  "scope": "X11, vi, five Studio tabs in restored isolated profile. Forward/reverse native Tab, accessible names, disabled skipped; one mapping disclosure Enter/Space and multiline entry. Initial navigation focus uses AT-SPI; native activation can be recovered only to test Studio. Separate successful per-tab runs on same binary/PID. No popup/dynamic review coverage, activation of wallpaper image actions or full contrast audit.",
+  "frontendTests": 49
+}

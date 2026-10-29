@@ -1,6 +1,6 @@
 import { ErrorText } from "../ErrorText";
 import { useRemovalFocus } from "../../hooks/useRemovalFocus";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useConfig } from "../../config/store";
 import { appearanceOf, BUILTIN_PRESETS, type Appearance } from "../../dockAppearance";
 import { useI18n } from "../../i18n/useI18n";
@@ -9,6 +9,8 @@ export function AppearanceSettings() {
   const { config, updateConfig } = useConfig();
   const { t } = useI18n();
   const removalFocus = useRemovalFocus();
+  const [colorDraft, setColorDraft] = useState(config.accentColor);
+  useEffect(() => setColorDraft(config.accentColor), [config.accentColor]);
   const nameInput = removalFocus.fallback;
   const [name, setName] = useState("");
   const [editing, setEditing] = useState<string | null>(null);
@@ -24,7 +26,7 @@ export function AppearanceSettings() {
   };
   return <div ref={removalFocus.root} onFocusCapture={removalFocus.onFocusCapture}>
     <Card title={t("appearanceTab")}>
-      <label className="settings-field">{t("accent")}<input type="color" aria-label={t("accent")} value={config.accentColor} onChange={(e) => void updateConfig({ accentColor: e.target.value })} /></label>
+      <form className="settings-inline" onSubmit={(event) => { event.preventDefault(); if (/^#[0-9a-fA-F]{6}$/.test(colorDraft)) void updateConfig({ accentColor: colorDraft }); }}><label className="settings-field">{t("accent")}<input aria-label={t("accent")} value={colorDraft} maxLength={7} pattern="#[0-9a-fA-F]{6}" required onChange={(event) => setColorDraft(event.target.value)} /></label><input className="accent-swatch" type="color" tabIndex={-1} aria-hidden="true" value={config.accentColor} onChange={(event) => void updateConfig({ accentColor: event.target.value })} /><button type="submit" aria-label={`${t("save")} ${t("accent")}`} disabled={!/^#[0-9a-fA-F]{6}$/.test(colorDraft) || colorDraft === config.accentColor}>{t("save")}</button></form>
       <Range label={t("opacity")} min={.2} max={1} step={.01} unit="" value={config.opacity} onChange={(opacity) => updateConfig({ opacity })} />
       <Range label={t("radius")} min={0} max={40} value={config.borderRadius} onChange={(borderRadius) => updateConfig({ borderRadius })} />
       <Toggle label={t("bounce")} value={config.bouncingLaunch !== false} onChange={(bouncingLaunch) => updateConfig({ bouncingLaunch })} />

@@ -75,6 +75,8 @@ if __name__ == '__main__':
     parser.add_argument('--preview-smoke', action='store_true')
     parser.add_argument('--capabilities-smoke', action='store_true')
     parser.add_argument('--localization-smoke', action='store_true')
+    parser.add_argument('--studio-tab-smoke', action='store_true')
+    parser.add_argument('--studio-tab-only', type=int, choices=range(5))
     parser.add_argument('--removal-focus-smoke', action='store_true')
     parser.add_argument('--calendar-keyboard-smoke', action='store_true')
     parser.add_argument('--clock-smoke', action='store_true')
@@ -146,7 +148,7 @@ if __name__ == '__main__':
             raise RuntimeError('Cannot verify GNOME lock state; no native input will be sent')
         if re.search(r'\btrue\b', result.stdout):
             raise RuntimeError('GNOME desktop is locked; unlock it before native UI tests. No input was sent.')
-    input_tests = any((args.removal_focus_smoke, args.calendar_keyboard_smoke, args.localization_smoke, args.performance_matrix, args.preview_smoke, args.capabilities_smoke, args.clock_smoke, args.icon_render_smoke, args.launcher_keyboard_smoke, args.missing_app_smoke, args.pinning_smoke, args.pin_identity_smoke, args.catalogue_refresh_smoke, args.exports_smoke, args.action, args.screenshot, args.basic, args.popup_smoke, args.focus_smoke, args.autohide_smoke, args.shortcut_smoke, args.lifecycle_smoke, args.registration_smoke, args.window_list_smoke, args.reorder_smoke, args.tooltip_smoke, args.launch_smoke, args.overflow_smoke, args.layout_smoke, args.indicator_smoke, args.mapping_smoke, args.internal_smoke, args.polling_smoke, args.launcher_smoke, args.studio_smoke, args.config_smoke, args.command_errors_smoke,
+    input_tests = any((args.studio_tab_smoke, args.removal_focus_smoke, args.calendar_keyboard_smoke, args.localization_smoke, args.performance_matrix, args.preview_smoke, args.capabilities_smoke, args.clock_smoke, args.icon_render_smoke, args.launcher_keyboard_smoke, args.missing_app_smoke, args.pinning_smoke, args.pin_identity_smoke, args.catalogue_refresh_smoke, args.exports_smoke, args.action, args.screenshot, args.basic, args.popup_smoke, args.focus_smoke, args.autohide_smoke, args.shortcut_smoke, args.lifecycle_smoke, args.registration_smoke, args.window_list_smoke, args.reorder_smoke, args.tooltip_smoke, args.launch_smoke, args.overflow_smoke, args.layout_smoke, args.indicator_smoke, args.mapping_smoke, args.internal_smoke, args.polling_smoke, args.launcher_smoke, args.studio_smoke, args.config_smoke, args.command_errors_smoke,
                        args.wallpaper_smoke, args.scheduler_smoke, args.library_stress, args.audio_smoke, args.media_smoke,
                        args.audio_exit, args.audio_unavailable, args.system_smoke, args.system_unavailable, args.system_open_smoke, args.system_locations_smoke))
     if input_tests or args.geometry_smoke: require_unlocked_desktop()
@@ -535,7 +537,7 @@ if __name__ == '__main__':
                 key(ord('a'), 1); key(ord('a'), 0); key(0xffe3, 0)
                 if value == '': key(0xff08, 1); key(0xff08, 0)
                 for char in value:
-                    assert char in 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 -./+', 'Test helper accepts bounded ASCII only'
+                    assert char in 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 -./+#', 'Test helper accepts bounded ASCII only'
                     code = x11.XKeysymToKeycode(display, ord(char))
                     shifted = symbol(code, mask.value & ~1) != ord(char)
                     assert not shifted or symbol(code, mask.value | 1) == ord(char), 'Test character needs an unsupported keymap level'
@@ -711,6 +713,9 @@ if __name__ == '__main__':
     if args.preview_smoke:
         from preview_smoke import run
         app = run(app, TEST_CONFIG, click, focus_studio, native_keys, test_app, start_isolated_app, lambda current: globals().__setitem__('app', current), require_unlocked_desktop, assert_pointer_over_test_app)
+    if args.studio_tab_smoke:
+        from studio_tab_smoke import run
+        run(app, focus_studio, native_keys, args.studio_tab_only)
     if args.removal_focus_smoke:
         from removal_focus_smoke import run
         app = run(app, TEST_CONFIG, click, focus_studio, native_keys, test_app, start_isolated_app, lambda current: globals().__setitem__("app", current))

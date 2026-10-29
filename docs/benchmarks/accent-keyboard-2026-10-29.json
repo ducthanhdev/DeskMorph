@@ -1,0 +1,83 @@
+{
+  "observations": [
+    {
+      "language": "vi",
+      "operation": "unpin 1",
+      "focus": "Bỏ ghim Focus Pin 2"
+    },
+    {
+      "language": "vi",
+      "operation": "unpin 2",
+      "focus": "Tìm ứng dụng"
+    },
+    {
+      "language": "vi",
+      "operation": "save accent with Enter",
+      "color": "#336699"
+    },
+    {
+      "language": "vi",
+      "operation": "remove Focus Renamed",
+      "focus": "Xóa Focus Preset 2"
+    },
+    {
+      "language": "vi",
+      "operation": "remove Focus Preset 2",
+      "focus": "Tên preset"
+    },
+    {
+      "language": "vi",
+      "operation": "remove folder 1",
+      "focus": "Xóa /tmp/deskmorph-focus-folder-2"
+    },
+    {
+      "language": "vi",
+      "operation": "remove folder 2",
+      "focus": "Thư mục ảnh"
+    },
+    {
+      "language": "en",
+      "operation": "unpin 1",
+      "focus": "Unpin Focus Pin 2"
+    },
+    {
+      "language": "en",
+      "operation": "unpin 2",
+      "focus": "Search applications"
+    },
+    {
+      "language": "en",
+      "operation": "save accent with Enter",
+      "color": "#336699"
+    },
+    {
+      "language": "en",
+      "operation": "remove Focus Renamed",
+      "focus": "Delete Focus Preset 2"
+    },
+    {
+      "language": "en",
+      "operation": "remove Focus Preset 2",
+      "focus": "Preset name"
+    },
+    {
+      "language": "en",
+      "operation": "remove folder 1",
+      "focus": "Delete /tmp/deskmorph-focus-folder-2"
+    },
+    {
+      "language": "en",
+      "operation": "remove folder 2",
+      "focus": "Image folder"
+    }
+  ],
+  "fixturePids": [
+    2764719,
+    2765403
+  ],
+  "normalPid": 2766114,
+  "configRestored": true,
+  "renameEnterSubmits": true,
+  "allFixturesExited": true,
+  "scope": "Native vi/en isolated profile; two Enter hex-color saves plus prior deletion/rename regression. Initial focus through AT-SPI, no claim of full keyboard-only reachability."
+}

@@ -15,10 +15,11 @@ function ClassMapping({ pin, platform, platformError }: { pin: PinnedApp; platfo
   const { mutatePin } = useConfig();
   const { t, pinName } = useI18n();
   const [draft, setDraft] = useState(pin.matchClasses.join("\n"));
+  const [expanded, setExpanded] = useState(false);
   const [classes, setClasses] = useState<string[]>([]);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
-  return <details className="class-mapping"><summary>{t("classMapping")} {pinName(pin)}</summary>
+  return <details className="class-mapping" onToggle={(event) => setExpanded(event.currentTarget.open)}><summary role="button" aria-expanded={expanded}>{t("classMapping")} {pinName(pin)}</summary>
     <p>{t("classMappingHelp")}</p>
     <label>{t("classMapping")}<textarea aria-label={`${t("classMapping")} ${pinName(pin)}`} rows={3} value={draft} onChange={(e) => setDraft(e.target.value)} /></label>
     <button disabled={busy || !platform?.windows.enumerate} onClick={async () => {

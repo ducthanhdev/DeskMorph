@@ -24,6 +24,7 @@ export function WallpaperSettings() {
   const [scan, setScan] = useState<Scan>({ images: [], issues: [], limited: false });
   const [current, setCurrent] = useState("");
   const [schedule, setSchedule] = useState<ScheduleStatus | null>(null);
+  const [issuesOpen, setIssuesOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [applying, setApplying] = useState(false);
   const [error, setError] = useState("");
@@ -117,7 +118,7 @@ export function WallpaperSettings() {
     {pollError && <p role="alert"><ErrorText error={pollError} /></p>}
     {error && <p role="alert"><ErrorText error={error} /> {failedApply && <button disabled={applying} onClick={() => void apply(failedApply.path)}>{t("retry")}</button>}</p>}{status && <p role="status">{text(status)}</p>}
     {scan.limited && <p role="status">{t("scanLimited")}</p>}
-    {scan.issues.length > 0 && <details className="wallpaper-issues"><summary>{t("scanIssues")} ({scan.issues.length})</summary><ul>{scan.issues.map((issue, i) => <li key={i}><code>{issue.path}</code>: {issue.message}</li>)}</ul></details>}
+    {scan.issues.length > 0 && <details className="wallpaper-issues" onToggle={(event) => setIssuesOpen(event.currentTarget.open)}><summary role="button" aria-expanded={issuesOpen}>{t("scanIssues")} ({scan.issues.length})</summary><ul>{scan.issues.map((issue, i) => <li key={i}><code>{issue.path}</code>: {issue.message}</li>)}</ul></details>}
     {loading ? <p role="status">{t("loading")}</p> : !filtered.length ? <p role="status">{t("noWallpapers")}</p> : <>
       <p className="settings-help">{filtered.length} • {t("page")} {currentPage + 1}/{pages}</p>
       <div className="wallpaper-grid">{visible.map((image) => <article key={image.path} className={`wallpaper-library-card ${current === image.path ? "is-current" : ""}`}>
