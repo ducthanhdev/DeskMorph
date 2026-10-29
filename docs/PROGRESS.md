@@ -785,3 +785,9 @@ Script cần AT-SPI, Python GI, GTK3 và libXtst. Chỉ gửi phím khi kiểm t
 - Native X11 hiện có eDP-1-1 và HDMI-0. Geometry smoke chạy 16 ca: chọn từng monitor, Dock top/bottom, popup clamp trái/phải; sau đó đổi HDMI-0 sang 1680x1050, chạy lại và trap khôi phục 1920x1080. [Bản tóm tắt](benchmarks/geometry-multimonitor-2026-10-30/result.json).
 - Thử đặt monitor âm bằng `xrandr --pos -1920x0` nhưng Mutter/NVIDIA kẹp topology về origin 0; không tính thành bằng chứng negative-origin. Cả hai monitor scale1 nên chưa đạt mixed DPI 125/150/200%; hot-unplug/fallback thật vẫn chưa chạy. G2.10/G2.11 giữ mở.
 - Đánh giá file: giữ JSON nhỏ gồm topology, số ca, mode và giới hạn; không giữ ảnh/log hoặc thay đổi cấu hình host sau trap restore.
+
+## G5.9 — Orca xử lý event DeskMorph trong audit accessibility (30/10/2026)
+
+- Chạy Orca với preferences riêng `/tmp` và speech tắt, đồng thời `desktop_smoke.py --studio-tab-smoke`; smoke qua. Orca log ghi nhận document DeskMorph, focus manager, cập nhật braille và đường tạo speech cho control có role/name. [Bản tóm tắt](benchmarks/orca-accessibility-2026-10-30/result.json).
+- Đây chứng minh event AT-SPI/Orca được xử lý, không chứng minh âm thanh vì speech cố ý tắt; screen reader động đầy đủ, popup/actions và contrast toàn ứng dụng vẫn cần kiểm thêm. G5.9 vẫn mở, tổng 94/99.
+- Lượt popup keyboard chạy cùng Orca bị focus interference và không tính; chỉ lượt Studio tab hoàn chỉnh được giữ. Đánh giá file: giữ JSON đếm event và scope; không commit log Orca 9k dòng hay preferences.

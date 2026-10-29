@@ -1,0 +1,18 @@
+{
+  "date": "2026-10-30",
+  "command": "orca --replace -u /tmp/private --disable=speech plus desktop_smoke.py --studio-tab-smoke",
+  "smoke": "pass",
+  "orca": {
+    "privatePreferences": true,
+    "speechDisabled": true,
+    "sawDeskMorphDocument": true,
+    "focusEvents": 8410,
+    "brailleUpdates": 542,
+    "speechGenerationEvents": 542
+  },
+  "scope": "GNOME X11 reference session; Orca attached to AT-SPI and processed DeskMorph focus/role events; process stopped and private prefs removed after run",
+  "limits": [
+    "speech output was intentionally disabled, so this proves event processing rather than audible speech",
+    "does not certify every dynamic popup/action or all screen reader settings"
+  ]
+}
