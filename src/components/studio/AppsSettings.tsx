@@ -71,7 +71,7 @@ export function AppsSettings() {
         const existing = config.pinnedApps?.find((pin) => installedForPin(pin, apps)?.id === app.id);
         const pinned = existing && existing.enabled !== false;
         return <div className="studio-app-row" key={app.id}><AppIcon path={app.iconPath} size={28} /><span><strong>{app.name}</strong><small>{app.genericName || app.id}</small></span>
-          <button onClick={async () => { try { await invoke("launch_installed_app", { id: app.id, action: null }); setOperationError(""); } catch (e) { setOperationError(errorMessage(e)); } }}>{t("open")}</button>
+          <button aria-label={`${t("open")} ${app.name}`} onClick={async () => { try { await invoke("launch_installed_app", { id: app.id, action: null }); setOperationError(""); } catch (e) { setOperationError(errorMessage(e)); } }}>{t("open")}</button>
           <button aria-label={`${pinned ? t("unpin") : t("pin")} ${app.name}`} onClick={() => void mutatePin(pinned ? "remove" : "add", existing?.id || app.id, existing || pinFromApp(app))}>{pinned ? t("unpin") : t("pin")}</button>
         </div>;
       })}</div>

@@ -1558,7 +1558,7 @@ body {
 .calendar-weekday-cell {
   font-size: 11px;
   font-weight: 600;
-  color: #64748b;
+  color: #a8b5c7;
   padding: 4px 0;
 }
 
@@ -1599,8 +1599,8 @@ body {
 }
 
 .calendar-day-cell.is-outside-month {
-  color: #475569;
-  opacity: 0.45;
+  color: #a8b5c7;
+  opacity: 1;
 }
 
 .calendar-day-cell.is-weekend:not(.is-today):not(.is-outside-month) {
@@ -1616,7 +1616,7 @@ body {
 
 /* Today glow highlight */
 .calendar-day-cell.is-today {
-  background: linear-gradient(135deg, rgba(72, 185, 199, 0.9), rgba(139, 92, 246, 0.9)) !important;
+  background: #284657 !important;
   color: #ffffff !important;
   font-weight: 800;
   box-shadow: 0 0 14px rgba(72, 185, 199, 0.55), 0 2px 6px rgba(0, 0, 0, 0.4);
@@ -1870,3 +1870,10 @@ button:focus-visible { outline: 2px solid #48b9c7; outline-offset: -2px; }
 
 /* Long user names must wrap inside the class-mapping summary as well as the pin row. */
 .class-mapping { min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
+
+/* Keyboard focus must remain visible in every WebView, including search inputs. */
+:where(button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 3px solid #67e8f9;
+  outline-offset: -3px;
+}
+.app-launcher input:focus-visible { outline: 3px solid #67e8f9; outline-offset: 1px; border-radius: 3px; }

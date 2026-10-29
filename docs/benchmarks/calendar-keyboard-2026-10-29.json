@@ -1,0 +1,55 @@
+{
+  "screenshot": "/tmp/deskmorph-desktop-test/calendar-keyboard.png",
+  "pid": 2652171,
+  "initial": "Thứ Năm, 29 tháng 10, 2026",
+  "navigation": [
+    {
+      "key": "right",
+      "before": "Thứ Năm, 29 tháng 10, 2026",
+      "after": "Thứ Sáu, 30 tháng 10, 2026"
+    },
+    {
+      "key": "left",
+      "before": "Thứ Sáu, 30 tháng 10, 2026",
+      "after": "Thứ Năm, 29 tháng 10, 2026"
+    },
+    {
+      "key": "down",
+      "before": "Thứ Năm, 29 tháng 10, 2026",
+      "after": "Thứ Năm, 5 tháng 11, 2026"
+    },
+    {
+      "key": "up",
+      "before": "Thứ Năm, 5 tháng 11, 2026",
+      "after": "Thứ Năm, 29 tháng 10, 2026"
+    },
+    {
+      "key": "next month",
+      "before": "Thứ Năm, 29 tháng 10, 2026",
+      "after": "Chủ Nhật, 29 tháng 11, 2026"
+    },
+    {
+      "key": "previous month",
+      "before": "Chủ Nhật, 29 tháng 11, 2026",
+      "after": "Thứ Năm, 29 tháng 10, 2026"
+    },
+    {
+      "key": "Monday",
+      "before": "Thứ Năm, 29 tháng 10, 2026",
+      "after": "Thứ Hai, 26 tháng 10, 2026"
+    },
+    {
+      "key": "Sunday",
+      "before": "Thứ Hai, 26 tháng 10, 2026",
+      "after": "Chủ Nhật, 1 tháng 11, 2026"
+    },
+    {
+      "key": "next year",
+      "before": "Chủ Nhật, 1 tháng 11, 2026",
+      "after": "Thứ Hai, 1 tháng 11, 2027"
+    }
+  ],
+  "enterSelects": true,
+  "singleDateTabStop": true,
+  "escapeDismisses": true
+}

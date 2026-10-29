@@ -1,10 +1,11 @@
 import { ErrorText } from "./ErrorText";
 import { useConfig } from "../config/store";
 import { useI18n } from "../i18n/useI18n";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { invoke } from "../ipc";
 import { listen } from "@tauri-apps/api/event";
 import { useClock } from "../hooks/useClock";
+import { calendarDestination } from "../calendarNavigation";
 import { formatClock } from "../dateTime";
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Clock } from "lucide-react";
 
@@ -14,8 +15,17 @@ export const CalendarFlyout: React.FC = () => {
   const [visible, setVisible] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const today = useClock(visible);
-  const [viewDate, setViewDate] = useState<Date>(new Date());
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [viewDate, setViewDate] = useState<Date>(() => { const now = new Date(); return new Date(now.getFullYear(), now.getMonth(), now.getDate()); });
+  const [selectedDate, setSelectedDate] = useState<Date>(() => { const now = new Date(); return new Date(now.getFullYear(), now.getMonth(), now.getDate()); });
+  const [focusedDate, setFocusedDate] = useState<Date>(() => { const now = new Date(); return new Date(now.getFullYear(), now.getMonth(), now.getDate()); });
+  const dayButtons = useRef(new Map<number, HTMLButtonElement>());
+  const focusDay = useRef(false);
+  useEffect(() => {
+    if (focusDay.current) {
+      dayButtons.current.get(focusedDate.getTime())?.focus();
+      focusDay.current = false;
+    }
+  }, [focusedDate, viewDate]);
   const liveTime = formatClock(today, locale, config);
 
   useEffect(() => {
@@ -45,16 +55,19 @@ export const CalendarFlyout: React.FC = () => {
 
   const handlePrevMonth = () => {
     setViewDate(new Date(currentYear, currentMonth - 1, 1));
+    setFocusedDate(new Date(currentYear, currentMonth - 1, 1));
   };
 
   const handleNextMonth = () => {
     setViewDate(new Date(currentYear, currentMonth + 1, 1));
+    setFocusedDate(new Date(currentYear, currentMonth + 1, 1));
   };
 
   const handleTodayJump = () => {
     const now = new Date();
     setViewDate(new Date(now.getFullYear(), now.getMonth(), 1));
     setSelectedDate(now);
+    setFocusedDate(new Date(now.getFullYear(), now.getMonth(), now.getDate()));
   };
 
   // Calendar calculations (Monday = 0 ... Sunday = 6)
@@ -175,6 +188,19 @@ export const CalendarFlyout: React.FC = () => {
 
             return (
               <button
+                ref={(node) => { if (node) dayButtons.current.set(item.date.getTime(), node); else dayButtons.current.delete(item.date.getTime()); }}
+                tabIndex={isSameDay(item.date, focusedDate) ? 0 : -1}
+                onFocus={() => setFocusedDate(item.date)}
+                onKeyDown={(event) => {
+                  if (event.altKey || event.ctrlKey || event.metaKey) return;
+                  const next = calendarDestination(item.date, event.key, event.shiftKey);
+                  if (!next) return;
+                  event.preventDefault();
+                  focusDay.current = true;
+                  setFocusedDate(next);
+                  setViewDate(new Date(next.getFullYear(), next.getMonth(), 1));
+                }}
+                aria-current={isToday ? "date" : undefined}
                 aria-label={formatFullDate(item.date)}
                 aria-pressed={isSelected}
                 key={idx}
@@ -185,6 +211,7 @@ export const CalendarFlyout: React.FC = () => {
                 } ${isWeekend ? "is-weekend" : ""}`}
                 onClick={() => {
                   setSelectedDate(item.date);
+                  setFocusedDate(item.date);
                   if (!item.isCurrentMonth) {
                     setViewDate(new Date(item.date.getFullYear(), item.date.getMonth(), 1));
                   }
