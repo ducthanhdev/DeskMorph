@@ -1,6 +1,6 @@
 # Hình nền trên GNOME
 
-Adapter sản phẩm hiện chỉ bật trên GNOME khi schema GSettings phù hợp có sẵn. Chưa xác minh adapter KDE/COSMIC hoặc hình nền hiển thị trong phiên Wayland. Ma trận môi trường nằm trong [CAPABILITIES.md](CAPABILITIES.md).
+Adapter sản phẩm hiện chỉ bật trên GNOME khi schema GSettings phù hợp có sẵn. Chưa xác minh adapter KDE/COSMIC. GNOME46 Wayland headless đã có kiểm pixel hình nền trong compositor riêng; chưa suy thành mọi phiên Wayland. Ma trận môi trường nằm trong [CAPABILITIES.md](CAPABILITIES.md).
 
 Lệnh apply kiểm tra đường dẫn local tuyệt đối, canonical path, giới hạn ảnh và decode trước khi ghi. Transaction GSettings kiểm tra quyền ghi, cập nhật cả `picture-uri` và `picture-uri-dark` nếu có, apply/sync rồi đọc lại giá trị. UI chỉ báo thành công sau kết quả backend; lỗi giữ thao tác để thử lại. Đây là xác nhận settings backend, không bảo đảm compositor đã vẽ từng pixel trên desktop.
 
@@ -27,3 +27,10 @@ Chạy trong GNOME/X11 đã mở khóa với instance có `DESKMORPH_CONFIG_HOME
 Ca này dùng hai PNG riêng, kiểm tra cả hai khóa GNOME, phản ánh hai lần thay đổi từ bên ngoài, deadline một phút khi Studio đóng và mở lại cùng instance. Sau đó tạm dừng riêng PID ứng dụng test bằng SIGSTOP 125 giây, SIGCONT, kiểm tra thay đổi khi quá hạn và không đổi tiếp trong mười giây. Xóa hai PNG để tạo lỗi ở deadline kế tiếp, khôi phục ảnh để xác minh tự phục hồi mà không bật/tắt lại. Có watchdog SIGCONT riêng, cùng finally khôi phục ảnh, tắt lịch, thư viện/cấu hình và hai URI hình nền ban đầu.
 
 SIGSTOP không phải system suspend. Ca này xác minh worker tiếp tục xử lý hạn quá hạn sau khi tiến trình ngừng chạy; chưa xác minh login/session/compositor hoặc clock hoạt động qua sleep thật. Kiểm thử sleep thật và thay đổi phần cứng vẫn là cổng còn mở, không được suy ra từ ca này.
+
+
+## Hình nền hiển thị trên GNOME46 Wayland
+
+[Bằng chứng và tám ảnh chụp stage](benchmarks/wallpaper-visible-2026-10-29/results.json) từ `/usr/bin/python3 tests/wayland_lab.py --wallpaper-test --output /tmp/deskmorph-wallpaper-visible/results.json`: UI DeskMorph thật Apply image01 (hồng), lỗi file mất rồi Retry image02 (xanh), đọc cả khóa URI sáng/tối và đối chiếu3 pixel nền thực với RGB nguồn, tolerance2/channel. Thu nhỏ riêng cửa sổ thuộc PID lab trước chụp và khôi phục sau đó. Cả vi/en, reduced motion, GNOME Shell46.0/Mutter46.2, output ảo1280×720 scale1.
+
+Sau Apply/Retry, ca phân biệt key đặt URI sáng về ảnh hồng trong keyfile lab, giữ URI tối xanh và đổi color-scheme prefer-dark/default. Pixel stage lần lượt xanh/hồng, chứng minh compositor chọn đúng key chứ không chỉ settings ghi thành công. Đây là thao tác test bên ngoài app trong môi trường riêng, không phải app viết hai URI khác nhau. Không chụp hoặc đổi wallpaper desktop host; mọi process/mount portal lab đã dọn. G6.9 còn các desktop khác chưa được xác minh; không bật adapter COSMIC/KDE từ kết quả GNOME.

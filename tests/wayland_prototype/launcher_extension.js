@@ -2,6 +2,8 @@
 import Base from './base_extension.js';
 import Clutter from 'gi://Clutter';
 import GLib from 'gi://GLib';
+import Gio from 'gi://Gio';
+import Shell from 'gi://Shell';
 import Meta from 'gi://Meta';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 export default class LauncherLab extends Base {
@@ -31,6 +33,28 @@ export default class LauncherLab extends Base {
     Dispatch(token, payload) {
         if (token !== this._token) throw new Error('Invalid lab token');
         const command = JSON.parse(payload);
+        if (command.op === 'backgroundScreenshot') {
+            if (GLib.getenv('DESKMORPH_WALLPAPER_TEST') !== '1') throw new Error('Wallpaper lab mode required');
+            const root = GLib.getenv('DESKMORPH_COMPOSITOR_LAB');
+            this._captureSequence = (this._captureSequence ?? 0) + 1;
+            const path = `${root}/background-${this._captureSequence}.png`;
+            const windows = this._windows().filter(w => !w.minimized);
+            windows.forEach(w => w.minimize());
+            Main.overview.hide();
+            GLib.timeout_add(GLib.PRIORITY_DEFAULT, 700, () => {
+                const stream = Gio.File.new_for_path(path).replace(null, false, Gio.FileCreateFlags.NONE, null);
+                const shooter = new Shell.Screenshot();
+                shooter.screenshot(false, stream).then(() => {
+                    stream.close(null);
+                    GLib.file_set_contents(path + '.json', JSON.stringify({ok: true}));
+                }).catch(error => {
+                    stream.close(null);
+                    GLib.file_set_contents(path + '.json', JSON.stringify({error: String(error)}));
+                }).finally(() => windows.forEach(w => w.unminimize()));
+                return GLib.SOURCE_REMOVE;
+            });
+            return JSON.stringify({path});
+        }
         if (command.op === 'bindingAvailable') {
             const action = global.display.grab_accelerator('<Control><Super>k', Meta.KeyBindingFlags.NONE);
             if (action) global.display.ungrab_accelerator(action);

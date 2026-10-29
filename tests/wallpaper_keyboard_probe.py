@@ -38,10 +38,13 @@ def run():
     images = root / 'images'; images.mkdir()
     pixel = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, False, 8, 8, 8)
     pixel.fill(0x345678ff)
-    for i in range(26): pixel.savev(str(images / f'image-{i:02}.png'), 'png', [], [])
+    for i in range(26):
+        pixel.fill(0xd13769ff if i == 1 else 0x345678ff)
+        pixel.savev(str(images / f'image-{i:02}.png'), 'png', [], [])
     other = root / 'other'; other.mkdir()
     pixel.savev(str(other / 'other.jpg'), 'jpeg', [], [])
     observations = []
+    captures = []
     dispatch(op='prepare')
     for language in ('vi', 'en'):
         config_home = root / ('wallpaper-' + language)
@@ -71,6 +74,22 @@ def run():
             def key(code): dispatch(op='key', code=code)
             def focused(name):
                 return (node := find(name)) and node.get_state_set().contains(Atspi.StateType.FOCUSED)
+            def background_pixels(expected, label):
+                path = Path(dispatch(op='backgroundScreenshot')['path'])
+                done = Path(str(path) + '.json')
+                wait(done.exists, 'Compositor screenshot did not finish')
+                assert json.loads(done.read_text()).get('ok'), done.read_text()
+                image = GdkPixbuf.Pixbuf.new_from_file(str(path))
+                data = image.get_pixels(); stride = image.get_rowstride(); channels = image.get_n_channels()
+                samples = []
+                for x, y in ((200, 200), (640, 360), (1000, 500)):
+                    rgb = list(data[y * stride + x * channels:y * stride + x * channels + 3])
+                    samples.append(dict(x=x, y=y, rgb=rgb))
+                assert all(max(abs(a-b) for a,b in zip(s['rgb'], expected)) <= 2 for s in samples), samples
+                captures.append(dict(language=language, label=label, file=path.name,
+                    sha256=hashlib.sha256(path.read_bytes()).hexdigest(), width=image.get_width(), height=image.get_height(), samples=samples))
+                dispatch(op='activate', id=studio['id'], pid=process.pid)
+                wait(lambda: any(w['focused'] for w in dispatch(op='state')['windows']), 'Studio focus did not return after screenshot')
             focus(labels['tab']); key(28)
             wait(lambda: find(labels['next']), 'Image scan did not produce pagination')
             focus(labels['next']); key(28)
@@ -111,6 +130,7 @@ def run():
             wait(lambda: (images / 'image-01.png').as_uri() in setting_path(), 'Apply did not update private GNOME setting')
             wait(lambda: focused(apply_name), 'Successful Apply lost focus')
             wait(lambda: (images / 'image-01.png').as_uri() in setting_path('picture-uri-dark'), 'Apply did not update private dark wallpaper setting')
+            background_pixels([209, 55, 105], 'applied-image-01')
             missing = images / 'image-02.png'
             missing.unlink()
             failed_name = labels['apply'] + ' image-02.png'
@@ -123,6 +143,17 @@ def run():
             wait(lambda: missing.as_uri() in setting_path(), 'Retry did not apply restored image')
             wait(lambda: focused(labels['search']), 'Removed Retry did not restore search focus')
             wait(lambda: missing.as_uri() in setting_path('picture-uri-dark'), 'Retry did not update private dark setting')
+            background_pixels([52, 86, 120], 'retried-image-02')
+            # Deliberately distinguish the two keys in private settings, so a
+            # dark-mode capture cannot pass by accidentally reading the light key.
+            subprocess.run(['gsettings', 'set', 'org.gnome.desktop.background', 'picture-uri', (images / 'image-01.png').as_uri()], env=env, check=True)
+            subprocess.run(['gsettings', 'set', 'org.gnome.desktop.interface', 'color-scheme', 'prefer-dark'], env=env, check=True)
+            time.sleep(.5)
+            background_pixels([52, 86, 120], 'dark-selects-image-02')
+            subprocess.run(['gsettings', 'set', 'org.gnome.desktop.interface', 'color-scheme', 'default'], env=env, check=True)
+            time.sleep(.5)
+            background_pixels([209, 55, 105], 'light-selects-image-01')
+            subprocess.run(['gsettings', 'set', 'org.gnome.desktop.background', 'picture-uri', missing.as_uri()], env=env, check=True)
             before_shuffle = setting_path()
             focus(labels['shuffle']); key(28)
             wait(lambda: setting_path() != before_shuffle, 'Shuffle did not change private wallpaper')
@@ -135,12 +166,12 @@ def run():
                 firstPageFocusNext=True, favoriteFilterSpace=True, unfavoriteEnterFocusSearch=True,
                 persistedFavoriteRemoval=True, folderEndHome=True, formatEndHomeIntersection=True,
                 searchZBackspace=True, filterFocusRetained=True, successfulApplyFocus=True, failedApplyFocus=True, shuffleFocus=True, shuffleUsesPrivateFixture=True,
-                retryRestoredFile=True, privateLightDarkSettingsVerified=True, failedApplyKeepsPrevious=True, removedRetryFocusSearch=True, onlyPrivateWallpaperSettings=True))
+                retryRestoredFile=True, privateLightDarkSettingsVerified=True, compositorLightDarkPixelsVerified=True, failedApplyKeepsPrevious=True, removedRetryFocusSearch=True, onlyPrivateWallpaperSettings=True))
         finally:
             process.terminate()
             try: process.wait(timeout=8)
             except subprocess.TimeoutExpired: process.kill(); process.wait(timeout=5)
-    (root / 'launcher-result.json').write_text(json.dumps(dict(wallpaperKeyboard=observations,
+    (root / 'launcher-result.json').write_text(json.dumps(dict(wallpaperKeyboard=observations, backgroundCaptures=captures,
         binarySha256=hashlib.sha256(binary.read_bytes()).hexdigest(), scope='Private GNOME46 native Wayland Studio, actual Enter/Space/Home/End/Z/Backspace keys after AT-SPI focus seeds. vi/en with reduced motion. Wallpaper applies only to private keyfile GNOME settings; no host input/settings, full Tab order, chooser or screen-reader claim.'), indent=2))
 
 

@@ -318,6 +318,8 @@ def run(output, prototype=False, launcher=False, shortcut=False, binary=None, te
                 time.sleep(.1)
             log = (root / 'session.log').read_text()
             output.with_suffix('.log').write_text(log)
+            for capture in root.glob('background-*.png'):
+                shutil.copyfile(capture, output.with_name(output.stem + '-' + capture.name))
             if (root / 'fixture.log').exists():
                 output.with_suffix('.fixture.log').write_text((root / 'fixture.log').read_text())
             for name in ('launcher-probe', 'deskmorph-launcher', 'accessibility', 'media-keys', 'shortcut-background'):
