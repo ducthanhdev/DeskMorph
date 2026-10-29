@@ -1,0 +1,354 @@
+{
+  "runs": [
+    {
+      "pid": 2995071,
+      "language": "vi",
+      "missingAudio": false,
+      "initialAudioCloseFocused": true,
+      "audio": {
+        "sequence": [
+          [
+            "button",
+            "Đóng"
+          ],
+          [
+            "radio button",
+            "Built-in Audio Analog Stereo"
+          ],
+          [
+            "slider",
+            "Âm lượng"
+          ],
+          [
+            "check box",
+            "Tắt tiếng"
+          ],
+          [
+            "radio button",
+            "DeskMorph_Keyboard_B"
+          ],
+          [
+            "button",
+            "Bài trước"
+          ],
+          [
+            "button",
+            "Tạm dừng"
+          ]
+        ],
+        "disabledSkipped": [
+          [
+            "button",
+            "Bài tiếp"
+          ]
+        ],
+        "reverseMatches": true,
+        "closeSeededForTraversal": true
+      },
+      "mediaKeyboard": {
+        "spaceSelects": true,
+        "enterPausePlay": true,
+        "targetOnly": true,
+        "focusSurvivesState": true
+      },
+      "removedPlayerFocusClose": true,
+      "initialSystemCloseFocused": true,
+      "system": {
+        "sequence": [
+          [
+            "button",
+            "Đóng"
+          ],
+          [
+            "button",
+            "Mở Downloads"
+          ]
+        ],
+        "disabledSkipped": [
+          [
+            "button",
+            "Mở Thùng rác"
+          ],
+          [
+            "button",
+            "Mở giám sát hệ thống"
+          ]
+        ],
+        "reverseMatches": true,
+        "closeSeededForTraversal": true
+      },
+      "configUnchanged": true,
+      "fixturePids": [
+        2995307,
+        2995312
+      ],
+      "fixturesExited": true,
+      "scope": "Native X11 current audio/system state, radio groups use checked Tab stop; only owned MPRIS receives Space/Enter media actions. No audio writes or system app launches; no screen reader certification."
+    },
+    {
+      "pid": 2996077,
+      "language": "en",
+      "missingAudio": false,
+      "initialAudioCloseFocused": true,
+      "audio": {
+        "sequence": [
+          [
+            "button",
+            "Close"
+          ],
+          [
+            "radio button",
+            "Built-in Audio Analog Stereo"
+          ],
+          [
+            "slider",
+            "Volume"
+          ],
+          [
+            "check box",
+            "Mute"
+          ],
+          [
+            "radio button",
+            "DeskMorph_Keyboard_B"
+          ],
+          [
+            "button",
+            "Previous"
+          ],
+          [
+            "button",
+            "Pause"
+          ]
+        ],
+        "disabledSkipped": [
+          [
+            "button",
+            "Next"
+          ]
+        ],
+        "reverseMatches": true,
+        "closeSeededForTraversal": true
+      },
+      "mediaKeyboard": {
+        "spaceSelects": true,
+        "enterPausePlay": true,
+        "targetOnly": true,
+        "focusSurvivesState": true
+      },
+      "removedPlayerFocusClose": true,
+      "initialSystemCloseFocused": true,
+      "system": {
+        "sequence": [
+          [
+            "button",
+            "Close"
+          ],
+          [
+            "button",
+            "Open Downloads"
+          ]
+        ],
+        "disabledSkipped": [
+          [
+            "button",
+            "Open Trash"
+          ],
+          [
+            "button",
+            "Open system monitor"
+          ]
+        ],
+        "reverseMatches": true,
+        "closeSeededForTraversal": true
+      },
+      "configUnchanged": true,
+      "fixturePids": [
+        2996271,
+        2996290
+      ],
+      "fixturesExited": true,
+      "scope": "Native X11 current audio/system state, radio groups use checked Tab stop; only owned MPRIS receives Space/Enter media actions. No audio writes or system app launches; no screen reader certification."
+    },
+    {
+      "pid": 2997059,
+      "language": "vi",
+      "missingAudio": true,
+      "initialAudioCloseFocused": true,
+      "audio": {
+        "sequence": [
+          [
+            "button",
+            "Đóng"
+          ],
+          [
+            "button",
+            "Chi tiết"
+          ],
+          [
+            "button",
+            "Thử lại"
+          ],
+          [
+            "radio button",
+            "DeskMorph_Keyboard_B"
+          ],
+          [
+            "button",
+            "Bài trước"
+          ],
+          [
+            "button",
+            "Tạm dừng"
+          ]
+        ],
+        "disabledSkipped": [
+          [
+            "button",
+            "Bài tiếp"
+          ]
+        ],
+        "reverseMatches": true,
+        "closeSeededForTraversal": true
+      },
+      "audioErrorKeyboard": {
+        "enterDetails": true,
+        "spaceCollapses": true,
+        "enterRetryKeepsFocus": true
+      },
+      "mediaKeyboard": {
+        "spaceSelects": true,
+        "enterPausePlay": true,
+        "targetOnly": true,
+        "focusSurvivesState": true
+      },
+      "removedPlayerFocusClose": true,
+      "initialSystemCloseFocused": true,
+      "system": {
+        "sequence": [
+          [
+            "button",
+            "Đóng"
+          ],
+          [
+            "button",
+            "Mở Downloads"
+          ]
+        ],
+        "disabledSkipped": [
+          [
+            "button",
+            "Mở Thùng rác"
+          ],
+          [
+            "button",
+            "Mở giám sát hệ thống"
+          ]
+        ],
+        "reverseMatches": true,
+        "closeSeededForTraversal": true
+      },
+      "configUnchanged": true,
+      "fixturePids": [
+        2997318,
+        2997330
+      ],
+      "fixturesExited": true,
+      "scope": "Native X11 current audio/system state, radio groups use checked Tab stop; only owned MPRIS receives Space/Enter media actions. No audio writes or system app launches; no screen reader certification."
+    },
+    {
+      "pid": 2998227,
+      "language": "en",
+      "missingAudio": true,
+      "initialAudioCloseFocused": true,
+      "audio": {
+        "sequence": [
+          [
+            "button",
+            "Close"
+          ],
+          [
+            "button",
+            "Details"
+          ],
+          [
+            "button",
+            "Retry"
+          ],
+          [
+            "radio button",
+            "DeskMorph_Keyboard_B"
+          ],
+          [
+            "button",
+            "Previous"
+          ],
+          [
+            "button",
+            "Pause"
+          ]
+        ],
+        "disabledSkipped": [
+          [
+            "button",
+            "Next"
+          ]
+        ],
+        "reverseMatches": true,
+        "closeSeededForTraversal": true
+      },
+      "audioErrorKeyboard": {
+        "enterDetails": true,
+        "spaceCollapses": true,
+        "enterRetryKeepsFocus": true
+      },
+      "mediaKeyboard": {
+        "spaceSelects": true,
+        "enterPausePlay": true,
+        "targetOnly": true,
+        "focusSurvivesState": true
+      },
+      "removedPlayerFocusClose": true,
+      "initialSystemCloseFocused": true,
+      "system": {
+        "sequence": [
+          [
+            "button",
+            "Close"
+          ],
+          [
+            "button",
+            "Open Downloads"
+          ]
+        ],
+        "disabledSkipped": [
+          [
+            "button",
+            "Open Trash"
+          ],
+          [
+            "button",
+            "Open system monitor"
+          ]
+        ],
+        "reverseMatches": true,
+        "closeSeededForTraversal": true
+      },
+      "configUnchanged": true,
+      "fixturePids": [
+        2998441,
+        2998470
+      ],
+      "fixturesExited": true,
+      "scope": "Native X11 current audio/system state, radio groups use checked Tab stop; only owned MPRIS receives Space/Enter media actions. No audio writes or system app launches; no screen reader certification."
+    }
+  ],
+  "fixturePids": [
+    2995071,
+    2996077,
+    2997059,
+    2998227
+  ],
+  "normalPid": 2999377,
+  "configRestored": true
+}

@@ -38,6 +38,7 @@ test('system actions reflect missing capabilities, localize actionable errors, s
     source = source.replace(new RegExp(`import \\{ ${names} \\} from .*;`), `const { ${names} } = globalThis.__systemPopupTest;`);
   }
   source = source.replace(/import \{ ErrorText \} from .*;/, 'const ErrorText="ErrorText";');
+  source = source.replace(/import \{ usePopupFocus \} from .*;/, 'const usePopupFocus=()=>({});');
   const transpiled = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022, jsx: ts.JsxEmit.ReactJSX } }).outputText.replaceAll('"react/jsx-runtime"', JSON.stringify(jsxUrl));
   const { SystemPopup } = await import('data:text/javascript;base64,' + Buffer.from(transpiled).toString('base64'));
   const render = () => { stateIndex = refIndex = 0; return SystemPopup({ generation: 48 }); };

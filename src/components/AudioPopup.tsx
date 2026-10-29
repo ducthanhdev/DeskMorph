@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { invoke } from "../ipc";
 import { listen } from "@tauri-apps/api/event";
 import { usePopupActive } from "../hooks/usePopupActive";
+import { usePopupFocus } from "../hooks/usePopupFocus";
 import { MediaControls } from "./MediaControls";
 import { useI18n } from "../i18n/useI18n";
 
@@ -26,6 +27,7 @@ export function AudioPopup({ generation }: { generation?: number }) {
   const changing = useRef(false);
   const queuedVolume = useRef<{ sink: string; value: number } | null>(null);
   const root = useRef<HTMLElement>(null);
+  const focus = usePopupFocus(root, visible, busy);
   const current = snapshot?.sinks.find((sink) => sink.name === snapshot.defaultSink);
   const receive = (value: Snapshot) => { setSnapshot(value); setError(null); };
   const failure = (e: unknown) => { setError(typeof e === "object" && e && "code" in e ? String(e.code) : String(e)); };
@@ -81,7 +83,7 @@ export function AudioPopup({ generation }: { generation?: number }) {
     try { const result = await invoke<Snapshot>("get_audio_snapshot"); if (active.current && !pending.current && !changing.current) receive(result); }
     catch (e) { if (active.current) failure(e); }
   };
-  return <section className="audio-popup" ref={root} aria-label={t("audio")}>
+  return <section className="audio-popup" ref={root} {...focus} aria-label={t("audio")}>
     <header><h2>{t("audio")}</h2><button onClick={() => { if (generation !== undefined) void invoke("hide_dock_context_menu", { generation }).catch((e) => { if (active.current) setError(String(e)); }); }}>{t("close")}</button></header>
     {error && <div role="alert"><p>{t("audioUnavailable")} <ErrorText error={error} /></p><button onClick={() => void refresh()}>{t("retry")}</button></div>}
     {!snapshot && !error && <p role="status">{t("loading")}</p>}

@@ -6,6 +6,7 @@ import { useI18n } from "../i18n/useI18n";
 import { usePolling } from "../hooks/usePolling";
 import { useSystemStatus } from "../hooks/useSystemStatus";
 import { usePopupActive } from "../hooks/usePopupActive";
+import { usePopupFocus } from "../hooks/usePopupFocus";
 import type { SystemStats } from "../types";
 import type { MessageKey } from "../i18n/messages";
 const stateKeys: Record<string, MessageKey> = {
@@ -29,6 +30,7 @@ export function SystemPopup({ generation }: { generation?: number }) {
   const [busy, setBusy] = useState(false);
   const changing = useRef(false);
   const root = useRef<HTMLElement>(null);
+  const focus = usePopupFocus(root, visible, busy);
   const describe = (key: string) => t(stateKeys[key] || "unknown");
   useEffect(() => {
     root.current?.querySelector<HTMLButtonElement>("button")?.focus();
@@ -50,7 +52,7 @@ export function SystemPopup({ generation }: { generation?: number }) {
     }
     finally { changing.current = false; if (active.current) setBusy(false); }
   };
-  return <section className="audio-popup system-popup" ref={root} aria-label={t("systemTools")}>
+  return <section className="audio-popup system-popup" ref={root} {...focus} aria-label={t("systemTools")}>
     <header><h2>{t("systemTools")}</h2><button onClick={() => { if (generation !== undefined) void invoke("hide_dock_context_menu", { generation }).catch((e) => { if (active.current) setError(String(e)); }); }}>{t("close")}</button></header>
     {(error || statusError || statsError) && <p role="alert"><ErrorText error={error || statusError || statsError!} /></p>}
     {!status && <p role="status">{t("loading")}</p>}

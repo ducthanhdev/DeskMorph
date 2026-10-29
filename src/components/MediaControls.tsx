@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { invoke } from "../ipc";
 import { listen } from "@tauri-apps/api/event";
 import { usePopupActive } from "../hooks/usePopupActive";
+import { usePopupFocus } from "../hooks/usePopupFocus";
 import { useI18n } from "../i18n/useI18n";
 type Player = { name: string; owner: string; identity: string; title: string; artists: string[]; artUrl: string; status: string; canPlay: boolean; canPause: boolean; canNext: boolean; canPrevious: boolean };
 export function MediaControls({ generation }: { generation?: number }) {
@@ -14,6 +15,8 @@ export function MediaControls({ generation }: { generation?: number }) {
   const [artworkError, setArtworkError] = useState(false);
   const [busy, setBusy] = useState(false);
   const visible = usePopupActive(generation);
+  const root = useRef<HTMLElement>(null);
+  const focus = usePopupFocus(root, visible, busy);
   const [subscribed, setSubscribed] = useState(false);
   const active = useRef(false);
   active.current = visible;
@@ -61,7 +64,7 @@ export function MediaControls({ generation }: { generation?: number }) {
     catch (e) { if (active.current) setError(String(e)); }
     finally { changing.current = false; if (active.current) setBusy(false); }
   };
-  return <section className="media-controls" aria-label={t("media")}>
+  return <section className="media-controls" ref={root} {...focus} aria-label={t("media")}>
     <h3>{t("media")}</h3>
     {error && <p role="alert">{t("mediaError")} <ErrorText error={error} /> <button onClick={() => void refresh()}>{t("retry")}</button></p>}
     {!player && !error && <p role="status">{t("mediaEmpty")}</p>}
