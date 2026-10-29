@@ -102,6 +102,8 @@ def session(root):
         'XDG_SESSION_TYPE', 'XDG_CURRENT_DESKTOP']}
     if os.environ.get('DESKMORPH_PROTOTYPE_TOKEN'):
         values['DESKMORPH_PROTOTYPE_TOKEN'] = os.environ['DESKMORPH_PROTOTYPE_TOKEN']
+    if os.environ.get('DESKMORPH_TERMINAL_TEST'):
+        values['DESKMORPH_TERMINAL_TEST'] = '1'
     if os.environ.get('DESKMORPH_LAB_BINARY'):
         values['DESKMORPH_LAB_BINARY'] = os.environ['DESKMORPH_LAB_BINARY']
     call(bus, 'org.freedesktop.DBus', '/org/freedesktop/DBus', 'org.freedesktop.DBus',
@@ -202,8 +204,8 @@ def probe(root, metadata, launcher=False, shortcut=False):
     return result
 
 
-def run(output, prototype=False, launcher=False, shortcut=False, binary=None):
-    launcher = launcher or shortcut
+def run(output, prototype=False, launcher=False, shortcut=False, binary=None, terminal=False):
+    launcher = launcher or shortcut or terminal
     # Reap private D-Bus service grandchildren as well as the direct supervisor.
     libc = C.CDLL(None)
     assert libc.prctl(36, 1, 0, 0, 0) == 0, 'Cannot establish child subreaper'
@@ -217,6 +219,8 @@ def run(output, prototype=False, launcher=False, shortcut=False, binary=None):
             GDK_BACKEND='wayland', WAYLAND_DISPLAY=SOCKET, LIBGL_ALWAYS_SOFTWARE='1')
         for key in ['DISPLAY', 'AT_SPI_BUS_ADDRESS', 'SESSION_MANAGER', 'DESKTOP_STARTUP_ID', 'XDG_SESSION_ID']:
             env.pop(key, None)
+        if terminal:
+            env['DESKMORPH_TERMINAL_TEST'] = '1'
         if binary:
             binary = binary.resolve()
             assert binary.is_file(), 'Lab binary is missing'
@@ -254,6 +258,11 @@ def run(output, prototype=False, launcher=False, shortcut=False, binary=None):
             result = probe(root, metadata, launcher, shortcut)
             result.update(kind='GNOME headless launcher probe' if launcher else 'GNOME headless extension prototype' if prototype else 'GNOME headless capability probe', hostDisplayUsed=False, inputInjected=prototype or launcher, hostInputInjected=False,
                 unsafeModeEnabled=False, privateSettings=True, elapsedSeconds=round(time.monotonic() - started, 3))
+        except Exception as error:
+            result = dict(kind='GNOME headless failed probe', passed=False,
+                error=str(error), hostDisplayUsed=False, hostInputInjected=False,
+                privateSettings=True, elapsedSeconds=round(time.monotonic() - started, 3))
+            raise
         finally:
             if process:
                 try: os.killpg(process.pid, signal.SIGTERM)
@@ -298,7 +307,7 @@ def run(output, prototype=False, launcher=False, shortcut=False, binary=None):
                 result['ownedProcessesExited'] = not any(active(pid) for pid in pids)
                 assert result['ownedProcessesExited'], 'Owned lab process did not exit'
                 output.write_text(json.dumps(result, ensure_ascii=False, indent=2) + '\n')
-                print(json.dumps(dict(output=str(output), gnomePid=result['gnomePid'], probes=result['probes'],
+                print(json.dumps(dict(output=str(output), gnomePid=result.get('gnomePid'), probes=result.get('probes'),
                     ownedProcessesExited=result['ownedProcessesExited']), ensure_ascii=False), flush=True)
             elif log:
                 print(log[-2000:], flush=True)
@@ -311,10 +320,13 @@ if __name__ == '__main__':
     parser.add_argument('--prototype', action='store_true', help='Run lab-only GNOME extension and native window prototype')
     parser.add_argument('--launcher-test', action='store_true', help='Exercise the actual DeskMorph CLI launcher on private Wayland')
     parser.add_argument('--shortcut-test', action='store_true', help='Exercise GNOME custom shortcut through private gsd-media-keys')
+    parser.add_argument('--terminal-test', action='store_true', help='Launch a real terminal from the actual launcher in the private lab')
     parser.add_argument('--binary', type=Path, help='Use this executable for the launcher UI probe')
     args = parser.parse_args()
-    if args.binary and (not args.launcher_test or args.shortcut_test):
-        parser.error('--binary requires --launcher-test and cannot be combined with --shortcut-test')
+    if args.terminal_test and args.shortcut_test:
+        parser.error('--terminal-test cannot be combined with --shortcut-test')
+    if args.binary and (not (args.launcher_test or args.terminal_test) or args.shortcut_test):
+        parser.error('--binary requires --launcher-test or --terminal-test and cannot be combined with --shortcut-test')
     if args.session: session(args.session)
-    elif args.output: run(args.output.resolve(), args.prototype, args.launcher_test, args.shortcut_test, args.binary)
+    elif args.output: run(args.output.resolve(), args.prototype, args.launcher_test, args.shortcut_test, args.binary, args.terminal_test)
     else: parser.error('--output is required')
