@@ -80,7 +80,7 @@ Phụ thuộc G1–G2. Thử parser và launch desktop entry trước khi xây l
 - [x] G3.1 Quét XDG_DATA_HOME/applications, XDG_DATA_DIRS/applications và các đường export Flatpak/Snap khi cần; dùng desktop ID và thứ tự ưu tiên đúng, tránh trùng.
 - [x] G3.2 Đọc Type, Name theo locale, GenericName, Keywords, Icon, Exec, TryExec, Terminal, Hidden, NoDisplay, OnlyShowIn, NotShowIn, StartupWMClass và Actions.
 - [x] G3.3 Lọc mục ẩn/không phù hợp môi trường; xử lý override Hidden=true và file lỗi; một file lỗi không làm hỏng toàn bộ danh mục.
-- [ ] G3.4 Launch theo desktop entry bằng cơ chế hệ thống phù hợp; xử lý field codes/Terminal/DBusActivatable, không ghép Exec từ file desktop thành chuỗi shell tùy tiện.
+- [x] G3.4 Launch theo desktop entry bằng cơ chế hệ thống phù hợp; xử lý field codes/Terminal/DBusActivatable, không ghép Exec từ file desktop thành chuỗi shell tùy tiện.
 - [x] G3.5 Thống nhất model InstalledApp: desktop ID, tên, icon, cách mở, match hints; giữ tương thích app ghim cũ qua migration/fallback.
 - [x] G3.6 Cache danh mục và refresh có kiểm soát; phát hiện app cài/gỡ/đổi entry bằng watcher hoặc refresh theo nhu cầu.
 - [x] G3.7 Bấm logo Dock mở launcher; có ô tìm kiếm, empty/loading/error state, đóng ngoài/Escape qua popup coordinator.
@@ -93,7 +93,7 @@ Phụ thuộc G1–G2. Thử parser và launch desktop entry trước khi xây l
 
 Tiêu chí: tìm được và mở đúng app thực tế gồm terminal, app có đường dẫn khoảng trắng, Flatpak/Snap nếu máy có; ghim giữ sau restart; file sai và icon thiếu không làm app crash. Test parser bằng fixtures, XDG precedence, lọc locale/environment, normalization tìm kiếm và migration pin; kiểm thử launch thực tế trên một tập app đại diện.
 
-Bằng chứng G3.2–G3.3: `application_fixtures.rs` chạy mỗi scenario trong tiến trình mới với XDG/locale/desktop riêng; kiểm tra metadata và model InstalledApp, override user/system/fallback, desktop ID thư mục con, Hidden tombstone, NoDisplay, OnlyShowIn/NotShowIn, TryExec có/thiếu, sai Type/file hỏng và icon không resolve được. Fixture launch đã qua field codes/Terminal/Desktop Action và DBusActivatable trên bus riêng; G3.4 vẫn chờ hoàn tất tập ứng dụng thực tế, G3.6 đã qua refresh xuyên GIO/IPC/UI, gồm lần cài đầu tiên khi export chưa tồn tại lúc startup; xem APPLICATION_CATALOGUE.md và PROGRESS.md.
+Bằng chứng G3.2–G3.3: `application_fixtures.rs` chạy mỗi scenario trong tiến trình mới với XDG/locale/desktop riêng; kiểm tra metadata và model InstalledApp, override user/system/fallback, desktop ID thư mục con, Hidden tombstone, NoDisplay, OnlyShowIn/NotShowIn, TryExec có/thiếu, sai Type/file hỏng và icon không resolve được. Fixture launch đã qua field codes/Terminal/Desktop Action và DBusActivatable trên bus riêng; G3.4 đã kiểm terminal COSMIC thật và Chromium Snap156 hiện cửa sổ native Wayland từ launcher/GIO bằng profile riêng (entry lab bổ sung flags/env, không chứng nhận entry nguyên bản); Flatpak không có app cài sẵn. G3.6 đã qua refresh xuyên GIO/IPC/UI, gồm lần cài đầu tiên khi export chưa tồn tại lúc startup; xem APPLICATION_CATALOGUE.md và PROGRESS.md.
 
 ## 7. G4 — Hoàn thiện trải nghiệm Dock
 

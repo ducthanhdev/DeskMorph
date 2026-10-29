@@ -12,7 +12,17 @@ export default class LauncherLab extends Base {
     _owned(pid) {
         try {
             const [ok, bytes] = GLib.file_get_contents(`/proc/${pid}/environ`);
-            return ok && new TextDecoder().decode(bytes).split('\0').includes(`DESKMORPH_COMPOSITOR_LAB=${GLib.getenv('DESKMORPH_COMPOSITOR_LAB')}`);
+            if (ok && new TextDecoder().decode(bytes).split('\0').includes(`DESKMORPH_COMPOSITOR_LAB=${GLib.getenv('DESKMORPH_COMPOSITOR_LAB')}`)) return true;
+        } catch (_) { /* Snap confinement can deny environ even to the compositor. */ }
+        if (GLib.getenv('DESKMORPH_SNAP_GUI_TEST') !== '1') return false;
+        try {
+            const root = GLib.getenv('DESKMORPH_COMPOSITOR_LAB');
+            const profile = '--user-data-dir=/tmp/deskmorph-snap-probe-' + root.split('/').at(-1).replace('deskmorph-wayland-lab-', '');
+            const [ok, bytes] = GLib.file_get_contents(`/proc/${pid}/cmdline`);
+            const [labelOk, label] = GLib.file_get_contents(`/proc/${pid}/attr/current`);
+            const args = new TextDecoder().decode(bytes).split(/[\0 ]+/).filter(Boolean);
+            return ok && labelOk && new TextDecoder().decode(label).startsWith('snap.chromium.chromium (enforce)') &&
+                args[0]?.startsWith('/snap/chromium/') && args[0]?.endsWith('/chrome') && args.includes(profile);
         } catch (_) { return false; }
     }
     _windows() {

@@ -1,4 +1,4 @@
-"""Installed Snap runtime launched by the real UI; explicitly headless scope."""
+"""Installed Snap runtime through the real UI, with headless and native Wayland modes."""
 import hashlib
 import json
 import os
@@ -14,6 +14,7 @@ from gi.repository import GLib
 
 class SnapProbe:
     def __init__(self, root, env):
+        self.gui = bool(env.get('DESKMORPH_SNAP_GUI_TEST'))
         self.env = dict(env, DBUS_SESSION_BUS_ADDRESS='unix:path=/run/user/' + str(os.getuid()) + '/bus', XDG_RUNTIME_DIR='/run/user/' + str(os.getuid()))
         self.root = root
         self.report = None
@@ -34,7 +35,7 @@ class SnapProbe:
         for name in key.get_keys('Desktop Entry')[0]:
             if name.startswith('Name['): key.remove_key('Desktop Entry', name)
         self.flag = '--user-data-dir=' + self.profile
-        key.set_string('Desktop Entry', 'Exec', '/usr/bin/env DBUS_SESSION_BUS_ADDRESS=' + self.env['DBUS_SESSION_BUS_ADDRESS'] + ' XDG_RUNTIME_DIR=' + self.env['XDG_RUNTIME_DIR'] + ' /snap/bin/chromium --headless '
+        key.set_string('Desktop Entry', 'Exec', '/usr/bin/env DBUS_SESSION_BUS_ADDRESS=' + self.env['DBUS_SESSION_BUS_ADDRESS'] + ' XDG_RUNTIME_DIR=' + self.env['XDG_RUNTIME_DIR'] + ' WAYLAND_DISPLAY=' + env['WAYLAND_DISPLAY'] + ' /snap/bin/chromium ' + ('--ozone-platform=wayland ' if self.gui else '--headless ')
             + self.flag + ' --crash-dumps-dir=' + self.profile + '/crashes --no-first-run --no-default-browser-check --disable-background-networking '
             + f'--remote-debugging-address=127.0.0.1 --remote-debugging-port={self.port} about:blank %U')
         directory = Path(env['XDG_DATA_HOME']) / 'applications'
@@ -64,7 +65,7 @@ class SnapProbe:
         with self.opener.open(f'http://127.0.0.1:{self.port}' + path, timeout=1) as response:
             return json.load(response)
 
-    def run(self, app, descendants, wait):
+    def run(self, app, descendants, wait, dispatch=None, app_pid=None):
         button = wait(lambda: next((n for n in descendants(app)
             if n.get_role_name() == 'button' and n.get_name() in (
                 'Mở 000 DeskMorph Snap Probe', 'Open 000 DeskMorph Snap Probe')), None),
@@ -90,11 +91,20 @@ class SnapProbe:
                 if reply.get('id') == 1: break
             assert reply['result']['result']['value'] == 'deskmorph-snap-ok', reply
         finally: ws.close()
-        self.report = dict(headless=True, snapUsesHostUserBusForCgroup=True, desktopId=self.source.name, launcherAccessibleButton=True,
+        windows = None
+        if self.gui:
+            browser_pid = next(p['pid'] for p in browser if not any(a.startswith('--type=') for a in p['argv']))
+            dispatch(op='target', pid=browser_pid)
+            windows = wait(lambda: [w for w in dispatch(op='state')['windows']
+                if w['frame']['width'] > 0 and w['frame']['height'] > 0 and 'DeskMorph Snap Runtime Probe' in w['title']],
+                'Snap document window did not map on the owned compositor')
+            assert all(w['clientType'] == 0 for w in windows), windows
+            dispatch(op='target', pid=app_pid)
+        self.report = dict(headless=not self.gui, nativeWaylandWindows=windows, snapUsesHostUserBusForCgroup=True, desktopId=self.source.name, launcherAccessibleButton=True,
             installedEntrySha256=hashlib.sha256(self.source.read_bytes()).hexdigest(),
             labEntrySha256=hashlib.sha256(self.desktop.read_bytes()).hexdigest(),
             ownedBrowser=[p for p in browser if not any(a.startswith('--type=') for a in p['argv'])], browserVersion=info['Browser'], renderedDocumentVerified=True,
-            scope='Actual installed Chromium Snap via /snap/bin/chromium and DeskMorph UI/GIO. Lab desktop override supplies unique temporary profile and headless flags. Does not certify a visible Snap window, unmodified desktop-entry launch, or Flatpak runtime.')
+            scope='Actual installed Chromium Snap via /snap/bin/chromium and DeskMorph UI/GIO. Lab desktop override supplies unique temporary profile and explicit renderer flags. Visible native Wayland windows are asserted only in gui mode. Does not certify unmodified desktop-entry launch or Flatpak runtime.')
         return self.report
 
     def close(self):

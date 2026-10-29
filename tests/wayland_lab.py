@@ -102,6 +102,8 @@ def session(root):
         'XDG_SESSION_TYPE', 'XDG_CURRENT_DESKTOP']}
     if os.environ.get('DESKMORPH_PROTOTYPE_TOKEN'):
         values['DESKMORPH_PROTOTYPE_TOKEN'] = os.environ['DESKMORPH_PROTOTYPE_TOKEN']
+    if os.environ.get('DESKMORPH_SNAP_GUI_TEST'):
+        values['DESKMORPH_SNAP_GUI_TEST'] = '1'
     if os.environ.get('DESKMORPH_SNAP_TEST'):
         values['DESKMORPH_SNAP_TEST'] = '1'
     if os.environ.get('DESKMORPH_TERMINAL_TEST'):
@@ -113,14 +115,14 @@ def session(root):
     metadata = dict(values, busAddress=os.environ['DBUS_SESSION_BUS_ADDRESS'], gnomePid=os.getpid())
     (root / 'session.json').write_text(json.dumps(metadata))
     os.execvp('gnome-shell', ['gnome-shell', '--headless', '--wayland', '--no-x11',
-        '--virtual-monitor=1280x720', '--wayland-display=' + SOCKET])
+        '--virtual-monitor=1280x720', '--wayland-display=' + os.environ['WAYLAND_DISPLAY']])
 
 
 def probe(root, metadata, launcher=False, shortcut=False):
     assert owned(metadata['gnomePid'], root)
     assert Path(f'/proc/{metadata["gnomePid"]}/exe').resolve().name == 'gnome-shell'
     bus = connection(metadata['busAddress'])
-    result = dict(gnomePid=metadata['gnomePid'], globals=globals_on(root / 'runtime' / SOCKET))
+    result = dict(gnomePid=metadata['gnomePid'], globals=globals_on(Path(metadata['WAYLAND_DISPLAY']) if Path(metadata['WAYLAND_DISPLAY']).is_absolute() else root / 'runtime' / SOCKET))
     result['displayState'] = call(bus, 'org.gnome.Mutter.DisplayConfig', '/org/gnome/Mutter/DisplayConfig',
         'org.gnome.Mutter.DisplayConfig', 'GetCurrentState').unpack()
     result['probes'] = {}
@@ -206,7 +208,8 @@ def probe(root, metadata, launcher=False, shortcut=False):
     return result
 
 
-def run(output, prototype=False, launcher=False, shortcut=False, binary=None, terminal=False, snap=False):
+def run(output, prototype=False, launcher=False, shortcut=False, binary=None, terminal=False, snap=False, snap_gui=False):
+    snap = snap or snap_gui
     launcher = launcher or shortcut or terminal or snap
     # Reap private D-Bus service grandchildren as well as the direct supervisor.
     libc = C.CDLL(None)
@@ -223,6 +226,12 @@ def run(output, prototype=False, launcher=False, shortcut=False, binary=None, te
             env.pop(key, None)
         if snap:
             env['DESKMORPH_SNAP_TEST'] = '1'
+        socket_path = root / 'runtime' / SOCKET
+        if snap_gui:
+            socket_path = Path('/run/user') / str(os.getuid()) / ('wayland-9' + secrets.token_hex(6))
+            assert not socket_path.exists() and not socket_path.with_suffix('.lock').exists()
+            env['WAYLAND_DISPLAY'] = str(socket_path)
+            env['DESKMORPH_SNAP_GUI_TEST'] = '1'
         if terminal:
             env['DESKMORPH_TERMINAL_TEST'] = '1'
         if binary:
@@ -248,7 +257,7 @@ def run(output, prototype=False, launcher=False, shortcut=False, binary=None, te
             deadline = time.monotonic() + 30
             while time.monotonic() < deadline:
                 if process.poll() is not None: raise AssertionError('Owned GNOME compositor exited before readiness')
-                if (root / 'session.json').exists() and (root / 'runtime' / SOCKET).exists():
+                if (root / 'session.json').exists() and socket_path.exists():
                     metadata = json.loads((root / 'session.json').read_text())
                     try:
                         bus = connection(metadata['busAddress'])
@@ -310,6 +319,12 @@ def run(output, prototype=False, launcher=False, shortcut=False, binary=None, te
             for name in ('launcher-probe', 'deskmorph-launcher', 'accessibility', 'media-keys', 'shortcut-background'):
                 if (root / (name + '.log')).exists(): output.with_suffix('.' + name + '.log').write_text((root / (name + '.log')).read_text())
             assert not any(active(pid) for pid in pids), 'Owned lab process did not exit'
+            if snap_gui:
+                for endpoint in (socket_path, Path(str(socket_path) + '.lock')):
+                    if endpoint.exists():
+                        assert endpoint.stat().st_uid == os.getuid()
+                        endpoint.unlink()
+                if result: result['ownedWaylandSocketRemoved'] = True
             if result:
                 result['ownedChildPids'] = sorted(pids)
                 result['ownedProcessesExited'] = not any(active(pid) for pid in pids)
@@ -328,16 +343,17 @@ if __name__ == '__main__':
     parser.add_argument('--prototype', action='store_true', help='Run lab-only GNOME extension and native window prototype')
     parser.add_argument('--launcher-test', action='store_true', help='Exercise the actual DeskMorph CLI launcher on private Wayland')
     parser.add_argument('--shortcut-test', action='store_true', help='Exercise GNOME custom shortcut through private gsd-media-keys')
+    parser.add_argument('--snap-gui-test', action='store_true', help='Map installed Chromium Snap on the private compositor using an owned runtime socket')
     parser.add_argument('--snap-test', action='store_true', help='Launch installed Chromium Snap headless with an isolated profile through DeskMorph UI')
     parser.add_argument('--terminal-test', action='store_true', help='Launch a real terminal from the actual launcher in the private lab')
     parser.add_argument('--binary', type=Path, help='Use this executable for the launcher UI probe')
     args = parser.parse_args()
-    if args.snap_test and (args.shortcut_test or args.terminal_test):
+    if (args.snap_test or args.snap_gui_test) and (args.shortcut_test or args.terminal_test):
         parser.error('--snap-test cannot be combined with shortcut or terminal modes')
     if args.terminal_test and args.shortcut_test:
         parser.error('--terminal-test cannot be combined with --shortcut-test')
-    if args.binary and (not (args.launcher_test or args.terminal_test) or args.shortcut_test):
-        parser.error('--binary requires --launcher-test or --terminal-test and cannot be combined with --shortcut-test')
+    if args.binary and (not (args.launcher_test or args.terminal_test or args.snap_test or args.snap_gui_test) or args.shortcut_test):
+        parser.error('--binary requires a launcher, terminal, or Snap mode and cannot be combined with --shortcut-test')
     if args.session: session(args.session)
-    elif args.output: run(args.output.resolve(), args.prototype, args.launcher_test, args.shortcut_test, args.binary, args.terminal_test, args.snap_test)
+    elif args.output: run(args.output.resolve(), args.prototype, args.launcher_test, args.shortcut_test, args.binary, args.terminal_test, args.snap_test, args.snap_gui_test)
     else: parser.error('--output is required')

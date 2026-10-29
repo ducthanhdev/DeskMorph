@@ -64,7 +64,7 @@ def run():
         wait(lambda: any(w['focused'] and w['title'] == 'DeskMorph Launcher' for w in dispatch(op='state')['windows']), 'Lab explicit activation did not focus launcher')
         assert all(w['clientType'] == 0 for w in state['windows']), state
         assert not any(w['title'] == 'DeskMorph Studio' for w in state['windows']), 'Cold launcher also mapped Studio'
-        snap_result = snap_probe.run(app, descendants, wait) if snap_probe else None
+        snap_result = snap_probe.run(app, descendants, wait, dispatch, process.pid) if snap_probe else None
         if snap_probe:
             subprocess.run([str(binary), '--launcher'], env=env, check=True, timeout=8)
             popup = wait(lambda: next((w for w in dispatch(op='state')['windows'] if w['title'] == 'DeskMorph Launcher'), None), 'Launcher did not reopen after Snap launch')

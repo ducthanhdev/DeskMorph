@@ -108,3 +108,6 @@ Kiểm terminal thật (29/10/2026): `/usr/bin/python3 tests/wayland_lab.py --te
 
 
 Kiểm Snap runtime thật: `/usr/bin/python3 tests/wayland_lab.py --snap-test --output /tmp/deskmorph-snap-launch/results.json`. [Bằng chứng Chromium156](benchmarks/snap-runtime-launch-2026-10-29.json) đi qua nút Mở launcher/GIO tới `/snap/bin/chromium`, xác minh AppArmor/profile riêng và nội dung trang qua CDP, đóng browser và xóa profile. Entry lab bổ sung headless/profile/loopback-CDP và env user bus/runtime hệ thống để snapd tạo cgroup. Chưa chứng nhận cửa sổ Snap hoặc entry nguyên bản; G3.4 còn mở. Cần python3-websocket để chạy harness; không đổi dependency sản phẩm.
+
+
+G3.4 đã chốt sau ca GUI Snap: `/usr/bin/python3 tests/wayland_lab.py --snap-gui-test --output /tmp/deskmorph-snap-gui/results.json`. [Bằng chứng](benchmarks/snap-gui-launch-2026-10-29.json) kiểm cửa sổ Chromium Snap156 native Wayland, PID/profile/AppArmor, frame dương và tiêu đề trang đối chiếu CDP; socket compositor riêng trong user runtime được dọn sau test. Kết hợp terminal thật, pin/path khoảng trắng và contract GIO field codes/Actions/DBusActivatable đã chạy lại. Entry Snap lab bổ sung flags/env để giữ profile riêng và user bus tạo cgroup; chưa chứng nhận entry nguyên bản hoặc runtime Flatpak chưa cài trên máy. Không suy ca này thành hỗ trợ Dock/window control GNOME Wayland.
