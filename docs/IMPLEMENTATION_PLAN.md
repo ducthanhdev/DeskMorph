@@ -77,7 +77,7 @@ G0.5/G2.1/G2.3: [CAPABILITIES.md](CAPABILITIES.md) ghi ma trận ban đầu và 
 
 Phụ thuộc G1–G2. Thử parser và launch desktop entry trước khi xây launcher UI.
 
-- [ ] G3.1 Quét XDG_DATA_HOME/applications, XDG_DATA_DIRS/applications và các đường export Flatpak/Snap khi cần; dùng desktop ID và thứ tự ưu tiên đúng, tránh trùng.
+- [x] G3.1 Quét XDG_DATA_HOME/applications, XDG_DATA_DIRS/applications và các đường export Flatpak/Snap khi cần; dùng desktop ID và thứ tự ưu tiên đúng, tránh trùng.
 - [x] G3.2 Đọc Type, Name theo locale, GenericName, Keywords, Icon, Exec, TryExec, Terminal, Hidden, NoDisplay, OnlyShowIn, NotShowIn, StartupWMClass và Actions.
 - [x] G3.3 Lọc mục ẩn/không phù hợp môi trường; xử lý override Hidden=true và file lỗi; một file lỗi không làm hỏng toàn bộ danh mục.
 - [ ] G3.4 Launch theo desktop entry bằng cơ chế hệ thống phù hợp; xử lý field codes/Terminal/DBusActivatable, không ghép Exec từ file desktop thành chuỗi shell tùy tiện.

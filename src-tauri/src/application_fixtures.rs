@@ -43,6 +43,17 @@ impl Fixture {
     }
     fn run(&self, scenario: &str) {
         let executable = std::env::current_exe().unwrap();
+        let configured = std::env::join_paths([self.0.join("system"), self.0.join("fallback")]).unwrap();
+        let data_dirs = if scenario == "exports" {
+            let first = self.0.join("user/flatpak/exports/share");
+            let exports = [first.clone(), self.0.join("flatpak-system/exports/share"),
+                self.0.join("snap/desktop"), first.clone(), self.0.join("absent-export")];
+            let dirs = crate::catalogue_paths::data_dirs(Some(&configured), &exports).unwrap();
+            let paths: Vec<_> = std::env::split_paths(&dirs).collect();
+            assert_eq!(paths.iter().filter(|path| **path == first).count(), 1);
+            assert_eq!(paths.len(), 5, "Only available export roots are appended once");
+            dirs
+        } else { configured };
         let mut command = if scenario == "dbus" {
             let mut command = Command::new("/usr/bin/dbus-run-session");
             command
@@ -64,14 +75,7 @@ impl Fixture {
             .env("XDG_CONFIG_HOME", self.0.join("config"))
             .env("XDG_CACHE_HOME", self.0.join("cache"))
             .env("XDG_DATA_HOME", self.0.join("user"))
-            .env(
-                "XDG_DATA_DIRS",
-                format!(
-                    "{}:{}",
-                    self.0.join("system").display(),
-                    self.0.join("fallback").display()
-                ),
-            )
+            .env("XDG_DATA_DIRS", data_dirs)
             .env("XDG_CURRENT_DESKTOP", "GNOME")
             .env("LANGUAGE", "fr")
             .env("LANG", "C.UTF-8")
@@ -131,6 +135,32 @@ fn xdg_precedence_hidden_overrides_locale_and_desktop_filters() {
     )
     .unwrap();
     f.run("catalogue");
+}
+
+#[test]
+fn exports_preserve_xdg_overrides_ids_symlinks_and_launch_resolution() {
+    let f = Fixture::new("exports");
+    let script = f.script("export app", "printf '%s' \"$1\" > \"$DESKMORPH_APP_FIXTURE/export-result-$1\"");
+    let exec = crate::registration::quote_exec(&script).unwrap();
+    for (directory, name) in [("user/flatpak/exports/share", "flatpak-user"),
+        ("flatpak-system/exports/share", "flatpak-system"), ("snap/desktop", "snap")] {
+        f.entry(directory, &format!("{name}.desktop"), &format!("Name={name}\nExec={exec} {name}"));
+        f.entry(directory, "configured.desktop", "Name=Export must not override configured dir");
+        f.entry(directory, "user.desktop", "Name=Export must not override user dir");
+        f.entry(directory, "masked.desktop", "Name=Masked export");
+        f.entry(directory, "export-override.desktop", &format!("Name={name}"));
+    }
+    f.entry("system", "configured.desktop", "Name=Configured");
+    f.entry("user", "user.desktop", "Name=User");
+    f.entry("user", "masked.desktop", "Hidden=true");
+    f.entry("snap/desktop", "vendor/nested.desktop", "Name=Nested Snap");
+    // Flatpak exports commonly point into a deployment rather than containing
+    // independent copies. Both discovery and desktop-ID launch must follow it.
+    let exported = f.0.join("user/flatpak/exports/share/applications/flatpak-user.desktop");
+    let deployed = f.0.join("deployment.desktop");
+    fs::rename(&exported, &deployed).unwrap();
+    std::os::unix::fs::symlink(deployed, exported).unwrap();
+    f.run("exports");
 }
 
 #[test]
@@ -261,6 +291,24 @@ fn isolated_child() {
         return;
     };
     match std::env::var("DESKMORPH_APP_SCENARIO").unwrap().as_str() {
+        "exports" => {
+            let apps: Vec<_> = gio::AppInfo::all().into_iter()
+                .filter_map(|app| app.downcast::<gio::DesktopAppInfo>().ok())
+                .filter_map(|app| describe_with_icon(app, |_| None)).collect();
+            let named = |id: &str| apps.iter().find(|app| app.id == id).unwrap();
+            assert_eq!(named("configured.desktop").name, "Configured");
+            assert_eq!(named("user.desktop").name, "User");
+            assert_eq!(named("export-override.desktop").name, "flatpak-user");
+            assert_eq!(named("vendor-nested.desktop").name, "Nested Snap");
+            assert!(!apps.iter().any(|app| app.id == "masked.desktop"));
+            let ids: std::collections::HashSet<_> = apps.iter().map(|app| &app.id).collect();
+            assert_eq!(ids.len(), apps.len(), "Duplicate desktop ID in export catalogue");
+            for name in ["flatpak-user", "flatpak-system", "snap"] {
+                assert_eq!(named(&format!("{name}.desktop")).name, name);
+                launch_desktop_entry(&format!("{name}.desktop"), None).unwrap();
+                assert_eq!(wait_file(&root, &format!("export-result-{name}")), name);
+            }
+        }
         "catalogue" => {
             let apps: Vec<_> = gio::AppInfo::all()
                 .into_iter()

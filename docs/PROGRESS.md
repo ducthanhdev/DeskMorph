@@ -2,7 +2,7 @@
 
 Mục tiêu giữ nguyên toàn bộ 99 đầu việc trong IMPLEMENTATION_PLAN.md. Chưa đạt cổng hoàn thành toàn dự án. Checkbox chưa đánh dấu không đồng nghĩa chưa có code: nhiều mục đang chờ kiểm thử đủ phạm vi.
 
-Hiện đã đánh dấu 62/99 mục, gồm G3.2–G3.3 bằng fixture môi trường cô lập và G0.5/G2.1/G2.3 qua capability EWMH, kiểm thử lỗi adapter và native startup thiếu xprop. Đã bổ sung G0.4/G2.4/G2.5 qua popup/auto-hide native và G9.6/G9.9 bằng hồi quy policy/asset/force-close và ảnh Studio thật trong README. Các cổng GUI, Wayland và phát hành vẫn chưa hoàn tất.
+Hiện đã đánh dấu 68/99 mục, gồm G3.2–G3.3 bằng fixture môi trường cô lập và G0.5/G2.1/G2.3 qua capability EWMH, kiểm thử lỗi adapter và native startup thiếu xprop. Đã bổ sung G0.4/G2.4/G2.5 qua popup/auto-hide native và G9.6/G9.9 bằng hồi quy policy/asset/force-close và ảnh Studio thật trong README. Các cổng GUI, Wayland và phát hành vẫn chưa hoàn tất.
 
 ## Môi trường tham chiếu đã xác minh
 
@@ -321,3 +321,13 @@ Script cần AT-SPI, Python GI, GTK3 và libXtst. Chỉ gửi phím khi kiểm t
 - Khảo sát identity đối chiếu request xdg_toplevel.set_app_id trong XML xdg-shell; desktop ID là nguồn identity đề xuất cho grouping/icon, không chuyển WM_CLASS/XID XWayland thành ID native. Enumeration/control vẫn cần API được compositor cho phép; chưa coi icon/window backend Wayland đã hoạt động.
 - Harness làm child subreaper, ghi PID bus/descendant có marker, stop/reap trong finally và kiểm ownedProcessesExited=true; runtime riêng được xóa sau cleanup. Lượt đầu sai enum GI trước khi GNOME khởi động đã sửa, không tính đạt. Python compile/diff check qua; không đổi code sản phẩm nên không lặp frontend/Rust suite chỉ vì nghiên cứu. [Khảo sát và cách chạy](WAYLAND_RESEARCH.md), [bản ghi](benchmarks/wayland-survey-2026-10-29.json).
 - G9.1 đánh dấu, tổng 67/99. Đây là capability survey headless, chưa phải prototype G9.2 hay chứng nhận Wayland G9.4; native DPI/hotplug của Dock ở G2.10–G2.11 vẫn chưa đạt. Lab mở được hướng kiểm thử tiếp theo mà không cần thay đổi desktop đang dùng.
+
+
+## G3.1 — Đường export Flatpak/Snap và desktop ID (29/10/2026)
+
+- Chuẩn bị XDG_DATA_DIRS ngay đầu run_app, trước GTK/GIO, sysinfo và worker. Giữ thứ tự đường tuyệt đối đã cấu hình; mặc định /usr/local/share:/usr/share khi thiếu/rỗng/toàn đường tương đối. Chỉ nối export có thư mục applications, loại đường trùng. GIO vẫn quyết định desktop ID và override XDG_DATA_HOME, dùng cùng đường cho discovery và launch.
+- Fallback gồm user Flatpak theo FLATPAK_USER_DIR hoặc XDG_DATA_HOME/flatpak (HOME/.local/share khi thiếu XDG_DATA_HOME), system /var/lib/flatpak/exports/share và Snap /var/lib/snapd/desktop. Custom system installation cần xuất đường qua XDG_DATA_DIRS. Không sửa biến môi trường sau khi GIO đã khởi tạo.
+- Fixture subprocess qua cả user/system Flatpak và Snap layout: configured/user override, Hidden tombstone, desktop ID lồng vendor-nested.desktop, symlink đến deployment, đường executable có dấu cách; ba export mở bằng desktop ID và ghi đúng marker. Full Rust 50/50 gồm ignored qua, custom-protocol build qua.
+- Native --exports-smoke --launcher-smoke exit 0: PID 1537980 nhận startup XDG_DATA_DIRS=/usr/local/share:/usr/share, vẫn tìm đúng một DeskMorph Export Probe trong user export và launch tạo marker. Khôi phục nguyên config, xóa fixture/marker, restart normal PID 1538444; hồi quy launcher qua bảy nhóm discovery/search/pin/GIO/group/window-list/close-confirmation, fixture PID 1538925 đã thoát.
+- Hai lần chạy harness đầu chưa đạt do AT-SPI proxy đã defunct sau SIGTERM và child đã thoát chờ reap; sửa lưu PID trước stop, nhận biết zombie và reap child. Không tính hai lượt lỗi thành bằng chứng sản phẩm. Ca cuối đã qua; thay đổi reap sau đó chỉ dọn child đã thoát.
+- [Hợp đồng catalogue](APPLICATION_CATALOGUE.md), [bản ghi](benchmarks/catalogue-exports-2026-10-29.json). G3.1 đánh dấu, tổng 68/99. Export-layout fixtures không chứng minh runtime của gói Flatpak/Snap thực tế; các cổng launch và Wayland còn mở.

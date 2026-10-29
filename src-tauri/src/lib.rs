@@ -7,6 +7,7 @@ mod wallpaper;
 mod tooltip;
 mod layout;
 mod applications;
+mod catalogue_paths;
 mod instance;
 mod registration;
 mod window_manager;
@@ -204,6 +205,7 @@ pub fn run() {
 }
 
 fn run_app() -> Result<(), String> {
+    catalogue_paths::prepare()?;
     let key = registration::config_root()?.join("com.ducthanhdev.deskmorph").to_string_lossy().into_owned();
     let instance = match instance::InstanceGuard::acquire(&key)? {
         Some(instance) => instance,

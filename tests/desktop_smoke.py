@@ -64,6 +64,7 @@ if __name__ == '__main__':
     parser.add_argument('--restart', action='store_true')
     parser.add_argument('--basic', action='store_true')
     parser.add_argument('--launcher-smoke', action='store_true')
+    parser.add_argument('--exports-smoke', action='store_true')
     parser.add_argument('--force-close-smoke', action='store_true')
     parser.add_argument('--popup-smoke', action='store_true')
     parser.add_argument('--focus-smoke', action='store_true')
@@ -127,7 +128,7 @@ if __name__ == '__main__':
             raise RuntimeError('Cannot verify GNOME lock state; no native input will be sent')
         if re.search(r'\btrue\b', result.stdout):
             raise RuntimeError('GNOME desktop is locked; unlock it before native UI tests. No input was sent.')
-    input_tests = any((args.action, args.screenshot, args.basic, args.popup_smoke, args.focus_smoke, args.autohide_smoke, args.shortcut_smoke, args.lifecycle_smoke, args.registration_smoke, args.window_list_smoke, args.reorder_smoke, args.tooltip_smoke, args.launch_smoke, args.overflow_smoke, args.layout_smoke, args.indicator_smoke, args.mapping_smoke, args.internal_smoke, args.polling_smoke, args.launcher_smoke, args.studio_smoke, args.config_smoke, args.command_errors_smoke,
+    input_tests = any((args.exports_smoke, args.action, args.screenshot, args.basic, args.popup_smoke, args.focus_smoke, args.autohide_smoke, args.shortcut_smoke, args.lifecycle_smoke, args.registration_smoke, args.window_list_smoke, args.reorder_smoke, args.tooltip_smoke, args.launch_smoke, args.overflow_smoke, args.layout_smoke, args.indicator_smoke, args.mapping_smoke, args.internal_smoke, args.polling_smoke, args.launcher_smoke, args.studio_smoke, args.config_smoke, args.command_errors_smoke,
                        args.wallpaper_smoke, args.scheduler_smoke, args.library_stress, args.audio_smoke, args.media_smoke,
                        args.audio_exit, args.audio_unavailable, args.system_smoke, args.system_unavailable, args.system_open_smoke))
     if input_tests or args.geometry_smoke: require_unlocked_desktop()
@@ -409,12 +410,13 @@ if __name__ == '__main__':
         binary = Path(__file__).resolve().parents[1] / 'src-tauri/target/agent/debug/deskmorph'
         subprocess.run([str(binary)], env=env, timeout=5, check=True, capture_output=True)
         time.sleep(0.7)
-    def start_isolated_app(binary_override=None):
+    def start_isolated_app(binary_override=None, env_overrides=None):
         require_unlocked_desktop()
         test_root = Path('/tmp/deskmorph-desktop-test')
         env = dict(os.environ, DESKMORPH_CONFIG_HOME=TEST_CONFIG, XDG_DATA_HOME=str(test_root / 'data'),
                    XDG_CACHE_HOME=str(test_root / 'cache'), WEBKIT_DISABLE_DMABUF_RENDERER='1')
         binary = Path(__file__).resolve().parents[1] / 'src-tauri/target/agent/debug/deskmorph'
+        if env_overrides: env.update(env_overrides)
         if binary_override is not None: binary = binary_override
         with (test_root / 'runtime.log').open('a') as log:
             launched = subprocess.Popen([str(binary)], env=env, stdout=log, stderr=log, start_new_session=True)
@@ -684,6 +686,9 @@ if __name__ == '__main__':
         report = {'passed': passed, 'pid': app.get_process_id(), 'preferencesRestored': True}
         Path('/tmp/deskmorph-desktop-test/autohide-result.json').write_text(json.dumps(report, indent=2))
         print(json.dumps(report))
+    if args.exports_smoke:
+        from exports_smoke import run
+        app = run(app, TEST_CONFIG, click, focus_studio, native_keys, test_app, start_isolated_app, lambda current: globals().__setitem__('app', current))
     # The dedicated case above exercises auto-hide. Other cases interact with
     # a fully shown Dock; AT-SPI actions on off-screen children are not a real
     # user interaction and can leave the popup unfocused during native resize.
