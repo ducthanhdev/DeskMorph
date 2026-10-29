@@ -679,3 +679,10 @@ Script cần AT-SPI, Python GI, GTK3 và libXtst. Chỉ gửi phím khi kiểm t
 - Giữ capability COSMIC unsupported: mới xác minh API/file watcher/pixel, chưa có adapter production giữ unknown fields/per-output/non-Path/concurrent write hoặc test xuyên DeskMorph trong COSMIC. KDE chưa có runtime. G6.9 vẫn mở, tổng90/99.
 - Theo yêu cầu mới, đánh giá trước commit: giữ cosmic_background_probe.py vì tái lập đúng điều kiện API/runtime/pixel, có assertion và cleanup; giữ tích hợp mode lab và stage screenshot dùng lại, không phải script một lần. Chỉ lưu một JSON tóm tắt và hai PNG khác trạng thái cần chứng minh; bỏ log startup/portal và full protocol dump khỏi commit. Python compile/diff check và hai lượt config/pixel hoàn chỉnh qua, không đổi code sản phẩm nên không chạy lại frontend/Rust.
 - Thêm TEST_EVIDENCE_POLICY.md phân biệt regression/harness tái lập với diagnostic tạm và dữ liệu sinh ra. Không xóa hoặc viết lại lịch sử commit chỉ vì có test; audit cũ mới theo nhóm đại diện, không tuyên bố đã duyệt từng file toàn kho.
+
+
+## G6.9 — Chuẩn bị sửa RON COSMIC và kiểm xung đột (29/10/2026)
+
+- Thêm module chưa nối command/capability, dùng ron0.12.3/RawValue chỉ thay vùng source và giữ byte khác. Từ chối thiếu/trùng field đã biết, per-output/non-Path, đường dẫn tương đối/NUL, cú pháp sai hoặc quá64KiB. GIO load/replace theo etag và đọc đối chiếu; test external edit giữ nguyên cấu hình bên ngoài, ghi thường giữ0600, từ chối symlink tại thời điểm load.
+- Đánh giá trước commit: giữ ba regression Rust vì bảo vệ cấu hình thật, Unicode/escaping, unknown field/comment và conflict; không commit log hay diagnostic script. Dependency lock chỉ thêm ron, không đổi phiên bản dependency khác. WALLPAPER.md ghi rõ giới hạn TOCTOU/etag/readback, chưa bảo đảm rollback/ownership/per-output hoặc cấu hình mặc định.
+- Toàn bộ Rust lib73 ca:69 qua,0 lỗi,4 ignored cần GTK/private D-Bus/native socket/X11 riêng; không tính ignored là đã chạy. Rustfmt module và git diff --check qua. Không đổi frontend hoặc gửi input host; không dùng bộ test này để tuyên bố adapter COSMIC hoạt động. G6.9 vẫn mở, tổng90/99.

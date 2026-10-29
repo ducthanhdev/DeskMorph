@@ -21,3 +21,5 @@ Trước stage, xem `git status`, diff và danh sách file mới; ghi rõ vì sa
 - Báo cáo cũ có phần verbose hoặc ảnh cùng trạng thái có thể gọn hơn. Chưa audit từng file; không tự xóa test/bằng chứng hoặc rewrite commit cũ theo suy đoán. Khi dọn cần kiểm mọi link tài liệu, khả năng tái chạy và bảo toàn bằng chứng cho checkbox đã chốt.
 
 Tài liệu này ghi quyết định kỹ thuật theo yêu cầu người dùng, không tạo bước xin phép bổ sung trước các commit đã được giao.
+
+- Chuẩn bị parser COSMIC: giữ ba Rust regression trong module, kiểm bảo toàn byte/comment/unknown enum và đường dẫn Unicode/escaping, từ chối cấu hình mơ hồ/không hỗ trợ, etag conflict/0600/symlink. Có giá trị bảo vệ dữ liệu người dùng; không thêm script diagnostic hoặc log build vào commit. Chưa coi các test này thay thế runtime/UI hay bảo đảm chống mọi race.

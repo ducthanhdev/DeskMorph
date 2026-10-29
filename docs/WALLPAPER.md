@@ -41,3 +41,12 @@ Sau Apply/Retry, ca phân biệt key đặt URI sáng về ảnh hồng trong ke
 [Ca chạy và ảnh nền thực](benchmarks/cosmic-background-2026-10-29/results.json): `cosmic-comp` backend winit lồng trên GNOME Wayland lab, `cosmic-bg`1.11.0 (9520e16), compositor commit8cb1802. Cả XDG config/runtime và bus đều riêng; không dùng session COSMIC của người dùng. Khóa `cosmic/com.system76.CosmicBackground/v1/all` chứa RON với `source: Path("…")`, `same-on-all=true`. Ảnh hồng được đọc lúc startup; atomic replace file all sang ảnh xanh làm nền đổi khi cùng PID cosmic-bg còn chạy, đối chiếu3 pixel stage/tolerance2 và ảnh đã xem. Không cần chạy cosmic-settings-daemon trong ca này.
 
 Đây là API research; sản phẩm vẫn báo unsupported trên COSMIC. Trước khi bật cần adapter đọc/ghi RON giữ nguyên field chưa biết, xử lý per-output và same-on-all, nguồn không phải Path, lỗi quyền/ảnh, concurrent write/rollback, rồi kiểm xuyên UI/IPC trong COSMIC. Không dùng regex của fixture để sửa config người dùng. KDE chưa có compositor/runtime trên máy tham chiếu, chưa có bằng chứng API.
+
+
+### Chuẩn bị bộ sửa RON (29/10/2026)
+
+`src-tauri/src/cosmic_background.rs` dùng RON 0.12.3 và RawValue mượn từ văn bản gốc để chỉ thay vùng `source`. Các byte bên ngoài vùng đó, bao gồm comment và field enum chưa biết, được giữ nguyên. Hiện chỉ nhận `output: "all"` và `Path` tuyệt đối UTF-8 không chứa NUL; từ chối field bắt buộc thiếu/trùng, nguồn khác Path, per-output, cú pháp sai và văn bản vượt 64 KiB. Chưa nối module này với capability hoặc command.
+
+I/O thử nghiệm yêu cầu file thường (không symlink tại lúc kiểm), có etag; replace dùng etag cũ, không backup, rồi đọc đối chiếu. Regression kiểm external edit bị từ chối mà không mất byte mới, ghi thường giữ mode 0600 và symlink bị từ chối. Đây chưa phải bảo đảm giao dịch chống mọi race: kiểm metadata và đọc file là hai bước, etag phụ thuộc backend/filesystem; thay đổi sau replace có thể trả lỗi dù dữ liệu đã được ghi. Chưa xử lý owner/parent symlink, fallback mặc định, same-on-all/per-output, rollback hoặc xác thực ảnh tại lớp này. Không dùng trực tiếp lên cấu hình người dùng trước khi hoàn tất adapter và ca tích hợp riêng.
+
+Lệnh regression: `cargo test --locked --offline --manifest-path src-tauri/Cargo.toml --target-dir src-tauri/target/agent --lib cosmic_background::tests::`. Giữ ba test nguồn vì bảo vệ nội dung cấu hình, escaping và xung đột ghi; không cần thêm báo cáo JSON hay log sinh ra cho các ca này.
