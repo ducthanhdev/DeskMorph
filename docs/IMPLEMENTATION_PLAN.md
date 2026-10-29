@@ -63,7 +63,7 @@ Phụ thuộc G1. Module dự kiến: platform/capabilities, window-manager/x11,
 - [x] G2.5 Hoàn thiện auto-hide: giữ hiện khi popup mở, timer ẩn được hủy đúng lúc, trigger cạnh màn hình đáng tin cậy, tắt Dock đóng popup liên quan.
 - [x] G2.6 Danh sách cửa sổ cập nhật tiêu đề/active/thêm/bớt; giữ cửa sổ đang chờ xác nhận đóng; close không dùng force kill thay thế tự động.
 - [x] G2.7 Điều hướng danh sách bằng mũi tên, Home/End, Enter, Escape; focus ban đầu và focus khi hàng biến mất hợp lý.
-- [ ] G2.8 Đóng bằng Escape/bấm ngoài có hành vi nhất quán; trả focus về nguồn mở khi phù hợp, không giành focus sau khi người dùng đã chọn app khác.
+- [x] G2.8 Đóng bằng Escape/bấm ngoài có hành vi nhất quán; trả focus về nguồn mở khi phù hợp, không giành focus sau khi người dùng đã chọn app khác.
 - [ ] G2.9 Chuẩn hóa tọa độ logical/physical, monitor origin và work area; tính vị trí từ kích thước Dock thực, clamp popup vào màn hình.
 - [ ] G2.10 Kiểm tra Dock trên/dưới, monitor bên trái có tọa độ âm, scale 100/125/150/200%, màn hình hỗn hợp DPI và đổi độ phân giải.
 - [ ] G2.11 Chọn màn hình đặt Dock; xử lý rút/cắm màn hình và fallback về màn hình còn lại. Dock trên tất cả màn hình là phần mở rộng sau khi chế độ chọn một màn hình ổn định.

@@ -81,7 +81,7 @@ export function AudioPopup({ generation }: { generation?: number }) {
     catch (e) { if (active.current) failure(e); }
   };
   return <section className="audio-popup" ref={root} aria-label={t("audio")}>
-    <header><h2>{t("audio")}</h2><button onClick={() => void invoke("hide_dock_context_menu")}>{t("close")}</button></header>
+    <header><h2>{t("audio")}</h2><button onClick={() => { if (generation !== undefined) void invoke("hide_dock_context_menu", { generation }).catch((e) => { if (active.current) setError(String(e)); }); }}>{t("close")}</button></header>
     {error && <div role="alert"><p>{t("audioUnavailable")} <small>({error})</small></p><button onClick={() => void refresh()}>{t("retry")}</button></div>}
     {!snapshot && !error && <p role="status">{t("loading")}</p>}
     {snapshot && <>

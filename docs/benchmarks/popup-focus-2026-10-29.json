@@ -1,0 +1,78 @@
+{
+  "environment": "Pop!_OS 24.04 / GNOME 46 / X11 / scale 1",
+  "date": "2026-10-29",
+  "normal": {
+    "pid": 1296935,
+    "fixturePid": 1299449,
+    "nativeContentFocusDelayMs": 0,
+    "liveUnfocusedCallbacksSkipped": 26,
+    "inactiveCallbacksSkipped": 0,
+    "passed": [
+      "Tìm ứng dụng: keyboard Enter / Escape returns exact Dock XID and Enter reopens same source without helper refocus",
+      "Âm thanh: keyboard Enter / Escape returns exact Dock XID and Enter reopens same source without helper refocus",
+      "Tiện ích hệ thống: keyboard Enter / Escape returns exact Dock XID and Enter reopens same source without helper refocus",
+      "Mở lịch: keyboard Enter / Escape returns exact Dock XID and Enter reopens same source without helper refocus",
+      "four popup modes: real outside click retains selected Studio XID across delayed callbacks",
+      "audio/system scoped Close buttons return Dock keyboard focus and Enter reopens original source",
+      "four popup modes: selecting owned external GTK window dismisses and retains exact external XID",
+      "window list Escape returns source and Enter reopens; activating second row keeps exact external target focus",
+      "right-click context menu Escape returns exact source Dock XID",
+      "launcher global shortcut from external GTK window: Escape returns exact original external XID",
+      "shortcut popup: external user selection wins over original source, without delayed restore"
+    ]
+  },
+  "delayed": {
+    "pid": 1291622,
+    "fixturePid": 1294066,
+    "nativeContentFocusDelayMs": 500,
+    "liveUnfocusedCallbacksSkipped": 5,
+    "inactiveCallbacksSkipped": 16,
+    "passed": [
+      "Tìm ứng dụng: keyboard Enter / Escape returns exact Dock XID and Enter reopens same source without helper refocus",
+      "Âm thanh: keyboard Enter / Escape returns exact Dock XID and Enter reopens same source without helper refocus",
+      "Tiện ích hệ thống: keyboard Enter / Escape returns exact Dock XID and Enter reopens same source without helper refocus",
+      "Mở lịch: keyboard Enter / Escape returns exact Dock XID and Enter reopens same source without helper refocus",
+      "four popup modes: real outside click retains selected Studio XID across delayed callbacks",
+      "audio/system scoped Close buttons return Dock keyboard focus and Enter reopens original source",
+      "four popup modes: selecting owned external GTK window dismisses and retains exact external XID",
+      "window list Escape returns source and Enter reopens; activating second row keeps exact external target focus",
+      "right-click context menu Escape returns exact source Dock XID",
+      "launcher global shortcut from external GTK window: Escape returns exact original external XID",
+      "shortcut popup: external user selection wins over original source, without delayed restore"
+    ]
+  },
+  "popupRegression": {
+    "passed": [
+      "launcher Escape",
+      "calendar/audio replace each other with one active popup",
+      "focus loss dismisses without stealing selected Studio focus",
+      "outside click dismisses and retains selected focus",
+      "five rapid launcher/calendar/audio cycles without orphaned popup or overlapping tooltip",
+      "Escape after rapid replacement"
+    ],
+    "pid": 1306040,
+    "completedRounds": 3
+  },
+  "launcherFixturePid": 1309644,
+  "frontendTestsPassed": 25,
+  "nativeTestsPassedIncludingIgnored": 46,
+  "configRestored": true,
+  "ownedFixturesExited": true,
+  "shortcutUsed": "Ctrl+Alt+Shift+J",
+  "limitations": [
+    "Super chords register all core masks but no KeyPress arrives in this session; cause unconfirmed.",
+    "Other desktops/compositors and mixed DPI not verified by this milestone."
+  ],
+  "launcherRegression": {
+    "passed": [
+      "installed desktop entry discovery",
+      "search UI",
+      "pin persistence by desktop ID",
+      "GIO native launch",
+      "grouped native windows",
+      "window list popup",
+      "close confirmation preserves window"
+    ],
+    "fixturePid": 1309644
+  }
+}

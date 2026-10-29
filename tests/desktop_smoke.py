@@ -66,6 +66,8 @@ if __name__ == '__main__':
     parser.add_argument('--launcher-smoke', action='store_true')
     parser.add_argument('--force-close-smoke', action='store_true')
     parser.add_argument('--popup-smoke', action='store_true')
+    parser.add_argument('--focus-smoke', action='store_true')
+    parser.add_argument('--focus-delay', action='store_true', help='Delay native popup content callback by 500 ms in debug build')
     parser.add_argument('--autohide-smoke', action='store_true')
     parser.add_argument('--shortcut-smoke', action='store_true')
     parser.add_argument('--lifecycle-smoke', action='store_true')
@@ -105,9 +107,10 @@ if __name__ == '__main__':
     parser.add_argument('--platform-tool-missing', action='store_true', help='Read-only startup check with an empty PATH in the isolated app')
     args = parser.parse_args()
     if args.performance_trace: args.performance_smoke = True
+    if args.focus_delay: args.focus_smoke = True
     if args.audio_tool_missing: args.audio_unavailable = True
     if args.force_close_smoke: args.launcher_smoke = True
-    if args.popup_smoke: args.restart = True
+    if args.popup_smoke or args.focus_smoke: args.restart = True
     if args.window_list_smoke or args.reorder_smoke or args.tooltip_smoke or args.launch_smoke or args.overflow_smoke or args.layout_smoke or args.indicator_smoke or args.mapping_smoke or args.internal_smoke or args.performance_smoke or args.polling_smoke: args.restart = True
     if args.platform_tool_missing: args.restart = True
     if args.scheduler_smoke: args.wallpaper_smoke = True
@@ -122,7 +125,7 @@ if __name__ == '__main__':
             raise RuntimeError('Cannot verify GNOME lock state; no native input will be sent')
         if re.search(r'\btrue\b', result.stdout):
             raise RuntimeError('GNOME desktop is locked; unlock it before native UI tests. No input was sent.')
-    input_tests = any((args.action, args.screenshot, args.basic, args.popup_smoke, args.autohide_smoke, args.shortcut_smoke, args.lifecycle_smoke, args.registration_smoke, args.window_list_smoke, args.reorder_smoke, args.tooltip_smoke, args.launch_smoke, args.overflow_smoke, args.layout_smoke, args.indicator_smoke, args.mapping_smoke, args.internal_smoke, args.polling_smoke, args.launcher_smoke, args.studio_smoke, args.config_smoke, args.command_errors_smoke,
+    input_tests = any((args.action, args.screenshot, args.basic, args.popup_smoke, args.focus_smoke, args.autohide_smoke, args.shortcut_smoke, args.lifecycle_smoke, args.registration_smoke, args.window_list_smoke, args.reorder_smoke, args.tooltip_smoke, args.launch_smoke, args.overflow_smoke, args.layout_smoke, args.indicator_smoke, args.mapping_smoke, args.internal_smoke, args.polling_smoke, args.launcher_smoke, args.studio_smoke, args.config_smoke, args.command_errors_smoke,
                        args.wallpaper_smoke, args.scheduler_smoke, args.library_stress, args.audio_smoke, args.media_smoke,
                        args.audio_exit, args.audio_unavailable, args.system_smoke, args.system_unavailable, args.system_open_smoke))
     if input_tests: require_unlocked_desktop()
@@ -293,6 +296,7 @@ if __name__ == '__main__':
             (safe_apps / 'deskmorph-stress-noop.desktop').write_text('[Desktop Entry]\nType=Application\nName=DeskMorph Stress Noop\nExec=/bin/true\n')
             env['XDG_DATA_HOME'] = str(safe_data)
         if args.polling_smoke: env['DESKMORPH_TRACE_COMMANDS'] = '1'
+        if args.focus_smoke: env['DESKMORPH_TEST_POPUP_FOCUS_DELAY_MS'] = '500' if args.focus_delay else '0'
         if args.audio_unavailable: env['PULSE_SERVER'] = 'unix:/tmp/deskmorph-nonexistent-audio-service'
         if args.audio_tool_missing or args.platform_tool_missing:
             empty_path = test_root / 'empty-tool-path'
@@ -461,6 +465,7 @@ if __name__ == '__main__':
         time.sleep(0.7)
         assert xid not in re.findall(r'0x[0-9a-fA-F]+', subprocess.check_output(['xprop', '-root', '_NET_CLIENT_LIST'], text=True)), 'Studio was not hidden by close'
     def native_keys(value=None, chord=None):
+        assert not (chord and 0xffe3 in chord and 0xffe9 in chord and any(0xffbe <= sym <= 0xffc9 for sym in chord)), 'Never send virtual-terminal switching chords'
         require_unlocked_desktop()
         active = subprocess.check_output(['xprop', '-root', '_NET_ACTIVE_WINDOW'], text=True)
         xid = re.search(r'0x[0-9a-fA-F]+', active).group(0)
@@ -473,8 +478,10 @@ if __name__ == '__main__':
         x11.XOpenDisplay.argtypes = [ctypes.c_char_p]
         x11.XKeysymToKeycode.argtypes = [ctypes.c_void_p, ctypes.c_ulong]
         x11.XKeysymToKeycode.restype = ctypes.c_uint
-        x11.XKeycodeToKeysym.argtypes = [ctypes.c_void_p, ctypes.c_uint, ctypes.c_int]
-        x11.XKeycodeToKeysym.restype = ctypes.c_ulong
+        x11.XDefaultRootWindow.argtypes = [ctypes.c_void_p]; x11.XDefaultRootWindow.restype = ctypes.c_ulong
+        x11.XQueryPointer.argtypes = [ctypes.c_void_p, ctypes.c_ulong, ctypes.POINTER(ctypes.c_ulong), ctypes.POINTER(ctypes.c_ulong), ctypes.POINTER(ctypes.c_int), ctypes.POINTER(ctypes.c_int), ctypes.POINTER(ctypes.c_int), ctypes.POINTER(ctypes.c_int), ctypes.POINTER(ctypes.c_uint)]
+        x11.XkbLookupKeySym.argtypes = [ctypes.c_void_p, ctypes.c_ubyte, ctypes.c_uint, ctypes.POINTER(ctypes.c_uint), ctypes.POINTER(ctypes.c_ulong)]
+        x11.XkbLookupKeySym.restype = ctypes.c_int
         x11.XFlush.argtypes = [ctypes.c_void_p]
         x11.XCloseDisplay.argtypes = [ctypes.c_void_p]
         xtst.XTestFakeKeyEvent.argtypes = [ctypes.c_void_p, ctypes.c_uint, ctypes.c_int, ctypes.c_ulong]
@@ -489,14 +496,23 @@ if __name__ == '__main__':
                 for sym in chord: key(sym, 1)
                 for sym in reversed(chord): key(sym, 0)
             if value is not None:
+                # Preserve lock modifiers; do not toggle the user's Caps Lock.
+                root, child = ctypes.c_ulong(), ctypes.c_ulong()
+                rx, ry, wx, wy, mask = ctypes.c_int(), ctypes.c_int(), ctypes.c_int(), ctypes.c_int(), ctypes.c_uint()
+                assert x11.XQueryPointer(display, x11.XDefaultRootWindow(display), ctypes.byref(root), ctypes.byref(child), ctypes.byref(rx), ctypes.byref(ry), ctypes.byref(wx), ctypes.byref(wy), ctypes.byref(mask))
+                assert not mask.value & (1 | 4 | 8 | 64), 'A non-lock keyboard modifier is held; no text will be typed'
+                def symbol(code, state):
+                    consumed, result = ctypes.c_uint(), ctypes.c_ulong()
+                    assert x11.XkbLookupKeySym(display, code, state, ctypes.byref(consumed), ctypes.byref(result))
+                    return result.value
                 key(0xffe3, 1)
                 key(ord('a'), 1); key(ord('a'), 0); key(0xffe3, 0)
                 if value == '': key(0xff08, 1); key(0xff08, 0)
                 for char in value:
                     assert char in 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 -./+', 'Test helper accepts bounded ASCII only'
                     code = x11.XKeysymToKeycode(display, ord(char))
-                    shifted = x11.XKeycodeToKeysym(display, code, 0) != ord(char)
-                    assert not shifted or x11.XKeycodeToKeysym(display, code, 1) == ord(char), 'Test character needs an unsupported keymap level'
+                    shifted = symbol(code, mask.value & ~1) != ord(char)
+                    assert not shifted or symbol(code, mask.value | 1) == ord(char), 'Test character needs an unsupported keymap level'
                     if shifted: key(0xffe1, 1)
                     key(ord(char), 1); key(ord(char), 0)
                     if shifted: key(0xffe1, 0)
@@ -669,7 +685,7 @@ if __name__ == '__main__':
     # The dedicated case above exercises auto-hide. Other cases interact with
     # a fully shown Dock; AT-SPI actions on off-screen children are not a real
     # user interaction and can leave the popup unfocused during native resize.
-    if any((args.popup_smoke, args.shortcut_smoke, args.audio_smoke, args.media_smoke, args.launcher_smoke)):
+    if any((args.popup_smoke, args.focus_smoke, args.shortcut_smoke, args.audio_smoke, args.media_smoke, args.launcher_smoke)):
         baseline_path = Path(TEST_CONFIG) / 'com.ducthanhdev.deskmorph/config.json'
         focus_studio()
         click('Taskbar Studio')
@@ -1785,6 +1801,17 @@ if __name__ == '__main__':
         report = {'passed': passed, 'pid': app.get_process_id(), 'originalShortcutRestored': True}
         Path('/tmp/deskmorph-desktop-test/shortcut-result.json').write_text(json.dumps(report, indent=2))
         print(json.dumps(report))
+    if args.focus_smoke:
+        from popup_focus_smoke import run
+        try:
+            run(app, TEST_CONFIG, click, focus_studio, native_keys, native_click_node, owned_input_pids)
+        finally:
+            if args.focus_smoke:
+                assert test_app().get_process_id() == app.get_process_id()
+                os.kill(app.get_process_id(), signal.SIGTERM)
+                process.wait(timeout=5)
+                app = start_isolated_app()  # Remove debug timing control after the test.
+
     if args.popup_smoke:
         popup_config_path = Path(TEST_CONFIG) / 'com.ducthanhdev.deskmorph/config.json'
         popup_config = lambda: json.loads(popup_config_path.read_text())['config']

@@ -91,10 +91,8 @@ export const DockContextMenuStandalone = () => {
     let stop: (() => void) | undefined;
     listen<DockContextMenuState>("deskmorph:context-menu-data", (event) => { if (!disposed) setMenu(event.payload); })
       .then((unlisten) => { if (disposed) unlisten(); else stop = unlisten; }).catch(console.error);
-    const onKey = (event: KeyboardEvent) => { if (event.key === "Escape") void invoke("hide_dock_context_menu").catch(console.error); };
-    // Native coordinator handles focus loss; duplicating it in DOM blur races with popup replacement.
-    window.addEventListener("keydown", onKey);
-    return () => { disposed = true; stop?.(); window.removeEventListener("keydown", onKey); };
+    // Native coordinator owns Escape and focus loss, using the active generation.
+    return () => { disposed = true; stop?.(); };
   }, []);
   if (!menu) return null;
   if (menu.mode === "system") return <SystemPopup key={menu.popupGeneration} generation={menu.popupGeneration} />;

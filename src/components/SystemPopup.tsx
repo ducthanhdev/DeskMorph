@@ -41,7 +41,7 @@ export function SystemPopup({ generation }: { generation?: number }) {
     finally { changing.current = false; if (active.current) setBusy(false); }
   };
   return <section className="audio-popup system-popup" ref={root} aria-label={t("systemTools")}>
-    <header><h2>{t("systemTools")}</h2><button onClick={() => void invoke("hide_dock_context_menu")}>{t("close")}</button></header>
+    <header><h2>{t("systemTools")}</h2><button onClick={() => { if (generation !== undefined) void invoke("hide_dock_context_menu", { generation }).catch((e) => { if (active.current) setError(String(e)); }); }}>{t("close")}</button></header>
     {(error || statusError || statsError) && <p role="alert">{error || statusError || statsError}</p>}
     {!status && <p role="status">{t("loading")}</p>}
     {stats && <section aria-label={t("showStats")}><h3>{t("showStats")}</h3><p>CPU: {stats.cpu_usage.toFixed(1)}%</p><p>RAM: {new Intl.NumberFormat(locale, { maximumFractionDigits: 1 }).format(stats.ram_used_mb / 1024)} / {new Intl.NumberFormat(locale, { maximumFractionDigits: 1 }).format(stats.ram_total_mb / 1024)} GiB ({stats.ram_percent.toFixed(1)}%)</p><small>{t("statsInterval")}</small></section>}

@@ -36,20 +36,7 @@ export const CalendarFlyout: React.FC = () => {
     return () => { disposed = true; stop?.(); };
   }, []);
 
-  // Listen for Escape key to close
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        invoke("hide_calendar_flyout").catch(console.error);
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, []);
+  // Escape is handled by the native coordinator, scoped to its active generation.
 
   const currentYear = viewDate.getFullYear();
   const currentMonth = viewDate.getMonth(); // 0 - 11

@@ -105,6 +105,16 @@ pub fn focus_at(app: &AppHandle, label: &'static str, timestamp: u32) -> Result<
         });
     }).map_err(|e| e.to_string())
 }
+/// Debug-only timing control for exercising native focus races. No delay in release.
+fn after_mapping(callback: impl FnOnce() + 'static) {
+    #[cfg(debug_assertions)]
+    let delay = std::env::var("DESKMORPH_TEST_POPUP_FOCUS_DELAY_MS").ok()
+        .and_then(|value| value.parse::<u64>().ok()).filter(|value| *value <= 1000).unwrap_or(0);
+    #[cfg(not(debug_assertions))]
+    let delay = 0;
+    if delay == 0 { gio::glib::idle_add_local_once(callback); }
+    else { gio::glib::timeout_add_local_once(std::time::Duration::from_millis(delay), callback); }
+}
 pub fn show(app: &AppHandle, label: &'static str, anchor: i32, width: u32, height: u32, data: Option<serde_json::Value>) -> Result<bool, String> {
     let state = app.state::<PopupState>();
     let mut c = state.0.lock().map_err(|e| e.to_string())?;
@@ -145,14 +155,20 @@ pub fn show(app: &AppHandle, label: &'static str, anchor: i32, width: u32, heigh
     app.emit("deskmorph:popup-visible", true).map_err(|e| e.to_string())?;
     drop(c);
     let handle = app.clone();
+    let focus_window = window.clone();
     window.with_webview(move |platform| {
         let view = platform.inner();
-        // Hide/show and GTK focus dispatch are queued independently. Focus the
-        // content after mapping, and discard requests for replaced popups.
-        gio::glib::idle_add_local_once(move || {
-            if active_generation(&handle, label) != Some(generation) { return; }
+        // Native activation belongs to the opening gesture above. A deferred
+        // content callback must never present a toplevel over a newer user choice.
+        after_mapping(move || {
+            let current = active_generation(&handle, label) == Some(generation);
+            let focused = focus_window.is_focused().unwrap_or(false);
+            #[cfg(debug_assertions)]
+            if std::env::var_os("DESKMORPH_TEST_POPUP_FOCUS_DELAY_MS").is_some() {
+                eprintln!("deskmorph-popup-content-focus generation={generation} active={current} focused={focused}");
+            }
+            if !current || !focused { return; }
             view.grab_focus();
-            if let Some(top) = view.toplevel().and_then(|w| w.downcast::<gtk::Window>().ok()) { top.present(); }
         });
     }).map_err(|e| e.to_string())?;
     watch_outside(app.clone(), label, generation, rect);
