@@ -135,6 +135,10 @@ pub fn show(app: &AppHandle, label: &'static str, anchor: i32, width: u32, heigh
     let top = position.y < area.y + area.height as i32 / 2;
     let anchor = geometry::anchor_x(dock_rect, anchor, dock.scale_factor().map_err(|e| e.to_string())?);
     let rect = geometry::popup_rect(area, dock_rect, scale, anchor, width, height, top);
+    #[cfg(debug_assertions)]
+    if std::env::var_os("DESKMORPH_TRACE_POPUP_DISMISS").is_some() {
+        eprintln!("deskmorph-popup-placement area={area:?} dock={dock_rect:?} popup={rect:?}");
+    }
     present(app, label, Some(rect), data, None)
 }
 /// A desktop-managed launcher is an ordinary toplevel on Wayland. Its position
@@ -199,6 +203,14 @@ fn present(app: &AppHandle, label: &'static str, placement: Option<Rect>, data: 
         after_mapping(move || {
             let current = active_generation(&handle, label) == Some(generation);
             let focused = focus_window.is_focused().unwrap_or(false);
+            // A remapped X11 toplevel can retain the WM's pre-topology
+            // position despite a move queued while hidden. Correct once after
+            // mapping, guarded against a replaced or dismissed popup.
+            if current {
+                if let Some(rect) = placement {
+                    let _ = focus_window.set_position(PhysicalPosition::new(rect.x, rect.y));
+                }
+            }
             #[cfg(debug_assertions)]
             if std::env::var_os("DESKMORPH_TEST_POPUP_FOCUS_DELAY_MS").is_some() {
                 eprintln!("deskmorph-popup-content-focus generation={generation} active={current} focused={focused}");

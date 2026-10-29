@@ -45,7 +45,7 @@ def run(app, config_home, click, focus_studio, native_keys):
         file = root / ('geometry-' + label + '.json')
         file.write_text(json.dumps({'schemaVersion': 1, 'config': value}))
         focus_studio(); click('Hệ thống'); click('Nhập cấu hình'); focus_studio('Select File')
-        native_keys(chord=[0xffe3, ord('l')]); native_keys(value=str(file)); native_keys(chord=[0xff0d])
+        native_keys(chord=[0xffe3, ord('l')]); native_keys(value=str(file)); click('Open', 'button')
         wait(lambda: node('Áp dụng cấu hình đã nhập', 'button'), 'Geometry import review not ready')
         click('Áp dụng cấu hình đã nhập')
         wait(lambda: config() == value, 'Geometry configuration not persisted')
@@ -80,7 +80,95 @@ def run(app, config_home, click, focus_studio, native_keys):
     }
     fixture_pins = [dict(id=f'geometry-fixture-{index}', name=f'Geometry Fixture {index}', command='/bin/true',
         matchClasses=[f'DeskMorphGeometry{index}'], iconType='custom', enabled=True) for index in range(40)]
+
+    def output_cycle(output):
+        # Explicitly opt in: this changes the real desktop output topology.
+        assert expected_scale == 1 and len(monitors) == 2
+        areas = dict(monitors)
+        assert output in areas
+        remaining = next(name for name in areas if name != output)
+        restore = ['xrandr']
+        for name in areas:
+            line = next(line for line in topology.splitlines() if line.startswith(name + ' connected '))
+            match = re.search(r'(\d+x\d+)([+-]\d+)([+-]\d+) \(normal ', line)
+            assert match, 'Output cycle supports unrotated outputs only'
+            mode, x, y = match.groups()
+            restore += ['--output', name, '--mode', mode, '--pos', f'{int(x)}x{int(y)}', '--rotate', 'normal']
+            if ' connected primary ' in line: restore += ['--primary']
+            section = topology.split(line, 1)[1].split('\n', 1)[1]
+            section = re.split(r'\n\S', section, maxsplit=1)[0]
+            current = re.search(r'^\s+' + re.escape(mode) + r'\s+.*?([\d.]+)\*', section, re.M)
+            assert current, 'Cannot preserve active output refresh rate'
+            restore += ['--rate', current.group(1)]
+
+        def active_outputs():
+            query = subprocess.check_output(['xrandr', '--query'], text=True, timeout=8)
+            return re.findall(r'^(\S+) connected (?:primary )?\d+x\d+[+-]\d+[+-]\d+', query, re.M)
+
+        def dock_on(area, position):
+            rect = native_rect('DeskMorph Taskbar')
+            if not rect: return None
+            ax, ay, aw, ah = area
+            y = ay + 16 if position == 'top' else ay + ah - 68
+            return rect if rect[1] == y and rect[3] == 52 and ax <= rect[0] and rect[0] + rect[2] <= ax + aw and abs(rect[0] + rect[2] / 2 - ax - aw / 2) <= .5 else None
+
+        def calendar(area, position):
+            focus_studio('DeskMorph Taskbar')
+            source = wait(lambda: node('Mở lịch', 'button'), 'Calendar source missing after output change')
+            assert source.get_component_iface().grab_focus()
+            wait(lambda: source.get_state_set().contains(Atspi.StateType.FOCUSED), 'Calendar source not focused')
+            native_keys(chord=[0xff0d])
+            def settled_calendar():
+                rect = native_rect('DeskMorph Calendar')
+                dock = dock_on(area, position)
+                if not rect or not dock: return None
+                ax, ay, aw, ah = area
+                y = dock[1] + dock[3] + 14 if position == 'top' else dock[1] - 354
+                y = max(ay + 10, min(y, ay + ah - 350))
+                return rect if rect[2:] == [320, 340] and rect[1] == y and ax <= rect[0] and rect[0] + rect[2] <= ax + aw else None
+            try:
+                rect = wait(settled_calendar, 'Calendar did not settle on the current output after topology change')
+            except AssertionError as error:
+                raise AssertionError(f'{error}; area={area}; dock={native_rect("DeskMorph Taskbar")}; calendar={native_rect("DeskMorph Calendar")}') from error
+            inside(area, rect)
+            return rect
+
+        result = dict(pid=app.get_process_id(), output=output, remaining=remaining, cycles=[],
+            scope='Real XRandR output off/on; cable remains connected, not physical unplug evidence')
+        try:
+            for position in ('top', 'bottom'):
+                desired = dict(original, language='vi', enabled=True, autoHide=False, monitor=output, position=position, height=52)
+                import_config(desired, 'output-cycle')
+                wait(lambda: dock_on(areas[output], position), 'Dock not on preferred output before cycle')
+                for index in range(3):
+                    calendar(areas[output], position)
+                    started = time.monotonic()
+                    subprocess.run(['xrandr', '--output', output, '--off'], check=True, timeout=10)
+                    wait(lambda: active_outputs() == [remaining], 'Output remained active after off')
+                    fallback = wait(lambda: dock_on(areas[remaining], position), 'Dock did not fall back to remaining output')
+                    wait(lambda: native_rect('DeskMorph Calendar') is None, 'Old calendar survived topology removal')
+                    fallback_seconds = round(time.monotonic() - started, 3)
+                    popup = calendar(areas[remaining], position)
+                    started = time.monotonic()
+                    subprocess.run(restore, check=True, timeout=10)
+                    wait(lambda: set(active_outputs()) == set(areas), 'Outputs not restored')
+                    returned = wait(lambda: dock_on(areas[output], position), 'Dock did not return to preferred output')
+                    wait(lambda: native_rect('DeskMorph Calendar') is None, 'Fallback calendar survived output restoration')
+                    assert config() == desired, 'Fallback overwrote monitor preference or other configuration'
+                    result['cycles'].append(dict(position=position, index=index, fallbackDock=fallback, fallbackPopup=popup,
+                        returnedDock=returned, fallbackSeconds=fallback_seconds, returnSeconds=round(time.monotonic() - started, 3)))
+                    print(json.dumps(result['cycles'][-1]), flush=True)
+        finally:
+            subprocess.run(restore, check=True, timeout=10)
+            wait(lambda: set(active_outputs()) == set(areas), 'Final output restoration failed')
+        result['outputsRestored'] = True
+        result['passed'] = True
+        (root / 'output-cycle-result.json').write_text(json.dumps(result, ensure_ascii=False, indent=2) + '\n')
+
     try:
+        if output := os.environ.get('DESKMORPH_GEOMETRY_OUTPUT_CYCLE'):
+            output_cycle(output)
+            return
         for name, area in monitors:
             for position in ['top', 'bottom']:
                 desired = dict(original, language='vi', enabled=True, autoHide=False, monitor=name, position=position,

@@ -1,0 +1,208 @@
+{
+  "pid": 880606,
+  "output": "HDMI-0",
+  "remaining": "eDP-1-1",
+  "cycles": [
+    {
+      "position": "top",
+      "index": 0,
+      "fallbackDock": [
+        494,
+        48,
+        932,
+        52
+      ],
+      "fallbackPopup": [
+        1208,
+        114,
+        320,
+        340
+      ],
+      "returnedDock": [
+        2414,
+        16,
+        932,
+        52
+      ],
+      "fallbackSeconds": 1.175,
+      "returnSeconds": 1.138
+    },
+    {
+      "position": "top",
+      "index": 1,
+      "fallbackDock": [
+        494,
+        48,
+        932,
+        52
+      ],
+      "fallbackPopup": [
+        1208,
+        114,
+        320,
+        340
+      ],
+      "returnedDock": [
+        2414,
+        16,
+        932,
+        52
+      ],
+      "fallbackSeconds": 1.188,
+      "returnSeconds": 1.532
+    },
+    {
+      "position": "top",
+      "index": 2,
+      "fallbackDock": [
+        494,
+        48,
+        932,
+        52
+      ],
+      "fallbackPopup": [
+        1208,
+        114,
+        320,
+        340
+      ],
+      "returnedDock": [
+        2414,
+        16,
+        932,
+        52
+      ],
+      "fallbackSeconds": 1.191,
+      "returnSeconds": 1.554
+    },
+    {
+      "position": "bottom",
+      "index": 0,
+      "fallbackDock": [
+        494,
+        1012,
+        932,
+        52
+      ],
+      "fallbackPopup": [
+        1208,
+        658,
+        320,
+        340
+      ],
+      "returnedDock": [
+        2414,
+        1012,
+        932,
+        52
+      ],
+      "fallbackSeconds": 1.039,
+      "returnSeconds": 1.457
+    },
+    {
+      "position": "bottom",
+      "index": 1,
+      "fallbackDock": [
+        494,
+        1012,
+        932,
+        52
+      ],
+      "fallbackPopup": [
+        1208,
+        658,
+        320,
+        340
+      ],
+      "returnedDock": [
+        2414,
+        1012,
+        932,
+        52
+      ],
+      "fallbackSeconds": 1.411,
+      "returnSeconds": 1.553
+    },
+    {
+      "position": "bottom",
+      "index": 2,
+      "fallbackDock": [
+        494,
+        1012,
+        932,
+        52
+      ],
+      "fallbackPopup": [
+        1208,
+        658,
+        320,
+        340
+      ],
+      "returnedDock": [
+        2414,
+        1012,
+        932,
+        52
+      ],
+      "fallbackSeconds": 1.478,
+      "returnSeconds": 1.411
+    }
+  ],
+  "scope": "Real XRandR output off/on; cable remains connected, not physical unplug evidence",
+  "outputsRestored": true,
+  "passed": true,
+  "date": "2026-10-30",
+  "command": "DESKMORPH_TRACE_POPUP_DISMISS=1 DESKMORPH_GEOMETRY_OUTPUT_CYCLE=HDMI-0 python3 tests/desktop_smoke.py --geometry-smoke",
+  "exitCode": 0,
+  "binarySha256": "25d5b94a378a413c17340316fb03f715afc0d6bae885f8258466736e173bb5c5",
+  "baseline": {
+    "computedPopup": [
+      1208,
+      114,
+      320,
+      340
+    ],
+    "actualPopup": [
+      1208,
+      82,
+      320,
+      340
+    ],
+    "dock": [
+      494,
+      48,
+      932,
+      52
+    ],
+    "result": "native calendar retained pre-topology Y after remap; bounded wait failed"
+  },
+  "limits": [
+    "XRandR output off/on; cable not physically unplugged",
+    "Reference scale1 only; no mixed DPI",
+    "Earlier post-fix run was interrupted by native outside-click dismissal before bottom cycles"
+  ],
+  "geometryRegression": {
+    "command": "python3 tests/desktop_smoke.py --geometry-smoke",
+    "pid": 904182,
+    "exitCode": 0,
+    "observationCount": 16,
+    "configurationRestored": true
+  },
+  "rustRegression": {
+    "passed": 85,
+    "ignored": 5,
+    "failed": 0
+  },
+  "restoredTopology": [
+    "HDMI-0 1920x1080+1920+0",
+    "eDP-1-1 primary 1920x1080+0+0"
+  ],
+  "focusDelayRegression": {
+    "command": "python3 tests/desktop_smoke.py --focus-delay",
+    "candidateExitCode": 1,
+    "withoutPostMapCorrectionExitCode": 1,
+    "failure": "Launcher native popup is mapped but active window remains the owned Taskbar after Enter",
+    "interpretation": "Same failure reproduced with and without post-map correction; remains unresolved, not counted as focus pass"
+  },
+  "rebuildSha256": "25d5b94a378a413c17340316fb03f715afc0d6bae885f8258466736e173bb5c5"
+}
