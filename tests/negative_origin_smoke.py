@@ -4,6 +4,8 @@
 No host display input or topology mutation; Escape targets the owned X server. Negative RandR monitors extend
 outside Xvfb's drawable root: this measures native allocations and AT-SPI
 activation, not visible pixels, real mouse/keyboard, WM or mixed DPI behavior.
+DESKMORPH_STUDIO_WIDGETS_LAB=1 instead checks native Studio controls on the
+positive monitor with rendered-pixel contrast and private-display keys.
 Requires an existing Xvfb executable; never installs host packages.
 """
 import hashlib
@@ -55,7 +57,9 @@ def worker(root, scale, position):
     gi.require_version('Gdk', '3.0')
     from gi.repository import Atspi, Gdk, GLib
     description_test = os.environ.get('DESKMORPH_CONTEXT_DESCRIPTION_LAB') == '1'
-    language = 'en' if description_test and scale == 2 else 'vi'
+    studio_test = os.environ.get('DESKMORPH_STUDIO_WIDGETS_LAB') == '1'
+    assert not (description_test and studio_test), 'Select one opt-in lab mode'
+    language = 'en' if (description_test or studio_test) and scale == 2 else 'vi'
     labels = json.loads((REPO / 'src/i18n/messages.json').read_text())[language]
     report = dict(passed=False, scale=scale, position=position, language=language, cases=[])
     registry_log = (root / 'registry.log').open('w')
@@ -72,11 +76,13 @@ def worker(root, scale, position):
             area = monitor.get_workarea()
             monitors.append(dict(name=monitor.get_model(), scale=monitor.get_scale_factor(),
                                  physicalWorkarea=[value * scale for value in (area.x, area.y, area.width, area.height)]))
-        target = next(m for m in monitors if m['name'] == 'left')
-        assert target['scale'] == scale and target['physicalWorkarea'] == [-1920, 0, 1920, 1080], monitors
+        target_name = 'right' if studio_test else 'left'
+        left = 0 if studio_test else -1920
+        target = next(m for m in monitors if m['name'] == target_name)
+        assert target['scale'] == scale and target['physicalWorkarea'] == [left, 0, 1920, 1080], monitors
         report['monitors'] = monitors
         cfg = json.loads((REPO / 'src/config/defaults.json').read_text())
-        cfg.update(monitor='left', position=position, pinnedApps=[], showStats=False,
+        cfg.update(monitor=target_name, position=position, pinnedApps=[], showStats=False,
                    showShuffle=False, showAudio=True, wallpaperScheduleEnabled=False,
                    reduceMotion=True, language=language)
         if description_test:
@@ -139,8 +145,8 @@ def worker(root, scale, position):
         wait(content_ready, 'Dock content not ready')
         dock = stable('DeskMorph Taskbar', samples=20)
         x, y, width, height = dock['rect']
-        assert -1920 <= x < 0 and x + width <= 0 and 0 <= y and y + height <= 1080, dock
-        assert abs((x + width / 2) - (-960)) <= 2, dock
+        assert left <= x and x + width <= left + 1920 and 0 <= y and y + height <= 1080, dock
+        assert abs((x + width / 2) - (left + 960)) <= 2, dock
         expected_y = 16 * scale if position == 'top' else 1080 - 16 * scale - height
         assert abs(y - expected_y) <= 2 and height == 52 * scale, dock
         report['dock'] = dock
@@ -170,6 +176,146 @@ def worker(root, scale, position):
                 x11.XSync(connection, 0)
             finally:
                 x11.XCloseDisplay(connection)
+        if studio_test:
+            # These native controls must be measured from rendered pixels:
+            # computed CSS does not expose the UA's checkmark/thumb colors.
+            from collections import Counter
+            from contrast_audit import contrast
+            subprocess.run([str(BINARY)], env=dict(os.environ, DESKMORPH_CONFIG_HOME=str(root / 'config')), check=True, timeout=8)
+            studio = stable('DeskMorph Studio')
+            results = dict(passed=False, initialFocus='AT-SPI seed; subsequent Space/Tab/arrows/Home/End are XTest on private DISPLAY', captures=[])
+            report['widgets'] = results
+
+            def control(label, role):
+                return next((n for n in walk(accessible) if n.get_role_name() == role and n.get_name() == label), None)
+
+            def focused(label, role):
+                node = control(label, role)
+                return node and node.get_state_set().contains(Atspi.StateType.FOCUSED)
+
+            def focus_control(label, role):
+                node = wait(lambda: control(label, role), 'Missing control ' + label)
+                assert node.get_component_iface().grab_focus()
+                keys(studio, [])
+                wait(lambda: focused(label, role), 'Control focus missing ' + label)
+                return node
+
+            def read_pixels(rect):
+                window = Gdk.get_default_root_window()
+                assert window.get_scale_factor() == scale
+                assert all(value % scale == 0 for value in rect), rect
+                # GdkPixbuf takes logical window coordinates and returns
+                # device pixels. Passing physical coordinates would double
+                # the crop at GDK_SCALE=2 and measure unrelated content.
+                image = Gdk.pixbuf_get_from_window(window, *(value // scale for value in rect))
+                assert image is not None
+                assert (image.get_width(), image.get_height()) == (rect[2], rect[3])
+                return image
+
+            def capture(name, node):
+                time.sleep(.2)
+                area = node.get_component_iface().get_extents(Atspi.CoordType.SCREEN)
+                accessible_rect = [value * scale for value in (area.x, area.y, area.width, area.height)]
+                rect = list(accessible_rect)
+                if node.get_role_name() == 'check box':
+                    # WebKit exposes this checkbox's enclosing label rectangle.
+                    # showClock has no help line; the square control occupies
+                    # the rightmost label-height box in the actual flex row.
+                    assert rect[2] >= rect[3] and rect[3] == 20 * scale, rect
+                    rect[0] += rect[2] - rect[3]
+                    rect[2] = rect[3]
+                pixbuf = read_pixels(rect)
+                assert pixbuf is not None
+                path = root / (name + '.png')
+                pixbuf.savev(str(path), 'png', [], [])
+                frame = native('DeskMorph Studio')['rect']
+                assert frame[0] <= rect[0] and frame[1] <= rect[1]
+                assert rect[0] + rect[2] <= frame[0] + frame[2] and rect[1] + rect[3] <= frame[1] + frame[3]
+                # Preserve a surrounding frame for review of real focus outlines.
+                full = read_pixels(frame)
+                assert full is not None
+                full.savev(str(root / (name + '-window.png')), 'png', [], [])
+                margin = 8 * scale
+                region_rect = [rect[0] - margin, rect[1] - margin, rect[2] + 2 * margin, rect[3] + 2 * margin]
+                region = read_pixels(region_rect)
+                assert region is not None
+                region.savev(str(root / (name + '-focus-region.png')), 'png', [], [])
+                region_data = region.get_pixels()
+                region_stride, region_channels = region.get_rowstride(), region.get_n_channels()
+                focus_color = (103, 232, 249)
+                focus_pixels = sum(tuple(region_data[y * region_stride + x * region_channels:y * region_stride + x * region_channels + 3]) == focus_color
+                    for y in range(region.get_height()) for x in range(region.get_width()))
+                assert focus_pixels >= 8 * scale * scale, 'Native keyboard focus outline missing from capture'
+                results['captures'].append(dict(name=name, rect=rect, accessibleRect=accessible_rect, path=str(path), focusColor=list(focus_color), focusPixelCount=focus_pixels))
+                pixels = pixbuf.get_pixels()
+                rowstride, channels = pixbuf.get_rowstride(), pixbuf.get_n_channels()
+                def pixel(x, y):
+                    offset = y * rowstride + x * channels
+                    return tuple(pixels[offset:offset + 3])
+                return pixbuf, pixel
+
+            def saved(field, value):
+                return json.loads(config.read_text())['config'][field] == value
+
+            # Disabled preview/restore controls must be skipped at the nav/main boundary.
+            restore = wait(lambda: control(labels['restoreAppearance'], 'button'), 'Restore button missing')
+            assert not restore.get_state_set().contains(Atspi.StateType.ENABLED)
+            focus_control(labels['systemTab'], 'button')
+            keys(studio, [0xff09])
+            wait(lambda: focused(labels['enabled'], 'check box'), 'Tab did not skip disabled preview/restore controls')
+            results['disabledRestoreSkippedByTab'] = True
+            checkbox = focus_control(labels['showClock'], 'check box')
+            checked = checkbox.get_state_set().contains(Atspi.StateType.CHECKED)
+            assert checked, 'Fixture must start checked for the pixel comparison'
+            image, pixel = capture('checkbox-checked-focus', checkbox)
+            palette = Counter(pixel(x, y) for y in range(image.get_height()) for x in range(image.get_width()))
+            # On this installed GTK/WebKit renderer, the two largest flat regions
+            # of the checked control are its colored fill and white checkmark.
+            dominant = palette.most_common(2)
+            assert len(dominant) == 2 and all(count >= 20 * scale * scale for _, count in dominant), dominant
+            fill, mark = (value for value, _ in dominant)
+            assert mark == (255, 255, 255) and fill != mark, dominant
+            check_ratio = contrast([*fill, 1], [*mark, 1])
+            results['checkboxPixels'] = dict(fill=list(fill), mark=list(mark), samples=[count for _, count in dominant], ratio=check_ratio, threshold=3, passed=check_ratio >= 3)
+            keys(studio, [0x20])
+            wait(lambda: saved('showClock', False), 'Checkbox Space did not persist')
+            wait(lambda: not control(labels['showClock'], 'check box').get_state_set().contains(Atspi.StateType.CHECKED), 'Native checked state did not change')
+            capture('checkbox-unchecked-focus', control(labels['showClock'], 'check box'))
+            keys(studio, [0x20])
+            wait(lambda: saved('showClock', True), 'Checkbox restore missing')
+            keys(studio, [0xff09])
+            wait(lambda: focused(labels['showStats'], 'check box'), 'Tab did not reach following checkbox')
+            keys(studio, [0xffe1, 0xff09])
+            wait(lambda: focused(labels['showClock'], 'check box'), 'Shift+Tab did not return to checkbox')
+            results['checkboxSpaceAndTabReverse'] = True
+
+            height = focus_control(labels['height'], 'slider')
+            start = json.loads(config.read_text())['config']['height']
+            image, pixel = capture('range-focus', height)
+            centerline = Counter(pixel(x, image.get_height() // 2) for x in range(2 * scale, image.get_width() - 2 * scale))
+            assert centerline[fill] >= 20 * scale and centerline[mark] >= 4 * scale, centerline.most_common(4)
+            unfilled, count = next((value, count) for value, count in centerline.most_common() if value not in (fill, mark))
+            assert count > 20 * scale
+            ratios = dict(thumbToFill=contrast([*mark, 1], [*fill, 1]), thumbToUnfilled=contrast([*mark, 1], [*unfilled, 1]), fillToUnfilled=contrast([*fill, 1], [*unfilled, 1]))
+            results['rangePixels'] = dict(fill=list(fill), thumb=list(mark), unfilled=list(unfilled), ratios=ratios, threshold=3, passed=min(ratios.values()) >= 3)
+            keys(studio, [0xff53])
+            wait(lambda: saved('height', start + 1), 'Range Right did not persist')
+            keys(studio, [0xff51])
+            wait(lambda: saved('height', start), 'Range Left restore missing')
+            results['rangeArrowKeys'] = True
+            position = focus_control(labels['position'], 'combo box')
+            capture('select-focus', position)
+            keys(studio, [0xff50])
+            wait(lambda: saved('position', 'bottom'), 'Select Home failed')
+            keys(studio, [0xff57])
+            wait(lambda: saved('position', 'top'), 'Select End failed')
+            results['selectHomeEnd'] = True
+            results['privateConfigFieldsRestored'] = json.loads(config.read_text())['config'] == cfg
+            assert results['privateConfigFieldsRestored']
+            results['passed'] = results['checkboxPixels']['passed'] and results['rangePixels']['passed']
+            report['passed'] = results['passed']
+            assert results['passed'], 'Native checkbox/range pixels below 3:1'
+            return
         for label, title in [(labels['searchApps'], 'DeskMorph Context Menu'),
                              (labels['audio'], 'DeskMorph Context Menu'),
                              (labels['systemTools'], 'DeskMorph Context Menu'),
@@ -180,7 +326,7 @@ def worker(root, scale, position):
             button = wait(source, 'Dock button absent: ' + label)
             current_dock = stable('DeskMorph Taskbar')
             x, y, width, height = current_dock['rect']
-            assert -1920 <= x < 0 and x + width <= 0 and 0 <= y and y + height <= 1080, current_dock
+            assert left <= x and x + width <= left + 1920 and 0 <= y and y + height <= 1080, current_dock
             assert abs(x + width / 2 + 960) <= 2, current_dock
             anchor = button.get_component_iface().get_extents(Atspi.CoordType.SCREEN)
             # GTK AT-SPI screen extents use GDK logical coordinates.
@@ -236,15 +382,18 @@ def worker(root, scale, position):
 def run():
     xvfb = os.environ.get('DESKMORPH_XVFB', '/tmp/xvfb-root/usr/bin/Xvfb')
     assert Path(xvfb).is_file(), 'Set DESKMORPH_XVFB to an existing Xvfb executable'
+    studio_test = os.environ.get('DESKMORPH_STUDIO_WIDGETS_LAB') == '1'
     root = Path(tempfile.mkdtemp(prefix='deskmorph-negative-origin-'))
-    report = dict(passed=False, root=str(root), contextDescriptionRequested=os.environ.get('DESKMORPH_CONTEXT_DESCRIPTION_LAB') == '1', binarySha256=hashlib.sha256(BINARY.read_bytes()).hexdigest(), runs=[],
+    report = dict(passed=False, root=str(root), runnerSha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(), studioWidgetsRequested=studio_test, contextDescriptionRequested=os.environ.get('DESKMORPH_CONTEXT_DESCRIPTION_LAB') == '1', binarySha256=hashlib.sha256(BINARY.read_bytes()).hexdigest(), runs=[],
         scope='Native allocation/AT-SPI activation on virtual negative-origin RandR monitors, top/bottom at GTK integer scales 1/2',
         limits=['No window manager; negative monitor lies outside Xvfb drawable root',
                 'AT-SPI opens sources; XTest Escape dismisses on the owned display only',
                 'Does not prove visible pixels, host input, physical topology, fractional scaling or mixed DPI'])
     try:
+        if studio_test:
+            report.update(scope='Native Studio checkbox/range/select keys and rendered pixels in vi/scale1, en/scale2 on positive Xvfb monitor', limits=['No window manager, physical display, host input, fractional/mixed DPI or Orca proof', 'AT-SPI seeds control focus; XTest then sends actual Space/Tab/Shift+Tab/arrows/Home/End on the owned DISPLAY', 'Pixel palette/centerline checks target this installed GTK/WebKit native renderer, not every platform or theme'])
         for scale in (1, 2):
-            for position in ('top', 'bottom'):
+            for position in (('top',) if studio_test else ('top', 'bottom')):
                 case = root / f'scale{scale}-{position}'
                 case.mkdir()
                 env = dict(os.environ, DESKMORPH_GEOMETRY_LAB=str(case))
@@ -258,7 +407,7 @@ def run():
                     XDG_CURRENT_DESKTOP='GNOME', XDG_SESSION_TYPE='x11', GTK_MODULES='atk-bridge', NO_AT_BRIDGE='0',
                     DBUS_SYSTEM_BUS_ADDRESS='unix:path=' + str(case / 'no-system-bus'), PULSE_SERVER='unix:' + str(case / 'no-audio'))
                 with (case / 'xvfb.log').open('w') as log:
-                    server = subprocess.Popen([xvfb, '-displayfd', '1', '-screen', '0', '3840x1080x24', '-nolisten', 'tcp', '-ac', '-noreset'], env=env, stdout=subprocess.PIPE, stderr=log, text=True)
+                    server = subprocess.Popen([xvfb, '-displayfd', '1', '-screen', '0', ('3840x2160x24' if studio_test else '3840x1080x24'), '-nolisten', 'tcp', '-ac', '-noreset'], env=env, stdout=subprocess.PIPE, stderr=log, text=True)
                 bus = session = None
                 try:
                     assert select.select([server.stdout], [], [], 8)[0], 'Xvfb readiness timeout'

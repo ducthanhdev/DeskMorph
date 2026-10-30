@@ -7,6 +7,7 @@
   --border-subtle: rgba(255, 255, 255, 0.08);
   --border-focus: rgba(72, 185, 199, 0.4);
   --accent-pop: #48b9c7;
+  --control-accent: #278b98;
   --accent-purple: #8b5cf6;
   --text-main: #f1f5f9;
   --text-muted: #94a3b8;
@@ -1747,10 +1748,10 @@ button:focus-visible { outline: 2px solid #48b9c7; outline-offset: -2px; }
 .studio-card h3 { margin: 20px 0 12px; font-size: 15px; }
 .settings-toggle, .settings-field, .settings-range { display: flex; justify-content: space-between; align-items: center; gap: 20px; margin: 16px 0; font-size: 14px; }
 .settings-toggle small, .settings-help { display: block; color: var(--text-muted); font-size: 13px; line-height: 1.6; margin-top: 6px; }
-.settings-toggle input { flex-shrink: 0; width: 20px; height: 20px; accent-color: var(--accent-pop); }
+.settings-toggle input { flex-shrink: 0; width: 20px; height: 20px; accent-color: var(--control-accent); }
 .settings-range { display: block; }
 .settings-range > span { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
-.settings-range input { width: 100%; accent-color: var(--accent-pop); }
+.settings-range input { width: 100%; accent-color: var(--control-accent); }
 .settings-range output { color: var(--accent-pop); }
 .studio-card input:not([type=checkbox]):not([type=range]):not([type=color]), .studio-card select, .studio-card textarea { min-width: 0; padding: 10px; border-radius: 8px; border: 1px solid #8291a8; background: #111827; color: var(--text-main); font: inherit; }
 .studio-card select { max-width: 65%; }

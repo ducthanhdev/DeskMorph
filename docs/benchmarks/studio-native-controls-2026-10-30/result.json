@@ -1,0 +1,468 @@
+{
+  "passed": true,
+  "command": "DESKMORPH_STUDIO_WIDGETS_LAB=1 /usr/bin/python3 tests/negative_origin_smoke.py",
+  "scope": "Native Studio checkbox/range/select keys and rendered pixels in vi/scale1, en/scale2 on positive Xvfb monitor",
+  "limits": [
+    "No window manager, physical display, host input, fractional/mixed DPI or Orca proof",
+    "AT-SPI seeds control focus; XTest then sends actual Space/Tab/Shift+Tab/arrows/Home/End on the owned DISPLAY",
+    "Pixel palette/centerline checks target this installed GTK/WebKit native renderer, not every platform or theme",
+    "Focus-color pixels prove an outline is present around these controls; whole application focus clipping/order remains outside this fixture",
+    "Checkbox palette/slider centerline checks measure native pixels and guard expected installed renderer geometry; no universal OS/theme claim",
+    "Select keyboard/focus measured, not select arrow/border contrast",
+    "No new Orca speech acceptance"
+  ],
+  "baseline": {
+    "binarySha256": "e107a79a4a468794810eb3ed0bce6ef0fc1b6762f96a07e0f9b48b090a31afb1",
+    "passed": false,
+    "run": {
+      "language": "vi",
+      "integerScale": 1,
+      "position": "top",
+      "passed": false,
+      "widgets": {
+        "passed": false,
+        "initialFocus": "AT-SPI seed; subsequent Space/Tab/arrows/Home/End are XTest on private DISPLAY",
+        "captures": [
+          {
+            "name": "checkbox-checked-focus",
+            "rect": [
+              2339,
+              1177,
+              20,
+              20
+            ],
+            "accessibleRect": [
+              1701,
+              1177,
+              658,
+              20
+            ]
+          },
+          {
+            "name": "checkbox-unchecked-focus",
+            "rect": [
+              2339,
+              1177,
+              20,
+              20
+            ],
+            "accessibleRect": [
+              1701,
+              1177,
+              658,
+              20
+            ]
+          },
+          {
+            "name": "range-focus",
+            "rect": [
+              1701,
+              1164,
+              658,
+              20
+            ],
+            "accessibleRect": [
+              1701,
+              1164,
+              658,
+              20
+            ]
+          },
+          {
+            "name": "select-focus",
+            "rect": [
+              2199,
+              1025,
+              160,
+              39
+            ],
+            "accessibleRect": [
+              2199,
+              1025,
+              160,
+              39
+            ]
+          }
+        ],
+        "disabledRestoreSkippedByTab": true,
+        "checkboxPixels": {
+          "fill": [
+            72,
+            185,
+            199
+          ],
+          "mark": [
+            255,
+            255,
+            255
+          ],
+          "samples": [
+            267,
+            62
+          ],
+          "ratio": 2.3230518963547997,
+          "threshold": 3,
+          "passed": false
+        },
+        "checkboxSpaceAndTabReverse": true,
+        "rangePixels": {
+          "fill": [
+            72,
+            185,
+            199
+          ],
+          "thumb": [
+            255,
+            255,
+            255
+          ],
+          "unfilled": [
+            14,
+            19,
+            33
+          ],
+          "ratios": {
+            "thumbToFill": 2.3230518963547997,
+            "thumbToUnfilled": 18.522071798864346,
+            "fillToUnfilled": 7.973163160034488
+          },
+          "threshold": 3,
+          "passed": false
+        },
+        "rangeArrowKeys": true,
+        "selectHomeEnd": true,
+        "privateConfigFieldsRestored": true
+      },
+      "error": "AssertionError('Native checkbox/range pixels below 3:1')"
+    },
+    "note": "Baseline vi/scale1 completes keyboard/config assertions and fails the actual pixel contrast gate"
+  },
+  "final": {
+    "binarySha256": "0da7257ff70566e53c25a71af9b87c5cdced5fca057c16690a9c1308d6b86789",
+    "runnerSha256": "f5d8bdcde8642e3b2a4f09f491d320a1cfdab625badbbd406b0f9f9976229c0e",
+    "cssSha256": "87bf451527e2ef20e9c59e721b2ab1944d7414eb4ecbf0cb39263c56de8591df",
+    "runs": [
+      {
+        "language": "vi",
+        "integerScale": 1,
+        "position": "top",
+        "passed": true,
+        "widgets": {
+          "passed": true,
+          "initialFocus": "AT-SPI seed; subsequent Space/Tab/arrows/Home/End are XTest on private DISPLAY",
+          "captures": [
+            {
+              "name": "checkbox-checked-focus",
+              "rect": [
+                2339,
+                1177,
+                20,
+                20
+              ],
+              "accessibleRect": [
+                1701,
+                1177,
+                658,
+                20
+              ],
+              "focusColor": [
+                103,
+                232,
+                249
+              ],
+              "focusPixelCount": 348
+            },
+            {
+              "name": "checkbox-unchecked-focus",
+              "rect": [
+                2339,
+                1177,
+                20,
+                20
+              ],
+              "accessibleRect": [
+                1701,
+                1177,
+                658,
+                20
+              ],
+              "focusColor": [
+                103,
+                232,
+                249
+              ],
+              "focusPixelCount": 348
+            },
+            {
+              "name": "range-focus",
+              "rect": [
+                1701,
+                1164,
+                658,
+                20
+              ],
+              "accessibleRect": [
+                1701,
+                1164,
+                658,
+                20
+              ],
+              "focusColor": [
+                103,
+                232,
+                249
+              ],
+              "focusPixelCount": 4176
+            },
+            {
+              "name": "select-focus",
+              "rect": [
+                2199,
+                1025,
+                160,
+                39
+              ],
+              "accessibleRect": [
+                2199,
+                1025,
+                160,
+                39
+              ],
+              "focusColor": [
+                103,
+                232,
+                249
+              ],
+              "focusPixelCount": 1146
+            }
+          ],
+          "disabledRestoreSkippedByTab": true,
+          "checkboxPixels": {
+            "fill": [
+              39,
+              139,
+              152
+            ],
+            "mark": [
+              255,
+              255,
+              255
+            ],
+            "samples": [
+              267,
+              62
+            ],
+            "ratio": 4.013213639358846,
+            "threshold": 3,
+            "passed": true
+          },
+          "checkboxSpaceAndTabReverse": true,
+          "rangePixels": {
+            "fill": [
+              39,
+              139,
+              152
+            ],
+            "thumb": [
+              255,
+              255,
+              255
+            ],
+            "unfilled": [
+              14,
+              19,
+              33
+            ],
+            "ratios": {
+              "thumbToFill": 4.013213639358846,
+              "thumbToUnfilled": 18.522071798864346,
+              "fillToUnfilled": 4.61527181538819
+            },
+            "threshold": 3,
+            "passed": true
+          },
+          "rangeArrowKeys": true,
+          "selectHomeEnd": true,
+          "privateConfigFieldsRestored": true
+        },
+        "error": null
+      },
+      {
+        "language": "en",
+        "integerScale": 2,
+        "position": "top",
+        "passed": true,
+        "widgets": {
+          "passed": true,
+          "initialFocus": "AT-SPI seed; subsequent Space/Tab/arrows/Home/End are XTest on private DISPLAY",
+          "captures": [
+            {
+              "name": "checkbox-checked-focus",
+              "rect": [
+                2758,
+                1274,
+                40,
+                40
+              ],
+              "accessibleRect": [
+                1482,
+                1274,
+                1316,
+                40
+              ],
+              "focusColor": [
+                103,
+                232,
+                249
+              ],
+              "focusPixelCount": 1392
+            },
+            {
+              "name": "checkbox-unchecked-focus",
+              "rect": [
+                2758,
+                1274,
+                40,
+                40
+              ],
+              "accessibleRect": [
+                1482,
+                1274,
+                1316,
+                40
+              ],
+              "focusColor": [
+                103,
+                232,
+                249
+              ],
+              "focusPixelCount": 1392
+            },
+            {
+              "name": "range-focus",
+              "rect": [
+                1482,
+                1248,
+                1316,
+                40
+              ],
+              "accessibleRect": [
+                1482,
+                1248,
+                1316,
+                40
+              ],
+              "focusColor": [
+                103,
+                232,
+                249
+              ],
+              "focusPixelCount": 16704
+            },
+            {
+              "name": "select-focus",
+              "rect": [
+                2420,
+                970,
+                378,
+                78
+              ],
+              "accessibleRect": [
+                2420,
+                970,
+                378,
+                78
+              ],
+              "focusColor": [
+                103,
+                232,
+                249
+              ],
+              "focusPixelCount": 5475
+            }
+          ],
+          "disabledRestoreSkippedByTab": true,
+          "checkboxPixels": {
+            "fill": [
+              39,
+              139,
+              152
+            ],
+            "mark": [
+              255,
+              255,
+              255
+            ],
+            "samples": [
+              1150,
+              297
+            ],
+            "ratio": 4.013213639358846,
+            "threshold": 3,
+            "passed": true
+          },
+          "checkboxSpaceAndTabReverse": true,
+          "rangePixels": {
+            "fill": [
+              39,
+              139,
+              152
+            ],
+            "thumb": [
+              255,
+              255,
+              255
+            ],
+            "unfilled": [
+              14,
+              19,
+              33
+            ],
+            "ratios": {
+              "thumbToFill": 4.013213639358846,
+              "thumbToUnfilled": 18.522071798864346,
+              "fillToUnfilled": 4.61527181538819
+            },
+            "threshold": 3,
+            "passed": true
+          },
+          "rangeArrowKeys": true,
+          "selectHomeEnd": true,
+          "privateConfigFieldsRestored": true
+        },
+        "error": null
+      }
+    ]
+  },
+  "validation": {
+    "typescriptViteBuild": true,
+    "nativeCustomProtocolBuild": true,
+    "existingComputedContrast": {
+      "passed": 137,
+      "total": 137,
+      "engine": "WebKitGTK 2.52.6"
+    },
+    "existingNegativeOriginRegression": {
+      "binarySha256": "0da7257ff70566e53c25a71af9b87c5cdced5fca057c16690a9c1308d6b86789",
+      "passed": true,
+      "placements": 16,
+      "descriptionCases": 4
+    },
+    "liveOwnedGeometryProcessesAfterCleanup": 0,
+    "frontendUnitSuiteRerun": false,
+    "rustUnitSuiteRerun": false,
+    "reason": "Only CSS control accent and native lab runner changed; real pixel/keyboard checks and computed contrast cover this change"
+  },
+  "measurementCorrections": [
+    {
+      "temporaryRoot": "/tmp/deskmorph-negative-origin-omz6bpg2",
+      "kind": "Checkbox accessible bounds include its entire label; original crop measured text/background",
+      "resolved": "Rightmost square of label-height in no-help showClock flex row, plus expected size and real fill/mark pixel guards"
+    },
+    {
+      "temporaryRoot": "/tmp/deskmorph-negative-origin-bi6xby6e",
+      "kind": "GdkPixbuf expects logical coordinates but original scale2 crop passed physical values; output became double-sized",
+      "resolved": "Convert physical rectangles to logical arguments; assert root scale, divisibility and exact output device-pixel dimensions; retained all focus/pixel checks"
+    }
+  ]
+}
