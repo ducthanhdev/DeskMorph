@@ -10,10 +10,10 @@ hoặc chứng nhận WCAG/Orca toàn diện vào kế hoạch.
 | --- | --- | --- |
 | Dock trên/dưới,100% | [16/16 output-scale cases](benchmarks/dpi-output-integer-trial-2026-10-30/result.json) | Đạt trong GNOME X11 tham chiếu |
 |125%,150%,mixed DPI, bốn popup/hai monitor | [48/48](benchmarks/dpi-native-full-matrix-2026-10-30/result.json) | Đạt native allocation; không chứng nhận độ sắc nét hoặc click mapping |
-|200% | Cùng integer trial:10 pass, system/top/HDMI fail,5 chưa chạy | Chưa đạt; cần tái hiện có trace và chạy các ca còn thiếu |
+|200% | Integer trial10 pass; [system mới12/12](benchmarks/system-output200-regression-2026-10-30/result.json) trên hai monitor/top-bottom/3repeats | Còn HDMI/top/calendar và HDMI/bottom/launcher,audio,calendar; failure system cũ chưa tái hiện, chưa xác định root cause |
 | Đổi độ phân giải | [1680×1050 và restore](benchmarks/geometry-multimonitor-2026-10-30/result.json) | Đạt; không cần lặp vì chưa có thay đổi sản phẩm mới |
 | Monitor bên trái có tọa độ âm | [16 allocations trong Xvfb](benchmarks/negative-origin-2026-10-30/result.json); Mutter/NVIDIA chuẩn hóa bố trí host về x=0 | Chưa chứng minh topology âm drawable dưới WM; không nâng synthetic monitor ngoài root thành màn hình thật |
-| Khôi phục sau kiểm |48-ca restore exact; integer trial cần recovery bổ sung, sau đó baseline giữ nguyên | Guard cooldown/bounded retry qua13 fault tests; chưa chạy lại guard mới trên host |
+| Khôi phục sau kiểm |48-ca restore exact; integer trial cần recovery bổ sung, sau đó baseline giữ nguyên | Guard cooldown/bounded retry qua14 fault/guard tests; [system200% host12/12](benchmarks/system-output200-regression-2026-10-30/result.json) restore exact, không cần reapply |
 
 [4 ca system trên GNOME riêng](benchmarks/system-geometry-private-wm-2026-10-30/result.json)
 qua scale1/2, top/bottom với màn hình drawable1920×1080. Phép đo cũ lấy anchor trước khi

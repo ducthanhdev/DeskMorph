@@ -1089,3 +1089,10 @@ Giữ audio_native_controls.py và callback chỉ dành private DISPLAY vì ki�
 Tái dùng system_locations_smoke.py, chỉ thêm language/report_root tùy chọn; đường cũ mặc định vi giữ nguyên. Adapter mới seed focus AT-SPI rồi Enter, không gọi do_action cho system mutations; PrivateKeyboard kiểm private marker/DISPLAY, owned PID và native activation trước XTest. Hai guard tests (4 subcases) chặn DISPLAY/marker sai, PID sai và focus đổi trước input; compile/diff check qua. Không đổi mã sản phẩm nên không build/lặp unit sản phẩm.
 
 Giữ một initial private driver AssertionError không có stacktrace, không quy lỗi sản phẩm hoặc coi pass; thêm traceback rồi lượt đầy đủ đạt, chưa xác định nguyên nhân failure chuẩn bị đầu.0 live system/geometry/WM/DPI helpers sau suite. Chốt system Enter; G5.9 còn tuyến bàn phím chooser→Open, G2.10 vẫn mở. Tổng97/99.
+
+
+## G2.10 — Hồi quy system200% trên host12/12 đạt (30/10/2026)
+
+[Bằng chứng](benchmarks/system-output200-regression-2026-10-30/result.json): output200%/200%, eDP/HDMI ×Dock trên/dưới ×3fresh instances =12/12 native allocations đạt. Không keyboard/mouse input; source được AT-SPI activate. Dwell20stable Dock samples, assert Dock không đổi xuyên activation và settling/dismiss trace được bật. Failure host cũ chưa tái hiện trong lượt này; không tuyên bố đã xác định root cause chỉ từ pass.
+
+Guard restore bổ sung đã chạy host thật: topology/primary/modes/refresh/user value/capabilities khớp baseline, cooldown readback đạt, restoreErrors rỗng và restoreApplyAttempts0 (không cần fallback). Bốn tổ hợp output200% còn thiếu là HDMI/top/calendar và HDMI/bottom/launcher,audio,calendar; system/bottom được chốt trong lượt mới. Negative topology hợp lệ dưới WM vẫn chưa có. Không mở rộng thêm ca khi window3phút sắp hết, đã trả desktop sau verifyrestore.

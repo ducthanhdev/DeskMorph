@@ -149,3 +149,8 @@ Giữ helper audio_native_controls.py tái dùng runner/owned private GNOME và 
 ## System keys private (30/10/2026)
 
 Giữ adapter system_keyboard_private.py và PrivateKeyboard để dùng receiver fixtures hiện có với Enter thật, thay bằng chứng do_action hẹp. [4cases/32Enter](benchmarks/system-keyboard-private-2026-10-30/result.json) giữ localized checks/argv/receiver window/PID/restore và initial unclassified preparation assertion. Không commit raw logs/private desktop entries hoặc thêm bản sao fixture generator. Guard tests cần thiết vì helper gửi native input: host DISPLAY/marker, wrong PID và lost activation phải không gọi XTest. Đây không là chứng nhận third-party monitor packages hoặc toàn bộ Tab route; chooser route còn thiếu được theo dõi riêng.
+
+
+## System output200 regression (30/10/2026)
+
+Giữ [12fresh native cases](benchmarks/system-output200-regression-2026-10-30/result.json) vì tái hiện đúng nguồn/màn hình từng thất bại, chạy guard restore mới trên host và kiểm lặp top/bottom. Không lặp48 fractional/mixed cases đã đạt hoặc quy lỗi ban đầu đã sửa khi root cause chưa xác định. Restore cooldown đạt không cần reapply, nên recovery retry vẫn chỉ có fault-test acceptance; bốn non-system output200% HDMI cases còn thiếu được ghi riêng.
