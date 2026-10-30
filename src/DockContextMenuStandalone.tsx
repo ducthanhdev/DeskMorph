@@ -1,3 +1,4 @@
+import { describeError } from "./i18n/errors";
 import { ErrorText } from "./components/ErrorText";
 import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { usePopupFocus } from "./hooks/usePopupFocus";
@@ -22,7 +23,7 @@ import type { DockContextMenuState, PinnedApp } from "./types";
 function ContextActions({ menu }: { menu: DockContextMenuState }) {
   const lifetime = useAsyncLifetime();
   const { platform, error: platformError } = usePlatform();
-  const { t, pinName } = useI18n();
+  const { t, pinName, language } = useI18n();
   const { config, mutatePin, error: configError } = useConfig();
   const { apps, loading, error: catalogueError } = useInstalledApps();
   const installed = apps.find((app) => app.id === menu.desktopId);
@@ -33,6 +34,20 @@ function ContextActions({ menu }: { menu: DockContextMenuState }) {
   const [confirmKill, setConfirmKill] = useState(false);
   const feedbackId = useId();
   const warningId = useId();
+  const announcedError = useRef<string | null>(null);
+  useEffect(() => {
+    if (!error) { announcedError.current = null; return; }
+    if (!active || menu.popupGeneration == null || lifetime.capture().aborted) return;
+    const summary = describeError(language, error).summary;
+    const key = `${menu.popupGeneration}:${summary}`;
+    if (announcedError.current === key) return;
+    announcedError.current = key;
+    // WebKitGTK's AT-SPI backend can expose the text without emitting its
+    // live-region event. Use the owned native window's standard ATK signal.
+    // The backend rejects stale generations/blurred windows; DOM feedback and
+    // source focus remain available even when this API is unsupported.
+    void invoke("announce_accessibility", { message: summary, generation: menu.popupGeneration }).catch(() => {});
+  }, [active, error, language, lifetime, menu.popupGeneration]);
   const root = useRef<HTMLElement>(null);
   const changing = useRef(false);
   const forceButton = useRef<HTMLButtonElement>(null);
@@ -57,6 +72,7 @@ function ContextActions({ menu }: { menu: DockContextMenuState }) {
   const perform = async (task: () => Promise<unknown>, close = true) => {
     if (changing.current) return;
     changing.current = true;
+    announcedError.current = null;
     const signal = lifetime.capture();
     setBusy(true); setError(null);
     try { const result = await task(); if (close && result !== false && !signal.aborted) await hide(); }

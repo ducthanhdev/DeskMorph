@@ -92,3 +92,10 @@ Tài liệu này ghi quyết định kỹ thuật theo yêu cầu người dùng
 [Trial trên Mutter thật](benchmarks/dpi-feature-trial-2026-10-30/result.json) công bố scale1,25/1,5 sau khi bật tạm `x11-randr-fractional-scaling`, nhưng đổi primary từ eDP sang HDMI và refresh eDP144Hz thành60Hz. Guard phát hiện topology khác, dừng ca; `passed:false` được giữ nguyên. Không apply scale fractional hoặc tính đây là acceptance ứng dụng.
 
 Cleanup đã phục hồi đúng features/user value, topology, primary, mode/refresh và capabilities ban đầu; fallback ApplyMonitorsConfig method1 TEMPORARY thực sự được dùng, không persistent method2. Không gửi input. Bằng chứng JSON cần giữ vì ghi cả failure và khôi phục thật; không thêm test trùng hoặc raw log. G2.10/G5.9 tiếp tục mở,97/99; release no-go.
+
+
+## Orca native announcement (30/10/2026)
+
+Giữ [kết quả speech và baseline](benchmarks/orca-native-announcement-2026-10-30/result.json), [keyboard vi/en](benchmarks/orca-native-announcement-2026-10-30/keyboard.json), frontend dedupe/retry/locale test, Rust ownership/generation/message guards và helper speech opt-in. Chúng bảo vệ lỗi thực: DOM có text/description nhưng reader không nói. Chỉ lưu fixture summary/số đo/hash/source URL, không raw audio/debug/preferences hay mã upstream. Speech acceptance yêu cầu summary trong log đã flush, waveform khác0, reader sống lúc đo/thoát0 và stream vào owned null sink; waveform không chứng minh intelligibility.
+
+Giữ failure tọa độ positive, SIGTERM exit-9 và startup reader song song trong metadata; không chuyển các lượt đó thành pass. Private Quit và chạy tuần tự giải quyết harness; không --replace reader người dùng. Các ca4/4 chỉ kiểm launch speech/focus vi/en/top/bottom trên integer scales trong Xvfb; GNOME keyboard regression riêng không bật Orca. Không suy chứng nhận warning/default browse, toàn bộ a11y hoặc fractional/mixed DPI. Audit0 owned helper/sink, audio mặc định giữ nguyên.

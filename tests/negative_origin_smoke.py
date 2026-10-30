@@ -6,6 +6,8 @@ outside Xvfb's drawable root: this measures native allocations and AT-SPI
 activation, not visible pixels, real mouse/keyboard, WM or mixed DPI behavior.
 DESKMORPH_STUDIO_WIDGETS_LAB=1 instead checks native Studio controls on the
 positive monitor with rendered-pixel contrast and private-display keys.
+DESKMORPH_CONTEXT_SPEECH_LAB=1 checks the real launch error with private Orca/SD
+and an owned host null sink; it sends no host display input.
 Requires an existing Xvfb executable; never installs host packages.
 """
 import hashlib
@@ -56,7 +58,8 @@ def worker(root, scale, position):
     gi.require_version('Atspi', '2.0')
     gi.require_version('Gdk', '3.0')
     from gi.repository import Atspi, Gdk, GLib
-    description_test = os.environ.get('DESKMORPH_CONTEXT_DESCRIPTION_LAB') == '1'
+    speech_test = os.environ.get('DESKMORPH_CONTEXT_SPEECH_LAB') == '1'
+    description_test = os.environ.get('DESKMORPH_CONTEXT_DESCRIPTION_LAB') == '1' or speech_test
     studio_test = os.environ.get('DESKMORPH_STUDIO_WIDGETS_LAB') == '1'
     assert not (description_test and studio_test), 'Select one opt-in lab mode'
     language = 'en' if (description_test or studio_test) and scale == 2 else 'vi'
@@ -65,6 +68,7 @@ def worker(root, scale, position):
     registry_log = (root / 'registry.log').open('w')
     registry = subprocess.Popen(['/usr/libexec/at-spi2-registryd'], stdout=registry_log, stderr=registry_log)
     app = None
+    speech = None
     try:
         # Explicit registry startup avoids activation through host systemd/broker.
         time.sleep(.5)
@@ -76,8 +80,8 @@ def worker(root, scale, position):
             area = monitor.get_workarea()
             monitors.append(dict(name=monitor.get_model(), scale=monitor.get_scale_factor(),
                                  physicalWorkarea=[value * scale for value in (area.x, area.y, area.width, area.height)]))
-        target_name = 'right' if studio_test else 'left'
-        left = 0 if studio_test else -1920
+        target_name = 'right' if studio_test or speech_test else 'left'
+        left = 0 if studio_test or speech_test else -1920
         target = next(m for m in monitors if m['name'] == target_name)
         assert target['scale'] == scale and target['physicalWorkarea'] == [left, 0, 1920, 1080], monitors
         report['monitors'] = monitors
@@ -150,6 +154,10 @@ def worker(root, scale, position):
         expected_y = 16 * scale if position == 'top' else 1080 - 16 * scale - height
         assert abs(y - expected_y) <= 2 and height == 52 * scale, dock
         report['dock'] = dock
+        if speech_test:
+            from isolated_speech import PrivateSpeech
+            speech = PrivateSpeech(root)
+            speech.start()
         x11 = ctypes.CDLL('libX11.so.6')
         xtst = ctypes.CDLL('libXtst.so.6')
         x11.XOpenDisplay.argtypes = [ctypes.c_char_p]
@@ -316,10 +324,13 @@ def worker(root, scale, position):
             report['passed'] = results['passed']
             assert results['passed'], 'Native checkbox/range pixels below 3:1'
             return
-        for label, title in [(labels['searchApps'], 'DeskMorph Context Menu'),
+        sources = [(labels['searchApps'], 'DeskMorph Context Menu'),
                              (labels['audio'], 'DeskMorph Context Menu'),
                              (labels['systemTools'], 'DeskMorph Context Menu'),
-                             (labels['calendar'], 'DeskMorph Calendar')]:
+                             (labels['calendar'], 'DeskMorph Calendar')]
+        # Speech mode isolates the launch error; unrelated popup churn belongs
+        # to the default allocation suite and can flood Orca's event queue.
+        for label, title in ([] if speech_test else sources):
             def source():
                 frame = next((n for n in walk(accessible) if n.get_role_name() == 'frame' and n.get_name() == 'DeskMorph Taskbar'), None)
                 return next((n for n in walk(frame) if n.get_role_name() == 'button' and n.get_name() == label), None)
@@ -327,7 +338,7 @@ def worker(root, scale, position):
             current_dock = stable('DeskMorph Taskbar')
             x, y, width, height = current_dock['rect']
             assert left <= x and x + width <= left + 1920 and 0 <= y and y + height <= 1080, current_dock
-            assert abs(x + width / 2 + 960) <= 2, current_dock
+            assert abs(x + width / 2 - (left + 960)) <= 2, current_dock
             anchor = button.get_component_iface().get_extents(Atspi.CoordType.SCREEN)
             # GTK AT-SPI screen extents use GDK logical coordinates.
             center = (anchor.x + anchor.width / 2) * scale
@@ -335,8 +346,8 @@ def worker(root, scale, position):
             assert button.get_action_iface().do_action(0), label
             popup = stable(title)
             px, py, pw, ph = popup['rect']
-            assert -1920 <= px < 0 and px + pw <= 0 and 0 <= py and py + ph <= 1080, popup
-            expected_x = round(max(-1920 + 10 * scale, min(center - pw / 2, -10 * scale - pw)))
+            assert left <= px and px + pw <= left + 1920 and 0 <= py and py + ph <= 1080, popup
+            expected_x = round(max(left + 10 * scale, min(center - pw / 2, left + 1920 - 10 * scale - pw)))
             # Read product placement contract: horizontal inset is 10 logical px.
             assert abs(px - expected_x) <= 2, (label, center, popup, expected_x)
             gap = py - (y + height) if position == 'top' else y - (py + ph)
@@ -357,11 +368,19 @@ def worker(root, scale, position):
                 return next((n for n in walk(frame) if n.get_role_name() == 'button' and n.get_name() == labels['newLaunch']), None)
             launch = wait(launch_button, 'Fixture launch action absent')
             assert launch.get_component_iface().grab_focus()
-            assert launch.get_action_iface().do_action(0)
+            if speech_test:
+                keys(popup, [0xff0d])
+            else:
+                assert launch.get_action_iface().do_action(0)
             expected = 'Không mở được ứng dụng' if language == 'vi' else 'Unable to launch application'
             wait(lambda: expected in launch_button().get_description(), 'Native launch error description missing')
             wait(lambda: launch_button().get_state_set().contains(Atspi.StateType.FOCUSED), 'Failed launch lost focus')
             report['nativeDescription'] = dict(language=language, expected=expected, observed=launch_button().get_description(), focusRetained=True, action='AT-SPI owned missing command; XTest Shift+F10 entry', scope='Native accessibility description, no Orca or warning/force coverage')
+            if speech_test:
+                report['nativeDescription']['action'] = 'Private XTest Shift+F10 and Enter on the owned missing command'
+                report['nativeDescription']['scope'] = 'Native description/focus followed by real Orca speech observation'
+                report['isolatedSpeech'] = speech.observe(expected)
+                assert report['isolatedSpeech']['passed'], 'Private Orca launch speech failed'
             keys(popup, [0xff1b])
             wait(lambda: native('DeskMorph Context Menu') is None, 'Fixture menu did not dismiss')
         assert config.read_bytes() == original, 'Private profile changed'
@@ -371,20 +390,30 @@ def worker(root, scale, position):
         report['error'] = repr(error)
         raise
     finally:
+        cleanup_error = None
+        if speech is not None:
+            try:
+                speech.close()
+            except Exception as error:
+                cleanup_error = error
+                report.update(passed=False, speechCleanupError=repr(error))
         if app is not None:
             stop(app)
             report['appExitCode'] = app.returncode
         stop(registry)
         registry_log.close()
         (root / 'result.json').write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n')
+        if cleanup_error is not None:
+            raise cleanup_error
 
 
 def run():
     xvfb = os.environ.get('DESKMORPH_XVFB', '/tmp/xvfb-root/usr/bin/Xvfb')
     assert Path(xvfb).is_file(), 'Set DESKMORPH_XVFB to an existing Xvfb executable'
     studio_test = os.environ.get('DESKMORPH_STUDIO_WIDGETS_LAB') == '1'
+    speech_test = os.environ.get('DESKMORPH_CONTEXT_SPEECH_LAB') == '1'
     root = Path(tempfile.mkdtemp(prefix='deskmorph-negative-origin-'))
-    report = dict(passed=False, root=str(root), runnerSha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(), studioWidgetsRequested=studio_test, contextDescriptionRequested=os.environ.get('DESKMORPH_CONTEXT_DESCRIPTION_LAB') == '1', binarySha256=hashlib.sha256(BINARY.read_bytes()).hexdigest(), runs=[],
+    report = dict(passed=False, root=str(root), runnerSha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(), studioWidgetsRequested=studio_test, contextSpeechRequested=speech_test, contextDescriptionRequested=os.environ.get('DESKMORPH_CONTEXT_DESCRIPTION_LAB') == '1', binarySha256=hashlib.sha256(BINARY.read_bytes()).hexdigest(), runs=[],
         scope='Native allocation/AT-SPI activation on virtual negative-origin RandR monitors, top/bottom at GTK integer scales 1/2',
         limits=['No window manager; negative monitor lies outside Xvfb drawable root',
                 'AT-SPI opens sources; XTest Escape dismisses on the owned display only',
@@ -392,11 +421,15 @@ def run():
     try:
         if studio_test:
             report.update(scope='Native Studio checkbox/range/select keys and rendered pixels in vi/scale1, en/scale2 on positive Xvfb monitor', limits=['No window manager, physical display, host input, fractional/mixed DPI or Orca proof', 'AT-SPI seeds control focus; XTest then sends actual Space/Tab/Shift+Tab/arrows/Home/End on the owned DISPLAY', 'Pixel palette/centerline checks target this installed GTK/WebKit native renderer, not every platform or theme'])
+        if speech_test:
+            report.update(scope='Native launch error description/focus and Orca speech, vi/scale1 and en/scale2, top/bottom on positive Xvfb monitor', limits=['No host display input, window manager, physical monitor, fractional/mixed DPI or full context keyboard suite proof', 'Private Orca/session/a11y buses; synthesis captured on owned host null sink without speaker playback', 'Whole-application announcements and human evaluation of intelligibility remain outside these fixtures'])
         for scale in (1, 2):
             for position in (('top',) if studio_test else ('top', 'bottom')):
                 case = root / f'scale{scale}-{position}'
                 case.mkdir()
                 env = dict(os.environ, DESKMORPH_GEOMETRY_LAB=str(case))
+                if speech_test:
+                    env['DESKMORPH_PRIVATE_SPEECH_HOST_PULSE'] = os.environ.get('PULSE_SERVER') or f'unix:/run/user/{os.getuid()}/pulse/native'
                 for key in ('AT_SPI_BUS_ADDRESS', 'DBUS_SESSION_BUS_ADDRESS', 'DBUS_STARTER_ADDRESS', 'DBUS_STARTER_BUS_TYPE', 'WAYLAND_DISPLAY', 'SESSION_MANAGER', 'GTK_MODULES'):
                     env.pop(key, None)
                 for key, name in [('XDG_CONFIG_HOME', 'config'), ('XDG_DATA_HOME', 'data'), ('XDG_CACHE_HOME', 'cache'), ('XDG_STATE_HOME', 'state'), ('XDG_RUNTIME_DIR', 'runtime')]:
@@ -407,7 +440,7 @@ def run():
                     XDG_CURRENT_DESKTOP='GNOME', XDG_SESSION_TYPE='x11', GTK_MODULES='atk-bridge', NO_AT_BRIDGE='0',
                     DBUS_SYSTEM_BUS_ADDRESS='unix:path=' + str(case / 'no-system-bus'), PULSE_SERVER='unix:' + str(case / 'no-audio'))
                 with (case / 'xvfb.log').open('w') as log:
-                    server = subprocess.Popen([xvfb, '-displayfd', '1', '-screen', '0', ('3840x2160x24' if studio_test else '3840x1080x24'), '-nolisten', 'tcp', '-ac', '-noreset'], env=env, stdout=subprocess.PIPE, stderr=log, text=True)
+                    server = subprocess.Popen([xvfb, '-displayfd', '1', '-screen', '0', ('3840x2160x24' if studio_test or speech_test else '3840x1080x24'), '-nolisten', 'tcp', '-ac', '-noreset'], env=env, stdout=subprocess.PIPE, stderr=log, text=True)
                 bus = session = None
                 try:
                     assert select.select([server.stdout], [], [], 8)[0], 'Xvfb readiness timeout'

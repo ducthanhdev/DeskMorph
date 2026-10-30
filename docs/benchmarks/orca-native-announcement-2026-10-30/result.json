@@ -1,0 +1,203 @@
+{
+  "passed": true,
+  "binarySha256": "0e732e011f1380e6da9173a58ffbed857dfdbd61470bddf289ef6b0180ad5b70",
+  "scope": "Native launch error description/focus and Orca speech, vi/scale1 and en/scale2, top/bottom on positive Xvfb monitor",
+  "limits": [
+    "No host display input, window manager, physical monitor, fractional/mixed DPI or full context keyboard suite proof",
+    "Private Orca/session/a11y buses; synthesis captured on owned host null sink without speaker playback",
+    "Whole-application announcements and human evaluation of intelligibility remain outside these fixtures"
+  ],
+  "runs": [
+    {
+      "passed": true,
+      "scale": 1,
+      "position": "top",
+      "language": "vi",
+      "nativeDescription": {
+        "language": "vi",
+        "expected": "Không mở được ứng dụng",
+        "observed": "Không mở được ứng dụng",
+        "focusRetained": true,
+        "action": "Private XTest Shift+F10 and Enter on the owned missing command",
+        "scope": "Native description/focus followed by real Orca speech observation"
+      },
+      "isolatedSpeech": {
+        "passed": true,
+        "expected": "Không mở được ứng dụng",
+        "spoken": true,
+        "speechOutputLines": 10,
+        "readerAliveBeforeStop": true,
+        "readerExitCodeAfterObservation": 0,
+        "speechLogReadAfterReaderStop": true,
+        "speechDrainSeconds": 3,
+        "samples": 98304,
+        "nonzeroSamples": 66657,
+        "peak": 32768,
+        "playbackStreamsTargetOwnedNullSink": true
+      },
+      "configUnchanged": true,
+      "appExitCode": -15
+    },
+    {
+      "passed": true,
+      "scale": 1,
+      "position": "bottom",
+      "language": "vi",
+      "nativeDescription": {
+        "language": "vi",
+        "expected": "Không mở được ứng dụng",
+        "observed": "Không mở được ứng dụng",
+        "focusRetained": true,
+        "action": "Private XTest Shift+F10 and Enter on the owned missing command",
+        "scope": "Native description/focus followed by real Orca speech observation"
+      },
+      "isolatedSpeech": {
+        "passed": true,
+        "expected": "Không mở được ứng dụng",
+        "spoken": true,
+        "speechOutputLines": 11,
+        "readerAliveBeforeStop": true,
+        "readerExitCodeAfterObservation": 0,
+        "speechLogReadAfterReaderStop": true,
+        "speechDrainSeconds": 3,
+        "samples": 98304,
+        "nonzeroSamples": 66425,
+        "peak": 32768,
+        "playbackStreamsTargetOwnedNullSink": true
+      },
+      "configUnchanged": true,
+      "appExitCode": -15
+    },
+    {
+      "passed": true,
+      "scale": 2,
+      "position": "top",
+      "language": "en",
+      "nativeDescription": {
+        "language": "en",
+        "expected": "Unable to launch application",
+        "observed": "Unable to launch application",
+        "focusRetained": true,
+        "action": "Private XTest Shift+F10 and Enter on the owned missing command",
+        "scope": "Native description/focus followed by real Orca speech observation"
+      },
+      "isolatedSpeech": {
+        "passed": true,
+        "expected": "Unable to launch application",
+        "spoken": true,
+        "speechOutputLines": 11,
+        "readerAliveBeforeStop": true,
+        "readerExitCodeAfterObservation": 0,
+        "speechLogReadAfterReaderStop": true,
+        "speechDrainSeconds": 3,
+        "samples": 98304,
+        "nonzeroSamples": 64607,
+        "peak": 32768,
+        "playbackStreamsTargetOwnedNullSink": true
+      },
+      "configUnchanged": true,
+      "appExitCode": -15
+    },
+    {
+      "passed": true,
+      "scale": 2,
+      "position": "bottom",
+      "language": "en",
+      "nativeDescription": {
+        "language": "en",
+        "expected": "Unable to launch application",
+        "observed": "Unable to launch application",
+        "focusRetained": true,
+        "action": "Private XTest Shift+F10 and Enter on the owned missing command",
+        "scope": "Native description/focus followed by real Orca speech observation"
+      },
+      "isolatedSpeech": {
+        "passed": true,
+        "expected": "Unable to launch application",
+        "spoken": true,
+        "speechOutputLines": 11,
+        "readerAliveBeforeStop": true,
+        "readerExitCodeAfterObservation": 0,
+        "speechLogReadAfterReaderStop": true,
+        "speechDrainSeconds": 3,
+        "samples": 98304,
+        "nonzeroSamples": 65806,
+        "peak": 32768,
+        "playbackStreamsTargetOwnedNullSink": true
+      },
+      "configUnchanged": true,
+      "appExitCode": -15
+    }
+  ],
+  "baseline": {
+    "binarySha256": "e107a79a4a468794810eb3ed0bce6ef0fc1b6762f96a07e0f9b48b090a31afb1",
+    "passed": false,
+    "case": {
+      "scale": 1,
+      "position": "top",
+      "language": "vi",
+      "nativeDescription": {
+        "language": "vi",
+        "expected": "Không mở được ứng dụng",
+        "observed": "Không mở được ứng dụng",
+        "focusRetained": true,
+        "action": "Private XTest Shift+F10 and Enter on the owned missing command",
+        "scope": "Native description/focus followed by real Orca speech observation"
+      },
+      "isolatedSpeech": {
+        "passed": false,
+        "expected": "Không mở được ứng dụng",
+        "spoken": false,
+        "speechOutputLines": 9,
+        "readerAliveBeforeStop": true,
+        "readerExitCodeAfterObservation": 0,
+        "speechLogReadAfterReaderStop": true,
+        "speechDrainSeconds": 3,
+        "samples": 294912,
+        "nonzeroSamples": 45593,
+        "peak": 32768,
+        "playbackStreamsTargetOwnedNullSink": true
+      },
+      "error": "AssertionError('Private Orca launch speech failed')"
+    }
+  },
+  "cleanup": {
+    "ownedLabProcesses": [],
+    "ownedSpeechSinks": [],
+    "defaultSink": "alsa_output.pci-0000_00_1f.3.analog-stereo"
+  },
+  "checks": {
+    "frontendPassed": 55,
+    "rustPassed": 87,
+    "rustIgnored": 5,
+    "typescriptViteNativeBuild": true
+  },
+  "sources": {
+    "WebKitGTK": "2.52.6",
+    "liveRegionQueue": "https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.6/Source/WebCore/accessibility/AXObjectCache.cpp",
+    "atspiNotificationSwitch": "https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.6/Source/WebCore/accessibility/atspi/AXObjectCacheAtspi.cpp",
+    "finding": "LiveRegionChanged queued by core is absent from AT-SPI platform notification switch; minimal DOM probe exposed updated text but no text-insert/announcement. Standard ATK notification emits announcement."
+  },
+  "harnessFailures": [
+    {
+      "kind": "positive-monitor assertions retained negative coordinates",
+      "acceptance": false,
+      "correction": "Use target left origin for bounds/centering"
+    },
+    {
+      "kind": "SIGTERM shutdown timed out, reader exit -9 despite spoken:true",
+      "acceptance": false,
+      "correction": "Use official Orca Quit on private session bus and require exit0"
+    },
+    {
+      "kind": "parallel reader startup refused by global per-user Orca CLI guard",
+      "acceptance": false,
+      "correction": "Run sequentially; preflight existing Orca and never --replace"
+    },
+    {
+      "kind": "Buffered debug tail caused early native probe spoken:false",
+      "acceptance": false,
+      "correction": "Read final debug after graceful Quit; no missing-speech conclusion from unflushed tail"
+    }
+  ]
+}

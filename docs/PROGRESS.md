@@ -986,3 +986,16 @@ Script cần AT-SPI, Python GI, GTK3 và libXtst. Chỉ gửi phím khi kiểm t
 [Trial trên Mutter thật](benchmarks/dpi-feature-trial-2026-10-30/result.json) công bố scale1,25/1,5 sau khi bật tạm `x11-randr-fractional-scaling`, nhưng đổi primary từ eDP sang HDMI và refresh eDP144Hz thành60Hz. Guard phát hiện topology khác, dừng ca; `passed:false` được giữ nguyên. Không apply scale fractional hoặc tính đây là acceptance ứng dụng.
 
 Cleanup đã phục hồi đúng features/user value, topology, primary, mode/refresh và capabilities ban đầu; fallback ApplyMonitorsConfig method1 TEMPORARY thực sự được dùng, không persistent method2. Không gửi input. Bằng chứng JSON cần giữ vì ghi cả failure và khôi phục thật; không thêm test trùng hoặc raw log. G2.10/G5.9 tiếp tục mở,97/99; release no-go.
+
+
+## G5.9 — Lỗi mở ứng dụng được Orca đọc qua ATK native (30/10/2026)
+
+[Bằng chứng đối chiếu](benchmarks/orca-native-announcement-2026-10-30/result.json): binary0e732e01… qua4/4 ca vi/scale1 vàen/scale2, Dock trên/dưới, trong Xvfb/bus/profile riêng. Shift+F10 và Enter thật trên display riêng gây lỗi command cố ý không tồn tại; native description đúng, nguồn giữ focus, Orca phát summary đúng ngôn ngữ và có waveform trên null sink sở hữu. Cả4 reader thoát0 qua Quit chính thức. Baselinee107a79a… dùng cùng phép đo/đọc log sau Quit vẫn không đọc lỗi, dù native description/focus đúng và có speech khác. Không suy khả năng người nghe hiểu từ waveform.
+
+WebKitGTK2.52.6 core queue LiveRegionChanged nhưng switch AT-SPI platform không có case xử lý; probe DOM có focus/document hợp lệ cập nhật text mà không có text-insert/announcement. Dùng standard ATK `notification` (assertive), fallback runtime `announcement`; không gửi trực tiếp vào Orca. Command native chỉ cho menu đang visible/focused/active với generation hiện tại, kiểm giới hạn message. Giữ DOM alert/description và focus, dedupe cùng lỗi/rerender; retry lỗi giống nhau vẫn thông báo. Unsupported API giữ feedback DOM. Guard stale/blur được unit test, chưa có native negative-case acceptance riêng.
+
+[Hồi quy GNOME thật vi/en](benchmarks/orca-native-announcement-2026-10-30/keyboard.json) qua Shift+F10/Menu, Tab/Shift+Tab, disabled skip, arrows/Home/End, Escape trả focus, lỗi launch, force review/cancel, removed-row fallback, Enter đóng và confirm force chỉ trên fixture sở hữu. Config phục hồi. Đây là hồi quy không bật Orca; không thay thế suite có Orca/warning/default browse mode trên binary mới.
+
+55/55 frontend,87 Rust pass/5ignored, TS/Vite/native custom-protocol build qua. Giữ test frontend retry/dedupe/locale và Rust guards vì bảo vệ lỗi cụ thể; giữ helper speech opt-in để tái lập tích hợp thật. Không thêm test mirror implementation, không commit raw speech/audio/profile/upstream source. Harness giữ tiêu chí exit0: SIGTERM từng timeout (-9), sửa bằng private D-Bus Quit; chạy song song từng bị Orca CLI chặn toàn user, nay chạy tuần tự và preflight reader, tuyệt đối không --replace. Sửa tọa độ negative bị sót trong mode positive; không bỏ bounds assertions. Log debug đọc sau reader stop vì tail buffered. Audit cuối0 helper/sink lab, default audio không đổi.
+
+Chốt riêng launch announcement, không chốt G5.9: còn full tab/focus clipping/contrast và screen-reader regression rộng hơn; G2.10 cũng mở. Tổng97/99, release no-go.

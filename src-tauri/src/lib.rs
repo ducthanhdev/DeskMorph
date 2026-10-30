@@ -1,4 +1,5 @@
 mod ui_messages;
+mod accessibility;
 mod diagnostics;
 mod shortcuts;
 mod system_widgets;
@@ -392,6 +393,7 @@ fn run_app() -> Result<(), String> {
             wallpaper::wallpaper_thumbnails,
             applications::get_installed_apps,
             applications::launch_installed_app,
+            accessibility::announce_accessibility,
             show_app_launcher,
             launcher_surface_ready,
             show_studio,

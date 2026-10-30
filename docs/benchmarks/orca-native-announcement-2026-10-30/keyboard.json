@@ -1,0 +1,137 @@
+{
+  "runs": [
+    {
+      "pid": 2564450,
+      "observations": [
+        {
+          "keys": [
+            65505,
+            65479
+          ],
+          "sequence": [
+            "Mở ứng dụng",
+            "Bỏ ghim",
+            "Sang phải",
+            "DeskMorph Window Test 1",
+            "Đóng DeskMorph Window Test 1",
+            "DeskMorph Window Test 2",
+            "Đóng DeskMorph Window Test 2",
+            "DeskMorph Window Test 3",
+            "Đóng DeskMorph Window Test 3",
+            "Buộc dừng…"
+          ],
+          "disabledSkipped": [
+            "Sang trái"
+          ],
+          "reverseMatches": true,
+          "arrowWrapAndHomeEnd": true,
+          "escapeRestores": true
+        },
+        {
+          "keys": [
+            65383
+          ],
+          "sequence": [
+            "Mở ứng dụng",
+            "Bỏ ghim",
+            "Sang phải",
+            "DeskMorph Window Test 1",
+            "Đóng DeskMorph Window Test 1",
+            "DeskMorph Window Test 2",
+            "Đóng DeskMorph Window Test 2",
+            "DeskMorph Window Test 3",
+            "Đóng DeskMorph Window Test 3",
+            "Buộc dừng…"
+          ],
+          "disabledSkipped": [
+            "Sang trái"
+          ],
+          "reverseMatches": true,
+          "arrowWrapAndHomeEnd": true,
+          "escapeRestores": true
+        }
+      ],
+      "configUnchanged": true,
+      "failedLaunchFocus": true,
+      "forceReviewCancelFocus": true,
+      "removedRowFallback": true,
+      "enterClosesOwnedWindow": true,
+      "keyboardForceConfirm": true,
+      "forceFixturePid": 2564387,
+      "forceFixtureExitCode": 1,
+      "scope": "Native pinned fixture context entry/Tab/arrows/Escape, nonexistent command failure, force review/cancel/Tab-confirm, external row removal and Enter close of owned fixture window2; force quit targets only the owned Popen fixture, no user app actions or unpinned context coverage"
+    },
+    {
+      "pid": 2566770,
+      "observations": [
+        {
+          "keys": [
+            65505,
+            65479
+          ],
+          "sequence": [
+            "Open application",
+            "Unpin",
+            "Move right",
+            "DeskMorph Window Test 1",
+            "Close DeskMorph Window Test 1",
+            "DeskMorph Window Test 2",
+            "Close DeskMorph Window Test 2",
+            "DeskMorph Window Test 3",
+            "Close DeskMorph Window Test 3",
+            "Force quit…"
+          ],
+          "disabledSkipped": [
+            "Move left"
+          ],
+          "reverseMatches": true,
+          "arrowWrapAndHomeEnd": true,
+          "escapeRestores": true
+        },
+        {
+          "keys": [
+            65383
+          ],
+          "sequence": [
+            "Open application",
+            "Unpin",
+            "Move right",
+            "DeskMorph Window Test 1",
+            "Close DeskMorph Window Test 1",
+            "DeskMorph Window Test 2",
+            "Close DeskMorph Window Test 2",
+            "DeskMorph Window Test 3",
+            "Close DeskMorph Window Test 3",
+            "Force quit…"
+          ],
+          "disabledSkipped": [
+            "Move left"
+          ],
+          "reverseMatches": true,
+          "arrowWrapAndHomeEnd": true,
+          "escapeRestores": true
+        }
+      ],
+      "configUnchanged": true,
+      "failedLaunchFocus": true,
+      "forceReviewCancelFocus": true,
+      "removedRowFallback": true,
+      "enterClosesOwnedWindow": true,
+      "keyboardForceConfirm": true,
+      "forceFixturePid": 2566718,
+      "forceFixtureExitCode": 1,
+      "scope": "Native pinned fixture context entry/Tab/arrows/Escape, nonexistent command failure, force review/cancel/Tab-confirm, external row removal and Enter close of owned fixture window2; force quit targets only the owned Popen fixture, no user app actions or unpinned context coverage"
+    }
+  ],
+  "fixturePids": [
+    2564450,
+    2566770
+  ],
+  "windowFixturePids": [
+    2564387,
+    2566718
+  ],
+  "normalPid": 2569005,
+  "configRestored": true,
+  "binarySha256": "0e732e011f1380e6da9173a58ffbed857dfdbd61470bddf289ef6b0180ad5b70"
+}
