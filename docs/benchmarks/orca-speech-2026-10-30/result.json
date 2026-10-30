@@ -1,0 +1,97 @@
+{
+  "date": "2026-10-30",
+  "command": "python3 tests/screen_reader_smoke.py",
+  "binarySha256": "1c2a54f8e3fd3e5dca7ece576d6301f714853ee996f352b6340a3a1b37b77f4b",
+  "passed": false,
+  "orcaVersion": "49.4",
+  "atspiVersion": "2.58.1",
+  "session": "GNOME X11",
+  "runs": [
+    {
+      "kind": "procfs-race",
+      "passed": false,
+      "error": "ProcessLookupError(3, 'No such process')",
+      "keyboardExitCode": null,
+      "speechOutputLines": 2,
+      "fixtureLabelSpoken": false,
+      "openLabelSpoken": false,
+      "capturedAudio": {
+        "samples": 98304,
+        "nonzeroSamples": 48606,
+        "peak": 32768
+      },
+      "orcaSegfaultLogged": false,
+      "defaultOutputPreserved": true,
+      "ownedRootProcessesExited": true
+    },
+    {
+      "kind": "default-browse-mode",
+      "passed": false,
+      "error": "AssertionError('Native context keyboard suite failed; see keyboard.log')",
+      "keyboardExitCode": 1,
+      "speechOutputLines": 111,
+      "fixtureLabelSpoken": true,
+      "openLabelSpoken": true,
+      "capturedAudio": {
+        "samples": 753664,
+        "nonzeroSamples": 435703,
+        "peak": 32768
+      },
+      "orcaSegfaultLogged": true,
+      "defaultOutputPreserved": true,
+      "ownedRootProcessesExited": true
+    },
+    {
+      "kind": "sticky-focus-command",
+      "passed": false,
+      "error": "AssertionError('Native context keyboard suite failed; see keyboard.log')",
+      "keyboardExitCode": 1,
+      "speechOutputLines": 28,
+      "fixtureLabelSpoken": true,
+      "openLabelSpoken": true,
+      "capturedAudio": {
+        "samples": 360448,
+        "nonzeroSamples": 260486,
+        "peak": 32768
+      },
+      "orcaSegfaultLogged": false,
+      "defaultOutputPreserved": true,
+      "ownedRootProcessesExited": true
+    },
+    {
+      "kind": "tab-entry-and-sticky-focus",
+      "passed": false,
+      "error": "AssertionError('Native context keyboard suite failed; see keyboard.log')",
+      "keyboardExitCode": 1,
+      "speechOutputLines": 2,
+      "fixtureLabelSpoken": false,
+      "openLabelSpoken": false,
+      "capturedAudio": {
+        "samples": 327680,
+        "nonzeroSamples": 18105,
+        "peak": 32768
+      },
+      "orcaSegfaultLogged": true,
+      "defaultOutputPreserved": true,
+      "ownedRootProcessesExited": true
+    }
+  ],
+  "scope": "Real Orca speech enabled, private Speech Dispatcher socket and owned null sink capture; context suite failed, so this does not certify screen-reader support",
+  "findings": [
+    "Default run spoke fixture labels and Tab traversal, then Orca handled End as end-of-line caret navigation rather than application navigation",
+    "Experimental Orca+double-A runs did not apply sticky focus mode; key events selected the GTK frame script; those experimental changes to shared drivers were reverted",
+    "Orca logs contain a segmentation fault around failure teardown/defunct-accessible processing; exact cause and product responsibility are not established",
+    "Procfs race handling and failure audio/reader diagnostics retained in the reusable runner"
+  ],
+  "limits": [
+    "Audio includes reader startup and is not attributed sample-by-sample to individual fixture utterances",
+    "No human listening or intelligibility evaluation",
+    "No passing live-alert/force-confirm or whole-application reading-order certification",
+    "Raw speech/debug logs/profiles/audio remain in /tmp and are not committed"
+  ],
+  "cleanupAudit": {
+    "configBytesRestored": true,
+    "liveOwnedSpeechProcesses": 0,
+    "remainingOwnedNullSinks": 0
+  }
+}
