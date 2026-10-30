@@ -1,0 +1,156 @@
+{
+  "date": "2026-10-30",
+  "binarySha256": "1c2a54f8e3fd3e5dca7ece576d6301f714853ee996f352b6340a3a1b37b77f4b",
+  "command": "DESKMORPH_POPUP_SOAK_SECONDS=1800 python3 tests/desktop_smoke.py --restart --popup-smoke",
+  "exitCode": 0,
+  "passed": true,
+  "pid": 1112822,
+  "completedRounds": 122,
+  "rapidReplacementBatches": 610,
+  "requestedSoakSeconds": 1800,
+  "checks": [
+    "launcher Escape",
+    "calendar/audio replace each other with one active popup",
+    "focus loss dismisses without stealing selected Studio focus",
+    "outside click dismisses and retains selected focus",
+    "five rapid launcher/calendar/audio cycles without orphaned popup or overlapping tooltip",
+    "Escape after rapid replacement"
+  ],
+  "resourceSummary": {
+    "sampleCount": 122,
+    "elapsedSeconds": 1808.461,
+    "first": {
+      "seconds": 15.819,
+      "processes": [
+        {
+          "pid": 1112822,
+          "name": "deskmorph",
+          "rssKiB": 214272,
+          "threads": 50,
+          "fds": 2173
+        },
+        {
+          "pid": 1112921,
+          "name": "WebKitWebProces",
+          "rssKiB": 181616,
+          "threads": 11,
+          "fds": 32
+        },
+        {
+          "pid": 1112904,
+          "name": "WebKitWebProces",
+          "rssKiB": 210128,
+          "threads": 22,
+          "fds": 32
+        },
+        {
+          "pid": 1112898,
+          "name": "WebKitWebProces",
+          "rssKiB": 206200,
+          "threads": 23,
+          "fds": 33
+        },
+        {
+          "pid": 1112892,
+          "name": "WebKitWebProces",
+          "rssKiB": 215064,
+          "threads": 22,
+          "fds": 32
+        },
+        {
+          "pid": 1112865,
+          "name": "WebKitWebProces",
+          "rssKiB": 218156,
+          "threads": 22,
+          "fds": 33
+        },
+        {
+          "pid": 1112861,
+          "name": "WebKitNetworkPr",
+          "rssKiB": 49328,
+          "threads": 15,
+          "fds": 30
+        }
+      ]
+    },
+    "last": {
+      "seconds": 1808.461,
+      "processes": [
+        {
+          "pid": 1112822,
+          "name": "deskmorph",
+          "rssKiB": 216576,
+          "threads": 50,
+          "fds": 2174
+        },
+        {
+          "pid": 1112921,
+          "name": "WebKitWebProces",
+          "rssKiB": 181080,
+          "threads": 10,
+          "fds": 32
+        },
+        {
+          "pid": 1112904,
+          "name": "WebKitWebProces",
+          "rssKiB": 210084,
+          "threads": 21,
+          "fds": 32
+        },
+        {
+          "pid": 1112898,
+          "name": "WebKitWebProces",
+          "rssKiB": 221208,
+          "threads": 22,
+          "fds": 33
+        },
+        {
+          "pid": 1112892,
+          "name": "WebKitWebProces",
+          "rssKiB": 220524,
+          "threads": 21,
+          "fds": 32
+        },
+        {
+          "pid": 1112865,
+          "name": "WebKitWebProces",
+          "rssKiB": 230388,
+          "threads": 20,
+          "fds": 33
+        },
+        {
+          "pid": 1112861,
+          "name": "WebKitNetworkPr",
+          "rssKiB": 48984,
+          "threads": 15,
+          "fds": 30
+        }
+      ]
+    },
+    "medianGrowth": {
+      "rssKiB": 264.0,
+      "threads": 0.0,
+      "fds": 0.0,
+      "treeRssKiB": -1960.0,
+      "treeProcesses": 0.0
+    },
+    "alarmLimits": {
+      "rssKiB": 32768,
+      "threads": 4,
+      "fds": 8,
+      "treeRssKiB": 131072,
+      "treeProcesses": 2
+    },
+    "withinGrowthLimits": true,
+    "peakTreeRssKiB": 1354676
+  },
+  "ownedProcessesExited": true,
+  "normalPidAfterCleanup": 1286830,
+  "scope": "Native GNOME X11 reference desktop, isolated test profile, real Enter from Dock followed by queued AT-SPI calendar/audio replacement; main plus observed descendant process tree sampled after each round",
+  "limits": [
+    "Thirty-minute observation and finite growth alarms do not prove zero leaks or indefinite uptime",
+    "Tree RSS sums can count shared pages more than once",
+    "The earlier AT-SPI-from-Studio failure is retained in incomplete.json; no product fix or universal cause is inferred",
+    "Physical hotplug, actual system suspend and private service restarts are separate linked runs, not concurrent events within this soak"
+  ]
+}

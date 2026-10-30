@@ -49,3 +49,5 @@ Tài liệu này ghi quyết định kỹ thuật theo yêu cầu người dùng
 - Popup soak: giữ sampler `/proc` có profile guard/starttime, median growth alarms và Quit/survivors cùng nhánh opt-in30–120phút vì dùng lại để đo lifecycle. Chỉ lưu JSON first/last/summary của lượt chưa đạt và smoke đối chiếu; hàng trăm mẫu raw, runtime log và profile ở/tmp. Failure focus vòng50 giữ nguyên; sửa harness yêu cầu native opening gesture không được gọi là sửa sản phẩm hoặc soak đạt.
 
 - Context force keyboard: mở rộng harness hiện có thay vì tạo bản sao, thêm kiểm environment/Popen owner và quan sát exit sau Tab/Enter. Giữ JSON hai lượt vi/en và cleanup; ảnh review đã có từ ca trước nên không thêm ảnh trùng. Không dùng fixture exit để tuyên bố mọi ứng dụng được force quit hoặc toàn bộ accessibility đã đạt.
+
+- Soak hoàn chỉnh: giữ một JSON summary122 mẫu/first/last và hash binary;122 raw samples ở/tmp. Giữ riêng failure trước sửa harness. Chốt lifecycle bằng liên kết các lượt riêng restart/suspend/hotplug, không gộp thành một soak có mọi sự kiện hoặc chứng nhận leak-free. Không thêm ảnh chụp cho số đo/procfs.

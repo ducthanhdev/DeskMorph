@@ -2,7 +2,7 @@
 
 Mục tiêu giữ nguyên toàn bộ 99 đầu việc trong IMPLEMENTATION_PLAN.md. Chưa đạt cổng hoàn thành toàn dự án. Checkbox chưa đánh dấu không đồng nghĩa chưa có code: nhiều mục đang chờ kiểm thử đủ phạm vi.
 
-Hiện đã đánh dấu **96/99 mục (~97%)**. Các mục còn mở: G2.10 (DPI/tọa độ âm), G5.9 (accessibility đầy đủ) và G9.8 (vòng đời dài; lượt soak đầu dừng ở vòng50 vì popup thiếu focus). G2.11 đã chốt bằng rút/cắm HDMI vật lý; G6.7 đã chốt bằng scheduler qua system suspend thật 138,922 giây. Chi tiết/phạm vi nằm trong các bản ghi cuối tài liệu. Quyết định phát hành vẫn là **không phát hành** theo RELEASE_CHECKLIST.md.
+Hiện đã đánh dấu **97/99 mục (~98%)**. Các mục còn mở: G2.10 (DPI/tọa độ âm) và G5.9 (accessibility đầy đủ). G9.8 đã chốt bằng soak native122 vòng/1808,461s, Quit/survivors và tổ hợp bằng chứng restart/suspend/HDMI thật. G2.11 đã chốt bằng rút/cắm HDMI vật lý; G6.7 đã chốt bằng scheduler qua system suspend thật138,922s. Chi tiết/phạm vi nằm trong các bản ghi cuối tài liệu. Quyết định phát hành vẫn là **không phát hành** theo RELEASE_CHECKLIST.md.
 
 ## Môi trường tham chiếu đã xác minh
 
@@ -868,3 +868,13 @@ Script cần AT-SPI, Python GI, GTK3 và libXtst. Chỉ gửi phím khi kiểm t
 - Mở rộng context keyboard harness sau các ca navigation/error/review-cancel/row removal/close: giữ lại đúng window1 thuộc Popen fixture, kiểm environment class/profile, mở review bằng Enter, assert focus Hủy, Tab tới Xác nhận buộc dừng và Enter. Assert tiến trình fixture thật sự thoát và popup đóng; không coi IPC success là đủ.
 - [Hai lượt vi/en](benchmarks/context-force-keyboard-2026-10-30/result.json) exit0; fixture1105728/1107860 thoát exit1 vì X server ngắt kết nối qua xkill. App test1105737/1107909 đã thoát, normal test1110153; bytes config khôi phục. Hồi quy menu Shift+F10/Menu, Tab hai chiều, Home/End/arrows, Escape, failure focus và close window2 cùng qua. Không thao tác app của người dùng.
 - Python compile/diff check qua; code sản phẩm/binary không đổi. G5.9 tiếp tục mở vì unpinned/desktop actions, contrast toàn ứng dụng và screen reader chưa đủ bằng chứng; tổng96/99.
+
+
+## G9.8 — Soak đủ 30 phút và tổng hợp vòng đời, đạt phạm vi tham chiếu (30/10/2026)
+
+- [Lượt hoàn chỉnh](benchmarks/popup-soak-2026-10-30/result.json) exit0, cùng PID1112822 chạy122 vòng trong1808,461s, gồm610 batch rapid launcher/calendar/audio. Mỗi batch bắt đầu bằng Enter thật từ Dock; calendar/audio được queue qua AT-SPI. Escape, replacement, outside click giữ Studio focus, không popup mồ côi/tooltip chồng đều qua. Không đổi binary trong lượt chạy, SHA256 ghi trong báo cáo.
+- 122 mẫu tài nguyên sau mỗi vòng: bỏ1/3 đầu, so median1/3 giữa/cuối. Main RSS tăng264KiB, thread/FD tăng0; tree RSS giảm1960KiB, process tăng0. Mẫu đầu/cuối main RSS214272→216576KiB, thread50→50, FD2173→2174; khác biệt endpoint không thay cho median. Peak tổng RSS1354676KiB có thể đếm shared pages nhiều lần. Mức FD nền cao được kiểm chỉ đọc và phần lớn trỏ tới/proc; không suy stable count thành không thể có leak.
+- Quit qua UI: main và mọi PID con đã quan sát không còn sống trong timeout, sau đó khởi động normal test PID1286830 thành công. Harness kiểm starttime khi tìm survivors để tránh nhầm PID reuse. Catalogue soak chỉ fixture/noop, không launch ứng dụng người dùng.
+- Tổ hợp bằng chứng chốt G9.8: [close/reopen/toggle/quit lifecycle](benchmarks/lifecycle-smoke-2026-10-30/result.json), [audio service restart](benchmarks/audio-service-restart-2026-10-29.json), [media bus restart](benchmarks/media-bus-restart-2026-10-29.json), [hai lượt12 restart audio](benchmarks/audio-restart-stress-2026-10-30/recheck.json), [rút/cắm HDMI thật](benchmarks/physical-hotplug-2026-10-30/result.json) và [system suspend thật138,922s](benchmarks/scheduler-suspend-2026-10-30/result.json). Các sự kiện này là lượt riêng; không tuyên bố đã xảy ra đồng thời trong soak.
+- Giữ [lượt soak đầu chưa đạt](benchmarks/popup-soak-2026-10-30/incomplete.json), cùng failure restart audio vòng7 cũ. Lượt sau qua không xác định mọi nguyên nhân cũ, không bảo đảm uptime vô hạn hoặc zero leaks. G9.8 đánh dấu theo30 phút/native GNOME X11 và alarm hữu hạn; G2.10/G5.9 tiếp tục mở. Tổng97/99 (~98%), release vẫn no-go.
+- Không thay code sản phẩm nên không chạy lại build/unit suites ngoài phạm vi. Python compile/diff check qua; giữ JSON summary/first/last, không commit122 raw samples, log hay profile.
