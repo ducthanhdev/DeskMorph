@@ -1,0 +1,199 @@
+{
+  "passed": false,
+  "scope": "Diagnostic real binary launch failure in owned Xvfb/session/a11y buses; private Orca/Speech Dispatcher and waveform on owned host null sink; no host display input",
+  "cases": [
+    {
+      "label": "committed baseline",
+      "temporaryRoot": "/tmp/deskmorph-negative-origin-7s0zcc1l",
+      "binarySha256": "38490a6882e4458866e43316027ddffef74020f7aee5caeec304c93df28a774f",
+      "monitor": "negative outside drawable",
+      "passed": false,
+      "nativeDescription": {
+        "language": "vi",
+        "expected": "Không mở được ứng dụng",
+        "observed": "Không mở được ứng dụng",
+        "focusRetained": true,
+        "action": "AT-SPI owned missing command; XTest Shift+F10 entry",
+        "scope": "Native description/focus observed before waiting eight seconds for Orca; vi, integer scale1, top Dock"
+      },
+      "speech": {
+        "expected": "Không mở được ứng dụng",
+        "spoken": false,
+        "speechOutputLines": 12,
+        "readerExitCodeBeforeCleanup": null,
+        "samples": 393216,
+        "nonzeroSamples": 221629,
+        "peak": 32768,
+        "scope": "Orca on private DISPLAY/a11y/session buses, actual waveform on an owned host null sink; no host display input or app reading"
+      },
+      "error": "AssertionError('Orca did not announce the launch error in the private lab')"
+    },
+    {
+      "label": "persistent empty summary experiment, discarded",
+      "temporaryRoot": "/tmp/deskmorph-negative-origin-7_ves4dt",
+      "binarySha256": "74de3f182c8a5cc9584b803958fe35b878b969bbee67001a1b5dc58617c2bfce",
+      "monitor": "negative outside drawable",
+      "passed": false,
+      "nativeDescription": {
+        "language": "vi",
+        "expected": "Không mở được ứng dụng",
+        "observed": "Không mở được ứng dụng",
+        "focusRetained": true,
+        "action": "AT-SPI owned missing command; XTest Shift+F10 entry",
+        "scope": "Native description/focus observed before waiting eight seconds for Orca; vi, integer scale1, top Dock"
+      },
+      "speech": {
+        "expected": "Không mở được ứng dụng",
+        "spoken": false,
+        "speechOutputLines": 12,
+        "readerExitCodeBeforeCleanup": null,
+        "samples": 393216,
+        "nonzeroSamples": 223701,
+        "peak": 32768,
+        "scope": "Orca on private DISPLAY/a11y/session buses, actual waveform on an owned host null sink; no host display input or app reading"
+      },
+      "error": "AssertionError('Orca did not announce the launch error in the private lab')"
+    },
+    {
+      "label": "persistent zero-width summary experiment, discarded",
+      "temporaryRoot": "/tmp/deskmorph-negative-origin-x0gk2_uz",
+      "binarySha256": "86e614079624dfe37670f3bdb4bc83598443a89e0e9f596825e9891b086c6e40",
+      "monitor": "positive within drawable",
+      "passed": false,
+      "nativeDescription": {
+        "language": "vi",
+        "expected": "Không mở được ứng dụng",
+        "observed": "Không mở được ứng dụng",
+        "focusRetained": true,
+        "action": "AT-SPI owned missing command; XTest Shift+F10 entry",
+        "scope": "Native description/focus observed before waiting eight seconds for Orca; vi, integer scale1, top Dock"
+      },
+      "speech": {
+        "expected": "Không mở được ứng dụng",
+        "spoken": false,
+        "speechOutputLines": 11,
+        "readerExitCodeBeforeCleanup": null,
+        "samples": 393216,
+        "nonzeroSamples": 228981,
+        "peak": 32768,
+        "scope": "Orca on private DISPLAY/a11y/session buses, actual waveform on an owned host null sink; no host display input or app reading"
+      },
+      "error": "AssertionError('Orca did not announce the launch error in the private lab')"
+    },
+    {
+      "label": "committed baseline, positive control",
+      "temporaryRoot": "/tmp/deskmorph-negative-origin-97f2_z86",
+      "binarySha256": "38490a6882e4458866e43316027ddffef74020f7aee5caeec304c93df28a774f",
+      "monitor": "positive within drawable",
+      "passed": false,
+      "nativeDescription": {
+        "language": "vi",
+        "expected": "Không mở được ứng dụng",
+        "observed": "Không mở được ứng dụng",
+        "focusRetained": true,
+        "action": "AT-SPI owned missing command; XTest Shift+F10 entry",
+        "scope": "Native description/focus observed before waiting eight seconds for Orca; vi, integer scale1, top Dock"
+      },
+      "speech": {
+        "expected": "Không mở được ứng dụng",
+        "spoken": false,
+        "speechOutputLines": 11,
+        "readerExitCodeBeforeCleanup": null,
+        "samples": 393216,
+        "nonzeroSamples": 224161,
+        "peak": 32768,
+        "scope": "Orca on private DISPLAY/a11y/session buses, actual waveform on an owned host null sink; no host display input or app reading"
+      },
+      "error": "AssertionError('Orca did not announce the launch error in the private lab')"
+    },
+    {
+      "label": "committed baseline, wait for routed playback stream",
+      "temporaryRoot": "/tmp/deskmorph-negative-origin-b7kx86s9",
+      "binarySha256": "38490a6882e4458866e43316027ddffef74020f7aee5caeec304c93df28a774f",
+      "monitor": "positive within drawable",
+      "passed": false,
+      "nativeDescription": {
+        "language": "vi",
+        "expected": "Không mở được ứng dụng",
+        "observed": "Không mở được ứng dụng",
+        "focusRetained": true,
+        "action": "AT-SPI owned missing command; XTest Shift+F10 entry",
+        "scope": "Native description/focus observed before waiting eight seconds for Orca; vi, integer scale1, top Dock"
+      },
+      "speech": {
+        "expected": "Không mở được ứng dụng",
+        "spoken": false,
+        "speechOutputLines": 11,
+        "readerExitCodeBeforeCleanup": null,
+        "samples": 393216,
+        "nonzeroSamples": 226737,
+        "peak": 32768,
+        "scope": "Orca on private DISPLAY/a11y/session buses, actual waveform on an owned host null sink; no host display input or app reading"
+      },
+      "error": "AssertionError('Orca did not announce the launch error in the private lab')"
+    },
+    {
+      "label": "committed baseline, WebKit descendant event observation",
+      "temporaryRoot": "/tmp/deskmorph-negative-origin-579fsnj8",
+      "binarySha256": "38490a6882e4458866e43316027ddffef74020f7aee5caeec304c93df28a774f",
+      "monitor": "positive within drawable",
+      "passed": false,
+      "nativeDescription": {
+        "language": "vi",
+        "expected": "Không mở được ứng dụng",
+        "observed": "Không mở được ứng dụng",
+        "focusRetained": true,
+        "action": "AT-SPI owned missing command; XTest Shift+F10 entry",
+        "scope": "Native description/focus observed before waiting eight seconds for Orca; vi, integer scale1, top Dock"
+      },
+      "speech": {
+        "expected": "Không mở được ứng dụng",
+        "spoken": false,
+        "speechOutputLines": 11,
+        "readerExitCodeBeforeCleanup": null,
+        "samples": 393216,
+        "nonzeroSamples": 230246,
+        "peak": 32768,
+        "scope": "Orca on private DISPLAY/a11y/session buses, actual waveform on an owned host null sink; no host display input or app reading"
+      },
+      "error": "AssertionError('Orca did not announce the launch error in the private lab')",
+      "events": {
+        "ownership": "native app PID or inherited DESKMORPH_GEOMETRY_LAB marker, including WebKit descendants",
+        "total": 1004,
+        "textChangedInsert": 0,
+        "announcement": 0,
+        "accessibleDescriptionChanged": 0,
+        "childrenAdded": 328,
+        "orcaIgnoredLiveRegionLogLines": 1
+      }
+    }
+  ],
+  "preparationFailure": {
+    "temporaryRoot": "/tmp/deskmorph-negative-origin-gj1m2kuv",
+    "kind": "playback stream observed with unresolved sink index 4294967295",
+    "speechAcceptanceMeasured": false,
+    "followup": "Private helper now waits for every owned stream to resolve to expected sink, preserving routing assertion; baseline repeats still miss launch announcement"
+  },
+  "productExperimentOutcome": "Both live-summary experiments discarded; frontend/native rebuild restored exact committed SHA256 38490a6882e4458866e43316027ddffef74020f7aee5caeec304c93df28a774f",
+  "cleanup": {
+    "liveOwnedProcesses": [],
+    "ownedSpeechSinks": [],
+    "defaultSink": "alsa_output.pci-0000_00_1f.3.analog-stereo"
+  },
+  "limits": [
+    "Diagnostic scripts/raw audio/debug/fixture configs stay in /tmp; not a new supported harness",
+    "Negative monitor cases do not prove visible pixels; positive controls stay within drawable but have no window manager",
+    "Only Vietnamese, integer scale1, top Dock tested here; prior vi/en keyboard evidence is separate",
+    "No observed text insertion/announcement does not establish WebKit or Orca root cause",
+    "Separate minimal HTML probe did not reach document/button speech; excluded from product conclusions",
+    "Does not certify intelligibility, whole application accessibility, fractional/mixed DPI or host keyboard regression"
+  ],
+  "progress": {
+    "completed": 97,
+    "total": 99,
+    "open": [
+      "G2.10",
+      "G5.9"
+    ]
+  }
+}

@@ -944,3 +944,12 @@ Script cần AT-SPI, Python GI, GTK3 và libXtst. Chỉ gửi phím khi kiểm t
 - Thử nghiệm persistent live summary sau đó chưa qua GTK/WebKit script/navigation guard, đã gỡ. Rebuild trả về đúng SHA25638490a… đã kiểm; giữ cả hai failure. Helper thêm chờ WebKit script trước bypass, guard mới chưa có full acceptance riêng trên restored product. Không dùng failure đó để quy nguyên nhân sản phẩm hoặc tuyên bố announcement đã sửa.
 -55/55 frontend tests, TS/Vite/native custom-protocol build,113/113 contrast, Python compile/diff check qua. Không đổi Rust backend nên không chạy lại Rust unit suite. Audit0 live speech/geometry lab process/sink, bytes config phục hồi. Chốt riêng description/warning và commit phần đã chứng minh; G5.9 tiếp tục mở, tổng97/99, release no-go.
 - Khoảng desktop10phút đã hết; không bật thử fractional feature. `mutter_scaling_probe.py` mới chuẩn bị, nhánh chỉ đọc đã qua và không đổi topology/settings; nhánh thử feature chưa chạy và chưa chốt/commit.
+
+
+## G5.9 — Đối chiếu launch speech trong lab riêng, chưa đạt (30/10/2026)
+
+- [Bằng chứng sáu lượt](benchmarks/orca-isolated-launch-2026-10-30/result.json): baseline38490a… trên monitor dương trong drawable, private DISPLAY/session/a11y bus và Orca thật, chờ8giây sau native description/focus assertion. Ba lượt baseline dương vẫn thiếu lời đọc lỗi, mỗi lượt11 speech-output lines và224161–230246 sample khác0. Không dùng waveform tổng để gán âm thanh cho thông báo lỗi.
+- Persistent summary empty/U+200B không cải thiện; đã gỡ toàn bộ thay đổi sản phẩm thử nghiệm, TS/Vite/native custom-protocol rebuild trả về đúng SHA25638490a6882e4458866e43316027ddffef74020f7aee5caeec304c93df28a774f. Không chạy lại frontend/Rust suite vì source sản phẩm trở về nguyên commit đã kiểm; không tuyên bố một regression run mới.
+- Observer ở lượt cuối nhận cả WebKit descendant có marker:328 children-added,0 text-insert/announcement/description-change; chưa kết luận nguyên nhân platform/reader. Giữ lỗi chuẩn bị stream chưa resolve index và sửa bước chờ trong helper tạm; không coi lỗi chuẩn bị là speech acceptance. Probe HTML chỉ đọc frame bị loại khỏi kết luận.
+- Script chẩn đoán/audio/debug/profile ở/tmp; chỉ lưu JSON tóm tắt và giới hạn. Audit0 live helper,0 owned speech sink; cleanup assert default audio không đổi. Không gửi input tới desktop host trong lượt này; đã báo người dùng có thể dùng desktop lại.
+- Tổng97/99, G2.10/G5.9 tiếp tục mở, release no-go. Mutter feature trial vẫn chưa chạy; file probe chuẩn bị chưa commit.
