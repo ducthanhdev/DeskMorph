@@ -144,3 +144,8 @@ Giữ helper GNOME riêng tái dùng negative_origin_smoke.py và [4 ca system n
 ## Audio native controls (30/10/2026)
 
 Giữ helper audio_native_controls.py tái dùng runner/owned private GNOME và PrivateAudioServer optional policy, cùng [4runs/20captures](benchmarks/audio-native-controls-2026-10-30/result.json). Đây là native integration đã yêu cầu cho G5.9: keys làm thay đổi server thật và pixel control, không test lặp markup. Giữ guard callback host vì callback có thể gửi XTest;14 fault/guard tests qua. WirePlumber profile chỉ policy, hardware disabled, private buses/XDG/socket; không viết sessionmanager giả để phản hồi UI. Lưu protocol-control failure khôngpolicy và ba crop gọn, không raw audio/log/private configs hoặc bản sao probe/tmp. Checked/unchecked paints, focus và range track có ratios >=3:1; không chứng nhận mọi theme, mọi trạng thái hoặc WCAG toàn diện. Default helper/Pulse restart probe qua; không đổi code sản phẩm nên không build/unit suite sản phẩm lại.
+
+
+## System keys private (30/10/2026)
+
+Giữ adapter system_keyboard_private.py và PrivateKeyboard để dùng receiver fixtures hiện có với Enter thật, thay bằng chứng do_action hẹp. [4cases/32Enter](benchmarks/system-keyboard-private-2026-10-30/result.json) giữ localized checks/argv/receiver window/PID/restore và initial unclassified preparation assertion. Không commit raw logs/private desktop entries hoặc thêm bản sao fixture generator. Guard tests cần thiết vì helper gửi native input: host DISPLAY/marker, wrong PID và lost activation phải không gọi XTest. Đây không là chứng nhận third-party monitor packages hoặc toàn bộ Tab route; chooser route còn thiếu được theo dõi riêng.

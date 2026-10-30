@@ -1080,3 +1080,12 @@ Giữ helper private_gnome_wm.py thay bản sao runner lớn: chỉ --replace sa
 Lab cũ không có session manager: pactl trực tiếp cũng chỉ đổi default.configured.audio.sink sangB trong khi default.audio.sink vẫnA. Giữ failure này như thiếu precondition, không quy lỗi Space/sản phẩm. PrivateAudioServer nay có opt-in WirePlumber0.5 policy thật, hardware audio/bluetooth/video disabled, session/system bus và XDG riêng. Policy mode không tự ghi default metadata; WirePlumber hoàn tất selection. Nhánh mặc định khôngpolicy và Pulse restart probe vẫn qua. Không cài package host.
 
 Giữ audio_native_controls.py và callback chỉ dành private DISPLAY vì kiểm trực tiếp integration keys/daemon/pixel còn thiếu;14 probe/orchestration tests qua, gồm guard từ chối callback trước truy cập display/app của host. Python compile/diff check qua. Không đổi sản phẩm nên không rebuild/lặp frontend/Rust suite.0 live app/Xvfb/GNOME/PipeWire/Pulse/WirePlumber lab cuối lượt. Chốt riêng audio; G5.9 còn system Enter/chooser route theo REMAINING_ACCEPTANCE.md, G2.10 vẫn mở, tổng97/99.
+
+
+## G5.9 — Enter thực cho tiện ích hệ thống vi/en (30/10/2026)
+
+[Bằng chứng private GNOME](benchmarks/system-keyboard-private-2026-10-30/result.json):4/4 cases vi/scale1, en/scale2 ×Dock trên/dưới,32 lần XTest Enter thực. Receiver fixtures hiện có kiểm primary monitor launch bị GIO từ chối rồi fallback mở GTK thuộc lab; Downloads giữ argv/path có khoảng trắng và literal shell characters; Downloads mất không tự tạo/launch, phục hồi rồi Enter retry đạt; Trash chỉ gửi trash:/// và không đổi sentinel; capability thiếu làm disabled và có lý do localized. Config bytes và fixture files phục hồi/dọn đúng.
+
+Tái dùng system_locations_smoke.py, chỉ thêm language/report_root tùy chọn; đường cũ mặc định vi giữ nguyên. Adapter mới seed focus AT-SPI rồi Enter, không gọi do_action cho system mutations; PrivateKeyboard kiểm private marker/DISPLAY, owned PID và native activation trước XTest. Hai guard tests (4 subcases) chặn DISPLAY/marker sai, PID sai và focus đổi trước input; compile/diff check qua. Không đổi mã sản phẩm nên không build/lặp unit sản phẩm.
+
+Giữ một initial private driver AssertionError không có stacktrace, không quy lỗi sản phẩm hoặc coi pass; thêm traceback rồi lượt đầy đủ đạt, chưa xác định nguyên nhân failure chuẩn bị đầu.0 live system/geometry/WM/DPI helpers sau suite. Chốt system Enter; G5.9 còn tuyến bàn phím chooser→Open, G2.10 vẫn mở. Tổng97/99.

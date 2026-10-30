@@ -1,0 +1,854 @@
+{
+  "passed": true,
+  "root": "/tmp/deskmorph-negative-origin-et_9lkp9",
+  "runnerSha256": "0de9424a337abfd75eb7741624a2d40a946c61e3a2c80de2a3d6504fde1ed604",
+  "studioWidgetsRequested": false,
+  "studioFocusRequested": false,
+  "contextSpeechRequested": false,
+  "contextDescriptionRequested": false,
+  "binarySha256": "1172029a8dee0dde0b196e4956b2df150522bb1b058c4ed0cf829bc55e449ac9",
+  "runs": [
+    {
+      "passed": true,
+      "monitor": "screen",
+      "position": "top",
+      "source": "system",
+      "observations": [
+        {
+          "source": "Tiện ích hệ thống",
+          "popup": [
+            794,
+            114,
+            380,
+            620
+          ],
+          "anchor": 984.0,
+          "expectedOrigin": [
+            794,
+            114
+          ]
+        }
+      ],
+      "gdkMonitors": [
+        {
+          "name": "screen",
+          "gtkScale": 1,
+          "area": [
+            0,
+            32,
+            1920,
+            1048
+          ]
+        }
+      ],
+      "pid": 3316373,
+      "settlingObservations": {
+        "DeskMorph Taskbar": [
+          {
+            "seconds": 0.003,
+            "rectangle": null
+          },
+          {
+            "seconds": 0.315,
+            "rectangle": [
+              410,
+              48,
+              1100,
+              52
+            ]
+          },
+          {
+            "seconds": 1.41,
+            "rectangle": [
+              811,
+              48,
+              298,
+              52
+            ]
+          }
+        ],
+        "DeskMorph Context Menu": [
+          {
+            "seconds": 0.009,
+            "rectangle": null
+          },
+          {
+            "seconds": 0.171,
+            "rectangle": [
+              794,
+              114,
+              380,
+              620
+            ]
+          }
+        ]
+      },
+      "dock": [
+        811,
+        48,
+        298,
+        52
+      ],
+      "dockAfterActivation": [
+        811,
+        48,
+        298,
+        52
+      ],
+      "controlAudit": {
+        "language": "vi",
+        "passed": [
+          "detected primary launch rejected by GIO, fallback desktop ID opens owned GTK window",
+          "XDG Downloads path and desktop argv preserved with spaces and literal shell characters",
+          "missing Downloads does not launch or create directory; click after restore retries successfully",
+          "Trash URI goes to private desktop handler; fixture trash contents preserved",
+          "missing monitor, file manager and Trash handler disable actions and explain why"
+        ],
+        "testPids": [
+          3316925,
+          3317635
+        ],
+        "fixturePids": [
+          3317311,
+          3317469,
+          3317543,
+          3317617
+        ],
+        "downloadsArgv": [
+          "--profile",
+          "two words",
+          "/tmp/deskmorph-negative-origin-et_9lkp9/scale1-top/system-keyboard/system-locations-qg1hcbdf/Downloaded files ; $(touch never)"
+        ],
+        "trashArgv": [
+          "trash:///"
+        ],
+        "monitorWindow": {
+          "argv": [],
+          "pid": 3317311,
+          "xid": "0x1800003"
+        },
+        "scope": "Controlled desktop receivers through real IPC/GIO; not certification of third-party monitor packages or a production Trash browser.",
+        "normalPid": 3318023,
+        "preferencesRestored": true,
+        "fixturesRemoved": true,
+        "activationMethod": "AT-SPI focus seeds followed by XTest Enter, owned private GNOME only",
+        "activations": [
+          {
+            "name": "Tiện ích hệ thống",
+            "role": "button",
+            "frame": "DeskMorph Taskbar",
+            "key": "Enter"
+          },
+          {
+            "name": "Mở giám sát hệ thống",
+            "role": "button",
+            "frame": "DeskMorph Context Menu",
+            "key": "Enter"
+          },
+          {
+            "name": "Tiện ích hệ thống",
+            "role": "button",
+            "frame": "DeskMorph Taskbar",
+            "key": "Enter"
+          },
+          {
+            "name": "Mở Downloads",
+            "role": "button",
+            "frame": "DeskMorph Context Menu",
+            "key": "Enter"
+          },
+          {
+            "name": "Mở Downloads",
+            "role": "button",
+            "frame": "DeskMorph Context Menu",
+            "key": "Enter"
+          },
+          {
+            "name": "Mở Downloads",
+            "role": "button",
+            "frame": "DeskMorph Context Menu",
+            "key": "Enter"
+          },
+          {
+            "name": "Mở Thùng rác",
+            "role": "button",
+            "frame": "DeskMorph Context Menu",
+            "key": "Enter"
+          },
+          {
+            "name": "Tiện ích hệ thống",
+            "role": "button",
+            "frame": "DeskMorph Taskbar",
+            "key": "Enter"
+          }
+        ]
+      },
+      "configUnchanged": true,
+      "appExit": -15,
+      "windowManager": {
+        "pid": 3315806,
+        "name": "GNOME Shell",
+        "privateDisplay": true,
+        "startupOverviewDismissed": true
+      },
+      "scale": 1,
+      "privateDisplay": true
+    },
+    {
+      "passed": true,
+      "monitor": "screen",
+      "position": "bottom",
+      "source": "system",
+      "observations": [
+        {
+          "source": "Tiện ích hệ thống",
+          "popup": [
+            794,
+            378,
+            380,
+            620
+          ],
+          "anchor": 984.0,
+          "expectedOrigin": [
+            794,
+            378
+          ]
+        }
+      ],
+      "gdkMonitors": [
+        {
+          "name": "screen",
+          "gtkScale": 1,
+          "area": [
+            0,
+            32,
+            1920,
+            1048
+          ]
+        }
+      ],
+      "pid": 3318896,
+      "settlingObservations": {
+        "DeskMorph Taskbar": [
+          {
+            "seconds": 0.003,
+            "rectangle": null
+          },
+          {
+            "seconds": 0.317,
+            "rectangle": [
+              410,
+              1012,
+              1100,
+              52
+            ]
+          },
+          {
+            "seconds": 1.259,
+            "rectangle": [
+              811,
+              1012,
+              298,
+              52
+            ]
+          }
+        ],
+        "DeskMorph Context Menu": [
+          {
+            "seconds": 0.002,
+            "rectangle": null
+          },
+          {
+            "seconds": 0.164,
+            "rectangle": [
+              794,
+              378,
+              380,
+              620
+            ]
+          }
+        ]
+      },
+      "dock": [
+        811,
+        1012,
+        298,
+        52
+      ],
+      "dockAfterActivation": [
+        811,
+        1012,
+        298,
+        52
+      ],
+      "controlAudit": {
+        "language": "vi",
+        "passed": [
+          "detected primary launch rejected by GIO, fallback desktop ID opens owned GTK window",
+          "XDG Downloads path and desktop argv preserved with spaces and literal shell characters",
+          "missing Downloads does not launch or create directory; click after restore retries successfully",
+          "Trash URI goes to private desktop handler; fixture trash contents preserved",
+          "missing monitor, file manager and Trash handler disable actions and explain why"
+        ],
+        "testPids": [
+          3319442,
+          3320163
+        ],
+        "fixturePids": [
+          3319834,
+          3319953,
+          3320059,
+          3320108
+        ],
+        "downloadsArgv": [
+          "--profile",
+          "two words",
+          "/tmp/deskmorph-negative-origin-et_9lkp9/scale1-bottom/system-keyboard/system-locations-p_7dor41/Downloaded files ; $(touch never)"
+        ],
+        "trashArgv": [
+          "trash:///"
+        ],
+        "monitorWindow": {
+          "argv": [],
+          "pid": 3319834,
+          "xid": "0x1800003"
+        },
+        "scope": "Controlled desktop receivers through real IPC/GIO; not certification of third-party monitor packages or a production Trash browser.",
+        "normalPid": 3320493,
+        "preferencesRestored": true,
+        "fixturesRemoved": true,
+        "activationMethod": "AT-SPI focus seeds followed by XTest Enter, owned private GNOME only",
+        "activations": [
+          {
+            "name": "Tiện ích hệ thống",
+            "role": "button",
+            "frame": "DeskMorph Taskbar",
+            "key": "Enter"
+          },
+          {
+            "name": "Mở giám sát hệ thống",
+            "role": "button",
+            "frame": "DeskMorph Context Menu",
+            "key": "Enter"
+          },
+          {
+            "name": "Tiện ích hệ thống",
+            "role": "button",
+            "frame": "DeskMorph Taskbar",
+            "key": "Enter"
+          },
+          {
+            "name": "Mở Downloads",
+            "role": "button",
+            "frame": "DeskMorph Context Menu",
+            "key": "Enter"
+          },
+          {
+            "name": "Mở Downloads",
+            "role": "button",
+            "frame": "DeskMorph Context Menu",
+            "key": "Enter"
+          },
+          {
+            "name": "Mở Downloads",
+            "role": "button",
+            "frame": "DeskMorph Context Menu",
+            "key": "Enter"
+          },
+          {
+            "name": "Mở Thùng rác",
+            "role": "button",
+            "frame": "DeskMorph Context Menu",
+            "key": "Enter"
+          },
+          {
+            "name": "Tiện ích hệ thống",
+            "role": "button",
+            "frame": "DeskMorph Taskbar",
+            "key": "Enter"
+          }
+        ]
+      },
+      "configUnchanged": true,
+      "appExit": 0,
+      "windowManager": {
+        "pid": 3318312,
+        "name": "GNOME Shell",
+        "privateDisplay": true,
+        "startupOverviewDismissed": true
+      },
+      "scale": 1,
+      "privateDisplay": true
+    },
+    {
+      "passed": true,
+      "monitor": "screen",
+      "position": "top",
+      "source": "system",
+      "observations": [
+        {
+          "source": "System utilities",
+          "popup": [
+            646,
+            52,
+            760,
+            1008
+          ],
+          "anchor": 1025.0,
+          "expectedOrigin": [
+            645,
+            52
+          ]
+        }
+      ],
+      "gdkMonitors": [
+        {
+          "name": "screen",
+          "gtkScale": 2,
+          "area": [
+            0,
+            32,
+            1920,
+            1048
+          ]
+        }
+      ],
+      "pid": 3321381,
+      "settlingObservations": {
+        "DeskMorph Taskbar": [
+          {
+            "seconds": 0.002,
+            "rectangle": null
+          },
+          {
+            "seconds": 0.316,
+            "rectangle": [
+              32,
+              64,
+              1856,
+              104
+            ]
+          },
+          {
+            "seconds": 1.411,
+            "rectangle": [
+              680,
+              64,
+              560,
+              104
+            ]
+          },
+          {
+            "seconds": 2.346,
+            "rectangle": [
+              682,
+              64,
+              558,
+              104
+            ]
+          },
+          {
+            "seconds": 3.439,
+            "rectangle": [
+              680,
+              64,
+              560,
+              104
+            ]
+          },
+          {
+            "seconds": 5.335,
+            "rectangle": [
+              680,
+              64,
+              562,
+              104
+            ]
+          },
+          {
+            "seconds": 6.436,
+            "rectangle": [
+              682,
+              64,
+              558,
+              104
+            ]
+          },
+          {
+            "seconds": 7.373,
+            "rectangle": [
+              680,
+              64,
+              560,
+              104
+            ]
+          },
+          {
+            "seconds": 8.311,
+            "rectangle": [
+              680,
+              64,
+              562,
+              104
+            ]
+          }
+        ],
+        "DeskMorph Context Menu": [
+          {
+            "seconds": 0.008,
+            "rectangle": null
+          },
+          {
+            "seconds": 0.169,
+            "rectangle": [
+              646,
+              52,
+              760,
+              1008
+            ]
+          }
+        ]
+      },
+      "dock": [
+        680,
+        64,
+        562,
+        104
+      ],
+      "dockAfterActivation": [
+        680,
+        64,
+        562,
+        104
+      ],
+      "controlAudit": {
+        "language": "en",
+        "passed": [
+          "detected primary launch rejected by GIO, fallback desktop ID opens owned GTK window",
+          "XDG Downloads path and desktop argv preserved with spaces and literal shell characters",
+          "missing Downloads does not launch or create directory; click after restore retries successfully",
+          "Trash URI goes to private desktop handler; fixture trash contents preserved",
+          "missing monitor, file manager and Trash handler disable actions and explain why"
+        ],
+        "testPids": [
+          3322354,
+          3323067
+        ],
+        "fixturePids": [
+          3322746,
+          3322904,
+          3322979,
+          3322999
+        ],
+        "downloadsArgv": [
+          "--profile",
+          "two words",
+          "/tmp/deskmorph-negative-origin-et_9lkp9/scale2-top/system-keyboard/system-locations-b6zhiv63/Downloaded files ; $(touch never)"
+        ],
+        "trashArgv": [
+          "trash:///"
+        ],
+        "monitorWindow": {
+          "argv": [],
+          "pid": 3322746,
+          "xid": "0x1800003"
+        },
+        "scope": "Controlled desktop receivers through real IPC/GIO; not certification of third-party monitor packages or a production Trash browser.",
+        "normalPid": 3323388,
+        "preferencesRestored": true,
+        "fixturesRemoved": true,
+        "activationMethod": "AT-SPI focus seeds followed by XTest Enter, owned private GNOME only",
+        "activations": [
+          {
+            "name": "System utilities",
+            "role": "button",
+            "frame": "DeskMorph Taskbar",
+            "key": "Enter"
+          },
+          {
+            "name": "Open system monitor",
+            "role": "button",
+            "frame": "DeskMorph Context Menu",
+            "key": "Enter"
+          },
+          {
+            "name": "System utilities",
+            "role": "button",
+            "frame": "DeskMorph Taskbar",
+            "key": "Enter"
+          },
+          {
+            "name": "Open Downloads",
+            "role": "button",
+            "frame": "DeskMorph Context Menu",
+            "key": "Enter"
+          },
+          {
+            "name": "Open Downloads",
+            "role": "button",
+            "frame": "DeskMorph Context Menu",
+            "key": "Enter"
+          },
+          {
+            "name": "Open Downloads",
+            "role": "button",
+            "frame": "DeskMorph Context Menu",
+            "key": "Enter"
+          },
+          {
+            "name": "Open Trash",
+            "role": "button",
+            "frame": "DeskMorph Context Menu",
+            "key": "Enter"
+          },
+          {
+            "name": "System utilities",
+            "role": "button",
+            "frame": "DeskMorph Taskbar",
+            "key": "Enter"
+          }
+        ]
+      },
+      "configUnchanged": true,
+      "appExit": -15,
+      "windowManager": {
+        "pid": 3320769,
+        "name": "GNOME Shell",
+        "privateDisplay": true,
+        "startupOverviewDismissed": true
+      },
+      "scale": 2,
+      "privateDisplay": true
+    },
+    {
+      "passed": true,
+      "monitor": "screen",
+      "position": "bottom",
+      "source": "system",
+      "observations": [
+        {
+          "source": "System utilities",
+          "popup": [
+            644,
+            52,
+            760,
+            1008
+          ],
+          "anchor": 1023.0,
+          "expectedOrigin": [
+            643,
+            52
+          ]
+        }
+      ],
+      "gdkMonitors": [
+        {
+          "name": "screen",
+          "gtkScale": 2,
+          "area": [
+            0,
+            32,
+            1920,
+            1048
+          ]
+        }
+      ],
+      "pid": 3324263,
+      "settlingObservations": {
+        "DeskMorph Taskbar": [
+          {
+            "seconds": 0.04,
+            "rectangle": null
+          },
+          {
+            "seconds": 0.357,
+            "rectangle": [
+              32,
+              944,
+              1856,
+              104
+            ]
+          },
+          {
+            "seconds": 1.657,
+            "rectangle": [
+              678,
+              944,
+              564,
+              104
+            ]
+          },
+          {
+            "seconds": 4.816,
+            "rectangle": [
+              680,
+              944,
+              560,
+              104
+            ]
+          },
+          {
+            "seconds": 5.76,
+            "rectangle": [
+              680,
+              944,
+              562,
+              104
+            ]
+          },
+          {
+            "seconds": 6.705,
+            "rectangle": [
+              678,
+              944,
+              564,
+              104
+            ]
+          }
+        ],
+        "DeskMorph Context Menu": [
+          {
+            "seconds": 0.009,
+            "rectangle": null
+          },
+          {
+            "seconds": 0.165,
+            "rectangle": [
+              644,
+              52,
+              760,
+              1008
+            ]
+          }
+        ]
+      },
+      "dock": [
+        678,
+        944,
+        564,
+        104
+      ],
+      "dockAfterActivation": [
+        678,
+        944,
+        564,
+        104
+      ],
+      "controlAudit": {
+        "language": "en",
+        "passed": [
+          "detected primary launch rejected by GIO, fallback desktop ID opens owned GTK window",
+          "XDG Downloads path and desktop argv preserved with spaces and literal shell characters",
+          "missing Downloads does not launch or create directory; click after restore retries successfully",
+          "Trash URI goes to private desktop handler; fixture trash contents preserved",
+          "missing monitor, file manager and Trash handler disable actions and explain why"
+        ],
+        "testPids": [
+          3325154,
+          3325880
+        ],
+        "fixturePids": [
+          3325549,
+          3325677,
+          3325795,
+          3325857
+        ],
+        "downloadsArgv": [
+          "--profile",
+          "two words",
+          "/tmp/deskmorph-negative-origin-et_9lkp9/scale2-bottom/system-keyboard/system-locations-qq7bfz6c/Downloaded files ; $(touch never)"
+        ],
+        "trashArgv": [
+          "trash:///"
+        ],
+        "monitorWindow": {
+          "argv": [],
+          "pid": 3325549,
+          "xid": "0x1800003"
+        },
+        "scope": "Controlled desktop receivers through real IPC/GIO; not certification of third-party monitor packages or a production Trash browser.",
+        "normalPid": 3326202,
+        "preferencesRestored": true,
+        "fixturesRemoved": true,
+        "activationMethod": "AT-SPI focus seeds followed by XTest Enter, owned private GNOME only",
+        "activations": [
+          {
+            "name": "System utilities",
+            "role": "button",
+            "frame": "DeskMorph Taskbar",
+            "key": "Enter"
+          },
+          {
+            "name": "Open system monitor",
+            "role": "button",
+            "frame": "DeskMorph Context Menu",
+            "key": "Enter"
+          },
+          {
+            "name": "System utilities",
+            "role": "button",
+            "frame": "DeskMorph Taskbar",
+            "key": "Enter"
+          },
+          {
+            "name": "Open Downloads",
+            "role": "button",
+            "frame": "DeskMorph Context Menu",
+            "key": "Enter"
+          },
+          {
+            "name": "Open Downloads",
+            "role": "button",
+            "frame": "DeskMorph Context Menu",
+            "key": "Enter"
+          },
+          {
+            "name": "Open Downloads",
+            "role": "button",
+            "frame": "DeskMorph Context Menu",
+            "key": "Enter"
+          },
+          {
+            "name": "Open Trash",
+            "role": "button",
+            "frame": "DeskMorph Context Menu",
+            "key": "Enter"
+          },
+          {
+            "name": "System utilities",
+            "role": "button",
+            "frame": "DeskMorph Taskbar",
+            "key": "Enter"
+          }
+        ]
+      },
+      "configUnchanged": true,
+      "appExit": -15,
+      "windowManager": {
+        "pid": 3323716,
+        "name": "GNOME Shell",
+        "privateDisplay": true,
+        "startupOverviewDismissed": true
+      },
+      "scale": 2,
+      "privateDisplay": true
+    }
+  ],
+  "scope": "Private GNOME X11 system actions via XTest Enter, receiver fixtures, vi/scale1 and en/scale2, top/bottom",
+  "limits": [
+    "No host input, files, app launches or system preferences mutation",
+    "AT-SPI seeds control focus; XTest Enter invokes private desktop receivers; not whole-app Tab route or third-party package certification"
+  ],
+  "sourceSha256": {
+    "tests/private_keyboard.py": "9b25e6ccb0b5a85763c79b4e8ba9a6cb80df1ee1b1ad8d414c7d665dfd3d3462",
+    "tests/system_keyboard_private.py": "db8461f09289e5049290030d496a7ae4b5bdfbab36da9b077403a93be5982e98",
+    "tests/system_locations_smoke.py": "47cf2263f2679518d087d8115463609d0dd731b482cc10595c037e2c7d6fefb8"
+  },
+  "nativeEnterCount": 32,
+  "initialPreparationFailure": {
+    "root": "/tmp/deskmorph-negative-origin-qs92ly1x",
+    "error": "AssertionError()",
+    "cause": "Unclassified private driver assertion before traceback instrumentation; not counted as pass",
+    "laterRun": "Added driver traceback only; full vi/en/top/bottom rerun passed"
+  }
+}

@@ -16,8 +16,11 @@ from gi.repository import Atspi, Gio
 from dock_layout_smoke import descendants
 
 
-def run(app, config_home, click, focus_studio, native_keys, test_app, start_app, set_app):
-    root = Path('/tmp/deskmorph-desktop-test')
+def run(app, config_home, click, focus_studio, native_keys, test_app, start_app, set_app, language='vi', report_root=None):
+    assert language in ('vi', 'en')
+    labels = json.loads((Path(__file__).resolve().parents[1] / 'src/i18n/messages.json').read_text())[language]
+    root = Path(report_root or '/tmp/deskmorph-desktop-test')
+    root.mkdir(parents=True, exist_ok=True)
     owned = Path(tempfile.mkdtemp(prefix='system-locations-', dir=root))
     config_path = Path(config_home) / 'com.ducthanhdev.deskmorph/config.json'
     original = config_path.read_bytes()
@@ -136,9 +139,9 @@ else:
 
     def popup():
         focus_studio()
-        if not find('Mở Downloads'):
-            click('Tiện ích hệ thống', 'button')
-        wait(lambda: find('Mở Downloads'), 'System actions missing')
+        if not find(labels['downloads']):
+            click(labels['systemTools'], 'button')
+        wait(lambda: find(labels['downloads']), 'System actions missing')
 
     def enabled(name):
         node = find(name)
@@ -167,19 +170,19 @@ else:
     try:
         stop_app()
         fixture = json.loads(original)
-        fixture['config'].update(enabled=True, showSystem=True, autoHide=False, language='vi')
+        fixture['config'].update(enabled=True, showSystem=True, autoHide=False, language=language)
         config_path.write_text(json.dumps(fixture))
         start(env)
         popup()
-        wait(lambda: all(enabled(name) for name in ('Mở Downloads', 'Mở Thùng rác', 'Mở giám sát hệ thống')), 'Supported actions are disabled')
-        click('Mở giám sát hệ thống')
+        wait(lambda: all(enabled(name) for name in (labels['downloads'], labels['trash'], labels['systemMonitor'])), 'Supported actions are disabled')
+        click(labels['systemMonitor'])
         monitor = read_marker('monitor')
         props = subprocess.check_output(['xprop', '-id', monitor['xid'], '_NET_WM_NAME', '_NET_WM_PID'], text=True)
         assert 'DeskMorph Owned System Monitor' in props and str(monitor['pid']) in props
         stop_monitor()
         passed.append('detected primary launch rejected by GIO, fallback desktop ID opens owned GTK window')
         popup()
-        click('Mở Downloads')
+        click(labels['downloads'])
         files = read_marker('files')
         assert files['argv'][:2] == ['--profile', 'two words'] and len(files['argv']) == 3
         argument = files['argv'][2]
@@ -188,14 +191,14 @@ else:
         passed.append('XDG Downloads path and desktop argv preserved with spaces and literal shell characters')
         (owned / 'files.json').unlink()
         downloads.rmdir()
-        click('Mở Downloads')
-        wait(lambda: 'Thư mục Downloads theo XDG chưa tồn tại.' in all_text(), 'Missing directory did not show localized error')
+        click(labels['downloads'])
+        wait(lambda: labels['downloadsMissing'] in all_text(), 'Missing directory did not show localized error')
         assert not downloads.exists() and not (owned / 'files.json').exists()
         downloads.mkdir()
-        click('Mở Downloads')
+        click(labels['downloads'])
         read_marker('files')
         passed.append('missing Downloads does not launch or create directory; click after restore retries successfully')
-        click('Mở Thùng rác')
+        click(labels['trash'])
         trash = read_marker('trash')
         assert trash['argv'] == ['trash:///'] and sentinel.read_text() == 'preserve fixture trash'
         passed.append('Trash URI goes to private desktop handler; fixture trash contents preserved')
@@ -205,17 +208,17 @@ else:
         start(env)
         popup()
         try:
-            wait(lambda: all(enabled(name) is False for name in ('Mở Downloads', 'Mở Thùng rác', 'Mở giám sát hệ thống')), 'Missing capabilities leave active buttons')
+            wait(lambda: all(enabled(name) is False for name in (labels['downloads'], labels['trash'], labels['systemMonitor'])), 'Missing capabilities leave active buttons')
         except AssertionError:
             frames = [node.get_name() for node in descendants(app) if node.get_role_name() == 'frame']
             active_window = subprocess.check_output(['xprop', '-root', '_NET_ACTIVE_WINDOW'], text=True)
-            raise AssertionError('Missing capabilities: ' + json.dumps({name: enabled(name) for name in ('Mở Downloads', 'Mở Thùng rác', 'Mở giám sát hệ thống')}) + '\n' + repr(frames) + '\n' + active_window + '\n' + all_text())
-        for message in ('Chưa tìm thấy ứng dụng quản lý tệp phù hợp.', 'Chưa tìm thấy trình xử lý Thùng rác trên desktop này.',
-                        'Chưa tìm thấy ứng dụng giám sát hệ thống được hỗ trợ.'):
+            raise AssertionError('Missing capabilities: ' + json.dumps({name: enabled(name) for name in (labels['downloads'], labels['trash'], labels['systemMonitor'])}) + '\n' + repr(frames) + '\n' + active_window + '\n' + all_text())
+        for message in (labels['fileManagerMissing'], labels['trashUnavailable'],
+                        labels['systemMonitorMissing']):
             assert message in all_text(), 'Missing capability reason: ' + message
         native_keys(chord=[0xff1b])
         passed.append('missing monitor, file manager and Trash handler disable actions and explain why')
-        report = {'passed': passed, 'testPids': app_pids[:], 'fixturePids': fixture_pids[:],
+        report = {'language': language, 'passed': passed, 'testPids': app_pids[:], 'fixturePids': fixture_pids[:],
                   'downloadsArgv': files['argv'], 'trashArgv': trash['argv'], 'monitorWindow': monitor,
                   'scope': 'Controlled desktop receivers through real IPC/GIO; not certification of third-party monitor packages or a production Trash browser.'}
     finally:
