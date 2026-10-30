@@ -1,0 +1,164 @@
+{
+  "date": "2026-10-30",
+  "binarySha256": "1c2a54f8e3fd3e5dca7ece576d6301f714853ee996f352b6340a3a1b37b77f4b",
+  "command": "DESKMORPH_POPUP_SOAK_SECONDS=1800 python3 tests/desktop_smoke.py --popup-smoke",
+  "passed": false,
+  "requestedSoakSeconds": 1800,
+  "pid": 1027420,
+  "completedRounds": 49,
+  "failedRound": 50,
+  "resourceSummary": {
+    "sampleCount": 49,
+    "elapsedSeconds": 567.359,
+    "first": {
+      "seconds": 12.214,
+      "processes": [
+        {
+          "pid": 1027420,
+          "name": "deskmorph",
+          "rssKiB": 213360,
+          "threads": 51,
+          "fds": 2132
+        },
+        {
+          "pid": 1027477,
+          "name": "WebKitWebProces",
+          "rssKiB": 181616,
+          "threads": 12,
+          "fds": 32
+        },
+        {
+          "pid": 1027471,
+          "name": "WebKitWebProces",
+          "rssKiB": 212620,
+          "threads": 23,
+          "fds": 32
+        },
+        {
+          "pid": 1027465,
+          "name": "WebKitWebProces",
+          "rssKiB": 205940,
+          "threads": 23,
+          "fds": 33
+        },
+        {
+          "pid": 1027459,
+          "name": "WebKitWebProces",
+          "rssKiB": 214316,
+          "threads": 23,
+          "fds": 32
+        },
+        {
+          "pid": 1027448,
+          "name": "WebKitWebProces",
+          "rssKiB": 215820,
+          "threads": 24,
+          "fds": 33
+        },
+        {
+          "pid": 1027444,
+          "name": "WebKitNetworkPr",
+          "rssKiB": 49080,
+          "threads": 16,
+          "fds": 30
+        }
+      ]
+    },
+    "last": {
+      "seconds": 567.359,
+      "processes": [
+        {
+          "pid": 1027420,
+          "name": "deskmorph",
+          "rssKiB": 215008,
+          "threads": 50,
+          "fds": 2132
+        },
+        {
+          "pid": 1027477,
+          "name": "WebKitWebProces",
+          "rssKiB": 181044,
+          "threads": 10,
+          "fds": 32
+        },
+        {
+          "pid": 1027471,
+          "name": "WebKitWebProces",
+          "rssKiB": 213976,
+          "threads": 21,
+          "fds": 32
+        },
+        {
+          "pid": 1027465,
+          "name": "WebKitWebProces",
+          "rssKiB": 217756,
+          "threads": 21,
+          "fds": 33
+        },
+        {
+          "pid": 1027459,
+          "name": "WebKitWebProces",
+          "rssKiB": 215272,
+          "threads": 21,
+          "fds": 32
+        },
+        {
+          "pid": 1027448,
+          "name": "WebKitWebProces",
+          "rssKiB": 252424,
+          "threads": 13,
+          "fds": 33
+        },
+        {
+          "pid": 1027444,
+          "name": "WebKitNetworkPr",
+          "rssKiB": 49336,
+          "threads": 15,
+          "fds": 30
+        }
+      ]
+    },
+    "medianGrowth": {
+      "rssKiB": 144.0,
+      "threads": 0.0,
+      "fds": 0.0,
+      "treeRssKiB": 8296.0,
+      "treeProcesses": 0.0
+    },
+    "alarmLimits": {
+      "rssKiB": 32768,
+      "threads": 4,
+      "fds": 8,
+      "treeRssKiB": 131072,
+      "treeProcesses": 2
+    },
+    "withinGrowthLimits": true,
+    "peakTreeRssKiB": 1348280
+  },
+  "failure": {
+    "message": "Rapid replacement left wrong, unfocused or orphaned popup",
+    "visibleFrames": {
+      "DeskMorph Studio": "0x3800003",
+      "DeskMorph Taskbar": "0x3800017",
+      "DeskMorph Context Menu": "0x3800075"
+    },
+    "activeWindow": "0x3800003",
+    "audioMuteControlPresent": true
+  },
+  "ownedProcessesExited": false,
+  "scope": "Native GNOME X11 popup replacement stress on isolated test profile, synthetic AT-SPI actions after an intentional native click selecting Studio",
+  "limits": [
+    "Stopped before 1800 seconds: lifecycle gate remains open",
+    "Resource growth below alarms over this partial run does not prove absence of leaks",
+    "No native opening gesture or Dock activation was established before the rapid AT-SPI batch; cause of activation failure is not yet established",
+    "Final failure diagnostics were collected before finally restored Studio focus; no claim of unrelated external input"
+  ],
+  "recheck": {
+    "command": "python3 tests/desktop_smoke.py --restart --popup-smoke",
+    "exitCode": 0,
+    "pid": 1098024,
+    "completedRounds": 3,
+    "change": "Each rapid batch starts with real Enter from the focused Dock launcher; remaining calendar/audio actions stay queued via AT-SPI",
+    "limit": "Short smoke only; not a completed 1800-second soak and not proof of the root cause of the original focus failure"
+  }
+}

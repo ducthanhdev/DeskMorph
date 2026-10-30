@@ -1,0 +1,144 @@
+{
+  "runs": [
+    {
+      "pid": 1105737,
+      "observations": [
+        {
+          "keys": [
+            65505,
+            65479
+          ],
+          "sequence": [
+            "Mở ứng dụng",
+            "Bỏ ghim",
+            "Sang phải",
+            "DeskMorph Window Test 1",
+            "Đóng DeskMorph Window Test 1",
+            "DeskMorph Window Test 2",
+            "Đóng DeskMorph Window Test 2",
+            "DeskMorph Window Test 3",
+            "Đóng DeskMorph Window Test 3",
+            "Buộc dừng…"
+          ],
+          "disabledSkipped": [
+            "Sang trái"
+          ],
+          "reverseMatches": true,
+          "arrowWrapAndHomeEnd": true,
+          "escapeRestores": true
+        },
+        {
+          "keys": [
+            65383
+          ],
+          "sequence": [
+            "Mở ứng dụng",
+            "Bỏ ghim",
+            "Sang phải",
+            "DeskMorph Window Test 1",
+            "Đóng DeskMorph Window Test 1",
+            "DeskMorph Window Test 2",
+            "Đóng DeskMorph Window Test 2",
+            "DeskMorph Window Test 3",
+            "Đóng DeskMorph Window Test 3",
+            "Buộc dừng…"
+          ],
+          "disabledSkipped": [
+            "Sang trái"
+          ],
+          "reverseMatches": true,
+          "arrowWrapAndHomeEnd": true,
+          "escapeRestores": true
+        }
+      ],
+      "configUnchanged": true,
+      "failedLaunchFocus": true,
+      "forceReviewCancelFocus": true,
+      "removedRowFallback": true,
+      "enterClosesOwnedWindow": true,
+      "keyboardForceConfirm": true,
+      "forceFixturePid": 1105728,
+      "forceFixtureExitCode": 1,
+      "scope": "Native pinned fixture context entry/Tab/arrows/Escape, nonexistent command failure, force review/cancel/Tab-confirm, external row removal and Enter close of owned fixture window2; force quit targets only the owned Popen fixture, no user app actions or unpinned context coverage"
+    },
+    {
+      "pid": 1107909,
+      "observations": [
+        {
+          "keys": [
+            65505,
+            65479
+          ],
+          "sequence": [
+            "Open application",
+            "Unpin",
+            "Move right",
+            "DeskMorph Window Test 1",
+            "Close DeskMorph Window Test 1",
+            "DeskMorph Window Test 2",
+            "Close DeskMorph Window Test 2",
+            "DeskMorph Window Test 3",
+            "Close DeskMorph Window Test 3",
+            "Force quit…"
+          ],
+          "disabledSkipped": [
+            "Move left"
+          ],
+          "reverseMatches": true,
+          "arrowWrapAndHomeEnd": true,
+          "escapeRestores": true
+        },
+        {
+          "keys": [
+            65383
+          ],
+          "sequence": [
+            "Open application",
+            "Unpin",
+            "Move right",
+            "DeskMorph Window Test 1",
+            "Close DeskMorph Window Test 1",
+            "DeskMorph Window Test 2",
+            "Close DeskMorph Window Test 2",
+            "DeskMorph Window Test 3",
+            "Close DeskMorph Window Test 3",
+            "Force quit…"
+          ],
+          "disabledSkipped": [
+            "Move left"
+          ],
+          "reverseMatches": true,
+          "arrowWrapAndHomeEnd": true,
+          "escapeRestores": true
+        }
+      ],
+      "configUnchanged": true,
+      "failedLaunchFocus": true,
+      "forceReviewCancelFocus": true,
+      "removedRowFallback": true,
+      "enterClosesOwnedWindow": true,
+      "keyboardForceConfirm": true,
+      "forceFixturePid": 1107860,
+      "forceFixtureExitCode": 1,
+      "scope": "Native pinned fixture context entry/Tab/arrows/Escape, nonexistent command failure, force review/cancel/Tab-confirm, external row removal and Enter close of owned fixture window2; force quit targets only the owned Popen fixture, no user app actions or unpinned context coverage"
+    }
+  ],
+  "fixturePids": [
+    1105737,
+    1107909
+  ],
+  "windowFixturePids": [
+    1105728,
+    1107860
+  ],
+  "normalPid": 1110153,
+  "configRestored": true,
+  "date": "2026-10-30",
+  "command": "python3 tests/desktop_smoke.py --restart --context-keyboard-smoke",
+  "exitCode": 0,
+  "binarySha256": "1c2a54f8e3fd3e5dca7ece576d6301f714853ee996f352b6340a3a1b37b77f4b",
+  "limits": [
+    "Pinned fixture menu only; unpinned groups and desktop-entry actions remain unaudited",
+    "No full screen-reader or contrast certification"
+  ]
+}

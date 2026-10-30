@@ -2,7 +2,7 @@
 
 Mục tiêu giữ nguyên toàn bộ 99 đầu việc trong IMPLEMENTATION_PLAN.md. Chưa đạt cổng hoàn thành toàn dự án. Checkbox chưa đánh dấu không đồng nghĩa chưa có code: nhiều mục đang chờ kiểm thử đủ phạm vi.
 
-Hiện đã đánh dấu **96/99 mục (~97%)**. Các mục còn mở: G2.10 (DPI/tọa độ âm), G5.9 (accessibility đầy đủ) và G9.8 (vòng đời dài). G2.11 đã chốt bằng rút/cắm HDMI vật lý; G6.7 đã chốt bằng scheduler qua system suspend thật 138,922 giây. Chi tiết/phạm vi nằm trong các bản ghi cuối tài liệu. Quyết định phát hành vẫn là **không phát hành** theo RELEASE_CHECKLIST.md.
+Hiện đã đánh dấu **96/99 mục (~97%)**. Các mục còn mở: G2.10 (DPI/tọa độ âm), G5.9 (accessibility đầy đủ) và G9.8 (vòng đời dài; lượt soak đầu dừng ở vòng50 vì popup thiếu focus). G2.11 đã chốt bằng rút/cắm HDMI vật lý; G6.7 đã chốt bằng scheduler qua system suspend thật 138,922 giây. Chi tiết/phạm vi nằm trong các bản ghi cuối tài liệu. Quyết định phát hành vẫn là **không phát hành** theo RELEASE_CHECKLIST.md.
 
 ## Môi trường tham chiếu đã xác minh
 
@@ -854,3 +854,17 @@ Script cần AT-SPI, Python GI, GTK3 và libXtst. Chỉ gửi phím khi kiểm t
 - Sau finally: hai PNG khôi phục; scheduler tắt, interval15, folders/favorites rỗng, recursive=false; cả hai GNOME URI về Sonoma-dark.jpg và desktop unlocked. Python compile/diff check qua. Không đổi sản phẩm nên không chạy lại suite Rust đã qua ở commit focus.
 - Chốt G6.7 trong phạm vi GNOME X11 tham chiếu; **96/99**, còn G2.10/G5.9/G9.8. G9.8 nay có thành phần sleep thật và physical HDMI, nhưng vẫn thiếu soak dài hạn/resource audit; không dùng một sleep cycle để chốt lifecycle dài.
 - Đánh giá file: giữ nhánh suspend thật opt-in với operator wake/unlock, clock proof và checkpoint; giữ JSON gọn kèm wallpaper flow/cleanup. SIGSTOP mặc định vẫn được ghi là process pause. Không commit log/profile/binary hoặc biến thử nghiệm thành chứng nhận compositor khác.
+
+## G9.8 — Soak popup và đo tài nguyên, lượt đầu chưa đạt (30/10/2026)
+
+- Thêm `DESKMORPH_POPUP_SOAK_SECONDS=1800` (opt-in30–120phút), giữ mặc định3 vòng. Mỗi vòng kiểm launcher/Escape, calendar/audio replacement, outside click/focus không bị lấy lại và5 chuỗi rapid replacement. Catalogue soak chỉ expose fixture/noop; không launch ứng dụng người dùng.
+- `NativeResources` kiểm profile owner, đọc `/proc` của main và descendants qua mọi thread, ghi RSS/thread/FD/process và starttime chống nhầm PID khi kiểm survivors. Sau khi đủ thời gian, bỏ1/3 mẫu đầu và so median1/3 giữa/cuối; alarm growth main32MiB/4threads/8FD, tree128MiB/2process. Tổng RSS có thể tính lặp shared pages; đây là alarm tăng trưởng, không chứng minh zero leaks. Ca thành công còn phải Quit và kiểm mọi PID đã quan sát thoát trước khi mở normal test instance.
+- [Lượt đầu chưa đạt](benchmarks/popup-soak-2026-10-30/incomplete.json):49 vòng hoàn tất, mẫu cuối567,359s, vòng50 dừng vì popup audio còn hiện nhưng native active window là Studio. Main median tăng144KiB, thread/FD không tăng; tree median tăng8296KiB, process không tăng. Không đủ1800s và chưa chạy phần Quit/survivors, nên không đánh dấu G9.8.
+- Rapid batch cũ gọi AT-SPI ngay sau outside click chủ động chọn Studio, không thiết lập native input từ Dock; activation của background action không được coi tương đương click/Enter thật. Harness nay bắt đầu mỗi batch bằng Enter thật từ Dock rồi queue calendar/audio qua AT-SPI. Smoke ngắn3 vòng exit0 PID1098024 trên cùng binary; chưa chứng minh nguyên nhân duy nhất của failure cũ hoặc thay thế soak dài.
+- Thêm checkpoint failure trước finally đổi focus và lưu resourceSummary trước growth assertion để không mất diagnostics khi ca thất bại. Python compile/diff check qua; không thay code sản phẩm/build. Tổng giữ96/99; còn lượt soak đầy đủ.
+
+## G5.9 — Xác nhận buộc dừng bằng Tab/Enter, native vi/en (30/10/2026)
+
+- Mở rộng context keyboard harness sau các ca navigation/error/review-cancel/row removal/close: giữ lại đúng window1 thuộc Popen fixture, kiểm environment class/profile, mở review bằng Enter, assert focus Hủy, Tab tới Xác nhận buộc dừng và Enter. Assert tiến trình fixture thật sự thoát và popup đóng; không coi IPC success là đủ.
+- [Hai lượt vi/en](benchmarks/context-force-keyboard-2026-10-30/result.json) exit0; fixture1105728/1107860 thoát exit1 vì X server ngắt kết nối qua xkill. App test1105737/1107909 đã thoát, normal test1110153; bytes config khôi phục. Hồi quy menu Shift+F10/Menu, Tab hai chiều, Home/End/arrows, Escape, failure focus và close window2 cùng qua. Không thao tác app của người dùng.
+- Python compile/diff check qua; code sản phẩm/binary không đổi. G5.9 tiếp tục mở vì unpinned/desktop actions, contrast toàn ứng dụng và screen reader chưa đủ bằng chứng; tổng96/99.

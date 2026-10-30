@@ -1,4 +1,4 @@
-"""Read-only native entry/navigation of a pinned app context popup."""
+"""Native context keyboard actions, restricted to owned fixture windows."""
 import json
 import os
 import signal
@@ -102,8 +102,29 @@ def run(app, focus_studio, native_keys, fixture, command):
     wait(lambda: frame('DeskMorph Context Menu') is None, 'Successful close did not dismiss context')
     state = command('title', 1, title='DeskMorph Window Test 1')
     assert '2' not in state and '1' in state, 'Close action did not close exactly fixture window 2'
+    # The only remaining window belongs to our Popen fixture. Confirm with
+    # real Tab/Enter, and observe that process exiting, rather than treating
+    # an IPC success or a disappearing popup as evidence of force quit.
+    assert fixture.poll() is None
+    fixture_env = Path(f'/proc/{fixture.pid}/environ').read_bytes().split(b'\0')
+    assert b'DESKMORPH_WINDOW_FIXTURE_CLASS=DeskMorphContextKeyboard' in fixture_env
+    assert b'DESKMORPH_CONFIG_HOME=/tmp/deskmorph-desktop-test/config' in fixture_env
+    focus_studio('DeskMorph Taskbar')
+    pin = wait(lambda: next((n for n in descendants(frame('DeskMorph Taskbar')) if n.get_role_name() == 'button' and n.get_name().startswith('DeskMorph Context Keyboard')), None), 'Source pin missing before force confirmation')
+    assert pin.get_component_iface().grab_focus()
+    time.sleep(.2); native_keys(chord=[0xffe1, 0xffc7])
+    force_node = wait(lambda: button(force), 'Force action missing for remaining owned window')
+    assert force_node.get_component_iface().grab_focus()
+    time.sleep(.2); native_keys(chord=[0xff0d])
+    wait(lambda: focused(cancel), 'Force confirmation did not start at Cancel')
+    native_keys(chord=[0xff09])
+    confirm = 'Xác nhận buộc dừng' if vi else 'Confirm force quit'
+    wait(lambda: focused(confirm), 'Tab did not reach force confirmation')
+    native_keys(chord=[0xff0d])
+    wait(lambda: fixture.poll() is not None, 'Force confirmation did not terminate the owned fixture')
+    wait(lambda: frame('DeskMorph Context Menu') is None, 'Force confirmation left context popup visible')
     assert config.read_bytes() == original
-    report = dict(pid=app.get_process_id(), screenshot=screenshot, observations=observations, configUnchanged=True, failedLaunchFocus=True, forceReviewCancelFocus=True, removedRowFallback=True, enterClosesOwnedWindow=True, scope='Native pinned fixture context entry/Tab/arrows/Escape, nonexistent command failure, force review/cancel only, external row removal and Enter close of owned fixture window2; no user app actions, no force kill or unpinned context coverage')
+    report = dict(pid=app.get_process_id(), screenshot=screenshot, observations=observations, configUnchanged=True, failedLaunchFocus=True, forceReviewCancelFocus=True, removedRowFallback=True, enterClosesOwnedWindow=True, keyboardForceConfirm=True, forceFixturePid=fixture.pid, forceFixtureExitCode=fixture.returncode, scope='Native pinned fixture context entry/Tab/arrows/Escape, nonexistent command failure, force review/cancel/Tab-confirm, external row removal and Enter close of owned fixture window2; force quit targets only the owned Popen fixture, no user app actions or unpinned context coverage')
     Path('/tmp/deskmorph-desktop-test/context-keyboard-result.json').write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n')
     print(json.dumps(report, ensure_ascii=False), flush=True)
     return report

@@ -1923,6 +1923,10 @@ if __name__ == '__main__':
                 app = start_isolated_app()  # Remove debug timing control after the test.
 
     if args.popup_smoke:
+        from native_resources import NativeResources
+        soak_seconds = int(os.environ.get('DESKMORPH_POPUP_SOAK_SECONDS', '0'))
+        assert soak_seconds == 0 or 1800 <= soak_seconds <= 7200, 'Soak must last 30..120 minutes'
+        resources = NativeResources(app.get_process_id(), TEST_CONFIG) if soak_seconds else None
         popup_config_path = Path(TEST_CONFIG) / 'com.ducthanhdev.deskmorph/config.json'
         popup_config = lambda: json.loads(popup_config_path.read_text())['config']
         original_auto = popup_config()['autoHide']
@@ -1931,7 +1935,7 @@ if __name__ == '__main__':
         click('Taskbar Studio')
         if original_auto: click(auto_label)
         try:
-            for popup_round in range(3):
+            for popup_round in range(10000 if soak_seconds else 3):
                 def visible_frames():
                     frames = {}
                     for xid in re.findall(r'0x[0-9a-fA-F]+', subprocess.check_output(['xprop', '-root', '_NET_CLIENT_LIST'], text=True)):
@@ -1987,7 +1991,14 @@ if __name__ == '__main__':
                 wait_popup(lambda: not popup_titles & visible_frames().keys(), 'Click outside popup did not dismiss it')
                 assert studio_xid in subprocess.check_output(['xprop', '-root', '_NET_ACTIVE_WINDOW'], text=True), 'Outside click did not retain selected Studio focus'
                 for _ in range(5):
-                    for name in ('Tìm ứng dụng', 'Mở lịch', 'Âm thanh'):
+                    # Begin with an actual Dock key gesture. AT-SPI do_action
+                    # from the deliberately active Studio does not carry an
+                    # X11 input timestamp and cannot require WM activation.
+                    focus_studio('DeskMorph Taskbar')
+                    source = next(n for n, _ in descendants(app) if n.get_role_name() == 'button' and n.get_name() == 'Tìm ứng dụng')
+                    assert source.get_component_iface().grab_focus()
+                    native_keys(chord=[0xff0d])
+                    for name in ('Mở lịch', 'Âm thanh'):
                         require_unlocked_desktop()
                         node = next(n for n, _ in descendants(app) if n.get_role_name() == 'button' and n.get_name() == name)
                         assert node.get_action_iface().do_action(0)
@@ -2009,12 +2020,40 @@ if __name__ == '__main__':
                 wait_popup(lambda: not popup_titles & visible_frames().keys(), 'Escape after rapid replacement left a popup')
                 report = {'passed': ['launcher Escape', 'calendar/audio replace each other with one active popup', 'focus loss dismisses without stealing selected Studio focus', 'outside click dismisses and retains selected focus', 'five rapid launcher/calendar/audio cycles without orphaned popup or overlapping tooltip', 'Escape after rapid replacement'], 'pid': app.get_process_id()}
                 report['completedRounds'] = popup_round + 1
+                if resources:
+                    time.sleep(.2)  # Let replaced popup watchers/subscriptions exit.
+                    resources.sample()
+                    report['resourceSamples'] = resources.samples
+                    report['requestedSoakSeconds'] = soak_seconds
                 Path('/tmp/deskmorph-desktop-test/popup-result.json').write_text(json.dumps(report, indent=2))
-                print(json.dumps(report))
+                print(json.dumps({key: value for key, value in report.items() if key != 'resourceSamples'}), flush=True)
+                if resources and resources.samples[-1]['seconds'] >= soak_seconds:
+                    report['resourceSummary'] = resources.summary()
+                    Path('/tmp/deskmorph-desktop-test/popup-result.json').write_text(json.dumps(report, indent=2))
+                    assert report['resourceSummary']['withinGrowthLimits'], 'Sustained native resource growth exceeded soak alarm limits'
+                    break
+        except Exception as error:
+            if resources:
+                failed = dict(passed=False, pid=app.get_process_id(), completedRounds=len(resources.samples),
+                    failedRound=popup_round + 1, requestedSoakSeconds=soak_seconds,
+                    failure=str(error), resourceSamples=resources.samples, ownedProcessesExited=False)
+                if len(resources.samples) >= 12: failed['resourceSummary'] = resources.summary()
+                Path('/tmp/deskmorph-desktop-test/popup-result.json').write_text(json.dumps(failed, indent=2))
+            raise
         finally:
             focus_studio()
             click('Taskbar Studio')
             if popup_config()['autoHide'] != original_auto: click(auto_label)
+        if resources:
+            click('Hệ thống'); click('Thoát DeskMorph')
+            process.wait(timeout=10)
+            deadline = time.monotonic() + 10
+            while resources.survivors() and time.monotonic() < deadline: time.sleep(.2)
+            assert not resources.survivors(), 'Owned native descendants survived Quit after soak'
+            report['ownedProcessesExited'] = True
+            app = start_isolated_app()
+            report['normalPidAfterCleanup'] = app.get_process_id()
+            Path('/tmp/deskmorph-desktop-test/popup-result.json').write_text(json.dumps(report, indent=2))
     if args.basic:
         path = Path(TEST_CONFIG) / 'com.ducthanhdev.deskmorph/config.json'
         config = lambda: json.loads(path.read_text())
