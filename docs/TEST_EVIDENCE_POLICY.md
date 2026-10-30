@@ -114,3 +114,8 @@ Giữ [6 ca native](benchmarks/dpi-native-fractional-2026-10-30/result.json) v�
 ## Functional glyph contrast (30/10/2026)
 
 Giữ72 fixture mở rộng trong contrast_audit.py vì đo stroke/gradient và fit SVG thật của các control chưa có bằng chứng; dùng lại renderer/math hiện có, không test lặp markup. [JSON gọn](benchmarks/functional-glyph-contrast-2026-10-30/result.json) giữ cận màu, kích thước SVG và hash, không lưu toàn computed tree hoặc nhân bản137 ca trước.209/209 là kết quả suite offscreen, không thay native focus/Orca acceptance.
+
+
+## DPI worker preflight (30/10/2026)
+
+Giữ nhánh opt-in dùng chung worker giữa Xvfb và Mutter, cùng [16 kết quả native riêng](benchmarks/dpi-worker-private-2026-10-30/result.json), để phát hiện sai nguồn/kích thước/đơn vị trước host mutation.11 fault tests tiếp tục qua; ma trận48 ca host mới chỉ chuẩn bị, chưa có acceptance. Không commit bản sao probe GNOME Shell/tmp: negative RandR monitor ngoài drawable root không phải topology vật lý dưới WM. Không dùng kết quả đó để đánh dấu G2.10 hoặc quy lỗi sản phẩm.

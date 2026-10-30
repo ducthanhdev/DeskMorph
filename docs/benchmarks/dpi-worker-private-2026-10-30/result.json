@@ -1,0 +1,1053 @@
+{
+  "passed": true,
+  "caseCount": 16,
+  "binarySha256": "1172029a8dee0dde0b196e4956b2df150522bb1b058c4ed0cf829bc55e449ac9",
+  "runnerSha256": "c4afcdb7b4fa6e565f5ffcc7f25b5f35ee83818ec4bfebfa4bece302ce64c4ab",
+  "scope": "Private positive Xvfb monitor, integer GTK scales1/2, four sources, top/bottom; same geometry worker as host trial. No host topology/input mutation.",
+  "limits": [
+    "No window manager, fractional/mixed DPI, physical pixels, popup sequencing or keyboard acceptance",
+    "Private GNOME Shell negative-origin exploratory topology extended outside drawable root; invalid as physical-monitor acceptance, not retained as regression harness"
+  ],
+  "runs": [
+    {
+      "passed": true,
+      "monitor": "right",
+      "position": "top",
+      "source": "audio",
+      "observations": [
+        {
+          "source": "Âm thanh",
+          "popup": [
+            1157,
+            82,
+            360,
+            540
+          ],
+          "anchor": 1337.0,
+          "expectedOrigin": [
+            1157,
+            82
+          ]
+        }
+      ],
+      "gdkMonitors": [
+        {
+          "name": "left",
+          "gtkScale": 1,
+          "area": [
+            -1920,
+            0,
+            1920,
+            1080
+          ]
+        },
+        {
+          "name": "right",
+          "gtkScale": 1,
+          "area": [
+            0,
+            0,
+            1920,
+            1080
+          ]
+        },
+        {
+          "name": "screen",
+          "gtkScale": 1,
+          "area": [
+            0,
+            0,
+            3840,
+            2160
+          ]
+        }
+      ],
+      "pid": 2977973,
+      "dock": [
+        410,
+        16,
+        1100,
+        52
+      ],
+      "configUnchanged": true,
+      "appExit": -15,
+      "scale": 1,
+      "privateDisplay": true
+    },
+    {
+      "passed": true,
+      "monitor": "right",
+      "position": "bottom",
+      "source": "audio",
+      "observations": [
+        {
+          "source": "Âm thanh",
+          "popup": [
+            1157,
+            458,
+            360,
+            540
+          ],
+          "anchor": 1337.0,
+          "expectedOrigin": [
+            1157,
+            458
+          ]
+        }
+      ],
+      "gdkMonitors": [
+        {
+          "name": "left",
+          "gtkScale": 1,
+          "area": [
+            -1920,
+            0,
+            1920,
+            1080
+          ]
+        },
+        {
+          "name": "right",
+          "gtkScale": 1,
+          "area": [
+            0,
+            0,
+            1920,
+            1080
+          ]
+        },
+        {
+          "name": "screen",
+          "gtkScale": 1,
+          "area": [
+            0,
+            0,
+            3840,
+            2160
+          ]
+        }
+      ],
+      "pid": 2978447,
+      "dock": [
+        410,
+        1012,
+        1100,
+        52
+      ],
+      "configUnchanged": true,
+      "appExit": -15,
+      "scale": 1,
+      "privateDisplay": true
+    },
+    {
+      "passed": true,
+      "monitor": "right",
+      "position": "top",
+      "source": "audio",
+      "observations": [
+        {
+          "source": "Âm thanh",
+          "popup": [
+            1180,
+            20,
+            720,
+            1040
+          ],
+          "anchor": 1542.0,
+          "expectedOrigin": [
+            1180,
+            20
+          ]
+        }
+      ],
+      "gdkMonitors": [
+        {
+          "name": "left",
+          "gtkScale": 2,
+          "area": [
+            -1920,
+            0,
+            1920,
+            1080
+          ]
+        },
+        {
+          "name": "right",
+          "gtkScale": 2,
+          "area": [
+            0,
+            0,
+            1920,
+            1080
+          ]
+        },
+        {
+          "name": "screen",
+          "gtkScale": 2,
+          "area": [
+            0,
+            0,
+            3840,
+            2160
+          ]
+        }
+      ],
+      "pid": 2978870,
+      "dock": [
+        32,
+        32,
+        1856,
+        104
+      ],
+      "configUnchanged": true,
+      "appExit": -15,
+      "scale": 2,
+      "privateDisplay": true
+    },
+    {
+      "passed": true,
+      "monitor": "right",
+      "position": "bottom",
+      "source": "audio",
+      "observations": [
+        {
+          "source": "Âm thanh",
+          "popup": [
+            1180,
+            20,
+            720,
+            1040
+          ],
+          "anchor": 1542.0,
+          "expectedOrigin": [
+            1180,
+            20
+          ]
+        }
+      ],
+      "gdkMonitors": [
+        {
+          "name": "left",
+          "gtkScale": 2,
+          "area": [
+            -1920,
+            0,
+            1920,
+            1080
+          ]
+        },
+        {
+          "name": "right",
+          "gtkScale": 2,
+          "area": [
+            0,
+            0,
+            1920,
+            1080
+          ]
+        },
+        {
+          "name": "screen",
+          "gtkScale": 2,
+          "area": [
+            0,
+            0,
+            3840,
+            2160
+          ]
+        }
+      ],
+      "pid": 2979288,
+      "dock": [
+        32,
+        944,
+        1856,
+        104
+      ],
+      "configUnchanged": true,
+      "appExit": -15,
+      "scale": 2,
+      "privateDisplay": true
+    },
+    {
+      "passed": true,
+      "monitor": "right",
+      "position": "top",
+      "source": "launcher",
+      "observations": [
+        {
+          "source": "Tìm ứng dụng",
+          "popup": [
+            597,
+            82,
+            500,
+            580
+          ],
+          "anchor": 847.0,
+          "expectedOrigin": [
+            597,
+            82
+          ]
+        }
+      ],
+      "gdkMonitors": [
+        {
+          "name": "left",
+          "gtkScale": 1,
+          "area": [
+            -1920,
+            0,
+            1920,
+            1080
+          ]
+        },
+        {
+          "name": "right",
+          "gtkScale": 1,
+          "area": [
+            0,
+            0,
+            1920,
+            1080
+          ]
+        },
+        {
+          "name": "screen",
+          "gtkScale": 1,
+          "area": [
+            0,
+            0,
+            3840,
+            2160
+          ]
+        }
+      ],
+      "pid": 2982889,
+      "dock": [
+        410,
+        16,
+        1100,
+        52
+      ],
+      "configUnchanged": true,
+      "appExit": -15,
+      "scale": 1,
+      "privateDisplay": true
+    },
+    {
+      "passed": true,
+      "monitor": "right",
+      "position": "bottom",
+      "source": "launcher",
+      "observations": [
+        {
+          "source": "Tìm ứng dụng",
+          "popup": [
+            597,
+            418,
+            500,
+            580
+          ],
+          "anchor": 847.0,
+          "expectedOrigin": [
+            597,
+            418
+          ]
+        }
+      ],
+      "gdkMonitors": [
+        {
+          "name": "left",
+          "gtkScale": 1,
+          "area": [
+            -1920,
+            0,
+            1920,
+            1080
+          ]
+        },
+        {
+          "name": "right",
+          "gtkScale": 1,
+          "area": [
+            0,
+            0,
+            1920,
+            1080
+          ]
+        },
+        {
+          "name": "screen",
+          "gtkScale": 1,
+          "area": [
+            0,
+            0,
+            3840,
+            2160
+          ]
+        }
+      ],
+      "pid": 2984015,
+      "dock": [
+        410,
+        1012,
+        1100,
+        52
+      ],
+      "configUnchanged": true,
+      "appExit": -15,
+      "scale": 1,
+      "privateDisplay": true
+    },
+    {
+      "passed": true,
+      "monitor": "right",
+      "position": "top",
+      "source": "launcher",
+      "observations": [
+        {
+          "source": "Tìm ứng dụng",
+          "popup": [
+            20,
+            20,
+            1000,
+            1040
+          ],
+          "anchor": 104.0,
+          "expectedOrigin": [
+            20,
+            20
+          ]
+        }
+      ],
+      "gdkMonitors": [
+        {
+          "name": "left",
+          "gtkScale": 2,
+          "area": [
+            -1920,
+            0,
+            1920,
+            1080
+          ]
+        },
+        {
+          "name": "right",
+          "gtkScale": 2,
+          "area": [
+            0,
+            0,
+            1920,
+            1080
+          ]
+        },
+        {
+          "name": "screen",
+          "gtkScale": 2,
+          "area": [
+            0,
+            0,
+            3840,
+            2160
+          ]
+        }
+      ],
+      "pid": 2985230,
+      "dock": [
+        32,
+        32,
+        1856,
+        104
+      ],
+      "configUnchanged": true,
+      "appExit": -15,
+      "scale": 2,
+      "privateDisplay": true
+    },
+    {
+      "passed": true,
+      "monitor": "right",
+      "position": "bottom",
+      "source": "launcher",
+      "observations": [
+        {
+          "source": "Tìm ứng dụng",
+          "popup": [
+            20,
+            20,
+            1000,
+            1040
+          ],
+          "anchor": 104.0,
+          "expectedOrigin": [
+            20,
+            20
+          ]
+        }
+      ],
+      "gdkMonitors": [
+        {
+          "name": "left",
+          "gtkScale": 2,
+          "area": [
+            -1920,
+            0,
+            1920,
+            1080
+          ]
+        },
+        {
+          "name": "right",
+          "gtkScale": 2,
+          "area": [
+            0,
+            0,
+            1920,
+            1080
+          ]
+        },
+        {
+          "name": "screen",
+          "gtkScale": 2,
+          "area": [
+            0,
+            0,
+            3840,
+            2160
+          ]
+        }
+      ],
+      "pid": 2986325,
+      "dock": [
+        32,
+        944,
+        1856,
+        104
+      ],
+      "configUnchanged": true,
+      "appExit": -15,
+      "scale": 2,
+      "privateDisplay": true
+    },
+    {
+      "passed": true,
+      "monitor": "right",
+      "position": "top",
+      "source": "system",
+      "observations": [
+        {
+          "source": "Tiện ích hệ thống",
+          "popup": [
+            794,
+            82,
+            380,
+            620
+          ],
+          "anchor": 984.0,
+          "expectedOrigin": [
+            794,
+            82
+          ]
+        }
+      ],
+      "gdkMonitors": [
+        {
+          "name": "left",
+          "gtkScale": 1,
+          "area": [
+            -1920,
+            0,
+            1920,
+            1080
+          ]
+        },
+        {
+          "name": "right",
+          "gtkScale": 1,
+          "area": [
+            0,
+            0,
+            1920,
+            1080
+          ]
+        },
+        {
+          "name": "screen",
+          "gtkScale": 1,
+          "area": [
+            0,
+            0,
+            3840,
+            2160
+          ]
+        }
+      ],
+      "pid": 2982859,
+      "dock": [
+        410,
+        16,
+        1100,
+        52
+      ],
+      "configUnchanged": true,
+      "appExit": -15,
+      "scale": 1,
+      "privateDisplay": true
+    },
+    {
+      "passed": true,
+      "monitor": "right",
+      "position": "bottom",
+      "source": "system",
+      "observations": [
+        {
+          "source": "Tiện ích hệ thống",
+          "popup": [
+            794,
+            378,
+            380,
+            620
+          ],
+          "anchor": 984.0,
+          "expectedOrigin": [
+            794,
+            378
+          ]
+        }
+      ],
+      "gdkMonitors": [
+        {
+          "name": "left",
+          "gtkScale": 1,
+          "area": [
+            -1920,
+            0,
+            1920,
+            1080
+          ]
+        },
+        {
+          "name": "right",
+          "gtkScale": 1,
+          "area": [
+            0,
+            0,
+            1920,
+            1080
+          ]
+        },
+        {
+          "name": "screen",
+          "gtkScale": 1,
+          "area": [
+            0,
+            0,
+            3840,
+            2160
+          ]
+        }
+      ],
+      "pid": 2984014,
+      "dock": [
+        410,
+        1012,
+        1100,
+        52
+      ],
+      "configUnchanged": true,
+      "appExit": -15,
+      "scale": 1,
+      "privateDisplay": true
+    },
+    {
+      "passed": true,
+      "monitor": "right",
+      "position": "top",
+      "source": "system",
+      "observations": [
+        {
+          "source": "Tiện ích hệ thống",
+          "popup": [
+            1140,
+            20,
+            760,
+            1040
+          ],
+          "anchor": 1638.0,
+          "expectedOrigin": [
+            1140,
+            20
+          ]
+        }
+      ],
+      "gdkMonitors": [
+        {
+          "name": "left",
+          "gtkScale": 2,
+          "area": [
+            -1920,
+            0,
+            1920,
+            1080
+          ]
+        },
+        {
+          "name": "right",
+          "gtkScale": 2,
+          "area": [
+            0,
+            0,
+            1920,
+            1080
+          ]
+        },
+        {
+          "name": "screen",
+          "gtkScale": 2,
+          "area": [
+            0,
+            0,
+            3840,
+            2160
+          ]
+        }
+      ],
+      "pid": 2985229,
+      "dock": [
+        32,
+        32,
+        1856,
+        104
+      ],
+      "configUnchanged": true,
+      "appExit": -15,
+      "scale": 2,
+      "privateDisplay": true
+    },
+    {
+      "passed": true,
+      "monitor": "right",
+      "position": "bottom",
+      "source": "system",
+      "observations": [
+        {
+          "source": "Tiện ích hệ thống",
+          "popup": [
+            628,
+            20,
+            760,
+            1040
+          ],
+          "anchor": 1008.0,
+          "expectedOrigin": [
+            628,
+            20
+          ]
+        }
+      ],
+      "gdkMonitors": [
+        {
+          "name": "left",
+          "gtkScale": 2,
+          "area": [
+            -1920,
+            0,
+            1920,
+            1080
+          ]
+        },
+        {
+          "name": "right",
+          "gtkScale": 2,
+          "area": [
+            0,
+            0,
+            1920,
+            1080
+          ]
+        },
+        {
+          "name": "screen",
+          "gtkScale": 2,
+          "area": [
+            0,
+            0,
+            3840,
+            2160
+          ]
+        }
+      ],
+      "pid": 2986300,
+      "dock": [
+        32,
+        944,
+        1856,
+        104
+      ],
+      "configUnchanged": true,
+      "appExit": -15,
+      "scale": 2,
+      "privateDisplay": true
+    },
+    {
+      "passed": true,
+      "monitor": "right",
+      "position": "top",
+      "source": "calendar",
+      "observations": [
+        {
+          "source": "Mở lịch",
+          "popup": [
+            1292,
+            82,
+            320,
+            340
+          ],
+          "anchor": 1451.5,
+          "expectedOrigin": [
+            1292,
+            82
+          ]
+        }
+      ],
+      "gdkMonitors": [
+        {
+          "name": "left",
+          "gtkScale": 1,
+          "area": [
+            -1920,
+            0,
+            1920,
+            1080
+          ]
+        },
+        {
+          "name": "right",
+          "gtkScale": 1,
+          "area": [
+            0,
+            0,
+            1920,
+            1080
+          ]
+        },
+        {
+          "name": "screen",
+          "gtkScale": 1,
+          "area": [
+            0,
+            0,
+            3840,
+            2160
+          ]
+        }
+      ],
+      "pid": 2983481,
+      "dock": [
+        410,
+        16,
+        1100,
+        52
+      ],
+      "configUnchanged": true,
+      "appExit": -15,
+      "scale": 1,
+      "privateDisplay": true
+    },
+    {
+      "passed": true,
+      "monitor": "right",
+      "position": "bottom",
+      "source": "calendar",
+      "observations": [
+        {
+          "source": "Mở lịch",
+          "popup": [
+            891,
+            658,
+            320,
+            340
+          ],
+          "anchor": 1050.5,
+          "expectedOrigin": [
+            890,
+            658
+          ]
+        }
+      ],
+      "gdkMonitors": [
+        {
+          "name": "left",
+          "gtkScale": 1,
+          "area": [
+            -1920,
+            0,
+            1920,
+            1080
+          ]
+        },
+        {
+          "name": "right",
+          "gtkScale": 1,
+          "area": [
+            0,
+            0,
+            1920,
+            1080
+          ]
+        },
+        {
+          "name": "screen",
+          "gtkScale": 1,
+          "area": [
+            0,
+            0,
+            3840,
+            2160
+          ]
+        }
+      ],
+      "pid": 2984481,
+      "dock": [
+        811,
+        1012,
+        298,
+        52
+      ],
+      "configUnchanged": true,
+      "appExit": -15,
+      "scale": 1,
+      "privateDisplay": true
+    },
+    {
+      "passed": true,
+      "monitor": "right",
+      "position": "top",
+      "source": "calendar",
+      "observations": [
+        {
+          "source": "Mở lịch",
+          "popup": [
+            822,
+            164,
+            640,
+            680
+          ],
+          "anchor": 1141.0,
+          "expectedOrigin": [
+            821,
+            164
+          ]
+        }
+      ],
+      "gdkMonitors": [
+        {
+          "name": "left",
+          "gtkScale": 2,
+          "area": [
+            -1920,
+            0,
+            1920,
+            1080
+          ]
+        },
+        {
+          "name": "right",
+          "gtkScale": 2,
+          "area": [
+            0,
+            0,
+            1920,
+            1080
+          ]
+        },
+        {
+          "name": "screen",
+          "gtkScale": 2,
+          "area": [
+            0,
+            0,
+            3840,
+            2160
+          ]
+        }
+      ],
+      "pid": 2985421,
+      "dock": [
+        32,
+        32,
+        1856,
+        104
+      ],
+      "configUnchanged": true,
+      "appExit": -15,
+      "scale": 2,
+      "privateDisplay": true
+    },
+    {
+      "passed": true,
+      "monitor": "right",
+      "position": "bottom",
+      "source": "calendar",
+      "observations": [
+        {
+          "source": "Mở lịch",
+          "popup": [
+            822,
+            236,
+            640,
+            680
+          ],
+          "anchor": 1141.0,
+          "expectedOrigin": [
+            821,
+            236
+          ]
+        }
+      ],
+      "gdkMonitors": [
+        {
+          "name": "left",
+          "gtkScale": 2,
+          "area": [
+            -1920,
+            0,
+            1920,
+            1080
+          ]
+        },
+        {
+          "name": "right",
+          "gtkScale": 2,
+          "area": [
+            0,
+            0,
+            1920,
+            1080
+          ]
+        },
+        {
+          "name": "screen",
+          "gtkScale": 2,
+          "area": [
+            0,
+            0,
+            3840,
+            2160
+          ]
+        }
+      ],
+      "pid": 2986932,
+      "dock": [
+        32,
+        944,
+        1856,
+        104
+      ],
+      "configUnchanged": true,
+      "appExit": -15,
+      "scale": 2,
+      "privateDisplay": true
+    }
+  ]
+}

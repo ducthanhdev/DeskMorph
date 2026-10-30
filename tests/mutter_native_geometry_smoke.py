@@ -1,9 +1,9 @@
 """Opt-in GNOME X11 fractional/mixed native allocation survey.
 
-Tests top Dock + launcher on both monitors; no host key/mouse injection.
+Tests four popups with top/bottom Dock on both monitors; no host key/mouse injection.
 Retains exact feature user value, modes, refresh, primary and origins. Uses
-Mutter VERIFY before TEMPORARY apply; never persistent method 2. Keep the
-current evidence limits: bottom Dock and the other popups are not covered.
+Mutter VERIFY before TEMPORARY apply; never persistent method 2.
+Each popup uses a fresh owned instance; this does not test popup sequencing.
 """
 import sys, os, json, time, copy, subprocess, tempfile, re, signal, hashlib, math
 from pathlib import Path
@@ -14,6 +14,12 @@ gi.require_version('Atspi', '2.0')
 from gi.repository import Gio, GLib, Gdk, Atspi
 import mutter_scaling_probe as m
 BINARY = REPO / 'src-tauri/target/agent/debug/deskmorph'
+SOURCES = {
+    'launcher': ('Tìm ứng dụng', 'DeskMorph Context Menu', [500, 580]),
+    'audio': ('Âm thanh', 'DeskMorph Context Menu', [360, 540]),
+    'system': ('Tiện ích hệ thống', 'DeskMorph Context Menu', [380, 620]),
+    'calendar': ('Mở lịch', 'DeskMorph Calendar', [320, 340]),
+}
 
 def wait(f, msg, seconds=12):
     end = time.monotonic() + seconds
@@ -29,11 +35,14 @@ def walk(n):
     for i in range(n.get_child_count()):
         yield from walk(n.get_child_at_index(i))
 
-def worker(root, monitor, position):
-    result = {'passed': False, 'monitor': monitor, 'position': position, 'observations': []}
+def worker(root, monitor, position, source='launcher'):
+    result = {'passed': False, 'monitor': monitor, 'position': position, 'source': source, 'observations': []}
     app = None
     try:
-        assert os.environ['DESKMORPH_DPI_WORKER_ROOT'] == str(root) and root.parent.name.startswith('deskmorph-dpi-native-') and (root.parent.parent == Path('/tmp'))
+        host_trial = os.environ.get('DESKMORPH_DPI_WORKER_ROOT') == str(root) and root.parent.name.startswith('deskmorph-dpi-native-') and root.parent.parent == Path('/tmp')
+        private_trial = os.environ.get('DESKMORPH_GEOMETRY_LAB') == str(root) and root.parent.name.startswith('deskmorph-negative-origin-') and root.parent.parent == Path('/tmp') and os.environ.get('DISPLAY') == (root / 'display').read_text()
+        assert host_trial or private_trial, 'Worker must belong to the host trial or private Xvfb runner'
+        assert source in SOURCES and position in ('top', 'bottom')
         d = Gdk.Display.get_default()
         mns = []
         for i in range(d.get_n_monitors()):
@@ -60,7 +69,6 @@ def worker(root, monitor, position):
             desktop = Atspi.get_desktop(0)
             return next((desktop.get_child_at_index(i) for i in range(desktop.get_child_count()) if desktop.get_child_at_index(i).get_process_id() == app.pid), None)
         accessible = wait(owned, 'Owned accessibility app absent')
-        window_ids = {}
 
         def raw_native(title):
             tree = subprocess.check_output(['xwininfo', '-root', '-tree'], text=True)
@@ -71,7 +79,6 @@ def worker(root, monitor, position):
                 info = subprocess.check_output(['xwininfo', '-id', xid], text=True)
                 if 'Map State: IsViewable' not in info:
                     continue
-                window_ids[title] = xid
                 return [int(re.search(k + ':\\s+(-?\\d+)', info).group(1)) for k in ('Absolute upper-left X', 'Absolute upper-left Y', 'Width', 'Height')]
 
         def native(title):
@@ -96,7 +103,7 @@ def worker(root, monitor, position):
         result['dock'] = dock
         assert dock[3] == 52 * s and abs(dock[0] + dock[2] / 2 - ax - aw / 2) <= 2, (dock, target)
         assert abs(dock[1] - (ay + 16 * s if position == 'top' else ay + ah - 68 * s)) <= 2, (dock, target)
-        for label, title, size in [('Tìm ứng dụng', 'DeskMorph Context Menu', [500, 580])]:
+        for label, title, size in [SOURCES[source]]:
 
             def source():
                 f = next((n for n in walk(accessible) if n.get_role_name() == 'frame' and n.get_name() == 'DeskMorph Taskbar'), None)
@@ -131,7 +138,7 @@ def worker(root, monitor, position):
     return result
 
 def run():
-    deadline = time.monotonic() + 240
+    deadline = time.monotonic() + 420
     root = Path(tempfile.mkdtemp(prefix='deskmorph-dpi-native-'))
     out = root / 'result.json'
     display = m.proxy()
@@ -139,7 +146,7 @@ def run():
     before = m.snapshot(display)
     original = settings.get_user_value('experimental-features')
     features = list(settings.get_strv('experimental-features'))
-    report = {'passed': False, 'before': before, 'features': features, 'originalUserValue': None if original is None else original.print_(True), 'root': str(root), 'binarySha256': hashlib.sha256(BINARY.read_bytes()).hexdigest(), 'cases': [], 'restoreErrors': [], 'inputSent': False, 'featureMutationAttempted': False, 'topologyMutationAttempted': False, 'scope': 'Real GNOME X11 fractional/mixed display layouts, native allocation and AT-SPI popup activation; top Dock and launcher only on both monitors; AT-SPI activation, app shutdown dismisses; no keyboard, bottom or other popup acceptance'}
+    report = {'passed': False, 'before': before, 'features': features, 'originalUserValue': None if original is None else original.print_(True), 'root': str(root), 'binarySha256': hashlib.sha256(BINARY.read_bytes()).hexdigest(), 'cases': [], 'restoreErrors': [], 'inputSent': False, 'featureMutationAttempted': False, 'topologyMutationAttempted': False, 'scope': 'Real GNOME X11 fractional/mixed display layouts, native allocation and AT-SPI activation of four popups, top/bottom on both monitors; fresh owned instance per popup; no keyboard, popup sequencing or physical-pixel proof'}
     report.update(topologyRestored=False, userValueRestored=False, capabilitiesRestored=False)
     out.write_text(json.dumps(report, indent=2))
     try:
@@ -175,20 +182,20 @@ def run():
             report['cases'].append(case)
             for logical in ordered:
                 connector = logical['connectors'][0]
-                for position in ('top',):
+                for position, source in ((position, source) for position in ('top', 'bottom') for source in SOURCES):
                     assert time.monotonic() + 40 < deadline, 'Desktop trial time budget exhausted; restoring baseline'
-                    folder = root / (label + '-' + connector + '-' + position)
+                    folder = root / (label + '-' + connector + '-' + position + '-' + source)
                     folder.mkdir()
                     env = dict(os.environ, DESKMORPH_DPI_WORKER_ROOT=str(folder))
                     for key in ('GDK_SCALE', 'GDK_DPI_SCALE'):
                         env.pop(key, None)
                     with (folder / 'worker.log').open('w') as log:
-                        p = subprocess.run(['/usr/bin/python3', __file__, '--worker', str(folder), connector, position], env=env, stdout=log, stderr=log, timeout=40)
+                        p = subprocess.run(['/usr/bin/python3', __file__, '--worker', str(folder), connector, position, source], env=env, stdout=log, stderr=log, timeout=40)
                     r = json.loads((folder / 'result.json').read_text())
                     case['runs'].append(r)
                     out.write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n')
                     assert p.returncode == 0 and r['passed'], r
-                    print(json.dumps({'layout': label, 'monitor': connector, 'position': position, 'passed': True}), flush=True)
+                    print(json.dumps({'layout': label, 'monitor': connector, 'position': position, 'source': source, 'passed': True}), flush=True)
             neutral = copy.deepcopy(before)
             neutral['properties'] = during['properties']
             m.apply(display, neutral, 1)
@@ -234,7 +241,7 @@ if __name__ == '__main__':
     signal.signal(signal.SIGTERM, m.interrupted)
     signal.signal(signal.SIGINT, m.interrupted)
     if len(sys.argv) > 1 and sys.argv[1] == '--worker':
-        sys.exit(0 if worker(Path(sys.argv[2]), sys.argv[3], sys.argv[4])['passed'] else 1)
+        sys.exit(0 if worker(Path(sys.argv[2]), sys.argv[3], sys.argv[4], sys.argv[5])['passed'] else 1)
     import argparse
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--run', action='store_true', help='Opt in to reversible host display mutations; requires an agreed idle desktop window')

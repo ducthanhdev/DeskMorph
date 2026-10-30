@@ -1028,3 +1028,12 @@ G2.10 vẫn mở: cần Dock dưới, audio/system/calendar và sequencing, nega
 [Bằng chứng](benchmarks/functional-glyph-contrast-2026-10-30/result.json):209/209 computed-style cases đạt, gồm72 ca mới cho glyph Dock, context menu, đóng cửa sổ và launcher. Render lucide-react đang cài với kích thước thật (X context14px, X đóng cửa sổ16px), CSS/control classes thật, nền đen/trắng, thường/hover khi có. Cận tương phản nhỏ nhất trong72 ca mới là5,246:1 (yêu cầu3:1); SVG bounds nằm trong parent. Lưu riêng72 kết quả mới, hash CSS/runner và tổng suite; không nhân bản137 ca cũ hoặc raw computed tree.
 
 Đây là cận bảo thủ từ màu stroke/background và gradient stops trong WebKitGTK offscreen, không chứng nhận artwork/logo ngoài, native controls, focus bàn phím hay toàn bộ accessibility. Không đổi mã sản phẩm; không rebuild hoặc lặp unit suite sản phẩm. G5.9 vẫn mở, tổng97/99.
+
+
+## G2.10 — Chuẩn bị ma trận48 ca, kiểm worker trên desktop riêng (30/10/2026)
+
+Mở rộng runner Mutter opt-in:3 layouts fractional/mixed ×2 monitor ×2 vị trí Dock ×4 nguồn launcher/audio/system/calendar =48 ca; mỗi nguồn dùng instance riêng. [Tiền kiểm native riêng](benchmarks/dpi-worker-private-2026-10-30/result.json) qua16/16 ca, GTK scale1/2 ×Dock trên/dưới ×4nguồn, với monitor dương trong Xvfb.11 fault tests của probe/orchestration qua sau mở rộng. Audit procfs cuối không còn tiến trình mang marker geometry/WM/DPI lab.
+
+Giữ nhánh dùng lại worker trong negative_origin_smoke.py để kiểm phép đo trước khi đổi topology host; không thêm harness bản sao. Một probe GNOME Shell riêng nhận vai trò WM nhưng monitor âm nằm ngoài drawable root, Dock bị đặt về vùng dương; đây không phải bố trí màn hình vật lý hợp lệ để kết luận lỗi sản phẩm hoặc chốt negative topology. Không giữ probe tạm như regression test.
+
+Chưa chạy48 ca trên host trong lượt này: khoảng desktop rảnh trước đã hết, cần xác nhận khoảng mới đang chờ.16 ca riêng không thay fractional/mixed/WM/physical-pixel acceptance;6 ca host đã lưu trước vẫn là phạm vi host được chứng minh. G2.10/G5.9 vẫn mở,97/99; release no-go.
