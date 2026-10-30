@@ -1083,6 +1083,16 @@ body {
   flex-shrink: 0;
 }
 
+/* Keep the action glyph readable for every user-selected gradient accent. */
+.dock-launcher-glyph {
+  box-sizing: content-box;
+  padding: 2px;
+  border-radius: 4px;
+  background: #e2e8f0;
+  color: #0c1017;
+  flex-shrink: 0;
+}
+
 .dock-launcher-btn:hover > svg {
   transform: scale(1.08);
 }

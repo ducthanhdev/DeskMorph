@@ -1,0 +1,1069 @@
+{
+  "passed": true,
+  "scope": "Functional launcher Sparkles glyph on fixed opaque background shared by native Dock and Studio preview; computed stroke/background contrast and bounding rectangles, not a whole application accessibility certificate",
+  "engine": "WebKitGTK 2.52.6",
+  "baseline": {
+    "cssSha256": "f68f0969dc61caefb05d5ba03c1d90174d483ef2f6a50b71e16376f9b962e840",
+    "passed": 125,
+    "total": 137,
+    "note": "12 dark-accent fixtures fail the conservative bound; bound=1 does not claim every rendered glyph pixel has 1:1 contrast"
+  },
+  "final": {
+    "cssSha256": "703196a8cae9164b5d01471834e0882cac45b3f2721e1ac46cd1d775398ba144",
+    "passed": 137,
+    "total": 137
+  },
+  "cases": [
+    {
+      "name": "icon/launcher/28/#000000/normal",
+      "threshold": 3,
+      "baselineConservativeBound": 1.0,
+      "finalConservativeBound": 15.456238298997041,
+      "foreground": [
+        12,
+        16,
+        23,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ],
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ]
+      ],
+      "strokeWidth": 2,
+      "strokeOpacity": 1,
+      "boundsWithinButton": true,
+      "rect": {
+        "x": 24.5,
+        "y": 41964.5,
+        "width": 17,
+        "height": 17
+      },
+      "buttonRect": {
+        "x": 19,
+        "y": 41959,
+        "width": 28,
+        "height": 28
+      },
+      "passed": true
+    },
+    {
+      "name": "icon/launcher/28/#000000/hover",
+      "threshold": 3,
+      "baselineConservativeBound": 1.0,
+      "finalConservativeBound": 15.456238298997041,
+      "foreground": [
+        12,
+        16,
+        23,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ],
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ]
+      ],
+      "strokeWidth": 2,
+      "strokeOpacity": 1,
+      "boundsWithinButton": true,
+      "rect": {
+        "x": 23.81999969482422,
+        "y": 42015.8203125,
+        "width": 18.360000610351562,
+        "height": 18.359375
+      },
+      "buttonRect": {
+        "x": 19,
+        "y": 42011,
+        "width": 28,
+        "height": 28
+      },
+      "passed": true
+    },
+    {
+      "name": "icon/launcher/28/#0c1017/normal",
+      "threshold": 3,
+      "baselineConservativeBound": 1.0,
+      "finalConservativeBound": 15.456238298997041,
+      "foreground": [
+        12,
+        16,
+        23,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ],
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ]
+      ],
+      "strokeWidth": 2,
+      "strokeOpacity": 1,
+      "boundsWithinButton": true,
+      "rect": {
+        "x": 24.5,
+        "y": 42068.5,
+        "width": 17,
+        "height": 17
+      },
+      "buttonRect": {
+        "x": 19,
+        "y": 42063,
+        "width": 28,
+        "height": 28
+      },
+      "passed": true
+    },
+    {
+      "name": "icon/launcher/28/#0c1017/hover",
+      "threshold": 3,
+      "baselineConservativeBound": 1.0,
+      "finalConservativeBound": 15.456238298997041,
+      "foreground": [
+        12,
+        16,
+        23,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ],
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ]
+      ],
+      "strokeWidth": 2,
+      "strokeOpacity": 1,
+      "boundsWithinButton": true,
+      "rect": {
+        "x": 23.81999969482422,
+        "y": 42119.8203125,
+        "width": 18.360000610351562,
+        "height": 18.359375
+      },
+      "buttonRect": {
+        "x": 19,
+        "y": 42115,
+        "width": 28,
+        "height": 28
+      },
+      "passed": true
+    },
+    {
+      "name": "icon/launcher/28/#ffffff/normal",
+      "threshold": 3,
+      "baselineConservativeBound": 4.499882333811372,
+      "finalConservativeBound": 15.456238298997041,
+      "foreground": [
+        12,
+        16,
+        23,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ],
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ]
+      ],
+      "strokeWidth": 2,
+      "strokeOpacity": 1,
+      "boundsWithinButton": true,
+      "rect": {
+        "x": 24.5,
+        "y": 42172.5,
+        "width": 17,
+        "height": 17
+      },
+      "buttonRect": {
+        "x": 19,
+        "y": 42167,
+        "width": 28,
+        "height": 28
+      },
+      "passed": true
+    },
+    {
+      "name": "icon/launcher/28/#ffffff/hover",
+      "threshold": 3,
+      "baselineConservativeBound": 4.499882333811372,
+      "finalConservativeBound": 15.456238298997041,
+      "foreground": [
+        12,
+        16,
+        23,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ],
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ]
+      ],
+      "strokeWidth": 2,
+      "strokeOpacity": 1,
+      "boundsWithinButton": true,
+      "rect": {
+        "x": 23.81999969482422,
+        "y": 42223.8203125,
+        "width": 18.360000610351562,
+        "height": 18.359375
+      },
+      "buttonRect": {
+        "x": 19,
+        "y": 42219,
+        "width": 28,
+        "height": 28
+      },
+      "passed": true
+    },
+    {
+      "name": "icon/launcher/28/#48b9c7/normal",
+      "threshold": 3,
+      "baselineConservativeBound": 3.2946520651999367,
+      "finalConservativeBound": 15.456238298997041,
+      "foreground": [
+        12,
+        16,
+        23,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ],
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ]
+      ],
+      "strokeWidth": 2,
+      "strokeOpacity": 1,
+      "boundsWithinButton": true,
+      "rect": {
+        "x": 24.5,
+        "y": 42276.5,
+        "width": 17,
+        "height": 17
+      },
+      "buttonRect": {
+        "x": 19,
+        "y": 42271,
+        "width": 28,
+        "height": 28
+      },
+      "passed": true
+    },
+    {
+      "name": "icon/launcher/28/#48b9c7/hover",
+      "threshold": 3,
+      "baselineConservativeBound": 3.2946520651999367,
+      "finalConservativeBound": 15.456238298997041,
+      "foreground": [
+        12,
+        16,
+        23,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ],
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ]
+      ],
+      "strokeWidth": 2,
+      "strokeOpacity": 1,
+      "boundsWithinButton": true,
+      "rect": {
+        "x": 23.81999969482422,
+        "y": 42327.8203125,
+        "width": 18.360000610351562,
+        "height": 18.359375
+      },
+      "buttonRect": {
+        "x": 19,
+        "y": 42323,
+        "width": 28,
+        "height": 28
+      },
+      "passed": true
+    },
+    {
+      "name": "icon/launcher/34/#000000/normal",
+      "threshold": 3,
+      "baselineConservativeBound": 1.0,
+      "finalConservativeBound": 15.456238298997041,
+      "foreground": [
+        12,
+        16,
+        23,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ],
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ]
+      ],
+      "strokeWidth": 2,
+      "strokeOpacity": 1,
+      "boundsWithinButton": true,
+      "rect": {
+        "x": 26,
+        "y": 42379,
+        "width": 20,
+        "height": 20
+      },
+      "buttonRect": {
+        "x": 19,
+        "y": 42372,
+        "width": 34,
+        "height": 34
+      },
+      "passed": true
+    },
+    {
+      "name": "icon/launcher/34/#000000/hover",
+      "threshold": 3,
+      "baselineConservativeBound": 1.0,
+      "finalConservativeBound": 15.456238298997041,
+      "foreground": [
+        12,
+        16,
+        23,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ],
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ]
+      ],
+      "strokeWidth": 2,
+      "strokeOpacity": 1,
+      "boundsWithinButton": true,
+      "rect": {
+        "x": 25.200000762939453,
+        "y": 42430.19921875,
+        "width": 21.599998474121094,
+        "height": 21.6015625
+      },
+      "buttonRect": {
+        "x": 19,
+        "y": 42424,
+        "width": 34,
+        "height": 34
+      },
+      "passed": true
+    },
+    {
+      "name": "icon/launcher/34/#0c1017/normal",
+      "threshold": 3,
+      "baselineConservativeBound": 1.0,
+      "finalConservativeBound": 15.456238298997041,
+      "foreground": [
+        12,
+        16,
+        23,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ],
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ]
+      ],
+      "strokeWidth": 2,
+      "strokeOpacity": 1,
+      "boundsWithinButton": true,
+      "rect": {
+        "x": 26,
+        "y": 42483,
+        "width": 20,
+        "height": 20
+      },
+      "buttonRect": {
+        "x": 19,
+        "y": 42476,
+        "width": 34,
+        "height": 34
+      },
+      "passed": true
+    },
+    {
+      "name": "icon/launcher/34/#0c1017/hover",
+      "threshold": 3,
+      "baselineConservativeBound": 1.0,
+      "finalConservativeBound": 15.456238298997041,
+      "foreground": [
+        12,
+        16,
+        23,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ],
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ]
+      ],
+      "strokeWidth": 2,
+      "strokeOpacity": 1,
+      "boundsWithinButton": true,
+      "rect": {
+        "x": 25.200000762939453,
+        "y": 42534.19921875,
+        "width": 21.599998474121094,
+        "height": 21.6015625
+      },
+      "buttonRect": {
+        "x": 19,
+        "y": 42528,
+        "width": 34,
+        "height": 34
+      },
+      "passed": true
+    },
+    {
+      "name": "icon/launcher/34/#ffffff/normal",
+      "threshold": 3,
+      "baselineConservativeBound": 4.499882333811372,
+      "finalConservativeBound": 15.456238298997041,
+      "foreground": [
+        12,
+        16,
+        23,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ],
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ]
+      ],
+      "strokeWidth": 2,
+      "strokeOpacity": 1,
+      "boundsWithinButton": true,
+      "rect": {
+        "x": 26,
+        "y": 42587,
+        "width": 20,
+        "height": 20
+      },
+      "buttonRect": {
+        "x": 19,
+        "y": 42580,
+        "width": 34,
+        "height": 34
+      },
+      "passed": true
+    },
+    {
+      "name": "icon/launcher/34/#ffffff/hover",
+      "threshold": 3,
+      "baselineConservativeBound": 4.499882333811372,
+      "finalConservativeBound": 15.456238298997041,
+      "foreground": [
+        12,
+        16,
+        23,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ],
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ]
+      ],
+      "strokeWidth": 2,
+      "strokeOpacity": 1,
+      "boundsWithinButton": true,
+      "rect": {
+        "x": 25.200000762939453,
+        "y": 42638.19921875,
+        "width": 21.599998474121094,
+        "height": 21.6015625
+      },
+      "buttonRect": {
+        "x": 19,
+        "y": 42632,
+        "width": 34,
+        "height": 34
+      },
+      "passed": true
+    },
+    {
+      "name": "icon/launcher/34/#48b9c7/normal",
+      "threshold": 3,
+      "baselineConservativeBound": 3.2946520651999367,
+      "finalConservativeBound": 15.456238298997041,
+      "foreground": [
+        12,
+        16,
+        23,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ],
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ]
+      ],
+      "strokeWidth": 2,
+      "strokeOpacity": 1,
+      "boundsWithinButton": true,
+      "rect": {
+        "x": 26,
+        "y": 42691,
+        "width": 20,
+        "height": 20
+      },
+      "buttonRect": {
+        "x": 19,
+        "y": 42684,
+        "width": 34,
+        "height": 34
+      },
+      "passed": true
+    },
+    {
+      "name": "icon/launcher/34/#48b9c7/hover",
+      "threshold": 3,
+      "baselineConservativeBound": 3.2946520651999367,
+      "finalConservativeBound": 15.456238298997041,
+      "foreground": [
+        12,
+        16,
+        23,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ],
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ]
+      ],
+      "strokeWidth": 2,
+      "strokeOpacity": 1,
+      "boundsWithinButton": true,
+      "rect": {
+        "x": 25.200000762939453,
+        "y": 42742.19921875,
+        "width": 21.599998474121094,
+        "height": 21.6015625
+      },
+      "buttonRect": {
+        "x": 19,
+        "y": 42736,
+        "width": 34,
+        "height": 34
+      },
+      "passed": true
+    },
+    {
+      "name": "icon/launcher/54/#000000/normal",
+      "threshold": 3,
+      "baselineConservativeBound": 1.0,
+      "finalConservativeBound": 15.456238298997041,
+      "foreground": [
+        12,
+        16,
+        23,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ],
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ]
+      ],
+      "strokeWidth": 2,
+      "strokeOpacity": 1,
+      "boundsWithinButton": true,
+      "rect": {
+        "x": 31,
+        "y": 42790,
+        "width": 30,
+        "height": 30
+      },
+      "buttonRect": {
+        "x": 19,
+        "y": 42778,
+        "width": 54,
+        "height": 54
+      },
+      "passed": true
+    },
+    {
+      "name": "icon/launcher/54/#000000/hover",
+      "threshold": 3,
+      "baselineConservativeBound": 1.0,
+      "finalConservativeBound": 15.456238298997041,
+      "foreground": [
+        12,
+        16,
+        23,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ],
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ]
+      ],
+      "strokeWidth": 2,
+      "strokeOpacity": 1,
+      "boundsWithinButton": true,
+      "rect": {
+        "x": 29.799999237060547,
+        "y": 42840.80078125,
+        "width": 32.400001525878906,
+        "height": 32.3984375
+      },
+      "buttonRect": {
+        "x": 19,
+        "y": 42830,
+        "width": 54,
+        "height": 54
+      },
+      "passed": true
+    },
+    {
+      "name": "icon/launcher/54/#0c1017/normal",
+      "threshold": 3,
+      "baselineConservativeBound": 1.0,
+      "finalConservativeBound": 15.456238298997041,
+      "foreground": [
+        12,
+        16,
+        23,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ],
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ]
+      ],
+      "strokeWidth": 2,
+      "strokeOpacity": 1,
+      "boundsWithinButton": true,
+      "rect": {
+        "x": 31,
+        "y": 42894,
+        "width": 30,
+        "height": 30
+      },
+      "buttonRect": {
+        "x": 19,
+        "y": 42882,
+        "width": 54,
+        "height": 54
+      },
+      "passed": true
+    },
+    {
+      "name": "icon/launcher/54/#0c1017/hover",
+      "threshold": 3,
+      "baselineConservativeBound": 1.0,
+      "finalConservativeBound": 15.456238298997041,
+      "foreground": [
+        12,
+        16,
+        23,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ],
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ]
+      ],
+      "strokeWidth": 2,
+      "strokeOpacity": 1,
+      "boundsWithinButton": true,
+      "rect": {
+        "x": 29.799999237060547,
+        "y": 42944.80078125,
+        "width": 32.400001525878906,
+        "height": 32.3984375
+      },
+      "buttonRect": {
+        "x": 19,
+        "y": 42934,
+        "width": 54,
+        "height": 54
+      },
+      "passed": true
+    },
+    {
+      "name": "icon/launcher/54/#ffffff/normal",
+      "threshold": 3,
+      "baselineConservativeBound": 4.499882333811372,
+      "finalConservativeBound": 15.456238298997041,
+      "foreground": [
+        12,
+        16,
+        23,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ],
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ]
+      ],
+      "strokeWidth": 2,
+      "strokeOpacity": 1,
+      "boundsWithinButton": true,
+      "rect": {
+        "x": 31,
+        "y": 42998,
+        "width": 30,
+        "height": 30
+      },
+      "buttonRect": {
+        "x": 19,
+        "y": 42986,
+        "width": 54,
+        "height": 54
+      },
+      "passed": true
+    },
+    {
+      "name": "icon/launcher/54/#ffffff/hover",
+      "threshold": 3,
+      "baselineConservativeBound": 4.499882333811372,
+      "finalConservativeBound": 15.456238298997041,
+      "foreground": [
+        12,
+        16,
+        23,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ],
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ]
+      ],
+      "strokeWidth": 2,
+      "strokeOpacity": 1,
+      "boundsWithinButton": true,
+      "rect": {
+        "x": 29.799999237060547,
+        "y": 43048.80078125,
+        "width": 32.400001525878906,
+        "height": 32.3984375
+      },
+      "buttonRect": {
+        "x": 19,
+        "y": 43038,
+        "width": 54,
+        "height": 54
+      },
+      "passed": true
+    },
+    {
+      "name": "icon/launcher/54/#48b9c7/normal",
+      "threshold": 3,
+      "baselineConservativeBound": 3.2946520651999367,
+      "finalConservativeBound": 15.456238298997041,
+      "foreground": [
+        12,
+        16,
+        23,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ],
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ]
+      ],
+      "strokeWidth": 2,
+      "strokeOpacity": 1,
+      "boundsWithinButton": true,
+      "rect": {
+        "x": 31,
+        "y": 43102,
+        "width": 30,
+        "height": 30
+      },
+      "buttonRect": {
+        "x": 19,
+        "y": 43090,
+        "width": 54,
+        "height": 54
+      },
+      "passed": true
+    },
+    {
+      "name": "icon/launcher/54/#48b9c7/hover",
+      "threshold": 3,
+      "baselineConservativeBound": 3.2946520651999367,
+      "finalConservativeBound": 15.456238298997041,
+      "foreground": [
+        12,
+        16,
+        23,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ],
+        [
+          226.0,
+          232.0,
+          240.0,
+          1
+        ]
+      ],
+      "strokeWidth": 2,
+      "strokeOpacity": 1,
+      "boundsWithinButton": true,
+      "rect": {
+        "x": 29.799999237060547,
+        "y": 43152.80078125,
+        "width": 32.400001525878906,
+        "height": 32.3984375
+      },
+      "buttonRect": {
+        "x": 19,
+        "y": 43142,
+        "width": 54,
+        "height": 54
+      },
+      "passed": true
+    }
+  ],
+  "validation": {
+    "frontendTestsPassed": 55,
+    "contrastMathTestsPassed": 4,
+    "typescriptViteBuild": true,
+    "nativeCustomProtocolBuild": true,
+    "binarySha256": "e107a79a4a468794810eb3ed0bce6ef0fc1b6762f96a07e0f9b48b090a31afb1",
+    "nativeRegression": {
+      "passed": true,
+      "popupPlacements": 16,
+      "descriptionCases": 4,
+      "scope": "Native allocation/AT-SPI activation on virtual negative-origin RandR monitors, top/bottom at GTK integer scales 1/2",
+      "limits": [
+        "No window manager; negative monitor lies outside Xvfb drawable root",
+        "AT-SPI opens sources; XTest Escape dismisses on the owned display only",
+        "Does not prove visible pixels, host input, physical topology, fractional scaling or mixed DPI"
+      ]
+    },
+    "nativeCapture": {
+      "passed": true,
+      "binarySha256": "e107a79a4a468794810eb3ed0bce6ef0fc1b6762f96a07e0f9b48b090a31afb1",
+      "accent": "#0c1017",
+      "position": "top",
+      "integerScale": 1,
+      "monitor": "positive within Xvfb drawable",
+      "noWindowManager": true,
+      "description": {
+        "language": "vi",
+        "expected": "Không mở được ứng dụng",
+        "observed": "Không mở được ứng dụng",
+        "focusRetained": true,
+        "action": "AT-SPI owned missing command; XTest Shift+F10 entry",
+        "scope": "Native accessibility description, no Orca or warning/force coverage"
+      }
+    },
+    "liveOwnedGeometryProcessesAfterCleanup": 0
+  },
+  "limits": [
+    "Hover selectors are mapped fixture states; no host mouse/keyboard sent",
+    "SVG comes from installed lucide-react and fixture applies same class/size formula as product, not a full component render",
+    "Rectangles prove SVG/backplate fit the button, not focus ring clipping across every view",
+    "Fixed opaque center gives a gradient-independent glyph background; app artwork, other custom accent indicators and native widgets remain outside these cases",
+    "No new Orca acceptance; launch announcement and full G5.9/G2.10 remain open"
+  ]
+}

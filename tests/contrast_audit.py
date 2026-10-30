@@ -7,6 +7,7 @@ import argparse
 import json
 import hashlib
 import re
+import subprocess
 from pathlib import Path
 import os
 os.environ.setdefault('WEBKIT_DISABLE_DMABUF_RENDERER', '1')
@@ -152,6 +153,21 @@ def fixtures():
             cases.append(dict(name=f'border/{surface}', markup='<div style="background:#1e293b">' + wrapper.format(control) + '</div>', threshold=3, metric='border'))
         if surface == 'studio-button':
             cases.append(dict(name='border/studio-button-hover', markup=wrapper.format(control.replace('data-target', 'class="test-hover" data-target')), threshold=3, metric='border'))
+    # Render the installed icon used by Taskbar/DockPreview instead of keeping
+    # a copied SVG path that could drift from the product dependency.
+    icons = json.loads(subprocess.check_output(['node', '--input-type=module', '-e',
+        'import React from "react"; import {renderToStaticMarkup} from "react-dom/server"; '
+        'import {Sparkles} from "lucide-react"; '
+        'process.stdout.write(JSON.stringify([28,34,54].map(size=>renderToStaticMarkup('
+        'React.createElement(Sparkles,{className:"dock-launcher-glyph",size:Math.round(size*.48),'
+        'color:"#0c1017","data-target":true})))));'],
+        cwd=Path(__file__).resolve().parents[1], text=True, timeout=10))
+    for size, icon in zip((28, 34, 54), icons):
+        for accent in ('#000000', '#0c1017', '#ffffff', '#48b9c7'):
+            for state in ('normal', 'hover'):
+                hover = ' test-hover' if state == 'hover' else ''
+                cases.append(dict(name=f'icon/launcher/{size}/{accent}/{state}', threshold=3,
+                    gradientBounds=True, metric='stroke', markup=f'<div class="taskbar-container" style="position:static;background:#172235"><button class="dock-launcher-btn{hover}" style="width:{size}px;height:{size}px;background:linear-gradient(135deg,{accent},#8b5cf6)">{icon}</button></div>'))
     return cases
 
 
@@ -174,7 +190,8 @@ def run(output, enforce, css_path, screenshot):
       for(let element=target;element;element=element.parentElement){const s=getComputedStyle(element);
         chain.push({background:color(s.backgroundColor),opacity:Number(s.opacity),image:s.backgroundImage});}
       const s=getComputedStyle(target);
-      return {index:Number(root.dataset.case),color:color(s.color),outline:color(s.outlineColor),outlineWidth:parseFloat(s.outlineWidth),border:color(s.borderTopColor),borderWidth:parseFloat(s.borderTopWidth),chain};
+      const rect=element=>{const r=element.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height}};
+      return {index:Number(root.dataset.case),rect:rect(target),parentRect:rect(target.parentElement),color:color(s.color),stroke:s.stroke === "none" ? null : color(s.stroke),strokeOpacity:Number(s.strokeOpacity),strokeWidth:parseFloat(s.strokeWidth),outline:color(s.outlineColor),outlineWidth:parseFloat(s.outlineWidth),border:color(s.borderTopColor),borderWidth:parseFloat(s.borderTopWidth),chain};
     }))'''
     def done(webview, task, *_):
         try:
@@ -183,11 +200,19 @@ def run(output, enforce, css_path, screenshot):
                 case = cases[record['index']]
                 metric = case.get('metric', 'color')
                 if case.get('gradientBounds'):
-                    assert metric == 'color'
+                    assert metric in ('color', 'stroke')
+                    if metric == 'stroke':
+                        assert record['stroke'] is not None and record['strokeOpacity'] == 1, 'SVG stroke must be visible and opaque'
+                        assert record['strokeWidth'] > 0, 'SVG stroke has no width'
+                        rect, parent = record['rect'], record['parentRect']
+                        case['boundsWithinButton'] = all((rect['x'] >= parent['x'] - .01,
+                            rect['y'] >= parent['y'] - .01,
+                            rect['x'] + rect['width'] <= parent['x'] + parent['width'] + .01,
+                            rect['y'] + rect['height'] <= parent['y'] + parent['height'] + .01))
                     lower, upper = background_bounds(record['chain'])
-                    ratio = contrast_lower_bound(record['color'], lower, upper)
-                    case.update(ratio=ratio, foreground=record['color'], backgroundBounds=[lower, upper],
-                        conservativeLowerBound=True, computed=record, passed=ratio >= case['threshold'])
+                    ratio = contrast_lower_bound(record[metric], lower, upper)
+                    case.update(ratio=ratio, foreground=record[metric], backgroundBounds=[lower, upper],
+                        conservativeLowerBound=True, computed=record, passed=ratio >= case['threshold'] and case.get('boundsWithinButton', True))
                     del case['markup']
                     continue
                 if metric != 'color': assert record[metric + 'Width'] > 0, 'Indicator has no width'
@@ -212,13 +237,14 @@ def run(output, enforce, css_path, screenshot):
                 del case['markup']
             result.update(cssSha256=hashlib.sha256(css.encode()).hexdigest(), ephemeralContext=True, engine=f'WebKitGTK {WebKit2.get_major_version()}.{WebKit2.get_minor_version()}.{WebKit2.get_micro_version()}', cases=cases,
                           passed=sum(c['passed'] for c in cases), total=len(cases), inputSent=False,
-                          scope='Computed style fixtures using actual App.css in Gtk.OffscreenWindow; white/black backdrops, flat layers and group opacity. Hover/focus selectors mapped to fixture states. Text 4.5:1; enumerated outlines/borders 3:1 against both interior and exterior flat backgrounds. Eight additional Studio text fixtures retain actual radial gradients/translucent cards, using conservative RGB/luminance bounds over every gradient stop. Unsupported images/interpolation/group opacity are rejected for gradient cases. A failing lower bound requires further measurement. No assertion of full app coverage, artwork, arbitrary gradients, native keyboard focus, native widgets or screen-reader behavior.')
+                          scope='Computed style fixtures using actual App.css in Gtk.OffscreenWindow; white/black backdrops, flat layers and group opacity. Hover/focus selectors mapped to fixture states. Text 4.5:1; enumerated outlines/borders 3:1 against both interior and exterior flat backgrounds. Eight additional Studio text fixtures and 24 installed launcher SVG stroke fixtures use conservative RGB/luminance bounds over every gradient stop. SVG cases cover minimum/default/maximum launcher size, four accents, normal/hover; bounding rectangles must fit the button. Unsupported images/interpolation/group opacity are rejected for gradient cases. A failing lower bound requires further measurement. No assertion of full app coverage, artwork, arbitrary gradients, native keyboard focus, native widgets or screen-reader behavior.')
         except Exception as error:
             result['error'] = repr(error)
         if screenshot and 'error' not in result:
             selection = [c['name'] for c in cases if c['name'] in (
                 'dock/clock-date/#ffffff/0.2', 'dock/clock-hover/#000000/1',
-                'dock/stats/#ffffff/0.2', 'dock/battery-action/#ffffff/0.2')]
+                'dock/stats/#ffffff/0.2', 'dock/battery-action/#ffffff/0.2',
+                'icon/launcher/34/#0c1017/normal', 'icon/launcher/34/#ffffff/normal')]
             selection_js = json.dumps([i for i,c in enumerate(cases) if c['name'] in selection])
             webview.evaluate_javascript("""(()=>{const all=Array.from(document.querySelectorAll('[data-case]'));const selected=""" + selection_js + """;
               document.body.replaceChildren(...selected.map(index=>all[index]));

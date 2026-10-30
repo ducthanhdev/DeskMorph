@@ -953,3 +953,12 @@ Script cần AT-SPI, Python GI, GTK3 và libXtst. Chỉ gửi phím khi kiểm t
 - Observer ở lượt cuối nhận cả WebKit descendant có marker:328 children-added,0 text-insert/announcement/description-change; chưa kết luận nguyên nhân platform/reader. Giữ lỗi chuẩn bị stream chưa resolve index và sửa bước chờ trong helper tạm; không coi lỗi chuẩn bị là speech acceptance. Probe HTML chỉ đọc frame bị loại khỏi kết luận.
 - Script chẩn đoán/audio/debug/profile ở/tmp; chỉ lưu JSON tóm tắt và giới hạn. Audit0 live helper,0 owned speech sink; cleanup assert default audio không đổi. Không gửi input tới desktop host trong lượt này; đã báo người dùng có thể dùng desktop lại.
 - Tổng97/99, G2.10/G5.9 tiếp tục mở, release no-go. Mutter feature trial vẫn chưa chạy; file probe chuẩn bị chưa commit.
+
+
+## G5.9 — Tương phản launcher với màu nhấn tùy chọn (30/10/2026)
+
+- Biểu tượng launcher trước đây dùng stroke tối trực tiếp trên gradient chứa accent tùy chọn; thêm nền sáng opaque nhỏ ở SVG, đồng bộ Dock/Studio preview. Gradient bên ngoài vẫn nhận màu cấu hình; vùng stroke có nền ổn định.
+- [Bằng chứng](benchmarks/launcher-glyph-contrast-2026-10-30/result.json): audit mở rộng24 ca SVG bằng icon lucide-react thật, kích thước28/34/54px,4 accent, thường/hover. Cận contrast15,456:1 và bounding rectangles đều đạt; tổng137/137.12 baseline cases không đạt cận bảo thủ, không tự quy cận1 thành tỷ lệ từng pixel. Giữ hai ảnh crop trước/sau và ảnh native đã xem.
+-55/55 frontend tests,4 contrast math tests, Python compile/diff check, TS/Vite/native custom-protocol build qua. Binarye107a79a4a468794810eb3ed0bce6ef0fc1b6762f96a07e0f9b48b090a31afb1 qua16 native popup allocation+4 description/focus cases vi/en, scale1/2, Dock trên/dưới. Capture native riêng trên monitor dương/Xvfb với accent#0c1017 đạt; không input desktop host,0 live owned geometry helper sau cleanup.
+- Giữ mở rộng contrast audit vì kiểm stroke/opacity/gradient và fit thực tế của WebKit, không thêm unit test lặp markup/CSS. Chỉ commit summary bounds/counts/hash và ảnh có giá trị review; raw computed tree/profile/runtime logs ở/tmp. Không đổi Rust backend nên không chạy lại Rust unit suite.
+- Đây là cải thiện một functional icon, chưa chứng nhận icon khác/native controls, focus clipping toàn ứng dụng hoặc Orca launch announcement. G5.9/G2.10 vẫn mở,97/99, release no-go.
