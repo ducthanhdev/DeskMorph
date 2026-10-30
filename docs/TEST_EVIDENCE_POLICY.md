@@ -62,3 +62,6 @@ Tài liệu này ghi quyết định kỹ thuật theo yêu cầu người dùng
 
 
 - Negative-origin allocation: giữ harness opt-in chạy Xvfb đã có, bus/profile/display riêng, PID/XID và phép đo từng popup sau Dock ổn định; Escape chỉ gửi tới private DISPLAY. Giữ JSON16 ca cùng lỗi phép đo đã sửa và giới hạn không WM/không pixel/mixed DPI; raw logs/profiles/Xvfb executable ở/tmp. Không thêm unit test lặp placement đã có; native matrix bắt được khác biệt AT-SPI logical/X11 physical ở scale2. Không đánh dấu G2.10 từ topology ảo.
+
+
+- Orca navigation preferences: giữ tùy chọn opt-in để tái lập cấu hình yêu cầu và ghi riêng caret-enabled đã quan sát; không thay assertions shared keyboard. JSON giữ failure mới, waveform counts, exit−11/cleanup và giới hạn preferences không có hiệu lực; không lưu raw speech/debug. Không tính lượt này thành kiểm focus mode thành công; diagnostics bổ sung sau run chỉ compile, không tuyên bố đã chạy GUI phiên bản đó.

@@ -74,6 +74,38 @@
       "orcaSegfaultLogged": true,
       "defaultOutputPreserved": true,
       "ownedRootProcessesExited": true
+    },
+    {
+      "passed": false,
+      "error": "AssertionError('Native context keyboard suite failed; see keyboard.log')",
+      "keyboardExitCode": 1,
+      "speechOutputLines": 61,
+      "fixtureLabelSpoken": true,
+      "capturedAudio": {
+        "samples": 524288,
+        "nonzeroSamples": 295819,
+        "peak": 32768
+      },
+      "readerExitCodeBeforeCleanup": null,
+      "processExitCodesAfterCleanup": [
+        0,
+        0,
+        -11
+      ],
+      "defaultOutputPreserved": true,
+      "ownedProcessesExited": true,
+      "kind": "private-navigation-disabled-preferences",
+      "navigationProfileRequested": "application",
+      "navigationSettingsRequested": {
+        "caretNavigationEnabled": false,
+        "structuralNavigationEnabled": false
+      },
+      "applicationCaretNavigationEnabledObserved": true,
+      "orcaSegfaultLogged": true,
+      "readerExitCodeAfterCleanup": -11,
+      "liveLabProcessesAfterRun": [],
+      "ownedSinksAfterRun": [],
+      "configBytesRestored": true
     }
   ],
   "scope": "Real Orca speech enabled, private Speech Dispatcher socket and owned null sink capture; context suite failed, so this does not certify screen-reader support",
@@ -93,5 +125,7 @@
     "configBytesRestored": true,
     "liveOwnedSpeechProcesses": 0,
     "remainingOwnedNullSinks": 0
-  }
+  },
+  "navigationComparisonConclusion": "Requested disabled caret/structural navigation in private Orca general/default-profile settings; WebKitGTK script activation still enabled caret navigation. End navigation still fails. This does not establish successful testing with navigation actually disabled.",
+  "orcaSourceObservation": "Installed Orca49.4 scripts/web/script.py initializes _default_caret_navigation_enabled=True; scripts/default.py activate calls set_enabled_for_script with that field after loading app settings. No system files modified."
 }

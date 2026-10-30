@@ -19,12 +19,15 @@ import wave
 
 def run():
     repo = Path(__file__).resolve().parents[1]
+    navigation = os.environ.get('DESKMORPH_ORCA_NAVIGATION', 'default')
+    assert navigation in ('default', 'application'), 'Unknown Orca navigation profile'
     root = Path(tempfile.mkdtemp(prefix='deskmorph-orca-speech-'))
     sink = 'deskmorph_orca_' + str(os.getpid())
     processes = []
     module = None
     reader = None
     report = dict(passed=False, root=str(root),
+        navigationProfileRequested=navigation,
         binarySha256=hashlib.sha256((repo / 'src-tauri/target/agent/debug/deskmorph').read_bytes()).hexdigest(),
         command='/usr/bin/python3 tests/screen_reader_smoke.py',
         scope='Orca speech enabled with native pinned-context keyboard fixtures in vi/en; speech synthesis captured from an owned null sink, no speaker playback or full application certification')
@@ -69,9 +72,16 @@ def run():
         assert speech.poll() is None, 'Private speech daemon exited'
         prefs = root / 'orca-prefs'
         prefs.mkdir()
+        navigation_settings = {} if navigation == 'default' else dict(
+            caretNavigationEnabled=False, structuralNavigationEnabled=False)
+        report['navigationSettingsRequested'] = navigation_settings
+        # An explicit comparison with Orca's own navigation disabled. This does
+        # not change the application or bypass any shared keyboard assertions;
+        # success here must not be reported as default-reader compatibility.
         (prefs / 'user-settings.conf').write_text(json.dumps(dict(general=dict(enableSpeech=True, enableBraille=False,
+            **navigation_settings,
             speechServerFactory='speechdispatcherfactory', speechServerInfo=['Default Synthesizer', 'default'],
-            startingProfile=['Default', 'default']), profiles={'default': dict(profile=['Default', 'default'], pronunciations={}, keybindings={})}, pronunciations={}, keybindings={})))
+            startingProfile=['Default', 'default']), profiles={'default': dict(profile=['Default', 'default'], pronunciations={}, keybindings={}, **navigation_settings)}, pronunciations={}, keybindings={})))
         raw = root / 'speech.raw'
         with raw.open('wb') as output, (root / 'capture.log').open('w') as errors:
             capture = subprocess.Popen(['parec', '--device=' + sink + '.monitor', '--rate=22050', '--channels=1', '--format=s16le', '--raw'], env=env, stdout=output, stderr=errors, start_new_session=True)
@@ -139,9 +149,16 @@ def run():
             report['capturedAudio'] = dict(samples=len(samples), nonzeroSamples=sum(value != 0 for value in samples), peak=max(map(abs, samples), default=0))
         debug = root / 'orca-debug.log'
         if debug.exists():
-            lines = [line for line in debug.read_text(errors='replace').splitlines() if 'SPEECH OUTPUT:' in line]
+            debug_text = debug.read_text(errors='replace')
+            lines = [line for line in debug_text.splitlines() if 'SPEECH OUTPUT:' in line]
             report['speechOutputLines'] = len(lines)
             report['fixtureLabelSpoken'] = any('DeskMorph Context Keyboard' in line for line in lines)
+            report['applicationCaretNavigationEnabledObserved'] = (
+                'Setting enabled state for deskmorph (module=orca.scripts.toolkits.WebKitGTK.script) to True'
+                in debug_text)
+        launch_log = root / 'orca-launch.log'
+        report['orcaSegfaultLogged'] = launch_log.exists() and 'Segmentation fault' in launch_log.read_text(errors='replace')
+        report['readerExitCodeAfterCleanup'] = reader.returncode if reader is not None else None
         report['processExitCodesAfterCleanup'] = [process.returncode for process in processes]
         report['defaultOutputPreserved'] = json.loads(pactl('--format=json', 'info'))['default_sink_name'] == before
         report['ownedProcessesExited'] = all(process.poll() is not None for process in processes)
