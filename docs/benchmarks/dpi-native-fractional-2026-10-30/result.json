@@ -1,0 +1,835 @@
+{
+  "passed": true,
+  "before": {
+    "configSerial": 145,
+    "monitors": [
+      {
+        "connector": "HDMI-0",
+        "configProperties": {},
+        "currentModes": [
+          {
+            "id": "1920x1080@60.000",
+            "width": 1920,
+            "height": 1080,
+            "refresh": 60.0,
+            "preferredScale": 1.0,
+            "supportedScales": [
+              1.0,
+              2.0
+            ]
+          }
+        ]
+      },
+      {
+        "connector": "eDP-1-1",
+        "configProperties": {},
+        "currentModes": [
+          {
+            "id": "1920x1080@144.003",
+            "width": 1920,
+            "height": 1080,
+            "refresh": 144.0028076171875,
+            "preferredScale": 1.0,
+            "supportedScales": [
+              1.0,
+              2.0
+            ]
+          }
+        ]
+      }
+    ],
+    "logicalMonitors": [
+      {
+        "x": 1920,
+        "y": 0,
+        "scale": 1.0,
+        "transform": 0,
+        "primary": false,
+        "connectors": [
+          "HDMI-0"
+        ]
+      },
+      {
+        "x": 0,
+        "y": 0,
+        "scale": 1.0,
+        "transform": 0,
+        "primary": true,
+        "connectors": [
+          "eDP-1-1"
+        ]
+      }
+    ],
+    "properties": {
+      "renderer": "xrandr",
+      "layout-mode": 2,
+      "global-scale-required": true,
+      "legacy-ui-scaling-factor": 1
+    }
+  },
+  "features": [],
+  "originalUserValue": "@as []",
+  "root": "/tmp/deskmorph-dpi-native-2c9iwzm0",
+  "binarySha256": "1172029a8dee0dde0b196e4956b2df150522bb1b058c4ed0cf829bc55e449ac9",
+  "cases": [
+    {
+      "layout": "125",
+      "requestedScales": [
+        1.25,
+        1.25
+      ],
+      "observed": {
+        "configSerial": 148,
+        "monitors": [
+          {
+            "connector": "HDMI-0",
+            "configProperties": {},
+            "currentModes": [
+              {
+                "id": "1920x1080@60.000",
+                "width": 1920,
+                "height": 1080,
+                "refresh": 60.0,
+                "preferredScale": 1.0,
+                "supportedScales": [
+                  1.0,
+                  1.25,
+                  1.5,
+                  1.7391303777694702,
+                  2.0,
+                  2.307692289352417
+                ]
+              }
+            ]
+          },
+          {
+            "connector": "eDP-1-1",
+            "configProperties": {},
+            "currentModes": [
+              {
+                "id": "1920x1080@144.003",
+                "width": 1920,
+                "height": 1080,
+                "refresh": 144.0028076171875,
+                "preferredScale": 1.0,
+                "supportedScales": [
+                  1.0,
+                  1.25,
+                  1.5,
+                  1.7391303777694702,
+                  2.0,
+                  2.307692289352417
+                ]
+              }
+            ]
+          }
+        ],
+        "logicalMonitors": [
+          {
+            "x": 3072,
+            "y": 0,
+            "scale": 1.25,
+            "transform": 0,
+            "primary": false,
+            "connectors": [
+              "HDMI-0"
+            ]
+          },
+          {
+            "x": 0,
+            "y": 0,
+            "scale": 1.25,
+            "transform": 0,
+            "primary": true,
+            "connectors": [
+              "eDP-1-1"
+            ]
+          }
+        ],
+        "properties": {
+          "renderer": "xrandr",
+          "layout-mode": 3,
+          "legacy-ui-scaling-factor": 2,
+          "supports-changing-layout-mode": true
+        }
+      },
+      "runs": [
+        {
+          "passed": true,
+          "monitor": "eDP-1-1",
+          "position": "top",
+          "observations": [
+            {
+              "source": "Tìm ứng dụng",
+              "popup": [
+                644,
+                228,
+                1000,
+                1160
+              ],
+              "anchor": 1144.0,
+              "expectedOrigin": [
+                644,
+                228
+              ]
+            }
+          ],
+          "gdkMonitors": [
+            {
+              "name": "eDP-1-1",
+              "gtkScale": 2,
+              "area": [
+                0,
+                64,
+                3072,
+                1664
+              ]
+            },
+            {
+              "name": "HDMI-0",
+              "gtkScale": 2,
+              "area": [
+                3072,
+                0,
+                3072,
+                1728
+              ]
+            }
+          ],
+          "pid": 2940166,
+          "dock": [
+            1072,
+            96,
+            930,
+            104
+          ],
+          "configUnchanged": true,
+          "appExit": -15
+        },
+        {
+          "passed": true,
+          "monitor": "HDMI-0",
+          "position": "top",
+          "observations": [
+            {
+              "source": "Tìm ứng dụng",
+              "popup": [
+                3716,
+                164,
+                1000,
+                1160
+              ],
+              "anchor": 4216.0,
+              "expectedOrigin": [
+                3716,
+                164
+              ]
+            }
+          ],
+          "gdkMonitors": [
+            {
+              "name": "eDP-1-1",
+              "gtkScale": 2,
+              "area": [
+                0,
+                64,
+                3072,
+                1664
+              ]
+            },
+            {
+              "name": "HDMI-0",
+              "gtkScale": 2,
+              "area": [
+                3072,
+                0,
+                3072,
+                1728
+              ]
+            }
+          ],
+          "pid": 2940654,
+          "dock": [
+            4144,
+            32,
+            930,
+            104
+          ],
+          "configUnchanged": true,
+          "appExit": -15
+        }
+      ]
+    },
+    {
+      "layout": "150",
+      "requestedScales": [
+        1.5,
+        1.5
+      ],
+      "observed": {
+        "configSerial": 156,
+        "monitors": [
+          {
+            "connector": "HDMI-0",
+            "configProperties": {},
+            "currentModes": [
+              {
+                "id": "1920x1080@60.000",
+                "width": 1920,
+                "height": 1080,
+                "refresh": 60.0,
+                "preferredScale": 1.0,
+                "supportedScales": [
+                  1.0,
+                  1.25,
+                  1.5,
+                  1.7391303777694702,
+                  2.0,
+                  2.307692289352417
+                ]
+              }
+            ]
+          },
+          {
+            "connector": "eDP-1-1",
+            "configProperties": {},
+            "currentModes": [
+              {
+                "id": "1920x1080@144.003",
+                "width": 1920,
+                "height": 1080,
+                "refresh": 144.0028076171875,
+                "preferredScale": 1.0,
+                "supportedScales": [
+                  1.0,
+                  1.25,
+                  1.5,
+                  1.7391303777694702,
+                  2.0,
+                  2.307692289352417
+                ]
+              }
+            ]
+          }
+        ],
+        "logicalMonitors": [
+          {
+            "x": 2560,
+            "y": 0,
+            "scale": 1.5,
+            "transform": 0,
+            "primary": false,
+            "connectors": [
+              "HDMI-0"
+            ]
+          },
+          {
+            "x": 0,
+            "y": 0,
+            "scale": 1.5,
+            "transform": 0,
+            "primary": true,
+            "connectors": [
+              "eDP-1-1"
+            ]
+          }
+        ],
+        "properties": {
+          "renderer": "xrandr",
+          "layout-mode": 3,
+          "legacy-ui-scaling-factor": 2,
+          "supports-changing-layout-mode": true
+        }
+      },
+      "runs": [
+        {
+          "passed": true,
+          "monitor": "eDP-1-1",
+          "position": "top",
+          "observations": [
+            {
+              "source": "Tìm ứng dụng",
+              "popup": [
+                388,
+                228,
+                1000,
+                1160
+              ],
+              "anchor": 888.0,
+              "expectedOrigin": [
+                388,
+                228
+              ]
+            }
+          ],
+          "gdkMonitors": [
+            {
+              "name": "eDP-1-1",
+              "gtkScale": 2,
+              "area": [
+                0,
+                64,
+                2560,
+                1376
+              ]
+            },
+            {
+              "name": "HDMI-0",
+              "gtkScale": 2,
+              "area": [
+                2560,
+                0,
+                2560,
+                1440
+              ]
+            }
+          ],
+          "pid": 2941321,
+          "dock": [
+            816,
+            96,
+            930,
+            104
+          ],
+          "configUnchanged": true,
+          "appExit": -15
+        },
+        {
+          "passed": true,
+          "monitor": "HDMI-0",
+          "position": "top",
+          "observations": [
+            {
+              "source": "Tìm ứng dụng",
+              "popup": [
+                2948,
+                164,
+                1000,
+                1160
+              ],
+              "anchor": 3448.0,
+              "expectedOrigin": [
+                2948,
+                164
+              ]
+            }
+          ],
+          "gdkMonitors": [
+            {
+              "name": "eDP-1-1",
+              "gtkScale": 2,
+              "area": [
+                0,
+                64,
+                2560,
+                1376
+              ]
+            },
+            {
+              "name": "HDMI-0",
+              "gtkScale": 2,
+              "area": [
+                2560,
+                0,
+                2560,
+                1440
+              ]
+            }
+          ],
+          "pid": 2941802,
+          "dock": [
+            3376,
+            32,
+            930,
+            104
+          ],
+          "configUnchanged": true,
+          "appExit": -15
+        }
+      ]
+    },
+    {
+      "layout": "mixed",
+      "requestedScales": [
+        1,
+        1.5
+      ],
+      "observed": {
+        "configSerial": 164,
+        "monitors": [
+          {
+            "connector": "HDMI-0",
+            "configProperties": {},
+            "currentModes": [
+              {
+                "id": "1920x1080@60.000",
+                "width": 1920,
+                "height": 1080,
+                "refresh": 60.0,
+                "preferredScale": 1.0,
+                "supportedScales": [
+                  1.0,
+                  1.25,
+                  1.5,
+                  1.7391303777694702,
+                  2.0,
+                  2.307692289352417
+                ]
+              }
+            ]
+          },
+          {
+            "connector": "eDP-1-1",
+            "configProperties": {},
+            "currentModes": [
+              {
+                "id": "1920x1080@144.003",
+                "width": 1920,
+                "height": 1080,
+                "refresh": 144.0028076171875,
+                "preferredScale": 1.0,
+                "supportedScales": [
+                  1.0,
+                  1.25,
+                  1.5,
+                  1.7391303777694702,
+                  2.0,
+                  2.307692289352417
+                ]
+              }
+            ]
+          }
+        ],
+        "logicalMonitors": [
+          {
+            "x": 3840,
+            "y": 0,
+            "scale": 1.5,
+            "transform": 0,
+            "primary": false,
+            "connectors": [
+              "HDMI-0"
+            ]
+          },
+          {
+            "x": 0,
+            "y": 0,
+            "scale": 1.0,
+            "transform": 0,
+            "primary": true,
+            "connectors": [
+              "eDP-1-1"
+            ]
+          }
+        ],
+        "properties": {
+          "renderer": "xrandr",
+          "layout-mode": 3,
+          "legacy-ui-scaling-factor": 2,
+          "supports-changing-layout-mode": true
+        }
+      },
+      "runs": [
+        {
+          "passed": true,
+          "monitor": "eDP-1-1",
+          "position": "top",
+          "observations": [
+            {
+              "source": "Tìm ứng dụng",
+              "popup": [
+                1028,
+                228,
+                1000,
+                1160
+              ],
+              "anchor": 1528.0,
+              "expectedOrigin": [
+                1028,
+                228
+              ]
+            }
+          ],
+          "gdkMonitors": [
+            {
+              "name": "eDP-1-1",
+              "gtkScale": 2,
+              "area": [
+                0,
+                64,
+                3840,
+                2096
+              ]
+            },
+            {
+              "name": "HDMI-0",
+              "gtkScale": 2,
+              "area": [
+                3840,
+                0,
+                2560,
+                1440
+              ]
+            }
+          ],
+          "pid": 2942464,
+          "dock": [
+            1456,
+            96,
+            930,
+            104
+          ],
+          "configUnchanged": true,
+          "appExit": -15
+        },
+        {
+          "passed": true,
+          "monitor": "HDMI-0",
+          "position": "top",
+          "observations": [
+            {
+              "source": "Tìm ứng dụng",
+              "popup": [
+                4228,
+                164,
+                1000,
+                1160
+              ],
+              "anchor": 4728.0,
+              "expectedOrigin": [
+                4228,
+                164
+              ]
+            }
+          ],
+          "gdkMonitors": [
+            {
+              "name": "eDP-1-1",
+              "gtkScale": 2,
+              "area": [
+                0,
+                64,
+                3840,
+                2096
+              ]
+            },
+            {
+              "name": "HDMI-0",
+              "gtkScale": 2,
+              "area": [
+                3840,
+                0,
+                2560,
+                1440
+              ]
+            }
+          ],
+          "pid": 2942871,
+          "dock": [
+            4656,
+            32,
+            930,
+            104
+          ],
+          "configUnchanged": true,
+          "appExit": -15
+        }
+      ]
+    }
+  ],
+  "restoreErrors": [],
+  "inputSent": false,
+  "scope": "Real GNOME X11 fractional/mixed display layouts, native allocation and AT-SPI popup activation; top Dock and launcher only on both monitors; AT-SPI activation, app shutdown dismisses; no keyboard, bottom or other popup acceptance",
+  "afterFeature": {
+    "configSerial": 145,
+    "monitors": [
+      {
+        "connector": "HDMI-0",
+        "configProperties": {},
+        "currentModes": [
+          {
+            "id": "1920x1080@60.000",
+            "width": 1920,
+            "height": 1080,
+            "refresh": 60.0,
+            "preferredScale": 1.0,
+            "supportedScales": [
+              1.0,
+              1.25,
+              1.5,
+              1.7391303777694702,
+              2.0,
+              2.307692289352417
+            ]
+          }
+        ]
+      },
+      {
+        "connector": "eDP-1-1",
+        "configProperties": {},
+        "currentModes": [
+          {
+            "id": "1920x1080@144.003",
+            "width": 1920,
+            "height": 1080,
+            "refresh": 144.0028076171875,
+            "preferredScale": 1.0,
+            "supportedScales": [
+              1.0,
+              1.25,
+              1.5,
+              1.7391303777694702,
+              2.0,
+              2.307692289352417
+            ]
+          }
+        ]
+      }
+    ],
+    "logicalMonitors": [
+      {
+        "x": 1920,
+        "y": 0,
+        "scale": 1.0,
+        "transform": 0,
+        "primary": false,
+        "connectors": [
+          "HDMI-0"
+        ]
+      },
+      {
+        "x": 0,
+        "y": 0,
+        "scale": 1.0,
+        "transform": 0,
+        "primary": true,
+        "connectors": [
+          "eDP-1-1"
+        ]
+      }
+    ],
+    "properties": {
+      "renderer": "xrandr",
+      "layout-mode": 3,
+      "legacy-ui-scaling-factor": 1,
+      "supports-changing-layout-mode": true
+    }
+  },
+  "after": {
+    "configSerial": 169,
+    "monitors": [
+      {
+        "connector": "HDMI-0",
+        "configProperties": {},
+        "currentModes": [
+          {
+            "id": "1920x1080@60.000",
+            "width": 1920,
+            "height": 1080,
+            "refresh": 60.0,
+            "preferredScale": 1.0,
+            "supportedScales": [
+              1.0,
+              2.0
+            ]
+          }
+        ]
+      },
+      {
+        "connector": "eDP-1-1",
+        "configProperties": {},
+        "currentModes": [
+          {
+            "id": "1920x1080@144.003",
+            "width": 1920,
+            "height": 1080,
+            "refresh": 144.0028076171875,
+            "preferredScale": 1.0,
+            "supportedScales": [
+              1.0,
+              2.0
+            ]
+          }
+        ]
+      }
+    ],
+    "logicalMonitors": [
+      {
+        "x": 1920,
+        "y": 0,
+        "scale": 1.0,
+        "transform": 0,
+        "primary": false,
+        "connectors": [
+          "HDMI-0"
+        ]
+      },
+      {
+        "x": 0,
+        "y": 0,
+        "scale": 1.0,
+        "transform": 0,
+        "primary": true,
+        "connectors": [
+          "eDP-1-1"
+        ]
+      }
+    ],
+    "properties": {
+      "renderer": "xrandr",
+      "layout-mode": 2,
+      "global-scale-required": true,
+      "legacy-ui-scaling-factor": 1
+    }
+  },
+  "topologyRestored": true,
+  "userValueRestored": true,
+  "capabilitiesRestored": true,
+  "limits": [
+    "Only top Dock and launcher measured on both outputs at125/150 and mixed100/150; bottom and audio/system/calendar remain open",
+    "Native window/framebuffer coordinates and GDK workareas, not photographed physical pixels, font sharpness or physical click location",
+    "Mutter global-UI-logical layout3 uses integer GTK scale2 while effective output scales are fractional; do not equate GTK scale2 with200% output",
+    "No negative-origin topology, live resolution change or all popups/keyboard coverage in this fixture",
+    "Recorded run used a temporary diagnostic; retained runner adapts the same geometry with explicit opt-in, ownership and signal/independent restore guards; those added guards were fault-tested, not rerun on host in this window"
+  ],
+  "cleanup": {
+    "ownedLabPids": [],
+    "dpiTopologyRestored": true,
+    "dpiUserValueRestored": true,
+    "dpiCapabilitiesRestored": true
+  },
+  "diagnosticRunnerSha256": "b2d7e76eb920f5087d1e20e59f210b5bbc6e089c5e77b9e8830f5529ee078935",
+  "retainedRunner": "tests/mutter_native_geometry_smoke.py --run",
+  "failures": [
+    {
+      "kind": "VERIFY refused x computed in ordinary logical coordinates",
+      "error": "Logical monitors not adjacent",
+      "restored": true,
+      "correction": "Account for global-UI-logical mode3; VERIFY before every temporary apply"
+    },
+    {
+      "kind": "X11 tree changed during enumeration",
+      "error": "Bad Drawable / Bad Window; xwininfo root query failed",
+      "restored": true,
+      "correction": "Retry transient query errors within the same bounded allocation wait"
+    },
+    {
+      "kind": "Popup sequence without dismissal",
+      "error": "Second Context Menu unstable",
+      "restored": true,
+      "correction": "Current survey starts a fresh owned app per case and measures launcher only; full popup sequencing still pending"
+    },
+    {
+      "kind": "Escape guard rejected focus not matching the owned popup XID; actual focus owner was not resolved",
+      "keySent": false,
+      "restored": true,
+      "correction": "No host key injection in accepted survey; do not treat the failed guard as keyboard acceptance"
+    }
+  ],
+  "faultTests": {
+    "probeExisting": 6,
+    "nativeOrchestration": 5,
+    "allPassed": true,
+    "realDisplayAccess": false
+  }
+}

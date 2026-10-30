@@ -104,3 +104,8 @@ Giữ failure tọa độ positive, SIGTERM exit-9 và startup reader song song 
 ## Studio focus scroll/pixels (30/10/2026)
 
 Giữ [bằng chứng406 control](benchmarks/studio-focus-scroll-2026-10-30/result.json), hai crop fixture và harness Tab dùng lại + callback pixel. Nó bắt regression control bị cắt và focus ảnh mất hoàn toàn; native select arrow/border có pixel/ratio riêng. Chỉ giữ số đo/nhãn fixture và counts theo trang, không raw tree/catalogue/profile/ảnh người dùng. Hai failure tọa độ và0 focus pixel được giữ có giới hạn; sửa first-five-buttons/disclosure lookup thuộc harness. 203 pixel samples mỗi ngôn ngữ loại nav seed,208 Tab stops mỗi lượt không đồng nghĩa mọi trạng thái động đã kiểm. Không thêm unit test chỉ kiểm scrollIntoView được gọi.
+
+
+## Fractional/mixed DPI native survey (30/10/2026)
+
+Giữ [6 ca native](benchmarks/dpi-native-fractional-2026-10-30/result.json) với Mutter requested/readback layouts, GDK workareas/scales, native Dock/launcher bounds, hash binary/diagnostic, failures và exact restore. Giữ runner opt-in cùng5 fault tests orchestration vì đây là thao tác host topology cần bảo vệ restore khi worker fail/timeout/interrupt và tách settings/display cleanup. Dùng lại probe/payload guards cũ; không giữ diagnostic sao chép trong/tmp hoặc raw logs. Metadata phân biệt diagnostic đã chạy thật với safety guards bổ sung mới chỉ fault-test. Native framebuffer allocations không thay thế physical pixels, font sharpness, keyboard/click, Dock dưới, popup khác hoặc negative origin dưới WM. Không đánh dấu G2.10 từ6 ca hẹp này.

@@ -1010,3 +1010,14 @@ Binary1172029a… qua cảvi/scale1 vàen/scale2: mỗi ngôn ngữ208 Tab stops
 Harness dùng nav landmark thay first5buttons, vì status Details có thể đứng trước nav; chọn đúng disclosure mapping theo nhãn. Đường Tab bắt đầu từ nav seed, không kiểm status disclosures đứng trước nav hoặc mọi dynamic state. Bounds trong window và pixel focus không tự chứng nhận mọi cạnh ring/ancestor clipping ở mọi trạng thái. Fixture ảnh đen/trắng thuộc lab, không lưu ảnh/tên file cá nhân. [Focus accent](benchmarks/studio-focus-scroll-2026-10-30/accent-focus.png) và [focus ảnh đen](benchmarks/studio-focus-scroll-2026-10-30/wallpaper-black-focus.png) đã xem.
 
 55/55 frontend, TS/Vite/native build, Python compile/diff check qua. Giữ native test vì bắt hai regression thực mà test CSS/điều hướng thuần trước đó bỏ sót; không thêm unit test mirror scrollIntoView. Rust không đổi nên không chạy lại Rust suite. G5.9/G2.10 tiếp tục mở,97/99; cần hồi quy screen reader rộng hơn và DPI/host WM.
+
+
+## G2.10 — Dock trên/launcher ở fractional và mixed DPI thật (30/10/2026)
+
+[Bằng chứng native Mutter](benchmarks/dpi-native-fractional-2026-10-30/result.json):6/6 ca Dock trên và launcher trên cảeDP/HDMI, lần lượt125%/125%,150%/150%,100%/150%. Mỗi topology qua VERIFY rồi TEMPORARY apply (không persistent), readback scales/modes/primary/origins khớp. Fresh worker không ép GDK_SCALE: GNOME global-UI-logical mode3 báo GTK scale2 cho cả monitor, dù effective output scale fractional/mixed; tọa độ logical→framebuffer được kiểm theo workarea GDK và xwininfo thật. Dock cao104 framebuffer px, center/margin/gap và launcher bounds/clamp đạt. Không gọi đây là ảnh chụp physical pixel hoặc kiểm sharpness/click mapping.
+
+Cleanup phục hồi exact experimental-features user value, primary, origins, mode/refresh (gồm eDP144Hz), capabilities ban đầu; audit0 lab process. Không gửi phím/chuột trong lượt đạt. Giữ các lượt VERIFY không-adjacent, X11 Bad Window khi enumerate, popup thứhai không ổn định và guard Escape từ chối focus trong metadata; tất cả đã restore, guard không gửi phím. Lượt đạt mỗi fixture chỉ đo launcher rồi dừng app, không biến các lượt sequence fail thành pass.
+
+Giữ `tests/mutter_native_geometry_smoke.py --run` vì geometry smoke cũ giả định uniform GTK scale và không dựng topology fractional/mixed. Runner được làm rõ opt-in/ownership/signal và restore settings/topology độc lập sau diagnostic đã đạt;11 fault tests (6 probe cũ+5 orchestration mới) kiểm worker lỗi/timeout/interrupt, VERIFY rejection, màn hình khóa và restore lỗi. Các guard bổ sung chưa chạy lại host trong window này. Không lưu bản sao raw scripts/log/config; JSON ghi hash diagnostic và phạm vi.
+
+G2.10 vẫn mở: cần Dock dưới, audio/system/calendar và sequencing, negative topology dưới WM/đổi resolution theo ma trận đầy đủ. G5.9 cũng mở; tổng97/99, release no-go.
