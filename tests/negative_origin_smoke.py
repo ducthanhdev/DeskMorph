@@ -8,6 +8,8 @@ DESKMORPH_STUDIO_WIDGETS_LAB=1 instead checks native Studio controls on the
 positive monitor with rendered-pixel contrast and private-display keys.
 DESKMORPH_CONTEXT_SPEECH_LAB=1 checks the real launch error with private Orca/SD
 and an owned host null sink; it sends no host display input.
+DESKMORPH_STUDIO_FOCUS_LAB=1 audits five Studio pages using private Tab/ShiftTab,
+control/window bounds, focus pixels and select contrast at integer scales 1/2.
 Requires an existing Xvfb executable; never installs host packages.
 """
 import hashlib
@@ -60,7 +62,8 @@ def worker(root, scale, position):
     from gi.repository import Atspi, Gdk, GLib
     speech_test = os.environ.get('DESKMORPH_CONTEXT_SPEECH_LAB') == '1'
     description_test = os.environ.get('DESKMORPH_CONTEXT_DESCRIPTION_LAB') == '1' or speech_test
-    studio_test = os.environ.get('DESKMORPH_STUDIO_WIDGETS_LAB') == '1'
+    focus_test = os.environ.get('DESKMORPH_STUDIO_FOCUS_LAB') == '1'
+    studio_test = os.environ.get('DESKMORPH_STUDIO_WIDGETS_LAB') == '1' or focus_test
     assert not (description_test and studio_test), 'Select one opt-in lab mode'
     language = 'en' if (description_test or studio_test) and scale == 2 else 'vi'
     labels = json.loads((REPO / 'src/i18n/messages.json').read_text())[language]
@@ -89,10 +92,20 @@ def worker(root, scale, position):
         cfg.update(monitor=target_name, position=position, pinnedApps=[], showStats=False,
                    showShuffle=False, showAudio=True, wallpaperScheduleEnabled=False,
                    reduceMotion=True, language=language)
-        if description_test:
+        if description_test or focus_test:
             missing = root / 'intentionally-missing-app'
             assert not missing.exists()
             cfg['pinnedApps'] = [dict(id='deskmorph-description-lab', name='DeskMorph Description Lab', command=str(missing), matchClasses=['DeskMorphDescriptionLab'], enabled=True, iconType='custom')]
+        if focus_test:
+            gi.require_version('GdkPixbuf', '2.0')
+            from gi.repository import GdkPixbuf
+            folder = root / 'wallpaper-fixtures'
+            folder.mkdir()
+            for name, color in [('black', 0x000000ff), ('white', 0xffffffff)]:
+                image = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, True, 8, 320, 180)
+                image.fill(color)
+                image.savev(str(folder / (name + '.png')), 'png', [], [])
+            cfg['wallpaperFolders'] = [str(folder)]
         config = root / 'config/com.ducthanhdev.deskmorph/config.json'
         config.parent.mkdir(parents=True, exist_ok=True)
         config.write_text(json.dumps(dict(schemaVersion=1, revision=0, config=cfg, warning=None)))
@@ -191,6 +204,11 @@ def worker(root, scale, position):
             from contrast_audit import contrast
             subprocess.run([str(BINARY)], env=dict(os.environ, DESKMORPH_CONFIG_HOME=str(root / 'config')), check=True, timeout=8)
             studio = stable('DeskMorph Studio')
+            if focus_test:
+                from studio_focus_pixels import audit
+                report['studioFocus'] = audit(accessible, root, scale, studio, keys, native, config, original)
+                report['passed'] = True
+                return
             results = dict(passed=False, initialFocus='AT-SPI seed; subsequent Space/Tab/arrows/Home/End are XTest on private DISPLAY', captures=[])
             report['widgets'] = results
 
@@ -410,10 +428,11 @@ def worker(root, scale, position):
 def run():
     xvfb = os.environ.get('DESKMORPH_XVFB', '/tmp/xvfb-root/usr/bin/Xvfb')
     assert Path(xvfb).is_file(), 'Set DESKMORPH_XVFB to an existing Xvfb executable'
-    studio_test = os.environ.get('DESKMORPH_STUDIO_WIDGETS_LAB') == '1'
+    focus_test = os.environ.get('DESKMORPH_STUDIO_FOCUS_LAB') == '1'
+    studio_test = os.environ.get('DESKMORPH_STUDIO_WIDGETS_LAB') == '1' or focus_test
     speech_test = os.environ.get('DESKMORPH_CONTEXT_SPEECH_LAB') == '1'
     root = Path(tempfile.mkdtemp(prefix='deskmorph-negative-origin-'))
-    report = dict(passed=False, root=str(root), runnerSha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(), studioWidgetsRequested=studio_test, contextSpeechRequested=speech_test, contextDescriptionRequested=os.environ.get('DESKMORPH_CONTEXT_DESCRIPTION_LAB') == '1', binarySha256=hashlib.sha256(BINARY.read_bytes()).hexdigest(), runs=[],
+    report = dict(passed=False, root=str(root), runnerSha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(), studioWidgetsRequested=studio_test, studioFocusRequested=focus_test, contextSpeechRequested=speech_test, contextDescriptionRequested=os.environ.get('DESKMORPH_CONTEXT_DESCRIPTION_LAB') == '1', binarySha256=hashlib.sha256(BINARY.read_bytes()).hexdigest(), runs=[],
         scope='Native allocation/AT-SPI activation on virtual negative-origin RandR monitors, top/bottom at GTK integer scales 1/2',
         limits=['No window manager; negative monitor lies outside Xvfb drawable root',
                 'AT-SPI opens sources; XTest Escape dismisses on the owned display only',
@@ -421,6 +440,8 @@ def run():
     try:
         if studio_test:
             report.update(scope='Native Studio checkbox/range/select keys and rendered pixels in vi/scale1, en/scale2 on positive Xvfb monitor', limits=['No window manager, physical display, host input, fractional/mixed DPI or Orca proof', 'AT-SPI seeds control focus; XTest then sends actual Space/Tab/Shift+Tab/arrows/Home/End on the owned DISPLAY', 'Pixel palette/centerline checks target this installed GTK/WebKit native renderer, not every platform or theme'])
+        if focus_test:
+            report.update(scope='Native Studio five-page Tab/reverse/disabled traversal with focus pixels and window bounds, vi/scale1 and en/scale2 in private Xvfb', limits=['No host input, window manager, fractional DPI, Orca or all dynamic states proof', 'AT-SPI seeds navigation focus; subsequent traversal uses private XTest Tab/Shift+Tab', 'Focus pixel count and control bounds do not by themselves prove every outline edge is unclipped'])
         if speech_test:
             report.update(scope='Native launch error description/focus and Orca speech, vi/scale1 and en/scale2, top/bottom on positive Xvfb monitor', limits=['No host display input, window manager, physical monitor, fractional/mixed DPI or full context keyboard suite proof', 'Private Orca/session/a11y buses; synthesis captured on owned host null sink without speaker playback', 'Whole-application announcements and human evaluation of intelligibility remain outside these fixtures'])
         for scale in (1, 2):
@@ -459,7 +480,9 @@ def run():
                     assert env['AT_SPI_BUS_ADDRESS'].startswith('unix:')
                     with (case / 'session.log').open('w') as log:
                         session = subprocess.Popen(['dbus-run-session', '--', '/usr/bin/python3', str(Path(__file__).resolve()), '--worker', str(case), str(scale), position], env=env, stdout=log, stderr=log, start_new_session=True)
-                    assert session.wait(timeout=90) == 0, str(case / 'session.log')
+                    # Five-page pixel traversal includes the installed app
+                    # catalogue; unlike a popup smoke its work scales with it.
+                    assert session.wait(timeout=300 if focus_test else 90) == 0, str(case / 'session.log')
                     print(json.dumps(dict(scale=scale, position=position, passed=True)), flush=True)
                 finally:
                     if session is not None:

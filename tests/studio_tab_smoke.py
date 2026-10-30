@@ -8,7 +8,8 @@ from gi.repository import Atspi
 from dock_layout_smoke import descendants
 
 
-def run(app, focus_studio, native_keys, only_tab=None):
+def run(app, focus_studio, native_keys, only_tab=None, report_root=None, on_focus=None):
+    report_root = Path(report_root or '/tmp/deskmorph-desktop-test')
     send_keys = native_keys
     def native_keys(value=None, chord=None):
         # Restore only our owned Studio if a desktop notification/application stole
@@ -39,7 +40,8 @@ def run(app, focus_studio, native_keys, only_tab=None):
         return [node.get_role_name(), node.get_name()]
     observations = []
     focus_studio()
-    tabs = controls()[:5]
+    navigation = next(n for n in descendants(frame()) if n.get_name() == 'Studio' and n.get_attributes().get('tag') == 'nav')
+    tabs = [n for n in descendants(navigation) if n.get_role_name() == 'button']
     assert len(tabs) == 5 and all(n.get_role_name() == 'button' for n in tabs)
     tab_names = [n.get_name() for n in tabs]
     for tab_index, tab_name in enumerate(tab_names):
@@ -49,7 +51,11 @@ def run(app, focus_studio, native_keys, only_tab=None):
         assert tabs[tab_index].get_component_iface().grab_focus()
         native_keys(chord=[0xff0d]); time.sleep(.8)
         assert tabs[0].get_component_iface().grab_focus()
+        # Status/error disclosures can precede nav in the native tree. Start
+        # the route at the seeded nav control rather than mistaking them for
+        # a page tab or asserting they already have focus.
         expected = [n for n in controls() if enabled(n)]
+        expected = expected[expected.index(tabs[0]):]
         disabled = [identity(n) for n in controls() if not enabled(n)]
         assert expected and all(n.get_name().strip() for n in expected), [('unnamed', identity(n)) for n in expected if not n.get_name().strip()]
         visited = []
@@ -57,6 +63,8 @@ def run(app, focus_studio, native_keys, only_tab=None):
             wait(lambda: target.get_state_set().contains(Atspi.StateType.FOCUSED), 'Wrong Tab target: ' + tab_name + ' ' + str(identity(target)))
             current = target
             visited.append(identity(current))
+            if on_focus is not None and index:
+                on_focus(tab_index, index, current)
             if index + 1 < len(expected):
                 native_keys(chord=[0xff09])
                 wait(lambda: not current.get_state_set().contains(Atspi.StateType.FOCUSED), 'Tab focus stuck on ' + str(identity(current)))
@@ -66,16 +74,18 @@ def run(app, focus_studio, native_keys, only_tab=None):
             wait(lambda: target.get_state_set().contains(Atspi.StateType.FOCUSED), 'Shift+Tab order differs: ' + str(identity(target)))
         disclosure = None
         if tab_index == 1:
-            summary = next(n for n in controls() if n.get_role_name() == 'button' and n.get_state_set().contains(Atspi.StateType.EXPANDABLE))
+            messages = json.loads((Path(__file__).resolve().parents[1] / 'src/i18n/messages.json').read_text())
+            mapping_labels = tuple(messages[language]['classMapping'] + ' ' for language in ('vi', 'en'))
+            summary = next(n for n in controls() if n.get_role_name() == 'button' and n.get_state_set().contains(Atspi.StateType.EXPANDABLE) and n.get_name().startswith(mapping_labels))
             assert summary.get_component_iface().grab_focus()
             native_keys(chord=[0xff0d])
             wait(lambda: summary.get_state_set().contains(Atspi.StateType.EXPANDED), 'Enter did not expose expanded state')
             native_keys(chord=[0xff09])
-            field = next(n for n in controls() if n.get_role_name() in ('entry', 'text') and n.get_state_set().contains(Atspi.StateType.MULTI_LINE) and n.get_name() == summary.get_name())
+            field = wait(lambda: next((n for n in controls() if n.get_role_name() in ('entry', 'text') and n.get_state_set().contains(Atspi.StateType.MULTI_LINE) and n.get_name() == summary.get_name()), None), 'Expanded class textarea missing')
             wait(lambda: field.get_state_set().contains(Atspi.StateType.FOCUSED), 'Tab did not reach class textarea')
             from gi.repository import Gdk
             rect = frame().get_component_iface().get_extents(Atspi.CoordType.SCREEN)
-            screenshot = '/tmp/deskmorph-desktop-test/studio-disclosure-focus.png'
+            screenshot = str(report_root / 'studio-disclosure-focus.png')
             pixbuf = Gdk.pixbuf_get_from_window(Gdk.get_default_root_window(), rect.x, rect.y, rect.width, rect.height)
             assert pixbuf is not None
             pixbuf.savev(screenshot, 'png', [], [])
@@ -84,8 +94,8 @@ def run(app, focus_studio, native_keys, only_tab=None):
             wait(lambda: not summary.get_state_set().contains(Atspi.StateType.EXPANDED), 'Space did not collapse disclosure')
             disclosure = dict(enterExpands=True, tabReachesTextarea=True, spaceCollapses=True, screenshot=screenshot)
         observations.append(dict(disclosure=disclosure, tab=tab_name, sequence=visited, disabledSkipped=disabled, reverseMatches=True))
-        Path(f'/tmp/deskmorph-desktop-test/studio-tab-{tab_index}-result.json').write_text(json.dumps(dict(pid=app.get_process_id(), **observations[-1]), ensure_ascii=False, indent=2))
+        (report_root / f'studio-tab-{tab_index}-result.json').write_text(json.dumps(dict(pid=app.get_process_id(), **observations[-1]), ensure_ascii=False, indent=2))
         print(json.dumps(dict(tab=tab_name, count=len(visited), disabled=len(disabled)), ensure_ascii=False), flush=True)
     report = dict(pid=app.get_process_id(), tabs=observations, scope='Native X11 current Studio state, existing profile; Tab/ShiftTab names/order/disabled, first class disclosure Enter/Space/textarea; no settings mutation, popup, color-save or open-review coverage')
-    Path('/tmp/deskmorph-desktop-test/studio-tab-result.json').write_text(json.dumps(report, ensure_ascii=False, indent=2))
+    (report_root / 'studio-tab-result.json').write_text(json.dumps(report, ensure_ascii=False, indent=2))
     return report

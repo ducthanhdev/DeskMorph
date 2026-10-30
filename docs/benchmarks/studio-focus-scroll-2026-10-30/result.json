@@ -1,0 +1,980 @@
+{
+  "passed": true,
+  "binarySha256": "1172029a8dee0dde0b196e4956b2df150522bb1b058c4ed0cf829bc55e449ac9",
+  "command": "DESKMORPH_STUDIO_FOCUS_LAB=1 /usr/bin/python3 tests/negative_origin_smoke.py",
+  "scope": "Native Studio five-page Tab/reverse/disabled traversal with focus pixels and window bounds, vi/scale1 and en/scale2 in private Xvfb",
+  "limits": [
+    "No host input, window manager, fractional DPI, Orca or all dynamic states proof",
+    "AT-SPI seeds navigation focus; subsequent traversal uses private XTest Tab/Shift+Tab",
+    "Focus pixel count and control bounds do not by themselves prove every outline edge is unclipped"
+  ],
+  "runs": [
+    {
+      "scale": 1,
+      "language": "vi",
+      "passed": true,
+      "pages": [
+        {
+          "page": "Taskbar Studio",
+          "tabStops": 23,
+          "disabledSkipped": [
+            [
+              "button",
+              "Thử hiệu ứng mở ứng dụng"
+            ],
+            [
+              "button",
+              "Khôi phục giao diện lúc mở Studio"
+            ]
+          ],
+          "reverseMatches": true,
+          "pixelCheckedControls": 22,
+          "minimumFocusPixels": 348,
+          "allControlBoundsInsideWindow": true,
+          "classDisclosure": false
+        },
+        {
+          "page": "Ứng dụng",
+          "tabStops": 130,
+          "disabledSkipped": [
+            [
+              "button",
+              "Sang trái DeskMorph Description Lab"
+            ],
+            [
+              "button",
+              "Sang phải DeskMorph Description Lab"
+            ]
+          ],
+          "reverseMatches": true,
+          "pixelCheckedControls": 129,
+          "minimumFocusPixels": 252,
+          "allControlBoundsInsideWindow": true,
+          "classDisclosure": true
+        },
+        {
+          "page": "Giao diện",
+          "tabStops": 18,
+          "disabledSkipped": [
+            [
+              "button",
+              "Thử hiệu ứng mở ứng dụng"
+            ],
+            [
+              "button",
+              "Khôi phục giao diện lúc mở Studio"
+            ],
+            [
+              "button",
+              "Lưu Màu chủ đạo"
+            ]
+          ],
+          "reverseMatches": true,
+          "pixelCheckedControls": 17,
+          "minimumFocusPixels": 348,
+          "allControlBoundsInsideWindow": true,
+          "classDisclosure": false
+        },
+        {
+          "page": "Hình nền",
+          "tabStops": 21,
+          "disabledSkipped": [
+            [
+              "button",
+              "Trang trước"
+            ],
+            [
+              "button",
+              "Trang sau"
+            ]
+          ],
+          "reverseMatches": true,
+          "pixelCheckedControls": 20,
+          "minimumFocusPixels": 348,
+          "allControlBoundsInsideWindow": true,
+          "classDisclosure": false
+        },
+        {
+          "page": "Hệ thống",
+          "tabStops": 16,
+          "disabledSkipped": [
+            [
+              "button",
+              "Tắt phím tắt"
+            ]
+          ],
+          "reverseMatches": true,
+          "pixelCheckedControls": 15,
+          "minimumFocusPixels": 348,
+          "allControlBoundsInsideWindow": true,
+          "classDisclosure": false
+        }
+      ],
+      "focusSamples": 203,
+      "measurements": [
+        {
+          "page": 0,
+          "index": 7,
+          "role": "combo box",
+          "name": "Vị trí",
+          "rect": [
+            2199,
+            1383,
+            160,
+            39
+          ],
+          "focusPixels": 1146,
+          "expectedFocusColor": [
+            103,
+            232,
+            249
+          ],
+          "selectContrast": {
+            "arrow": [
+              148,
+              163,
+              184
+            ],
+            "fill": [
+              17,
+              24,
+              39
+            ],
+            "border": [
+              130,
+              145,
+              168
+            ],
+            "exterior": [
+              18,
+              24,
+              42
+            ],
+            "ratios": {
+              "arrowToFill": 6.9186546948218375,
+              "borderToFill": 5.545566906941303,
+              "borderToExterior": 5.51749763760712
+            },
+            "threshold": 3
+          }
+        },
+        {
+          "page": 0,
+          "index": 8,
+          "role": "combo box",
+          "name": "Màn hình đặt Dock",
+          "rect": [
+            2194,
+            1383,
+            165,
+            39
+          ],
+          "focusPixels": 1176,
+          "expectedFocusColor": [
+            103,
+            232,
+            249
+          ],
+          "selectContrast": {
+            "arrow": [
+              148,
+              163,
+              184
+            ],
+            "fill": [
+              17,
+              24,
+              39
+            ],
+            "border": [
+              130,
+              145,
+              168
+            ],
+            "exterior": [
+              18,
+              24,
+              42
+            ],
+            "ratios": {
+              "arrowToFill": 6.9186546948218375,
+              "borderToFill": 5.545566906941303,
+              "borderToExterior": 5.51749763760712
+            },
+            "threshold": 3
+          }
+        },
+        {
+          "page": 3,
+          "index": 12,
+          "role": "combo box",
+          "name": "Chu kỳ đổi ảnh",
+          "rect": [
+            2251,
+            1358,
+            91,
+            39
+          ],
+          "focusPixels": 734,
+          "expectedFocusColor": [
+            103,
+            232,
+            249
+          ],
+          "selectContrast": {
+            "arrow": [
+              148,
+              163,
+              184
+            ],
+            "fill": [
+              17,
+              24,
+              39
+            ],
+            "border": [
+              130,
+              145,
+              168
+            ],
+            "exterior": [
+              19,
+              24,
+              42
+            ],
+            "ratios": {
+              "arrowToFill": 6.9186546948218375,
+              "borderToFill": 5.545566906941303,
+              "borderToExterior": 5.508378299334931
+            },
+            "threshold": 3
+          }
+        },
+        {
+          "page": 3,
+          "index": 14,
+          "role": "combo box",
+          "name": "Lọc theo thư mục",
+          "rect": [
+            1808,
+            1381,
+            551,
+            41
+          ],
+          "focusPixels": 3504,
+          "expectedFocusColor": [
+            103,
+            232,
+            249
+          ],
+          "selectContrast": {
+            "arrow": [
+              148,
+              163,
+              184
+            ],
+            "fill": [
+              17,
+              24,
+              39
+            ],
+            "border": [
+              130,
+              145,
+              168
+            ],
+            "exterior": [
+              17,
+              23,
+              40
+            ],
+            "ratios": {
+              "arrowToFill": 6.9186546948218375,
+              "borderToFill": 5.545566906941303,
+              "borderToExterior": 5.577376658029398
+            },
+            "threshold": 3
+          }
+        },
+        {
+          "page": 3,
+          "index": 15,
+          "role": "combo box",
+          "name": "Định dạng",
+          "rect": [
+            1701,
+            1381,
+            158,
+            41
+          ],
+          "focusPixels": 1146,
+          "expectedFocusColor": [
+            103,
+            232,
+            249
+          ],
+          "selectContrast": {
+            "arrow": [
+              148,
+              163,
+              184
+            ],
+            "fill": [
+              17,
+              24,
+              39
+            ],
+            "border": [
+              130,
+              145,
+              168
+            ],
+            "exterior": [
+              16,
+              22,
+              38
+            ],
+            "ratios": {
+              "arrowToFill": 6.9186546948218375,
+              "borderToFill": 5.545566906941303,
+              "borderToExterior": 5.636029734868244
+            },
+            "threshold": 3
+          }
+        },
+        {
+          "page": 3,
+          "index": 17,
+          "role": "toggle button",
+          "name": "Áp dụng black.png",
+          "rect": [
+            1702,
+            1257,
+            207,
+            165
+          ],
+          "focusPixels": 1993,
+          "expectedFocusColor": [
+            103,
+            232,
+            249
+          ],
+          "artworkFocusContrast": {
+            "ring": [
+              103,
+              232,
+              249
+            ],
+            "backing": [
+              12,
+              16,
+              23
+            ],
+            "artwork": [
+              0,
+              0,
+              0
+            ],
+            "ratio": 13.144894925838239,
+            "threshold": 3
+          }
+        },
+        {
+          "page": 3,
+          "index": 19,
+          "role": "toggle button",
+          "name": "Áp dụng white.png",
+          "rect": [
+            1926,
+            1257,
+            208,
+            165
+          ],
+          "focusPixels": 1987,
+          "expectedFocusColor": [
+            103,
+            232,
+            249
+          ],
+          "artworkFocusContrast": {
+            "ring": [
+              103,
+              232,
+              249
+            ],
+            "backing": [
+              12,
+              16,
+              23
+            ],
+            "artwork": [
+              255,
+              255,
+              255
+            ],
+            "ratio": 13.144894925838239,
+            "threshold": 3
+          }
+        },
+        {
+          "page": 4,
+          "index": 5,
+          "role": "combo box",
+          "name": "Ngôn ngữ",
+          "rect": [
+            2257,
+            1008,
+            102,
+            39
+          ],
+          "focusPixels": 800,
+          "expectedFocusColor": [
+            103,
+            232,
+            249
+          ],
+          "selectContrast": {
+            "arrow": [
+              148,
+              163,
+              184
+            ],
+            "fill": [
+              17,
+              24,
+              39
+            ],
+            "border": [
+              130,
+              145,
+              168
+            ],
+            "exterior": [
+              17,
+              23,
+              39
+            ],
+            "ratios": {
+              "arrowToFill": 6.9186546948218375,
+              "borderToFill": 5.545566906941303,
+              "borderToExterior": 5.583750428195598
+            },
+            "threshold": 3
+          }
+        }
+      ],
+      "configUnchanged": true
+    },
+    {
+      "scale": 2,
+      "language": "en",
+      "passed": true,
+      "pages": [
+        {
+          "page": "Taskbar Studio",
+          "tabStops": 23,
+          "disabledSkipped": [
+            [
+              "button",
+              "Preview launch animation"
+            ],
+            [
+              "button",
+              "Restore appearance from Studio startup"
+            ]
+          ],
+          "reverseMatches": true,
+          "pixelCheckedControls": 22,
+          "minimumFocusPixels": 1392,
+          "allControlBoundsInsideWindow": true,
+          "classDisclosure": false
+        },
+        {
+          "page": "Applications",
+          "tabStops": 130,
+          "disabledSkipped": [
+            [
+              "button",
+              "Move left DeskMorph Description Lab"
+            ],
+            [
+              "button",
+              "Move right DeskMorph Description Lab"
+            ]
+          ],
+          "reverseMatches": true,
+          "pixelCheckedControls": 129,
+          "minimumFocusPixels": 1008,
+          "allControlBoundsInsideWindow": true,
+          "classDisclosure": true
+        },
+        {
+          "page": "Appearance",
+          "tabStops": 18,
+          "disabledSkipped": [
+            [
+              "button",
+              "Preview launch animation"
+            ],
+            [
+              "button",
+              "Restore appearance from Studio startup"
+            ],
+            [
+              "button",
+              "Save Accent color"
+            ]
+          ],
+          "reverseMatches": true,
+          "pixelCheckedControls": 17,
+          "minimumFocusPixels": 1392,
+          "allControlBoundsInsideWindow": true,
+          "classDisclosure": false
+        },
+        {
+          "page": "Wallpapers",
+          "tabStops": 21,
+          "disabledSkipped": [
+            [
+              "button",
+              "Previous page"
+            ],
+            [
+              "button",
+              "Next page"
+            ]
+          ],
+          "reverseMatches": true,
+          "pixelCheckedControls": 20,
+          "minimumFocusPixels": 1392,
+          "allControlBoundsInsideWindow": true,
+          "classDisclosure": false
+        },
+        {
+          "page": "System",
+          "tabStops": 16,
+          "disabledSkipped": [
+            [
+              "button",
+              "Disable shortcut"
+            ]
+          ],
+          "reverseMatches": true,
+          "pixelCheckedControls": 15,
+          "minimumFocusPixels": 1392,
+          "allControlBoundsInsideWindow": true,
+          "classDisclosure": false
+        }
+      ],
+      "focusSamples": 203,
+      "measurements": [
+        {
+          "page": 0,
+          "index": 7,
+          "role": "combo box",
+          "name": "Position",
+          "rect": [
+            2420,
+            1686,
+            378,
+            78
+          ],
+          "focusPixels": 5475,
+          "expectedFocusColor": [
+            103,
+            232,
+            249
+          ],
+          "selectContrast": {
+            "arrow": [
+              148,
+              163,
+              184
+            ],
+            "fill": [
+              17,
+              24,
+              39
+            ],
+            "border": [
+              130,
+              145,
+              168
+            ],
+            "exterior": [
+              18,
+              24,
+              42
+            ],
+            "ratios": {
+              "arrowToFill": 6.9186546948218375,
+              "borderToFill": 5.545566906941303,
+              "borderToExterior": 5.51749763760712
+            },
+            "threshold": 3
+          }
+        },
+        {
+          "page": 0,
+          "index": 8,
+          "role": "combo box",
+          "name": "Dock monitor",
+          "rect": [
+            2468,
+            1686,
+            330,
+            78
+          ],
+          "focusPixels": 4899,
+          "expectedFocusColor": [
+            103,
+            232,
+            249
+          ],
+          "selectContrast": {
+            "arrow": [
+              148,
+              163,
+              184
+            ],
+            "fill": [
+              17,
+              24,
+              39
+            ],
+            "border": [
+              130,
+              145,
+              168
+            ],
+            "exterior": [
+              18,
+              24,
+              42
+            ],
+            "ratios": {
+              "arrowToFill": 6.9186546948218375,
+              "borderToFill": 5.545566906941303,
+              "borderToExterior": 5.51749763760712
+            },
+            "threshold": 3
+          }
+        },
+        {
+          "page": 3,
+          "index": 12,
+          "role": "combo box",
+          "name": "Change interval",
+          "rect": [
+            2594,
+            1636,
+            170,
+            78
+          ],
+          "focusPixels": 2977,
+          "expectedFocusColor": [
+            103,
+            232,
+            249
+          ],
+          "selectContrast": {
+            "arrow": [
+              148,
+              163,
+              184
+            ],
+            "fill": [
+              17,
+              24,
+              39
+            ],
+            "border": [
+              130,
+              145,
+              168
+            ],
+            "exterior": [
+              18,
+              24,
+              42
+            ],
+            "ratios": {
+              "arrowToFill": 6.9186546948218375,
+              "borderToFill": 5.545566906941303,
+              "borderToExterior": 5.51749763760712
+            },
+            "threshold": 3
+          }
+        },
+        {
+          "page": 3,
+          "index": 14,
+          "role": "combo box",
+          "name": "Filter by folder",
+          "rect": [
+            1694,
+            1682,
+            1104,
+            82
+          ],
+          "focusPixels": 14235,
+          "expectedFocusColor": [
+            103,
+            232,
+            249
+          ],
+          "selectContrast": {
+            "arrow": [
+              148,
+              163,
+              184
+            ],
+            "fill": [
+              17,
+              24,
+              39
+            ],
+            "border": [
+              130,
+              145,
+              168
+            ],
+            "exterior": [
+              17,
+              23,
+              40
+            ],
+            "ratios": {
+              "arrowToFill": 6.9186546948218375,
+              "borderToFill": 5.545566906941303,
+              "borderToExterior": 5.577376658029398
+            },
+            "threshold": 3
+          }
+        },
+        {
+          "page": 3,
+          "index": 15,
+          "role": "combo box",
+          "name": "Format",
+          "rect": [
+            1482,
+            1682,
+            238,
+            82
+          ],
+          "focusPixels": 3843,
+          "expectedFocusColor": [
+            103,
+            232,
+            249
+          ],
+          "selectContrast": {
+            "arrow": [
+              148,
+              163,
+              184
+            ],
+            "fill": [
+              17,
+              24,
+              39
+            ],
+            "border": [
+              130,
+              145,
+              168
+            ],
+            "exterior": [
+              16,
+              22,
+              38
+            ],
+            "ratios": {
+              "arrowToFill": 6.9186546948218375,
+              "borderToFill": 5.545566906941303,
+              "borderToExterior": 5.636029734868244
+            },
+            "threshold": 3
+          }
+        },
+        {
+          "page": 3,
+          "index": 17,
+          "role": "toggle button",
+          "name": "Apply black.png",
+          "rect": [
+            1484,
+            1434,
+            414,
+            330
+          ],
+          "focusPixels": 8051,
+          "expectedFocusColor": [
+            103,
+            232,
+            249
+          ],
+          "artworkFocusContrast": {
+            "ring": [
+              103,
+              232,
+              249
+            ],
+            "backing": [
+              12,
+              16,
+              23
+            ],
+            "artwork": [
+              0,
+              0,
+              0
+            ],
+            "ratio": 13.144894925838239,
+            "threshold": 3
+          }
+        },
+        {
+          "page": 3,
+          "index": 19,
+          "role": "toggle button",
+          "name": "Apply white.png",
+          "rect": [
+            1932,
+            1434,
+            416,
+            330
+          ],
+          "focusPixels": 8063,
+          "expectedFocusColor": [
+            103,
+            232,
+            249
+          ],
+          "artworkFocusContrast": {
+            "ring": [
+              103,
+              232,
+              249
+            ],
+            "backing": [
+              12,
+              16,
+              23
+            ],
+            "artwork": [
+              255,
+              255,
+              255
+            ],
+            "ratio": 13.144894925838239,
+            "threshold": 3
+          }
+        },
+        {
+          "page": 4,
+          "index": 5,
+          "role": "combo box",
+          "name": "Language",
+          "rect": [
+            2594,
+            936,
+            204,
+            78
+          ],
+          "focusPixels": 3385,
+          "expectedFocusColor": [
+            103,
+            232,
+            249
+          ],
+          "selectContrast": {
+            "arrow": [
+              148,
+              163,
+              184
+            ],
+            "fill": [
+              17,
+              24,
+              39
+            ],
+            "border": [
+              130,
+              145,
+              168
+            ],
+            "exterior": [
+              17,
+              23,
+              39
+            ],
+            "ratios": {
+              "arrowToFill": 6.9186546948218375,
+              "borderToFill": 5.545566906941303,
+              "borderToExterior": 5.583750428195598
+            },
+            "threshold": 3
+          }
+        }
+      ],
+      "configUnchanged": true
+    }
+  ],
+  "failures": [
+    {
+      "binarySha256": "0e732e011f1380e6da9173a58ffbed857dfdbd61470bddf289ef6b0180ad5b70",
+      "control": "Accent input",
+      "rect": [
+        1800,
+        1402,
+        208,
+        39
+      ],
+      "window": [
+        1430,
+        730,
+        980,
+        700
+      ],
+      "bottomClippedPixels": 11,
+      "nativeScreenshotReviewed": true
+    },
+    {
+      "kind": "Intermediate input-only scrolling",
+      "control": "Auto-hide checkbox label/help",
+      "rect": [
+        1701,
+        1390,
+        658,
+        43
+      ],
+      "window": [
+        1430,
+        730,
+        980,
+        700
+      ],
+      "bottomClippedPixels": 3
+    },
+    {
+      "kind": "Wallpaper apply outline clipped by overflow-hidden card",
+      "focusPixels": 0,
+      "nativeScreenshotReviewed": true,
+      "assetNameOmitted": true
+    }
+  ],
+  "harnessCorrections": [
+    "Resolve tabs within the Studio nav landmark instead of first five buttons; error Details can precede navigation",
+    "Resolve class-mapping disclosure by localized class-mapping label instead of first expandable button",
+    "Use owned black/white wallpapers; no user image/name in committed screenshots",
+    "Five-page traversal timeout accounts for installed catalogue size; retains focus/order/bounds/pixel assertions"
+  ],
+  "cleanup": {
+    "ownedLabPids": [],
+    "dpiTopologyRestored": true,
+    "dpiUserValueRestored": true,
+    "dpiCapabilitiesRestored": true
+  }
+}

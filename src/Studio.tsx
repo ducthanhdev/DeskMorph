@@ -33,7 +33,11 @@ export function Studio() {
     {platform?.reasons.map((reason) => <div className="app-status" role="status" key={reason}><ErrorText error={reason} /></div>)}
     {!ready ? <p className="app-status" role="status">{t("loading")}</p> : <div className="studio-body">
       <nav className="studio-nav" aria-label="Studio">{tabs.map((tab) => <button key={tab} className={`nav-btn ${activeTab === tab ? "active" : ""}`} aria-current={activeTab === tab ? "page" : undefined} onClick={() => setActiveTab(tab)}>{t(`${tab}Tab`)}</button>)}</nav>
-      <main className="studio-content" key={activeTab}>
+      <main className="studio-content" key={activeTab} onFocusCapture={(event) => {
+        // WebKit can reveal only the text caret when tabbing into an input.
+        // Keep the entire control and its focus ring inside the scrollport.
+        (event.target.closest("label") ?? event.target).scrollIntoView({ block: "nearest", inline: "nearest" });
+      }}>
         {(activeTab === "dock" || activeTab === "appearance") && <><DockPreview /><button className="studio-button appearance-restore" disabled={!appearanceChanged || restoring} onClick={async () => {
           if (!originalAppearance || restoring) return;
           const signal = lifetime.capture();

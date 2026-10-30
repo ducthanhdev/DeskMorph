@@ -129,3 +129,14 @@ WebKitGTK2.52.6 core queue LiveRegionChanged nhưng switch AT-SPI platform khôn
 55/55 frontend,87 Rust pass/5ignored, TS/Vite/native custom-protocol build qua. Giữ test frontend retry/dedupe/locale và Rust guards vì bảo vệ lỗi cụ thể; giữ helper speech opt-in để tái lập tích hợp thật. Không thêm test mirror implementation, không commit raw speech/audio/profile/upstream source. Harness giữ tiêu chí exit0: SIGTERM từng timeout (-9), sửa bằng private D-Bus Quit; chạy song song từng bị Orca CLI chặn toàn user, nay chạy tuần tự và preflight reader, tuyệt đối không --replace. Sửa tọa độ negative bị sót trong mode positive; không bỏ bounds assertions. Log debug đọc sau reader stop vì tail buffered. Audit cuối0 helper/sink lab, default audio không đổi.
 
 Chốt riêng launch announcement, không chốt G5.9: còn full tab/focus clipping/contrast và screen-reader regression rộng hơn; G2.10 cũng mở. Tổng97/99, release no-go.
+
+
+## G5.9 — Cuộn control và focus trên ảnh trong Studio (30/10/2026)
+
+[Kiểm native năm trang](benchmarks/studio-focus-scroll-2026-10-30/result.json) phát hiện hai lỗi thật: ô accent bị cắt11px ở đáy khi Tab, và outline nút áp dụng hình nền bị parent overflow:hidden cắt hoàn toàn (0 pixel focus). Bản sửa cuộn cả nhãn/control vào scrollport với margin8px; dùng viền focus bên trong thẻ ảnh, có nền tối riêng để nhận biết trên ảnh sáng/tối.
+
+Binary1172029a… qua cảvi/scale1 vàen/scale2: mỗi ngôn ngữ208 Tab stops trên5 trang, Tab/Shift+Tab đúng thứ tự và bỏ qua disabled, disclosure mapping mở/textarea/collapse đạt. Mỗi lượt203 control sau nav seed được đo bounds nằm trong window và có focus pixel: tổng406.12 select có arrow/fill6,919:1, border/fill5,546:1, border/exterior tối thiểu5,508:1. Focus trên hai fixture ảnh đen/trắng có ring/backing13,145:1, kiểm pixel ảnh đã load thật. Không thao tác setting, bytes config nguyên vẹn.
+
+Harness dùng nav landmark thay first5buttons, vì status Details có thể đứng trước nav; chọn đúng disclosure mapping theo nhãn. Đường Tab bắt đầu từ nav seed, không kiểm status disclosures đứng trước nav hoặc mọi dynamic state. Bounds trong window và pixel focus không tự chứng nhận mọi cạnh ring/ancestor clipping ở mọi trạng thái. Fixture ảnh đen/trắng thuộc lab, không lưu ảnh/tên file cá nhân. [Focus accent](benchmarks/studio-focus-scroll-2026-10-30/accent-focus.png) và [focus ảnh đen](benchmarks/studio-focus-scroll-2026-10-30/wallpaper-black-focus.png) đã xem.
+
+55/55 frontend, TS/Vite/native build, Python compile/diff check qua. Giữ native test vì bắt hai regression thực mà test CSS/điều hướng thuần trước đó bỏ sót; không thêm unit test mirror scrollIntoView. Rust không đổi nên không chạy lại Rust suite. G5.9/G2.10 tiếp tục mở,97/99; cần hồi quy screen reader rộng hơn và DPI/host WM.

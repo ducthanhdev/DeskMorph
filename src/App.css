@@ -1743,6 +1743,7 @@ button:focus-visible { outline: 2px solid #48b9c7; outline-offset: -2px; }
 /* Studio settings share the Dock's appearance model. */
 .studio-header { flex-shrink: 0; }
 .studio-content { flex: 1; min-width: 0; overflow: auto; padding: 28px; }
+.studio-content :is(label, button, input, select, textarea, summary, [tabindex]) { scroll-margin: 8px; }
 .studio-card, .dock-preview { margin-bottom: 22px; padding: 22px; border: 1px solid var(--border-subtle); border-radius: 16px; background: var(--bg-card); }
 .studio-card h2, .dock-preview h2 { font-size: 18px; margin-bottom: 16px; }
 .studio-card h3 { margin: 20px 0 12px; font-size: 15px; }
@@ -1797,7 +1798,9 @@ button:focus-visible { outline: 2px solid #48b9c7; outline-offset: -2px; }
 .wallpaper-filters .settings-toggle { margin: 0; }
 .wallpaper-library-card { position: relative; border: 1px solid #475569; border-radius: 12px; overflow: hidden; background: #111827; }
 .wallpaper-library-card.is-current { border: 2px solid var(--accent-pop); }
-.studio-card .wallpaper-apply { display: block; width: 100%; padding: 0; text-align: left; border: 0; border-radius: 0; background: transparent; }
+.studio-card .wallpaper-apply { position: relative; display: block; width: 100%; padding: 0; text-align: left; border: 0; border-radius: 0; background: transparent; }
+.studio-app .wallpaper-apply:focus-visible { outline: none; }
+.wallpaper-apply:focus-visible::after { content: ""; position: absolute; inset: 4px; border: 3px solid #67e8f9; border-radius: 6px; box-shadow: 0 0 0 2px #0c1017; pointer-events: none; }
 .studio-card .wallpaper-favorite { position: absolute; right: 6px; top: 6px; background: #111827; font-size: 20px; padding: 3px 7px; }
 .wallpaper-favorite[aria-pressed=true] { color: #fbbf24; }
 .wallpaper-thumb-placeholder { display: flex; align-items: center; justify-content: center; height: 130px; font-size: 12px; color: #94a3b8; }
