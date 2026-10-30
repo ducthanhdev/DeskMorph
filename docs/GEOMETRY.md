@@ -41,3 +41,10 @@ Khảo sát [Mutter DisplayConfig hiện tại](benchmarks/dpi-capabilities-2026
 
 
 Nhánh opt-in `DESKMORPH_CONTEXT_DESCRIPTION_LAB=1` bổ sung pin fixture có command không tồn tại trong private root, mở menu bằng Shift+F10 trên private DISPLAY rồi kiểm accessible description/focus sau lỗi qua AT-SPI. [Lượt4 ca](benchmarks/context-description-lab-2026-10-30/result.json) dùng vi/scale1 và en/scale2, top/bottom;16 popup placement cùng lượt qua. Đây là kiểm bổ sung G5.9 trên binary thật, không tăng phạm vi chứng nhận DPI/pixel/WM.
+
+
+[Preflight khôi phục Mutter](benchmarks/dpi-restore-preflight-2026-10-30/result.json) bổ sung `tests/mutter_scaling_probe.py --verify-restore --output /tmp/mutter-restore.json`. Lệnh chỉ đọc state/settings và gọi ApplyMonitorsConfig với **method0/VERIFY**, không áp cấu hình hoặc bật feature. Lượt đầu server từ chối “Can't set layout mode”; payload nay chỉ gửi layout-mode khi server công bố supports-changing-layout-mode, còn fixed layout phải khớp baseline. Lượt sửa được Mutter xác nhận hợp lệ; features, user-value state, topology và capabilities giữ nguyên.
+
+Probe lưu backup features/user value (phân biệt unset với explicit[]) và active mode/refresh/position/scale/transform/primary cùng underscanning nếu có, trước mutation. Nhánh `--trial-fractional-feature` khôi phục user value trong finally; nếu topology còn lệch mới gọi TEMPORARY/method1 bằng serial mới, không dùng persistent/method2. Read-only survey không tự áp lại một bố trí do người dùng/ngoại cảnh thay đổi; connected connector set khác baseline thì dừng fallback. Mọi lỗi restore vẫn ghi báo cáo. Sáu fault-injection tests kiểm các ranh giới này; không thay acceptance host.
+
+**Feature trial và fallback method1 chưa chạy trên host**; chỉ VERIFY payload đã chạy. Đang chờ desktop window mới cho bật tạm feature rồi khảo sát125/150% và global-scale constraints. SIGINT/SIGTERM thường đi qua finally; không bảo đảm khôi phục sau SIGKILL/mất điện/lỗi display service. Không đánh dấu G2.10 hoặc coi preflight là DPI test đạt.

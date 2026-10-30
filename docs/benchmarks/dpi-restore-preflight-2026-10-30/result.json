@@ -1,0 +1,393 @@
+{
+  "passed": true,
+  "scope": "Real Mutter VERIFY of restoration payload and fault-injection tests for diagnostic runner; no scaling/feature change or application DPI acceptance",
+  "command": "/usr/bin/python3 tests/mutter_scaling_probe.py --output /tmp/deskmorph-mutter-verify-restore-fixed.json --verify-restore",
+  "verificationMethod": 0,
+  "monitorConfigurationApplied": false,
+  "fractionalFeatureTrialExecuted": false,
+  "diagnosticFailure": {
+    "passed": false,
+    "trialRequested": false,
+    "verifyRestoreRequested": true,
+    "before": {
+      "monitors": [
+        {
+          "connector": "HDMI-0",
+          "configProperties": {},
+          "currentModes": [
+            {
+              "id": "1920x1080@60.000",
+              "width": 1920,
+              "height": 1080,
+              "refresh": 60.0,
+              "preferredScale": 1.0,
+              "supportedScales": [
+                1.0,
+                2.0
+              ]
+            }
+          ]
+        },
+        {
+          "connector": "eDP-1-1",
+          "configProperties": {},
+          "currentModes": [
+            {
+              "id": "1920x1080@144.003",
+              "width": 1920,
+              "height": 1080,
+              "refresh": 144.0028076171875,
+              "preferredScale": 1.0,
+              "supportedScales": [
+                1.0,
+                2.0
+              ]
+            }
+          ]
+        }
+      ],
+      "logicalMonitors": [
+        {
+          "x": 1920,
+          "y": 0,
+          "scale": 1.0,
+          "transform": 0,
+          "primary": false,
+          "connectors": [
+            "HDMI-0"
+          ]
+        },
+        {
+          "x": 0,
+          "y": 0,
+          "scale": 1.0,
+          "transform": 0,
+          "primary": true,
+          "connectors": [
+            "eDP-1-1"
+          ]
+        }
+      ],
+      "properties": {
+        "renderer": "xrandr",
+        "layout-mode": 2,
+        "global-scale-required": true,
+        "legacy-ui-scaling-factor": 1
+      }
+    },
+    "originalFeatures": [],
+    "originalUserValueUnset": false,
+    "backup": "/tmp/deskmorph-mutter-scaling-g7dahfb1/backup.json",
+    "settingsRestored": true,
+    "userValueRestored": true,
+    "topologyRestored": true,
+    "capabilitiesRestored": true,
+    "featureMutationAttempted": false,
+    "restoreConfigurationApplied": false,
+    "restoreErrors": [],
+    "scope": "Mutter capability survey, optional VERIFY of saved restore payload and reversible fractional-feature trial; no application DPI acceptance",
+    "inputSent": false,
+    "error": "GLib.Error('GDBus.Error:org.freedesktop.DBus.Error.InvalidArgs: Can't set layout mode', 'g-dbus-error-quark', 16)",
+    "after": {
+      "monitors": [
+        {
+          "connector": "HDMI-0",
+          "configProperties": {},
+          "currentModes": [
+            {
+              "id": "1920x1080@60.000",
+              "width": 1920,
+              "height": 1080,
+              "refresh": 60.0,
+              "preferredScale": 1.0,
+              "supportedScales": [
+                1.0,
+                2.0
+              ]
+            }
+          ]
+        },
+        {
+          "connector": "eDP-1-1",
+          "configProperties": {},
+          "currentModes": [
+            {
+              "id": "1920x1080@144.003",
+              "width": 1920,
+              "height": 1080,
+              "refresh": 144.0028076171875,
+              "preferredScale": 1.0,
+              "supportedScales": [
+                1.0,
+                2.0
+              ]
+            }
+          ]
+        }
+      ],
+      "logicalMonitors": [
+        {
+          "x": 1920,
+          "y": 0,
+          "scale": 1.0,
+          "transform": 0,
+          "primary": false,
+          "connectors": [
+            "HDMI-0"
+          ]
+        },
+        {
+          "x": 0,
+          "y": 0,
+          "scale": 1.0,
+          "transform": 0,
+          "primary": true,
+          "connectors": [
+            "eDP-1-1"
+          ]
+        }
+      ],
+      "properties": {
+        "renderer": "xrandr",
+        "layout-mode": 2,
+        "global-scale-required": true,
+        "legacy-ui-scaling-factor": 1
+      }
+    }
+  },
+  "verified": {
+    "passed": true,
+    "trialRequested": false,
+    "verifyRestoreRequested": true,
+    "before": {
+      "monitors": [
+        {
+          "connector": "HDMI-0",
+          "configProperties": {},
+          "currentModes": [
+            {
+              "id": "1920x1080@60.000",
+              "width": 1920,
+              "height": 1080,
+              "refresh": 60.0,
+              "preferredScale": 1.0,
+              "supportedScales": [
+                1.0,
+                2.0
+              ]
+            }
+          ]
+        },
+        {
+          "connector": "eDP-1-1",
+          "configProperties": {},
+          "currentModes": [
+            {
+              "id": "1920x1080@144.003",
+              "width": 1920,
+              "height": 1080,
+              "refresh": 144.0028076171875,
+              "preferredScale": 1.0,
+              "supportedScales": [
+                1.0,
+                2.0
+              ]
+            }
+          ]
+        }
+      ],
+      "logicalMonitors": [
+        {
+          "x": 1920,
+          "y": 0,
+          "scale": 1.0,
+          "transform": 0,
+          "primary": false,
+          "connectors": [
+            "HDMI-0"
+          ]
+        },
+        {
+          "x": 0,
+          "y": 0,
+          "scale": 1.0,
+          "transform": 0,
+          "primary": true,
+          "connectors": [
+            "eDP-1-1"
+          ]
+        }
+      ],
+      "properties": {
+        "renderer": "xrandr",
+        "layout-mode": 2,
+        "global-scale-required": true,
+        "legacy-ui-scaling-factor": 1
+      }
+    },
+    "originalFeatures": [],
+    "originalUserValueUnset": false,
+    "backup": "/tmp/deskmorph-mutter-scaling-2oeg64gd/backup.json",
+    "settingsRestored": true,
+    "userValueRestored": true,
+    "topologyRestored": true,
+    "capabilitiesRestored": true,
+    "featureMutationAttempted": false,
+    "restoreConfigurationApplied": false,
+    "restoreErrors": [],
+    "scope": "Mutter capability survey, optional VERIFY of saved restore payload and reversible fractional-feature trial; no application DPI acceptance",
+    "inputSent": false,
+    "restorePayloadVerifiedByMutter": true,
+    "during": {
+      "monitors": [
+        {
+          "connector": "HDMI-0",
+          "configProperties": {},
+          "currentModes": [
+            {
+              "id": "1920x1080@60.000",
+              "width": 1920,
+              "height": 1080,
+              "refresh": 60.0,
+              "preferredScale": 1.0,
+              "supportedScales": [
+                1.0,
+                2.0
+              ]
+            }
+          ]
+        },
+        {
+          "connector": "eDP-1-1",
+          "configProperties": {},
+          "currentModes": [
+            {
+              "id": "1920x1080@144.003",
+              "width": 1920,
+              "height": 1080,
+              "refresh": 144.0028076171875,
+              "preferredScale": 1.0,
+              "supportedScales": [
+                1.0,
+                2.0
+              ]
+            }
+          ]
+        }
+      ],
+      "logicalMonitors": [
+        {
+          "x": 1920,
+          "y": 0,
+          "scale": 1.0,
+          "transform": 0,
+          "primary": false,
+          "connectors": [
+            "HDMI-0"
+          ]
+        },
+        {
+          "x": 0,
+          "y": 0,
+          "scale": 1.0,
+          "transform": 0,
+          "primary": true,
+          "connectors": [
+            "eDP-1-1"
+          ]
+        }
+      ],
+      "properties": {
+        "renderer": "xrandr",
+        "layout-mode": 2,
+        "global-scale-required": true,
+        "legacy-ui-scaling-factor": 1
+      }
+    },
+    "after": {
+      "monitors": [
+        {
+          "connector": "HDMI-0",
+          "configProperties": {},
+          "currentModes": [
+            {
+              "id": "1920x1080@60.000",
+              "width": 1920,
+              "height": 1080,
+              "refresh": 60.0,
+              "preferredScale": 1.0,
+              "supportedScales": [
+                1.0,
+                2.0
+              ]
+            }
+          ]
+        },
+        {
+          "connector": "eDP-1-1",
+          "configProperties": {},
+          "currentModes": [
+            {
+              "id": "1920x1080@144.003",
+              "width": 1920,
+              "height": 1080,
+              "refresh": 144.0028076171875,
+              "preferredScale": 1.0,
+              "supportedScales": [
+                1.0,
+                2.0
+              ]
+            }
+          ]
+        }
+      ],
+      "logicalMonitors": [
+        {
+          "x": 1920,
+          "y": 0,
+          "scale": 1.0,
+          "transform": 0,
+          "primary": false,
+          "connectors": [
+            "HDMI-0"
+          ]
+        },
+        {
+          "x": 0,
+          "y": 0,
+          "scale": 1.0,
+          "transform": 0,
+          "primary": true,
+          "connectors": [
+            "eDP-1-1"
+          ]
+        }
+      ],
+      "properties": {
+        "renderer": "xrandr",
+        "layout-mode": 2,
+        "global-scale-required": true,
+        "legacy-ui-scaling-factor": 1
+      }
+    }
+  },
+  "faultInjectionTests": {
+    "passed": 6,
+    "scope": "Mocked display/settings, no host bus access",
+    "checks": [
+      "Unset versus explicit GSettings user values restored distinctly",
+      "GSettings restore exception still saves failed report",
+      "Display restore exception still saves report and settings restoration",
+      "Read-only survey does not restore an external topology change",
+      "Layout-mode property only included when compositor supports changing it; persistent method2 refused",
+      "No vacuous success for empty active monitor list; disabled outputs ignored"
+    ]
+  },
+  "runnerSha256": "bf308d858bb78a1e2b82dd9692f019118583e52d7ba902773a9e21b00d5ab448",
+  "limits": [
+    "Method0 verifies server acceptance only; temporary method1 fallback has not been applied on host",
+    "Signal handler routes normal SIGINT/SIGTERM through finally; no guarantee against SIGKILL, machine power loss or display service failure",
+    "Fractional 125/150%, mixed DPI and negative topology under host GNOME WM still pending",
+    "Feature trial needs a newly confirmed desktop availability window; no assumption from earlier expired windows"
+  ]
+}

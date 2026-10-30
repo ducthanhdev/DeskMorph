@@ -82,3 +82,6 @@ Tài liệu này ghi quyết định kỹ thuật theo yêu cầu người dùng
 
 
 - Native Studio controls: giữ nhánh opt-in trong Xvfb harness có sẵn vì baseline thật bắt được tick/thumb contrast2,323:1 và hậu kiểm native vi/en4,013:1; computed CSS không đo được màu UA checkmark/thumb. Keys thật Space/Tab/Shift+Tab/arrows/Home/End đối chiếu native checked/config và disabled skip. Giữ summary palette/counts/rectangles/ratio/hash, baseline fail, hai lỗi crop đã sửa và4 ảnh nhỏ có giá trị review; raw full-window/log/profile ở/tmp. Label crop phải kiểm ô vuông20px và palette, GdkPixbuf crop phải kiểm root scale/đơn vị/logical/device dimensions. Không bỏ assertions khi đo nhầm vùng, không gọi field restore là byte restore hoặc outline pixel hiện diện là chứng nhận clipping toàn app. Không thêm unit test chỉ phản chiếu token CSS hoặc chạy lại unit suites không liên quan.
+
+
+- Mutter restore preflight: giữ probe opt-in và6 fault tests vì host settings/topology restoration cần kiểm failure paths, user-value unset/explicit và read-only invariant. Giữ JSON method0 reject/pass cùng normalized topology không EDID/serial; backup/user-value/raw state ở/tmp. Method0 chỉ VERIFY, không gọi là monitor apply hoặc fractional acceptance. Method1 fallback mới chuẩn bị/chưa chạy; không dùng unit mocks để chứng nhận host restore. Không bật feature khi chưa có desktop availability mới.
