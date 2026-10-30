@@ -109,3 +109,8 @@ Giữ [bằng chứng406 control](benchmarks/studio-focus-scroll-2026-10-30/resu
 ## Fractional/mixed DPI native survey (30/10/2026)
 
 Giữ [6 ca native](benchmarks/dpi-native-fractional-2026-10-30/result.json) với Mutter requested/readback layouts, GDK workareas/scales, native Dock/launcher bounds, hash binary/diagnostic, failures và exact restore. Giữ runner opt-in cùng5 fault tests orchestration vì đây là thao tác host topology cần bảo vệ restore khi worker fail/timeout/interrupt và tách settings/display cleanup. Dùng lại probe/payload guards cũ; không giữ diagnostic sao chép trong/tmp hoặc raw logs. Metadata phân biệt diagnostic đã chạy thật với safety guards bổ sung mới chỉ fault-test. Native framebuffer allocations không thay thế physical pixels, font sharpness, keyboard/click, Dock dưới, popup khác hoặc negative origin dưới WM. Không đánh dấu G2.10 từ6 ca hẹp này.
+
+
+## Functional glyph contrast (30/10/2026)
+
+Giữ72 fixture mở rộng trong contrast_audit.py vì đo stroke/gradient và fit SVG thật của các control chưa có bằng chứng; dùng lại renderer/math hiện có, không test lặp markup. [JSON gọn](benchmarks/functional-glyph-contrast-2026-10-30/result.json) giữ cận màu, kích thước SVG và hash, không lưu toàn computed tree hoặc nhân bản137 ca trước.209/209 là kết quả suite offscreen, không thay native focus/Orca acceptance.

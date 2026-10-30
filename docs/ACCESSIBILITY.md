@@ -140,3 +140,10 @@ Binary1172029a… qua cảvi/scale1 vàen/scale2: mỗi ngôn ngữ208 Tab stops
 Harness dùng nav landmark thay first5buttons, vì status Details có thể đứng trước nav; chọn đúng disclosure mapping theo nhãn. Đường Tab bắt đầu từ nav seed, không kiểm status disclosures đứng trước nav hoặc mọi dynamic state. Bounds trong window và pixel focus không tự chứng nhận mọi cạnh ring/ancestor clipping ở mọi trạng thái. Fixture ảnh đen/trắng thuộc lab, không lưu ảnh/tên file cá nhân. [Focus accent](benchmarks/studio-focus-scroll-2026-10-30/accent-focus.png) và [focus ảnh đen](benchmarks/studio-focus-scroll-2026-10-30/wallpaper-black-focus.png) đã xem.
 
 55/55 frontend, TS/Vite/native build, Python compile/diff check qua. Giữ native test vì bắt hai regression thực mà test CSS/điều hướng thuần trước đó bỏ sót; không thêm unit test mirror scrollIntoView. Rust không đổi nên không chạy lại Rust suite. G5.9/G2.10 tiếp tục mở,97/99; cần hồi quy screen reader rộng hơn và DPI/host WM.
+
+
+## G5.9 — Tương phản biểu tượng chức năng (30/10/2026)
+
+[Bằng chứng](benchmarks/functional-glyph-contrast-2026-10-30/result.json):209/209 computed-style cases đạt, gồm72 ca mới cho glyph Dock, context menu, đóng cửa sổ và launcher. Render lucide-react đang cài với kích thước thật (X context14px, X đóng cửa sổ16px), CSS/control classes thật, nền đen/trắng, thường/hover khi có. Cận tương phản nhỏ nhất trong72 ca mới là5,246:1 (yêu cầu3:1); SVG bounds nằm trong parent. Lưu riêng72 kết quả mới, hash CSS/runner và tổng suite; không nhân bản137 ca cũ hoặc raw computed tree.
+
+Đây là cận bảo thủ từ màu stroke/background và gradient stops trong WebKitGTK offscreen, không chứng nhận artwork/logo ngoài, native controls, focus bàn phím hay toàn bộ accessibility. Không đổi mã sản phẩm; không rebuild hoặc lặp unit suite sản phẩm. G5.9 vẫn mở, tổng97/99.

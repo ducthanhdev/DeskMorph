@@ -168,6 +168,34 @@ def fixtures():
                 hover = ' test-hover' if state == 'hover' else ''
                 cases.append(dict(name=f'icon/launcher/{size}/{accent}/{state}', threshold=3,
                     gradientBounds=True, metric='stroke', markup=f'<div class="taskbar-container" style="position:static;background:#172235"><button class="dock-launcher-btn{hover}" style="width:{size}px;height:{size}px;background:linear-gradient(135deg,{accent},#8b5cf6)">{icon}</button></div>'))
+    # Other functional glyphs inherit currentColor from their actual control
+    # classes. External application logos/media artwork are outside this set.
+    glyph_sizes = dict(Volume2=16, Shuffle=14, Activity=16, Battery=16,
+        BatteryCharging=16, Wifi=16, Network=16, Plus=16, Pin=16, PinOff=16,
+        ArrowLeft=14, ArrowRight=14, X=16, XSmall=14, Flame=16, Settings=14, Search=18)
+    glyphs = json.loads(subprocess.check_output(['node', '--input-type=module', '-e',
+        'import React from "react"; import {renderToStaticMarkup} from "react-dom/server"; '
+        'import * as Icons from "lucide-react"; const sizes=' + json.dumps(glyph_sizes) + ';'
+        'process.stdout.write(JSON.stringify(Object.fromEntries(Object.entries(sizes).map(([name,size])=>'
+        '[name,renderToStaticMarkup(React.createElement(Icons[name === "XSmall" ? "X" : name],{size,"data-target":true}))]))));'],
+        cwd=Path(__file__).resolve().parents[1], text=True, timeout=10))
+    def glyph_case(name, markup):
+        cases.append(dict(name='icon/' + name, markup=markup, threshold=3,
+                          gradientBounds=True, metric='stroke'))
+    for backdrop in ('#000000', '#ffffff'):
+        for state in ('normal', 'hover'):
+            hover = ' test-hover' if state == 'hover' else ''
+            for name in ('Volume2', 'Shuffle', 'Activity', 'Battery', 'BatteryCharging', 'Wifi', 'Network'):
+                widget = " system-widget-button" if name in ("Activity", "Battery", "BatteryCharging", "Wifi", "Network") else ""
+                glyph_case(f'dock/{name}/{backdrop}/{state}', f'<div style="background:{backdrop}"><div class="taskbar-container" style="position:static"><button class="dock-action-btn{widget}{hover}">{glyphs[name]}</button></div></div>')
+            for name in ('Plus', 'Pin', 'PinOff', 'ArrowLeft', 'ArrowRight', 'XSmall', 'Flame'):
+                danger = ' context-danger' if name == 'Flame' else ''
+                glyph_case(f'context/{name}/{backdrop}/{state}', f'<div style="background:{backdrop}"><div class="context-actions"><button class="{hover}{danger}">{glyphs[name]}</button></div></div>')
+            glyph_case(f'window-close/{backdrop}/{state}', f'<div style="background:{backdrop}"><div class="window-list"><div class="window-list-row{hover}"><button class="window-list-close{hover}">{glyphs["X"]}</button></div></div></div>')
+            for pressed in ('false', 'true'):
+                glyph_case(f'launcher-pin/{pressed}/{backdrop}/{state}', f'<div style="background:{backdrop}"><div class="app-launcher"><div class="app-launcher-row{hover}"><button class="app-launcher-pin" aria-pressed="{pressed}">{glyphs["PinOff" if pressed == "true" else "Pin"]}</button></div></div></div>')
+        glyph_case(f'launcher-settings/{backdrop}', f'<div style="background:{backdrop}"><div class="app-launcher"><footer><button>{glyphs["Settings"]}</button></footer></div></div>')
+        glyph_case(f'launcher-search/{backdrop}', f'<div style="background:{backdrop}"><div class="app-launcher"><header>{glyphs["Search"]}</header></div></div>')
     return cases
 
 
@@ -237,7 +265,7 @@ def run(output, enforce, css_path, screenshot):
                 del case['markup']
             result.update(cssSha256=hashlib.sha256(css.encode()).hexdigest(), ephemeralContext=True, engine=f'WebKitGTK {WebKit2.get_major_version()}.{WebKit2.get_minor_version()}.{WebKit2.get_micro_version()}', cases=cases,
                           passed=sum(c['passed'] for c in cases), total=len(cases), inputSent=False,
-                          scope='Computed style fixtures using actual App.css in Gtk.OffscreenWindow; white/black backdrops, flat layers and group opacity. Hover/focus selectors mapped to fixture states. Text 4.5:1; enumerated outlines/borders 3:1 against both interior and exterior flat backgrounds. Eight additional Studio text fixtures and 24 installed launcher SVG stroke fixtures use conservative RGB/luminance bounds over every gradient stop. SVG cases cover minimum/default/maximum launcher size, four accents, normal/hover; bounding rectangles must fit the button. Unsupported images/interpolation/group opacity are rejected for gradient cases. A failing lower bound requires further measurement. No assertion of full app coverage, artwork, arbitrary gradients, native keyboard focus, native widgets or screen-reader behavior.')
+                          scope='Computed style fixtures using actual App.css in Gtk.OffscreenWindow; white/black backdrops, flat layers and group opacity. Hover/focus selectors mapped to fixture states. Text 4.5:1; enumerated outlines/borders 3:1 against both interior and exterior flat backgrounds. Eight additional Studio text fixtures and 96 installed SVG stroke fixtures (24 launcher, 72 other functional glyphs) use conservative RGB/luminance bounds over every gradient stop. Launcher SVG cases cover minimum/default/maximum size and four accents; other glyphs cover Dock/context/window/launcher actions at actual icon sizes on black/white backdrops, normal/hover where applicable; bounding rectangles must fit the button. Unsupported images/interpolation/group opacity are rejected for gradient cases. A failing lower bound requires further measurement. No assertion of full app coverage, artwork, arbitrary gradients, native keyboard focus, native widgets or screen-reader behavior.')
         except Exception as error:
             result['error'] = repr(error)
         if screenshot and 'error' not in result:

@@ -1,0 +1,2462 @@
+{
+  "cssSha256": "de30dc1d4c4c58edfd078782faf32cd1a24bf81490025c4215a3bbc3bfb3453e",
+  "ephemeralContext": true,
+  "engine": "WebKitGTK 2.52.6",
+  "passed": 209,
+  "total": 209,
+  "inputSent": false,
+  "scope": "Computed style fixtures using actual App.css in Gtk.OffscreenWindow; white/black backdrops, flat layers and group opacity. Hover/focus selectors mapped to fixture states. Text 4.5:1; enumerated outlines/borders 3:1 against both interior and exterior flat backgrounds. Eight additional Studio text fixtures and 96 installed SVG stroke fixtures (24 launcher, 72 other functional glyphs) use conservative RGB/luminance bounds over every gradient stop. Launcher SVG cases cover minimum/default/maximum size and four accents; other glyphs cover Dock/context/window/launcher actions at actual icon sizes on black/white backdrops, normal/hover where applicable; bounding rectangles must fit the button. Unsupported images/interpolation/group opacity are rejected for gradient cases. A failing lower bound requires further measurement. No assertion of full app coverage, artwork, arbitrary gradients, native keyboard focus, native widgets or screen-reader behavior.",
+  "selectedCount": 72,
+  "selectedMinimumLowerBound": 5.246294887305699,
+  "runnerSha256": "6cc9c0c0d27940df2677c7f2c222f1034ed943d41808b3533588f8da94039a7c",
+  "cases": [
+    {
+      "name": "icon/dock/Volume2/#000000/normal",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 15.94955748463937,
+      "foreground": [
+        255,
+        255,
+        255,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          23.0,
+          34.0,
+          53.0,
+          1
+        ],
+        [
+          23.0,
+          34.0,
+          53.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/dock/Shuffle/#000000/normal",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 15.94955748463937,
+      "foreground": [
+        255,
+        255,
+        255,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          23.0,
+          34.0,
+          53.0,
+          1
+        ],
+        [
+          23.0,
+          34.0,
+          53.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        14,
+        14
+      ]
+    },
+    {
+      "name": "icon/dock/Activity/#000000/normal",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 15.94955748463937,
+      "foreground": [
+        255,
+        255,
+        255,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          23.0,
+          34.0,
+          53.0,
+          1
+        ],
+        [
+          23.0,
+          34.0,
+          53.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/dock/Battery/#000000/normal",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 15.94955748463937,
+      "foreground": [
+        255,
+        255,
+        255,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          23.0,
+          34.0,
+          53.0,
+          1
+        ],
+        [
+          23.0,
+          34.0,
+          53.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/dock/BatteryCharging/#000000/normal",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 15.94955748463937,
+      "foreground": [
+        255,
+        255,
+        255,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          23.0,
+          34.0,
+          53.0,
+          1
+        ],
+        [
+          23.0,
+          34.0,
+          53.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/dock/Wifi/#000000/normal",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 15.94955748463937,
+      "foreground": [
+        255,
+        255,
+        255,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          23.0,
+          34.0,
+          53.0,
+          1
+        ],
+        [
+          23.0,
+          34.0,
+          53.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/dock/Network/#000000/normal",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 15.94955748463937,
+      "foreground": [
+        255,
+        255,
+        255,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          23.0,
+          34.0,
+          53.0,
+          1
+        ],
+        [
+          23.0,
+          34.0,
+          53.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/context/Plus/#000000/normal",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 14.547218051633715,
+      "foreground": [
+        226,
+        232,
+        240,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          14.7,
+          22.54,
+          41.16,
+          1
+        ],
+        [
+          14.7,
+          22.54,
+          41.16,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/context/Pin/#000000/normal",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 14.547218051633715,
+      "foreground": [
+        226,
+        232,
+        240,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          14.7,
+          22.54,
+          41.16,
+          1
+        ],
+        [
+          14.7,
+          22.54,
+          41.16,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/context/PinOff/#000000/normal",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 14.547218051633715,
+      "foreground": [
+        226,
+        232,
+        240,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          14.7,
+          22.54,
+          41.16,
+          1
+        ],
+        [
+          14.7,
+          22.54,
+          41.16,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/context/ArrowLeft/#000000/normal",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 14.547218051633715,
+      "foreground": [
+        226,
+        232,
+        240,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          14.7,
+          22.54,
+          41.16,
+          1
+        ],
+        [
+          14.7,
+          22.54,
+          41.16,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        14,
+        14
+      ]
+    },
+    {
+      "name": "icon/context/ArrowRight/#000000/normal",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 14.547218051633715,
+      "foreground": [
+        226,
+        232,
+        240,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          14.7,
+          22.54,
+          41.16,
+          1
+        ],
+        [
+          14.7,
+          22.54,
+          41.16,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        14,
+        14
+      ]
+    },
+    {
+      "name": "icon/context/XSmall/#000000/normal",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 14.547218051633715,
+      "foreground": [
+        226,
+        232,
+        240,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          14.7,
+          22.54,
+          41.16,
+          1
+        ],
+        [
+          14.7,
+          22.54,
+          41.16,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        14,
+        14
+      ]
+    },
+    {
+      "name": "icon/context/Flame/#000000/normal",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 9.484060958462027,
+      "foreground": [
+        253,
+        164,
+        175,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          14.7,
+          22.54,
+          41.16,
+          1
+        ],
+        [
+          14.7,
+          22.54,
+          41.16,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/window-close/#000000/normal",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 14.579849251299363,
+      "foreground": [
+        226,
+        232,
+        240,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          14.549999999999999,
+          22.31,
+          40.74,
+          1
+        ],
+        [
+          14.549999999999999,
+          22.31,
+          40.74,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/launcher-pin/false/#000000/normal",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 14.547218051633715,
+      "foreground": [
+        226,
+        232,
+        240,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          14.7,
+          22.54,
+          41.16,
+          1
+        ],
+        [
+          14.7,
+          22.54,
+          41.16,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/launcher-pin/true/#000000/normal",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 7.719819244932527,
+      "foreground": [
+        72,
+        185,
+        199,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          14.7,
+          22.54,
+          41.16,
+          1
+        ],
+        [
+          14.7,
+          22.54,
+          41.16,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/dock/Volume2/#000000/hover",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 8.20221195910791,
+      "foreground": [
+        12,
+        16,
+        23,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          72.0,
+          185.0,
+          199.0,
+          1
+        ],
+        [
+          72.0,
+          185.0,
+          199.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/dock/Shuffle/#000000/hover",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 8.20221195910791,
+      "foreground": [
+        12,
+        16,
+        23,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          72.0,
+          185.0,
+          199.0,
+          1
+        ],
+        [
+          72.0,
+          185.0,
+          199.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        14,
+        14
+      ]
+    },
+    {
+      "name": "icon/dock/Activity/#000000/hover",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 8.20221195910791,
+      "foreground": [
+        12,
+        16,
+        23,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          72.0,
+          185.0,
+          199.0,
+          1
+        ],
+        [
+          72.0,
+          185.0,
+          199.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/dock/Battery/#000000/hover",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 8.20221195910791,
+      "foreground": [
+        12,
+        16,
+        23,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          72.0,
+          185.0,
+          199.0,
+          1
+        ],
+        [
+          72.0,
+          185.0,
+          199.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/dock/BatteryCharging/#000000/hover",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 8.20221195910791,
+      "foreground": [
+        12,
+        16,
+        23,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          72.0,
+          185.0,
+          199.0,
+          1
+        ],
+        [
+          72.0,
+          185.0,
+          199.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/dock/Wifi/#000000/hover",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 8.20221195910791,
+      "foreground": [
+        12,
+        16,
+        23,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          72.0,
+          185.0,
+          199.0,
+          1
+        ],
+        [
+          72.0,
+          185.0,
+          199.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/dock/Network/#000000/hover",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 8.20221195910791,
+      "foreground": [
+        12,
+        16,
+        23,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          72.0,
+          185.0,
+          199.0,
+          1
+        ],
+        [
+          72.0,
+          185.0,
+          199.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/context/Plus/#000000/hover",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 9.58253637912146,
+      "foreground": [
+        226,
+        232,
+        240,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          38.0,
+          57.0,
+          78.0,
+          1
+        ],
+        [
+          38.0,
+          57.0,
+          78.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/context/Pin/#000000/hover",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 9.58253637912146,
+      "foreground": [
+        226,
+        232,
+        240,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          38.0,
+          57.0,
+          78.0,
+          1
+        ],
+        [
+          38.0,
+          57.0,
+          78.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/context/PinOff/#000000/hover",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 9.58253637912146,
+      "foreground": [
+        226,
+        232,
+        240,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          38.0,
+          57.0,
+          78.0,
+          1
+        ],
+        [
+          38.0,
+          57.0,
+          78.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/context/ArrowLeft/#000000/hover",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 9.58253637912146,
+      "foreground": [
+        226,
+        232,
+        240,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          38.0,
+          57.0,
+          78.0,
+          1
+        ],
+        [
+          38.0,
+          57.0,
+          78.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        14,
+        14
+      ]
+    },
+    {
+      "name": "icon/context/ArrowRight/#000000/hover",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 9.58253637912146,
+      "foreground": [
+        226,
+        232,
+        240,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          38.0,
+          57.0,
+          78.0,
+          1
+        ],
+        [
+          38.0,
+          57.0,
+          78.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        14,
+        14
+      ]
+    },
+    {
+      "name": "icon/context/XSmall/#000000/hover",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 9.58253637912146,
+      "foreground": [
+        226,
+        232,
+        240,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          38.0,
+          57.0,
+          78.0,
+          1
+        ],
+        [
+          38.0,
+          57.0,
+          78.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        14,
+        14
+      ]
+    },
+    {
+      "name": "icon/context/Flame/#000000/hover",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 6.247336008417195,
+      "foreground": [
+        253,
+        164,
+        175,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          38.0,
+          57.0,
+          78.0,
+          1
+        ],
+        [
+          38.0,
+          57.0,
+          78.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/window-close/#000000/hover",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 5.248330636375212,
+      "foreground": [
+        226,
+        232,
+        240,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          185.0,
+          28.0,
+          28.0,
+          1
+        ],
+        [
+          185.0,
+          28.0,
+          28.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/launcher-pin/false/#000000/hover",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 9.88611174269459,
+      "foreground": [
+        226,
+        232,
+        240,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          36.0,
+          55.0,
+          75.0,
+          1
+        ],
+        [
+          36.0,
+          55.0,
+          75.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/launcher-pin/true/#000000/hover",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 5.246294887305699,
+      "foreground": [
+        72,
+        185,
+        199,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          36.0,
+          55.0,
+          75.0,
+          1
+        ],
+        [
+          36.0,
+          55.0,
+          75.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/launcher-settings/#000000",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 8.856795516228493,
+      "foreground": [
+        167,
+        184,
+        204,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          14.7,
+          22.54,
+          41.16,
+          1
+        ],
+        [
+          14.7,
+          22.54,
+          41.16,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        14,
+        14
+      ]
+    },
+    {
+      "name": "icon/launcher-search/#000000",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 14.547218051633715,
+      "foreground": [
+        226,
+        232,
+        240,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          14.7,
+          22.54,
+          41.16,
+          1
+        ],
+        [
+          14.7,
+          22.54,
+          41.16,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        18,
+        18
+      ]
+    },
+    {
+      "name": "icon/dock/Volume2/#ffffff/normal",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 15.94955748463937,
+      "foreground": [
+        255,
+        255,
+        255,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          23.0,
+          34.0,
+          53.0,
+          1
+        ],
+        [
+          23.0,
+          34.0,
+          53.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/dock/Shuffle/#ffffff/normal",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 15.94955748463937,
+      "foreground": [
+        255,
+        255,
+        255,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          23.0,
+          34.0,
+          53.0,
+          1
+        ],
+        [
+          23.0,
+          34.0,
+          53.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        14,
+        14
+      ]
+    },
+    {
+      "name": "icon/dock/Activity/#ffffff/normal",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 15.94955748463937,
+      "foreground": [
+        255,
+        255,
+        255,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          23.0,
+          34.0,
+          53.0,
+          1
+        ],
+        [
+          23.0,
+          34.0,
+          53.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/dock/Battery/#ffffff/normal",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 15.94955748463937,
+      "foreground": [
+        255,
+        255,
+        255,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          23.0,
+          34.0,
+          53.0,
+          1
+        ],
+        [
+          23.0,
+          34.0,
+          53.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/dock/BatteryCharging/#ffffff/normal",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 15.94955748463937,
+      "foreground": [
+        255,
+        255,
+        255,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          23.0,
+          34.0,
+          53.0,
+          1
+        ],
+        [
+          23.0,
+          34.0,
+          53.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/dock/Wifi/#ffffff/normal",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 15.94955748463937,
+      "foreground": [
+        255,
+        255,
+        255,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          23.0,
+          34.0,
+          53.0,
+          1
+        ],
+        [
+          23.0,
+          34.0,
+          53.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/dock/Network/#ffffff/normal",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 15.94955748463937,
+      "foreground": [
+        255,
+        255,
+        255,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          23.0,
+          34.0,
+          53.0,
+          1
+        ],
+        [
+          23.0,
+          34.0,
+          53.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/context/Plus/#ffffff/normal",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 13.827988332377796,
+      "foreground": [
+        226,
+        232,
+        240,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          19.800000000000004,
+          27.640000000000004,
+          46.260000000000005,
+          1
+        ],
+        [
+          19.800000000000004,
+          27.640000000000004,
+          46.260000000000005,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/context/Pin/#ffffff/normal",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 13.827988332377796,
+      "foreground": [
+        226,
+        232,
+        240,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          19.800000000000004,
+          27.640000000000004,
+          46.260000000000005,
+          1
+        ],
+        [
+          19.800000000000004,
+          27.640000000000004,
+          46.260000000000005,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/context/PinOff/#ffffff/normal",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 13.827988332377796,
+      "foreground": [
+        226,
+        232,
+        240,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          19.800000000000004,
+          27.640000000000004,
+          46.260000000000005,
+          1
+        ],
+        [
+          19.800000000000004,
+          27.640000000000004,
+          46.260000000000005,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/context/ArrowLeft/#ffffff/normal",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 13.827988332377796,
+      "foreground": [
+        226,
+        232,
+        240,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          19.800000000000004,
+          27.640000000000004,
+          46.260000000000005,
+          1
+        ],
+        [
+          19.800000000000004,
+          27.640000000000004,
+          46.260000000000005,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        14,
+        14
+      ]
+    },
+    {
+      "name": "icon/context/ArrowRight/#ffffff/normal",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 13.827988332377796,
+      "foreground": [
+        226,
+        232,
+        240,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          19.800000000000004,
+          27.640000000000004,
+          46.260000000000005,
+          1
+        ],
+        [
+          19.800000000000004,
+          27.640000000000004,
+          46.260000000000005,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        14,
+        14
+      ]
+    },
+    {
+      "name": "icon/context/XSmall/#ffffff/normal",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 13.827988332377796,
+      "foreground": [
+        226,
+        232,
+        240,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          19.800000000000004,
+          27.640000000000004,
+          46.260000000000005,
+          1
+        ],
+        [
+          19.800000000000004,
+          27.640000000000004,
+          46.260000000000005,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        14,
+        14
+      ]
+    },
+    {
+      "name": "icon/context/Flame/#ffffff/normal",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 9.015159036709736,
+      "foreground": [
+        253,
+        164,
+        175,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          19.800000000000004,
+          27.640000000000004,
+          46.260000000000005,
+          1
+        ],
+        [
+          19.800000000000004,
+          27.640000000000004,
+          46.260000000000005,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/window-close/#ffffff/normal",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 13.485287847375004,
+      "foreground": [
+        226,
+        232,
+        240,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          22.200000000000006,
+          29.960000000000004,
+          48.39000000000001,
+          1
+        ],
+        [
+          22.200000000000006,
+          29.960000000000004,
+          48.39000000000001,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/launcher-pin/false/#ffffff/normal",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 13.827988332377796,
+      "foreground": [
+        226,
+        232,
+        240,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          19.800000000000004,
+          27.640000000000004,
+          46.260000000000005,
+          1
+        ],
+        [
+          19.800000000000004,
+          27.640000000000004,
+          46.260000000000005,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/launcher-pin/true/#ffffff/normal",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 7.338143284035267,
+      "foreground": [
+        72,
+        185,
+        199,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          19.800000000000004,
+          27.640000000000004,
+          46.260000000000005,
+          1
+        ],
+        [
+          19.800000000000004,
+          27.640000000000004,
+          46.260000000000005,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/dock/Volume2/#ffffff/hover",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 8.20221195910791,
+      "foreground": [
+        12,
+        16,
+        23,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          72.0,
+          185.0,
+          199.0,
+          1
+        ],
+        [
+          72.0,
+          185.0,
+          199.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/dock/Shuffle/#ffffff/hover",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 8.20221195910791,
+      "foreground": [
+        12,
+        16,
+        23,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          72.0,
+          185.0,
+          199.0,
+          1
+        ],
+        [
+          72.0,
+          185.0,
+          199.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        14,
+        14
+      ]
+    },
+    {
+      "name": "icon/dock/Activity/#ffffff/hover",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 8.20221195910791,
+      "foreground": [
+        12,
+        16,
+        23,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          72.0,
+          185.0,
+          199.0,
+          1
+        ],
+        [
+          72.0,
+          185.0,
+          199.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/dock/Battery/#ffffff/hover",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 8.20221195910791,
+      "foreground": [
+        12,
+        16,
+        23,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          72.0,
+          185.0,
+          199.0,
+          1
+        ],
+        [
+          72.0,
+          185.0,
+          199.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/dock/BatteryCharging/#ffffff/hover",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 8.20221195910791,
+      "foreground": [
+        12,
+        16,
+        23,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          72.0,
+          185.0,
+          199.0,
+          1
+        ],
+        [
+          72.0,
+          185.0,
+          199.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/dock/Wifi/#ffffff/hover",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 8.20221195910791,
+      "foreground": [
+        12,
+        16,
+        23,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          72.0,
+          185.0,
+          199.0,
+          1
+        ],
+        [
+          72.0,
+          185.0,
+          199.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/dock/Network/#ffffff/hover",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 8.20221195910791,
+      "foreground": [
+        12,
+        16,
+        23,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          72.0,
+          185.0,
+          199.0,
+          1
+        ],
+        [
+          72.0,
+          185.0,
+          199.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/context/Plus/#ffffff/hover",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 9.58253637912146,
+      "foreground": [
+        226,
+        232,
+        240,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          38.0,
+          57.0,
+          78.0,
+          1
+        ],
+        [
+          38.0,
+          57.0,
+          78.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/context/Pin/#ffffff/hover",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 9.58253637912146,
+      "foreground": [
+        226,
+        232,
+        240,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          38.0,
+          57.0,
+          78.0,
+          1
+        ],
+        [
+          38.0,
+          57.0,
+          78.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/context/PinOff/#ffffff/hover",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 9.58253637912146,
+      "foreground": [
+        226,
+        232,
+        240,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          38.0,
+          57.0,
+          78.0,
+          1
+        ],
+        [
+          38.0,
+          57.0,
+          78.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/context/ArrowLeft/#ffffff/hover",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 9.58253637912146,
+      "foreground": [
+        226,
+        232,
+        240,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          38.0,
+          57.0,
+          78.0,
+          1
+        ],
+        [
+          38.0,
+          57.0,
+          78.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        14,
+        14
+      ]
+    },
+    {
+      "name": "icon/context/ArrowRight/#ffffff/hover",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 9.58253637912146,
+      "foreground": [
+        226,
+        232,
+        240,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          38.0,
+          57.0,
+          78.0,
+          1
+        ],
+        [
+          38.0,
+          57.0,
+          78.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        14,
+        14
+      ]
+    },
+    {
+      "name": "icon/context/XSmall/#ffffff/hover",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 9.58253637912146,
+      "foreground": [
+        226,
+        232,
+        240,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          38.0,
+          57.0,
+          78.0,
+          1
+        ],
+        [
+          38.0,
+          57.0,
+          78.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        14,
+        14
+      ]
+    },
+    {
+      "name": "icon/context/Flame/#ffffff/hover",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 6.247336008417195,
+      "foreground": [
+        253,
+        164,
+        175,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          38.0,
+          57.0,
+          78.0,
+          1
+        ],
+        [
+          38.0,
+          57.0,
+          78.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/window-close/#ffffff/hover",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 5.248330636375212,
+      "foreground": [
+        226,
+        232,
+        240,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          185.0,
+          28.0,
+          28.0,
+          1
+        ],
+        [
+          185.0,
+          28.0,
+          28.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/launcher-pin/false/#ffffff/hover",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 9.88611174269459,
+      "foreground": [
+        226,
+        232,
+        240,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          36.0,
+          55.0,
+          75.0,
+          1
+        ],
+        [
+          36.0,
+          55.0,
+          75.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/launcher-pin/true/#ffffff/hover",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 5.246294887305699,
+      "foreground": [
+        72,
+        185,
+        199,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          36.0,
+          55.0,
+          75.0,
+          1
+        ],
+        [
+          36.0,
+          55.0,
+          75.0,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        16,
+        16
+      ]
+    },
+    {
+      "name": "icon/launcher-settings/#ffffff",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 8.418906255887839,
+      "foreground": [
+        167,
+        184,
+        204,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          19.800000000000004,
+          27.640000000000004,
+          46.260000000000005,
+          1
+        ],
+        [
+          19.800000000000004,
+          27.640000000000004,
+          46.260000000000005,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        14,
+        14
+      ]
+    },
+    {
+      "name": "icon/launcher-search/#ffffff",
+      "threshold": 3,
+      "gradientBounds": true,
+      "metric": "stroke",
+      "boundsWithinButton": true,
+      "ratio": 13.827988332377796,
+      "foreground": [
+        226,
+        232,
+        240,
+        1
+      ],
+      "backgroundBounds": [
+        [
+          19.800000000000004,
+          27.640000000000004,
+          46.260000000000005,
+          1
+        ],
+        [
+          19.800000000000004,
+          27.640000000000004,
+          46.260000000000005,
+          1
+        ]
+      ],
+      "conservativeLowerBound": true,
+      "passed": true,
+      "svgSize": [
+        18,
+        18
+      ]
+    }
+  ]
+}

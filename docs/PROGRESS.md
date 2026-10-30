@@ -1021,3 +1021,10 @@ Cleanup phục hồi exact experimental-features user value, primary, origins, m
 Giữ `tests/mutter_native_geometry_smoke.py --run` vì geometry smoke cũ giả định uniform GTK scale và không dựng topology fractional/mixed. Runner được làm rõ opt-in/ownership/signal và restore settings/topology độc lập sau diagnostic đã đạt;11 fault tests (6 probe cũ+5 orchestration mới) kiểm worker lỗi/timeout/interrupt, VERIFY rejection, màn hình khóa và restore lỗi. Các guard bổ sung chưa chạy lại host trong window này. Không lưu bản sao raw scripts/log/config; JSON ghi hash diagnostic và phạm vi.
 
 G2.10 vẫn mở: cần Dock dưới, audio/system/calendar và sequencing, negative topology dưới WM/đổi resolution theo ma trận đầy đủ. G5.9 cũng mở; tổng97/99, release no-go.
+
+
+## G5.9 — Tương phản biểu tượng chức năng (30/10/2026)
+
+[Bằng chứng](benchmarks/functional-glyph-contrast-2026-10-30/result.json):209/209 computed-style cases đạt, gồm72 ca mới cho glyph Dock, context menu, đóng cửa sổ và launcher. Render lucide-react đang cài với kích thước thật (X context14px, X đóng cửa sổ16px), CSS/control classes thật, nền đen/trắng, thường/hover khi có. Cận tương phản nhỏ nhất trong72 ca mới là5,246:1 (yêu cầu3:1); SVG bounds nằm trong parent. Lưu riêng72 kết quả mới, hash CSS/runner và tổng suite; không nhân bản137 ca cũ hoặc raw computed tree.
+
+Đây là cận bảo thủ từ màu stroke/background và gradient stops trong WebKitGTK offscreen, không chứng nhận artwork/logo ngoài, native controls, focus bàn phím hay toàn bộ accessibility. Không đổi mã sản phẩm; không rebuild hoặc lặp unit suite sản phẩm. G5.9 vẫn mở, tổng97/99.
