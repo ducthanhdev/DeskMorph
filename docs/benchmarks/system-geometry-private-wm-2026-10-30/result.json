@@ -1,0 +1,458 @@
+{
+  "passed": true,
+  "root": "/tmp/deskmorph-negative-origin-qadebuzk",
+  "runnerSha256": "d8debbdc8ceea696c726c58d11fc2de25409b6dfceecb2ebb28fcb8ffebe0db3",
+  "studioWidgetsRequested": false,
+  "studioFocusRequested": false,
+  "contextSpeechRequested": false,
+  "contextDescriptionRequested": false,
+  "binarySha256": "1172029a8dee0dde0b196e4956b2df150522bb1b058c4ed0cf829bc55e449ac9",
+  "runs": [
+    {
+      "passed": true,
+      "monitor": "screen",
+      "position": "top",
+      "source": "system",
+      "observations": [
+        {
+          "source": "Tiện ích hệ thống",
+          "popup": [
+            794,
+            114,
+            380,
+            620
+          ],
+          "anchor": 984.0,
+          "expectedOrigin": [
+            794,
+            114
+          ]
+        }
+      ],
+      "gdkMonitors": [
+        {
+          "name": "screen",
+          "gtkScale": 1,
+          "area": [
+            0,
+            32,
+            1920,
+            1048
+          ]
+        }
+      ],
+      "pid": 3139992,
+      "settlingObservations": {
+        "DeskMorph Taskbar": [
+          {
+            "seconds": 0.003,
+            "rectangle": null
+          },
+          {
+            "seconds": 0.325,
+            "rectangle": [
+              410,
+              48,
+              1100,
+              52
+            ]
+          },
+          {
+            "seconds": 1.448,
+            "rectangle": [
+              811,
+              48,
+              298,
+              52
+            ]
+          }
+        ],
+        "DeskMorph Context Menu": [
+          {
+            "seconds": 0.004,
+            "rectangle": null
+          },
+          {
+            "seconds": 0.159,
+            "rectangle": [
+              794,
+              114,
+              380,
+              620
+            ]
+          }
+        ]
+      },
+      "dock": [
+        811,
+        48,
+        298,
+        52
+      ],
+      "dockAfterActivation": [
+        811,
+        48,
+        298,
+        52
+      ],
+      "configUnchanged": true,
+      "appExit": -15,
+      "windowManager": {
+        "pid": 3139466,
+        "name": "GNOME Shell",
+        "privateDisplay": true,
+        "startupOverviewDismissed": true
+      },
+      "scale": 1,
+      "privateDisplay": true
+    },
+    {
+      "passed": true,
+      "monitor": "screen",
+      "position": "bottom",
+      "source": "system",
+      "observations": [
+        {
+          "source": "Tiện ích hệ thống",
+          "popup": [
+            794,
+            378,
+            380,
+            620
+          ],
+          "anchor": 984.0,
+          "expectedOrigin": [
+            794,
+            378
+          ]
+        }
+      ],
+      "gdkMonitors": [
+        {
+          "name": "screen",
+          "gtkScale": 1,
+          "area": [
+            0,
+            32,
+            1920,
+            1048
+          ]
+        }
+      ],
+      "pid": 3141172,
+      "settlingObservations": {
+        "DeskMorph Taskbar": [
+          {
+            "seconds": 0.004,
+            "rectangle": null
+          },
+          {
+            "seconds": 0.329,
+            "rectangle": [
+              410,
+              1012,
+              1100,
+              52
+            ]
+          },
+          {
+            "seconds": 1.125,
+            "rectangle": [
+              811,
+              1012,
+              298,
+              52
+            ]
+          }
+        ],
+        "DeskMorph Context Menu": [
+          {
+            "seconds": 0.003,
+            "rectangle": null
+          },
+          {
+            "seconds": 0.164,
+            "rectangle": [
+              794,
+              378,
+              380,
+              620
+            ]
+          }
+        ]
+      },
+      "dock": [
+        811,
+        1012,
+        298,
+        52
+      ],
+      "dockAfterActivation": [
+        811,
+        1012,
+        298,
+        52
+      ],
+      "configUnchanged": true,
+      "appExit": -15,
+      "windowManager": {
+        "pid": 3140617,
+        "name": "GNOME Shell",
+        "privateDisplay": true,
+        "startupOverviewDismissed": true
+      },
+      "scale": 1,
+      "privateDisplay": true
+    },
+    {
+      "passed": true,
+      "monitor": "screen",
+      "position": "top",
+      "source": "system",
+      "observations": [
+        {
+          "source": "Tiện ích hệ thống",
+          "popup": [
+            628,
+            52,
+            760,
+            1008
+          ],
+          "anchor": 1008.0,
+          "expectedOrigin": [
+            628,
+            52
+          ]
+        }
+      ],
+      "gdkMonitors": [
+        {
+          "name": "screen",
+          "gtkScale": 2,
+          "area": [
+            0,
+            32,
+            1920,
+            1048
+          ]
+        }
+      ],
+      "pid": 3142313,
+      "settlingObservations": {
+        "DeskMorph Taskbar": [
+          {
+            "seconds": 0.002,
+            "rectangle": null
+          },
+          {
+            "seconds": 0.315,
+            "rectangle": [
+              32,
+              64,
+              1856,
+              104
+            ]
+          },
+          {
+            "seconds": 0.952,
+            "rectangle": [
+              662,
+              64,
+              596,
+              104
+            ]
+          }
+        ],
+        "DeskMorph Context Menu": [
+          {
+            "seconds": 0.005,
+            "rectangle": null
+          },
+          {
+            "seconds": 0.162,
+            "rectangle": [
+              628,
+              52,
+              760,
+              1008
+            ]
+          }
+        ]
+      },
+      "dock": [
+        662,
+        64,
+        596,
+        104
+      ],
+      "dockAfterActivation": [
+        662,
+        64,
+        596,
+        104
+      ],
+      "configUnchanged": true,
+      "appExit": -15,
+      "windowManager": {
+        "pid": 3141734,
+        "name": "GNOME Shell",
+        "privateDisplay": true,
+        "startupOverviewDismissed": true
+      },
+      "scale": 2,
+      "privateDisplay": true
+    },
+    {
+      "passed": true,
+      "monitor": "screen",
+      "position": "bottom",
+      "source": "system",
+      "observations": [
+        {
+          "source": "Tiện ích hệ thống",
+          "popup": [
+            628,
+            52,
+            760,
+            1008
+          ],
+          "anchor": 1008.0,
+          "expectedOrigin": [
+            628,
+            52
+          ]
+        }
+      ],
+      "gdkMonitors": [
+        {
+          "name": "screen",
+          "gtkScale": 2,
+          "area": [
+            0,
+            32,
+            1920,
+            1048
+          ]
+        }
+      ],
+      "pid": 3143459,
+      "settlingObservations": {
+        "DeskMorph Taskbar": [
+          {
+            "seconds": 0.002,
+            "rectangle": null
+          },
+          {
+            "seconds": 0.311,
+            "rectangle": [
+              32,
+              944,
+              1856,
+              104
+            ]
+          },
+          {
+            "seconds": 1.415,
+            "rectangle": [
+              662,
+              944,
+              596,
+              104
+            ]
+          }
+        ],
+        "DeskMorph Context Menu": [
+          {
+            "seconds": 0.002,
+            "rectangle": null
+          },
+          {
+            "seconds": 0.158,
+            "rectangle": [
+              628,
+              52,
+              760,
+              1008
+            ]
+          }
+        ]
+      },
+      "dock": [
+        662,
+        944,
+        596,
+        104
+      ],
+      "dockAfterActivation": [
+        662,
+        944,
+        596,
+        104
+      ],
+      "configUnchanged": true,
+      "appExit": -15,
+      "windowManager": {
+        "pid": 3142900,
+        "name": "GNOME Shell",
+        "privateDisplay": true,
+        "startupOverviewDismissed": true
+      },
+      "scale": 2,
+      "privateDisplay": true
+    }
+  ],
+  "scope": "Native DPI worker with GNOME Shell on one drawable1920x1080 Xvfb monitor, integer GTK scales1/2, top/bottom, source=system",
+  "limits": [
+    "No physical monitor, host input, output-scale fractional/mixed DPI, negative origin or popup sequencing proof",
+    "Private Shell startup overview is dismissed with private Escape before app launch"
+  ],
+  "workerSha256": "e43ddef6b80594abe3e0e428bebe87dfc58a6415498407d1e911398bc5c56337",
+  "privateWmHelperSha256": "e5b63c182ef7b28988a36718881af5dbbc8e712001af02771604d0fee1c4e3ff",
+  "premeasurementFailure": {
+    "passed": false,
+    "monitor": "screen",
+    "position": "top",
+    "source": "system",
+    "settlingObservations": {
+      "DeskMorph Taskbar": [
+        {
+          "seconds": 0.002,
+          "rectangle": null
+        },
+        {
+          "seconds": 0.334,
+          "rectangle": [
+            32,
+            64,
+            1856,
+            104
+          ]
+        }
+      ],
+      "DeskMorph Context Menu": [
+        {
+          "seconds": 0.007,
+          "rectangle": null
+        },
+        {
+          "seconds": 0.163,
+          "rectangle": [
+            628,
+            52,
+            760,
+            1008
+          ]
+        }
+      ]
+    },
+    "dock": [
+      32,
+      64,
+      1856,
+      104
+    ],
+    "error": "AssertionError({'passed': False, 'monitor': 'screen', 'position': 'top', 'source': 'system', 'observations': [], 'gdkMonitors': [{'name': 'screen', 'gtkScale': 2, 'area': [0, 32, 1920, 1048]}], 'pid': 3134740, 'settlingObservations': {'DeskMorph Taskbar': [{'seconds': 0.002, 'rectangle': None}, {'seconds': 0.334, 'rectangle': [32, 64, 1856, 104]}], 'DeskMorph Context Menu': [{'seconds': 0.007, 'rectangle': None}, {'seconds': 0.163, 'rectangle': [628, 52, 760, 1008]}]}, 'dock': [32, 64, 1856, 104], 'error': \"AssertionError(('Tiện ích hệ thống', [628, 52, 760, 1008], 1140, 52))\", 'appExit': -15, 'windowManager': {'pid': 3134212, 'name': 'GNOME Shell', 'privateDisplay': True, 'startupOverviewDismissed': True}, 'scale': 2, 'privateDisplay': True})",
+    "placementTrace": "deskmorph-popup-placement area=Rect { x: 0, y: 32, width: 1920, height: 1048 } dock=Rect { x: 662, y: 64, width: 596, height: 104 } popup=Rect { x: 628, y: 52, width: 760, height: 1008 }"
+  },
+  "interpretation": "Previous measurement sampled a wide initial Dock but app opened against a resized Dock; new worker waits20stable samples and asserts Dock unchanged across activation. This explains that private geometry mismatch, not the separate host popup-stability failure."
+}

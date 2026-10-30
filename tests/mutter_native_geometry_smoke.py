@@ -57,10 +57,10 @@ def worker(root, monitor, position, source='launcher'):
         cfg = json.loads((REPO / 'src/config/defaults.json').read_text())
         cfg.update(monitor=monitor, position=position, language='vi', autoHide=False, enabled=True, showStats=False, showShuffle=False, pinnedApps=[], reduceMotion=True, wallpaperScheduleEnabled=False)
         config = root / 'config/com.ducthanhdev.deskmorph/config.json'
-        config.parent.mkdir(parents=True)
+        config.parent.mkdir(parents=True, exist_ok=True)
         config.write_text(json.dumps({'schemaVersion': 1, 'revision': 0, 'config': cfg, 'warning': None}))
         original = config.read_bytes()
-        env = dict(os.environ, DESKMORPH_CONFIG_HOME=str(root / 'config'), DESKMORPH_DPI_NATIVE_LAB=str(root), WEBKIT_DISABLE_DMABUF_RENDERER='1')
+        env = dict(os.environ, DESKMORPH_CONFIG_HOME=str(root / 'config'), DESKMORPH_DPI_NATIVE_LAB=str(root), DESKMORPH_TRACE_POPUP_DISMISS='1', WEBKIT_DISABLE_DMABUF_RENDERER='1')
         with (root / 'app.log').open('w') as log:
             app = subprocess.Popen([str(BINARY)], env=env, stdout=log, stderr=log)
         result['pid'] = app.pid
@@ -88,18 +88,25 @@ def worker(root, monitor, position, source='launcher'):
                 result['transientX11Queries'] = result.get('transientX11Queries', 0) + 1
                 return None
 
-        def stable(title):
+        def stable(title, samples=3):
             last = None
             count = 0
+            started = time.monotonic()
+            trace = []
+            result.setdefault('settlingObservations', {})[title] = trace
 
             def sample():
                 nonlocal last, count
                 v = native(title)
+                if not trace or v != last:
+                    trace.append({'seconds': round(time.monotonic() - started, 3), 'rectangle': v})
+                    if len(trace) > 32:
+                        del trace[0]
                 count = count + 1 if v and v == last else 0
                 last = v
-                return v if count >= 3 else None
+                return v if count >= samples else None
             return wait(sample, title + ' unstable')
-        dock = stable('DeskMorph Taskbar')
+        dock = stable('DeskMorph Taskbar', samples=20)
         result['dock'] = dock
         assert dock[3] == 52 * s and abs(dock[0] + dock[2] / 2 - ax - aw / 2) <= 2, (dock, target)
         assert abs(dock[1] - (ay + 16 * s if position == 'top' else ay + ah - 68 * s)) <= 2, (dock, target)
@@ -113,6 +120,9 @@ def worker(root, monitor, position, source='launcher'):
             anchor = (a.x + a.width / 2) * s
             assert b.get_action_iface().do_action(0)
             popup = stable(title)
+            after_dock = native('DeskMorph Taskbar')
+            result['dockAfterActivation'] = after_dock
+            assert after_dock == dock, ('Dock changed between source measurement and popup activation', dock, after_dock)
             x, y, w, h = popup
             expected = [min(size[0] * s, aw - 20 * s), min(size[1] * s, ah - 20 * s)]
             assert [w, h] == expected, (label, popup, expected)
@@ -137,9 +147,12 @@ def worker(root, monitor, position, source='launcher'):
         (root / 'result.json').write_text(json.dumps(result, ensure_ascii=False, indent=2) + '\n')
     return result
 
-def run(layouts=('125', '150', 'mixed')):
+def run(layouts=('125', '150', 'mixed'), sources=None, repetitions=1):
     scale_sets = {'100': [1., 1.], '125': [1.25, 1.25], '150': [1.5, 1.5], '200': [2., 2.], 'mixed': [1., 1.5]}
     assert layouts and all(label in scale_sets for label in layouts), 'Unknown or empty DPI layouts'
+    sources = tuple(SOURCES) if sources is None else tuple(sources)
+    assert sources and all(source in SOURCES for source in sources), 'Unknown or empty sources'
+    assert 1 <= repetitions <= 5, 'Repeat count must be between1 and5'
     deadline = time.monotonic() + 420
     root = Path(tempfile.mkdtemp(prefix='deskmorph-dpi-native-'))
     out = root / 'result.json'
@@ -185,9 +198,9 @@ def run(layouts=('125', '150', 'mixed')):
             report['cases'].append(case)
             for logical in ordered:
                 connector = logical['connectors'][0]
-                for position, source in ((position, source) for position in ('top', 'bottom') for source in SOURCES):
+                for position, source, repetition in ((position, source, repetition) for position in ('top', 'bottom') for source in sources for repetition in range(repetitions)):
                     assert time.monotonic() + 40 < deadline, 'Desktop trial time budget exhausted; restoring baseline'
-                    folder = root / (label + '-' + connector + '-' + position + '-' + source)
+                    folder = root / (label + '-' + connector + '-' + position + '-' + source + '-' + str(repetition))
                     folder.mkdir()
                     env = dict(os.environ, DESKMORPH_DPI_WORKER_ROOT=str(folder))
                     for key in ('GDK_SCALE', 'GDK_DPI_SCALE'):
@@ -195,6 +208,7 @@ def run(layouts=('125', '150', 'mixed')):
                     with (folder / 'worker.log').open('w') as log:
                         p = subprocess.run(['/usr/bin/python3', __file__, '--worker', str(folder), connector, position, source], env=env, stdout=log, stderr=log, timeout=40)
                     r = json.loads((folder / 'result.json').read_text())
+                    r['repetition'] = repetition
                     case['runs'].append(r)
                     out.write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n')
                     assert p.returncode == 0 and r['passed'], r
@@ -267,7 +281,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--run', action='store_true', help='Opt in to reversible host display mutations; requires an agreed idle desktop window')
     parser.add_argument('--layouts', nargs='+', choices=('100', '125', '150', '200', 'mixed'), default=['125', '150', 'mixed'], help='Explicit output scales; default is the 48-case fractional/mixed matrix')
+    parser.add_argument('--sources', nargs='+', choices=tuple(SOURCES), default=list(SOURCES), help='Select popup sources for targeted reproduction')
+    parser.add_argument('--repeat', type=int, choices=range(1, 6), default=1, help='Fresh owned instances per source,1..5')
     args = parser.parse_args()
     if not args.run:
         parser.error('--run is required; no host settings were changed')
-    sys.exit(0 if run(tuple(args.layouts))['passed'] else 1)
+    sys.exit(0 if run(tuple(args.layouts), args.sources, args.repeat)['passed'] else 1)

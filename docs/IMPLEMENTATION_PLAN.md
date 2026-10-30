@@ -1,6 +1,6 @@
 # Kế hoạch phát triển DeskMorph
 
-Ngày lập: 28/10/2026. Trạng thái: đang triển khai. Bằng chứng và phần chưa xác minh được ghi trong [PROGRESS.md](PROGRESS.md).
+Ngày lập: 28/10/2026. Trạng thái: đang triển khai. Bằng chứng và phần chưa xác minh được ghi trong [PROGRESS.md](PROGRESS.md). Hai mục còn mở được đối chiếu tại [REMAINING_ACCEPTANCE.md](REMAINING_ACCEPTANCE.md).
 
 ## 1. Mục tiêu và phạm vi
 

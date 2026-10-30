@@ -12,7 +12,9 @@ DESKMORPH_STUDIO_FOCUS_LAB=1 audits five Studio pages using private Tab/ShiftTab
 control/window bounds, focus pixels and select contrast at integer scales 1/2.
 DESKMORPH_DPI_SOURCE_LAB=launcher/audio/system/calendar exercises the host DPI
 worker against positive private monitors before any host display trial.
-Requires an existing Xvfb executable; never installs host packages.
+DESKMORPH_PRIVATE_GNOME_WM=1 with DPI_SOURCE_LAB uses one drawable1920x1080
+monitor and a guarded private GNOME Shell, instead of synthetic RandR monitors.
+Requires existing Xvfb/GNOME executables; never installs host packages.
 """
 import hashlib
 import json
@@ -81,7 +83,13 @@ def worker(root, scale, position):
         assert registry.poll() is None
         if dpi_source:
             from mutter_native_geometry_smoke import worker as dpi_worker
-            report = dpi_worker(root, 'right', position, dpi_source)
+            if os.environ.get('DESKMORPH_PRIVATE_GNOME_WM') == '1':
+                from private_gnome_wm import private_gnome_wm
+                with private_gnome_wm(root) as wm:
+                    report = dpi_worker(root, 'screen', position, dpi_source)
+                    report['windowManager'] = wm
+            else:
+                report = dpi_worker(root, 'right', position, dpi_source)
             report.update(scale=scale, privateDisplay=True)
             assert report['passed'], report
             return
@@ -440,6 +448,8 @@ def run():
     focus_test = os.environ.get('DESKMORPH_STUDIO_FOCUS_LAB') == '1'
     studio_test = os.environ.get('DESKMORPH_STUDIO_WIDGETS_LAB') == '1' or focus_test
     dpi_source = os.environ.get('DESKMORPH_DPI_SOURCE_LAB')
+    wm_test = os.environ.get('DESKMORPH_PRIVATE_GNOME_WM') == '1'
+    assert not wm_test or (dpi_source and not studio_test and os.environ.get('DESKMORPH_CONTEXT_DESCRIPTION_LAB') != '1' and os.environ.get('DESKMORPH_CONTEXT_SPEECH_LAB') != '1'), 'Private WM mode requires only DPI_SOURCE_LAB'
     speech_test = os.environ.get('DESKMORPH_CONTEXT_SPEECH_LAB') == '1'
     root = Path(tempfile.mkdtemp(prefix='deskmorph-negative-origin-'))
     report = dict(passed=False, root=str(root), runnerSha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(), studioWidgetsRequested=studio_test, studioFocusRequested=focus_test, contextSpeechRequested=speech_test, contextDescriptionRequested=os.environ.get('DESKMORPH_CONTEXT_DESCRIPTION_LAB') == '1', binarySha256=hashlib.sha256(BINARY.read_bytes()).hexdigest(), runs=[],
@@ -454,6 +464,8 @@ def run():
             report.update(scope='Native Studio five-page Tab/reverse/disabled traversal with focus pixels and window bounds, vi/scale1 and en/scale2 in private Xvfb', limits=['No host input, window manager, fractional DPI, Orca or all dynamic states proof', 'AT-SPI seeds navigation focus; subsequent traversal uses private XTest Tab/Shift+Tab', 'Focus pixel count and control bounds do not by themselves prove every outline edge is unclipped'])
         if dpi_source:
             report.update(scope='DPI geometry worker on private positive Xvfb monitor, integer scales1/2, top/bottom, source=' + dpi_source, limits=['Worker/coordinate checks only; no host WM, fractional/mixed DPI, physical pixels or keyboard acceptance'])
+        if wm_test:
+            report.update(scope='Native DPI worker with GNOME Shell on one drawable1920x1080 Xvfb monitor, integer GTK scales1/2, top/bottom, source=' + dpi_source, limits=['No physical monitor, host input, output-scale fractional/mixed DPI, negative origin or popup sequencing proof', 'Private Shell startup overview is dismissed with private Escape before app launch'])
         if speech_test:
             report.update(scope='Native launch error description/focus and Orca speech, vi/scale1 and en/scale2, top/bottom on positive Xvfb monitor', limits=['No host display input, window manager, physical monitor, fractional/mixed DPI or full context keyboard suite proof', 'Private Orca/session/a11y buses; synthesis captured on owned host null sink without speaker playback', 'Whole-application announcements and human evaluation of intelligibility remain outside these fixtures'])
         for scale in (1, 2):
@@ -473,7 +485,7 @@ def run():
                     XDG_CURRENT_DESKTOP='GNOME', XDG_SESSION_TYPE='x11', GTK_MODULES='atk-bridge', NO_AT_BRIDGE='0',
                     DBUS_SYSTEM_BUS_ADDRESS='unix:path=' + str(case / 'no-system-bus'), PULSE_SERVER='unix:' + str(case / 'no-audio'))
                 with (case / 'xvfb.log').open('w') as log:
-                    server = subprocess.Popen([xvfb, '-displayfd', '1', '-screen', '0', ('3840x2160x24' if studio_test or speech_test or dpi_source else '3840x1080x24'), '-nolisten', 'tcp', '-ac', '-noreset'], env=env, stdout=subprocess.PIPE, stderr=log, text=True)
+                    server = subprocess.Popen([xvfb, '-displayfd', '1', '-screen', '0', ('1920x1080x24' if wm_test else '3840x2160x24' if studio_test or speech_test or dpi_source else '3840x1080x24'), '-nolisten', 'tcp', '-ac', '-noreset'], env=env, stdout=subprocess.PIPE, stderr=log, text=True)
                 bus = session = None
                 try:
                     assert select.select([server.stdout], [], [], 8)[0], 'Xvfb readiness timeout'
@@ -481,7 +493,7 @@ def run():
                     assert number.isdigit()
                     env['DISPLAY'] = ':' + number
                     (case / 'display').write_text(env['DISPLAY'])
-                    for name, geometry in [('left', '1920/527x1080/296+-1920+0'), ('right', '1920/344x1080/193+0+0')]:
+                    for name, geometry in ([] if wm_test else [('left', '1920/527x1080/296+-1920+0'), ('right', '1920/344x1080/193+0+0')]):
                         subprocess.run(['xrandr', '--setmonitor', name, geometry, 'none'], env=env, check=True, timeout=5)
                     conf = case / 'a11y.conf'
                     conf.write_text(Path('/usr/share/defaults/at-spi2/accessibility.conf').read_text().replace('unix:dir=/tmp', 'unix:path=' + str(case / 'a11y.sock')))

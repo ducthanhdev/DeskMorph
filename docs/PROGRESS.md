@@ -1060,3 +1060,12 @@ Harness chờ stream4294967295 resolve về đúng owned sink trước input; sa
 Bổ sung kiểm lại baseline sau cooldown, tối đa hai lần VERIFY/TEMPORARY recovery và ghi restoreErrors nếu baseline không giữ được.13 fault tests qua, gồm delayed update/persistent drift; guard mới chưa chạy lại host nên chưa tuyên bố giải quyết failure thật. Giữ hai regression vì bảo vệ restore cài đặt màn hình có tác động thật, không test mirror geometry. Probe system200% trong GNOME/Xvfb riêng dừng trước popup do synthetic monitor chồng root dẫn Dock sai center; không dùng làm acceptance hoặc quy lỗi200% từ topology lab đó. Không commit probe/tmp bản sao.
 
 Khoảng desktop rảnh đã kết thúc và đã trả desktop cho người dùng. G2.10 còn ca200% system stability và negative topology hợp lệ; G5.9 có Orca menu đạt nhưng vẫn cần audit thao tác chính/contrast native còn thiếu. Tổng97/99; chưa đạt điều kiện phát hành.
+
+
+## G2.10/G5.9 — Tái hiện có WM riêng và kiểm toán phần còn thiếu (30/10/2026)
+
+[System geometry private WM](benchmarks/system-geometry-private-wm-2026-10-30/result.json):4/4 system cases scale1/2, Dock trên/dưới qua với GNOME Shell riêng, một drawable1920×1080, private buses/keyfile/XDG. Worker cũ có một mismatch do sample Dock1856px trước khi app co về596px; placement trace dùng Dock mới. Chờ20stable samples và assert Dock không đổi qua activation giữ nguyên geometry assertions, không tự retry hoặc chuyển failure host thành pass. Trace map/resize transitions tối đa32 entry/title và debug dismissal phục vụ lượt tái hiện200% tiếp theo; --sources/--repeat cho phép kiểm đúng nguồn mà không lặp48ca đã đạt.
+
+Giữ helper private_gnome_wm.py thay bản sao runner lớn: chỉ --replace sau khi kiểm root/marker/DISPLAY/session+system bus/keyfile/XDG riêng; Escape chỉ trên display riêng trước mở app để đóng startup overview. Guard test với6 subcases chặn host resources trước Popen,13 restore fault tests qua; Python compile/diff check qua. Audit0lab helpers. Các lỗi chuẩn bị thư mục config/repeated lab, Dock init và synthetic-monitor probes không được tính acceptance host; chỉ JSON đo cần thiết được giữ.
+
+[Kiểm toán phần còn thiếu](REMAINING_ACCEPTANCE.md) đối chiếu trực tiếp hai ID gốc, chỉ ra audio native contrast/output/volume keys, system Enter và chooser route chưa có bằng chứng tương ứng. Không mở rộng thành chứng nhận mọi desktop/Orca hoặc chạy lại resolution đã đạt. Câu hỏi desktop rảnh3phút để tái hiện system200% trên host đang chờ; chưa có xác nhận mới nên chưa mutate host. G2.10/G5.9 vẫn mở,97/99.

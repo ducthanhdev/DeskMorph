@@ -37,6 +37,8 @@ G5.9 trong kế hoạch triển khai **chưa chốt**. Tài liệu này tách c�
 
 ## Các phần cần hoàn tất trước khi chốt G5.9
 
+Trạng thái hiện tại được đối chiếu trong [REMAINING_ACCEPTANCE.md](REMAINING_ACCEPTANCE.md). Các đoạn dưới ghi lịch sử phát hiện; bằng chứng bổ sung về sau có thể đã giải quyết một phần. Phần còn thiếu cụ thể hiện là audio native contrast/output/volume keys, system Enter và tuyến chooser đến Open.
+
 - Kiểm thêm trạng thái động: lỗi/conflict và concurrent review thực tế, thứ tự điều hướng đầy đủ trong hộp thoại file, thao tác wallpaper favorite/filter/paging và focus sau khi control biến mất/disabled. Import/reset review/cancel/confirm/undo đã có kiểm native vi/en.
 - Kiểm đường vào/ra Dock và popup chỉ bằng bàn phím, cùng audio/media/system/context/window actions, kể cả thiếu capability/lỗi và pending.
   Nút vào Dock từ Studio, thứ tự Tab hai chiều và mở/đóng/mở lại launcher/audio/system/calendar trên Dock tự ẩn đã có bằng chứng vi/en. Control bên trong popup và các trạng thái lỗi/pending còn mở.

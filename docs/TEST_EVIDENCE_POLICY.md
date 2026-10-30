@@ -134,3 +134,8 @@ Giữ [JSON hồi quy đạt](benchmarks/orca-current-regression-2026-10-30/resu
 ## Integer output failure and recovery guard (30/10/2026)
 
 Giữ [integer-output trial thất bại](benchmarks/dpi-output-integer-trial-2026-10-30/result.json) riêng với48-ca pass:100%16/16,200%10pass/1fail/5not-run; flags cleanup thất bại không bị ghi đè bởi operatorRecovery đạt.13 fault tests bảo vệ bounded reapply/cooldown và ghi lỗi persistent drift; không thay acceptance host guard mới. Giữ --layouts để tái lập200% độc lập, không phải chạy lại48ca đã đạt. Baseline được xác minh giữ nguyên sau recovery và0helper/sink. Không giữ private GNOME diagnostic không đạt precondition synthetic monitor như test sản phẩm.
+
+
+## Private GNOME WM geometry (30/10/2026)
+
+Giữ helper GNOME riêng tái dùng negative_origin_smoke.py và [4 ca system native](benchmarks/system-geometry-private-wm-2026-10-30/result.json), không commit các bản sao diagnostic/tmp. Guard test6 subcases cần thiết vì helper gọi Shell --replace và private Escape; phải chặn host DISPLAY/buses/settings/XDG trước Popen. Giữ settling trace có giới hạn và --sources/--repeat để tái hiện failure thật, không thêm unit test mirror polling. Chờ Dock ổn định20samples và assert không đổi qua activation bắt stale-anchor measurement, không làm nhẹ yêu cầu clamp/center/size.4 ca private không thay200% HDMI acceptance, fractional output hoặc negative topology dưới WM.
