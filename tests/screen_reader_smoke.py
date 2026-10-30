@@ -20,7 +20,7 @@ import wave
 def run():
     repo = Path(__file__).resolve().parents[1]
     navigation = os.environ.get('DESKMORPH_ORCA_NAVIGATION', 'default')
-    assert navigation in ('default', 'application'), 'Unknown Orca navigation profile'
+    assert navigation in ('default', 'application', 'bypass-navigation'), 'Unknown Orca navigation profile'
     root = Path(tempfile.mkdtemp(prefix='deskmorph-orca-speech-'))
     sink = 'deskmorph_orca_' + str(os.getpid())
     processes = []
@@ -66,14 +66,15 @@ def run():
         (config / 'modules/espeak-ng.conf').write_bytes(Path('/etc/speech-dispatcher/modules/espeak-ng.conf').read_bytes())
         (config / 'speechd.conf').write_text('LogLevel 5\nAudioOutputMethod "pulse"\nAudioPulseDevice "' + sink + '"\nAddModule "espeak-ng" "sd_espeak-ng" "espeak-ng.conf"\nDefaultModule espeak-ng\n')
         socket = root / 'speech.sock'
-        env = dict(os.environ, PULSE_SINK=sink, SPEECHD_ADDRESS='unix_socket:' + str(socket), DESKMORPH_SPEECH_LAB=str(root))
+        env = dict(os.environ, SPT_NOENV='1', DESKMORPH_ORCA_PREFS=str(root / 'orca-prefs'), PULSE_SINK=sink, SPEECHD_ADDRESS='unix_socket:' + str(socket), DESKMORPH_SPEECH_LAB=str(root))
         speech = launch(['speech-dispatcher', '-s', '-C', str(config), '-S', str(socket), '-P', str(root / 'speech.pid'), '-L', str(root), '-t', '0'], 'speech-launch', env)
         wait(lambda: socket.exists() or speech.poll() is not None, 'Private speech socket timed out')
         assert speech.poll() is None, 'Private speech daemon exited'
         prefs = root / 'orca-prefs'
         prefs.mkdir()
-        navigation_settings = {} if navigation == 'default' else dict(
-            caretNavigationEnabled=False, structuralNavigationEnabled=False)
+        navigation_settings = dict(
+            caretNavigationEnabled=False, structuralNavigationEnabled=False) if navigation == 'application' else {}
+        # Comparison preferences are requests; actual reader state is observed.
         report['navigationSettingsRequested'] = navigation_settings
         # An explicit comparison with Orca's own navigation disabled. This does
         # not change the application or bypass any shared keyboard assertions;
@@ -105,11 +106,13 @@ def run():
             owned_pids = speech_pids()
             return [item for item in json.loads(pactl('--format=json', 'list', 'sink-inputs')) if item.get('properties', {}).get('application.process.id') in owned_pids]
         inputs = wait(speech_inputs, 'Speech playback stream missing')
+        report['initialPlaybackTargets'] = dict(expectedSink=sink_id, observed=[dict(index=item['index'], sink=item['sink']) for item in inputs])
         assert all(item['sink'] == sink_id for item in inputs), 'Speech stream escaped the private sink'
         report['playbackStreamsTargetOwnedNullSink'] = True
         command = ['/usr/bin/python3', str(repo / 'tests/desktop_smoke.py'), '--restart', '--context-keyboard-smoke']
         with (root / 'keyboard.log').open('w') as log:
-            result = subprocess.run(command, cwd=repo, stdout=log, stderr=log, timeout=240)
+            result = subprocess.run(command, cwd=repo, stdout=log, stderr=log, timeout=240,
+                env=dict(os.environ, DESKMORPH_ORCA_DRIVER_ROOT=str(root), DESKMORPH_ORCA_READER_PID=str(reader.pid)))
         report['keyboardExitCode'] = result.returncode
         assert result.returncode == 0, 'Native context keyboard suite failed; see keyboard.log'
         time.sleep(3)
@@ -153,6 +156,10 @@ def run():
             lines = [line for line in debug_text.splitlines() if 'SPEECH OUTPUT:' in line]
             report['speechOutputLines'] = len(lines)
             report['fixtureLabelSpoken'] = any('DeskMorph Context Keyboard' in line for line in lines)
+            report['bypassNavigation'] = dict(
+                requested=navigation == 'bypass-navigation',
+                enabledEvents=sum('DEFAULT: Removing key grabs for deskmorph ' in line and ': bypass mode enabled' in line for line in debug_text.splitlines()),
+                disabledEvents=sum('DEFAULT: Adding key grabs for deskmorph ' in line and ': bypass mode disabled' in line for line in debug_text.splitlines()))
             report['applicationCaretNavigationEnabledObserved'] = (
                 'Setting enabled state for deskmorph (module=orca.scripts.toolkits.WebKitGTK.script) to True'
                 in debug_text)

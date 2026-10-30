@@ -59,15 +59,19 @@ test('diagnostic disclosure follows keyboard button semantics and translates a r
   }
   const raw = 'private path diagnostic [config_write; patch_config]';
   try {
-    let tree = ErrorText({ error: raw });
-    assert.equal(tree.props.children[0], messages.vi.configWriteError);
+    let tree = ErrorText({ error: raw, summaryId: 'fixture-error-summary' });
+    assert.equal(tree.props.children[0].props.id, 'fixture-error-summary');
+    assert.equal(tree.props.children[0].props.children, messages.vi.configWriteError);
+    assert.equal([...nodes(tree.props.children[0])].length, 1, 'Description target contains direct summary text, without diagnostic controls');
     let button = [...nodes(tree)].find(node => node.type === 'button');
     assert.equal(button.props.type, 'button'); assert.equal(button.props['aria-expanded'], false);
     assert.equal([...nodes(tree)].some(node => node.props?.className === 'error-diagnostics'), false);
-    button.props.onClick(); language = 'en'; tree = ErrorText({ error: raw });
-    assert.equal(tree.props.children[0], messages.en.configWriteError);
+    button.props.onClick(); language = 'en'; tree = ErrorText({ error: raw, summaryId: 'fixture-error-summary' });
+    assert.equal(tree.props.children[0].props.id, 'fixture-error-summary');
+    assert.equal(tree.props.children[0].props.children, messages.en.configWriteError);
     assert.equal([...nodes(tree)].find(node => node.type === 'button').props.children, messages.en.details);
     assert.equal([...nodes(tree)].find(node => node.props?.className === 'error-diagnostics').props.children, raw);
+
   } finally { delete globalThis.__errorTextTest; }
 });
 

@@ -68,3 +68,8 @@ Tài liệu này ghi quyết định kỹ thuật theo yêu cầu người dùng
 
 
 - Mutter scale capabilities: chỉ lưu JSON đã bỏ serial/EDID và mô tả GetCurrentState/GSettings; không thêm harness/unit test cho một capability snapshot. Ghi riêng feature có trong schema với feature thực sự bật/chạy đạt; không dùng survey integer-global hiện tại để chốt fractional/mixed DPI.
+
+
+- Orca bypass/description: giữ helper opt-in Alt+Backspace có reader/log ownership và bypass on/off vì tái lập bàn phím thật mà không bỏ Home/End assertions. Regression hiện có kiểm ErrorText target chỉ chứa chữ, ID/link ổn định khi đổi locale và cancel không gửi kill. Giữ baseline, final warning-speech-pass/launch-speech-fail, lỗi chuẩn bị/composite-description và hai thử nghiệm persistent-summary đã gỡ. Commit phần description/warning đã kiểm, không coi whole speech suite đạt. Guard WebKit script mới chưa có full acceptance riêng trên restored product, ghi rõ giới hạn thay vì lược failure.
+
+- Native description lab: mở rộng harness Xvfb có sẵn bằng opt-in fixture missing command, không tạo một harness khác giả markup sản phẩm. Giữ4 native description/focus cases +16 placement trên binary thật cùng hash, private-display keys/PID guard và JSON gọn; raw config/log/probe ở/tmp. Probe HTML sáu cases chỉ là chẩn đoán platform mapping, không thay acceptance của app.

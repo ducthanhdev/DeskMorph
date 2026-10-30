@@ -8,6 +8,7 @@ from pathlib import Path
 import time
 from gi.repository import Atspi
 from dock_layout_smoke import descendants
+from orca_keyboard import navigate as reader_navigate
 
 
 def run(app, focus_studio, native_keys, fixture, command):
@@ -50,7 +51,7 @@ def run(app, focus_studio, native_keys, fixture, command):
             native_keys(chord=[0xffe1, 0xff09])
             wait(lambda: node.get_state_set().contains(Atspi.StateType.FOCUSED), 'Wrong reverse Tab target')
         for key, target in [(0xff57, expected[-1]), (0xff54, expected[0]), (0xff52, expected[-1]), (0xff50, expected[0])]:
-            native_keys(chord=[key])
+            reader_navigate(native_keys, key)
             wait(lambda: target.get_state_set().contains(Atspi.StateType.FOCUSED), 'Wrong context navigation target')
         disabled = [n.get_name() for n in buttons() if not enabled(n)]
         native_keys(chord=[0xff1b])
@@ -74,12 +75,17 @@ def run(app, focus_studio, native_keys, fixture, command):
     time.sleep(.2); native_keys(chord=[0xff0d])
     wait(lambda: any(n.get_role_name() in ('alert', 'notification') or n.get_attributes().get('xml-roles') == 'alert' for n in descendants(frame('DeskMorph Context Menu'))), 'Failed launch has no alert')
     wait(lambda: focused(launch), 'Failed request lost action focus')
+    failure = 'Không mở được ứng dụng' if vi else 'Unable to launch application'
+    wait(lambda: failure in button(launch).get_description(), 'Failed launch missing accessible description')
     force = 'Buộc dừng…' if vi else 'Force quit…'
     cancel = 'Hủy' if vi else 'Cancel'
     force_node = wait(lambda: button(force), 'Force action missing')
     assert force_node.get_component_iface().grab_focus()
     time.sleep(.2); native_keys(chord=[0xff0d])
     wait(lambda: focused(cancel), 'Force review must focus Cancel')
+    warning = 'Buộc đóng có thể' if vi else 'Force closing may close'
+    wait(lambda: warning in button(cancel).get_description(), 'Cancel missing force warning description')
+    wait(lambda: any(n.get_role_name() in ('alert', 'dialog') and n.get_attributes().get('xml-roles') == 'alertdialog' for n in descendants(frame('DeskMorph Context Menu'))), 'Force review missing alertdialog semantics')
     from gi.repository import Gdk
     rect = frame('DeskMorph Context Menu').get_component_iface().get_extents(Atspi.CoordType.SCREEN)
     image = Gdk.pixbuf_get_from_window(Gdk.get_default_root_window(), rect.x, rect.y, rect.width, rect.height)

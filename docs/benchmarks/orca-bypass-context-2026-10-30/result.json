@@ -1,0 +1,653 @@
+{
+  "date": "2026-10-30",
+  "passed": false,
+  "command": "DESKMORPH_ORCA_NAVIGATION=bypass-navigation python3 tests/screen_reader_smoke.py",
+  "runs": [
+    {
+      "passed": false,
+      "binarySha256": "1c2a54f8e3fd3e5dca7ece576d6301f714853ee996f352b6340a3a1b37b77f4b",
+      "navigationProfileRequested": "bypass-navigation",
+      "navigationSettingsRequested": {},
+      "readerExitCodeBeforeCleanup": null,
+      "speechOutputLines": 4,
+      "capturedAudio": {
+        "samples": 98304,
+        "nonzeroSamples": 67200,
+        "peak": 32768
+      },
+      "fixtureLabelSpoken": false,
+      "bypassNavigation": {
+        "requested": true,
+        "enabledEvents": 0,
+        "disabledEvents": 0
+      },
+      "applicationCaretNavigationEnabledObserved": false,
+      "orcaSegfaultLogged": false,
+      "readerExitCodeAfterCleanup": -9,
+      "processExitCodesAfterCleanup": [
+        0,
+        0,
+        -9
+      ],
+      "defaultOutputPreserved": true,
+      "ownedProcessesExited": true,
+      "error": "AssertionError('Speech stream escaped the private sink')",
+      "kind": "audio-preflight-failure"
+    },
+    {
+      "passed": false,
+      "binarySha256": "1c2a54f8e3fd3e5dca7ece576d6301f714853ee996f352b6340a3a1b37b77f4b",
+      "navigationProfileRequested": "bypass-navigation",
+      "navigationSettingsRequested": {},
+      "initialPlaybackTargets": {
+        "expectedSink": 9785,
+        "observed": [
+          {
+            "index": 9811,
+            "sink": 9785
+          }
+        ]
+      },
+      "playbackStreamsTargetOwnedNullSink": true,
+      "keyboardExitCode": 1,
+      "readerExitCodeBeforeCleanup": null,
+      "speechOutputLines": 2,
+      "capturedAudio": {
+        "samples": 393216,
+        "nonzeroSamples": 35909,
+        "peak": 32768
+      },
+      "fixtureLabelSpoken": false,
+      "bypassNavigation": {
+        "requested": true,
+        "enabledEvents": 0,
+        "disabledEvents": 0
+      },
+      "applicationCaretNavigationEnabledObserved": false,
+      "orcaSegfaultLogged": false,
+      "readerExitCodeAfterCleanup": -9,
+      "processExitCodesAfterCleanup": [
+        0,
+        0,
+        -9
+      ],
+      "defaultOutputPreserved": true,
+      "ownedProcessesExited": true,
+      "error": "AssertionError('Native context keyboard suite failed; see keyboard.log')",
+      "kind": "setproctitle-ownership-guard-failure"
+    },
+    {
+      "passed": false,
+      "binarySha256": "1c2a54f8e3fd3e5dca7ece576d6301f714853ee996f352b6340a3a1b37b77f4b",
+      "navigationProfileRequested": "bypass-navigation",
+      "navigationSettingsRequested": {},
+      "initialPlaybackTargets": {
+        "expectedSink": 9823,
+        "observed": [
+          {
+            "index": 9850,
+            "sink": 9823
+          }
+        ]
+      },
+      "playbackStreamsTargetOwnedNullSink": true,
+      "keyboardExitCode": 0,
+      "readerExitCodeBeforeCleanup": null,
+      "expectedUtterances": {
+        "DeskMorph Context Keyboard": true,
+        "Hủy": true,
+        "Cancel": true,
+        "Mở ứng dụng": true,
+        "Open application": true,
+        "Không mở được ứng dụng": false,
+        "Unable to launch application": false,
+        "Buộc đóng có thể": false,
+        "Force closing may close": false
+      },
+      "speechOutputLines": 353,
+      "audio": {
+        "rate": 22050,
+        "channels": 1,
+        "samples": 1867776,
+        "nonzeroSamples": 1294348,
+        "peak": 32768,
+        "sha256": "1cd5dac0f027d8fb296634d906731af42eaa82e8cb26f529161385f10b9a300c"
+      },
+      "capturedAudio": {
+        "samples": 1867776,
+        "nonzeroSamples": 1294348,
+        "peak": 32768
+      },
+      "fixtureLabelSpoken": true,
+      "bypassNavigation": {
+        "requested": true,
+        "enabledEvents": 16,
+        "disabledEvents": 16
+      },
+      "applicationCaretNavigationEnabledObserved": true,
+      "orcaSegfaultLogged": false,
+      "readerExitCodeAfterCleanup": 0,
+      "processExitCodesAfterCleanup": [
+        0,
+        0,
+        0
+      ],
+      "defaultOutputPreserved": true,
+      "ownedProcessesExited": true,
+      "error": "AssertionError('Orca did not speak all expected context labels')",
+      "limits": [
+        "No human listening evaluation or certification of intelligibility",
+        "Whole-application reading order, every live region and other Orca settings remain outside this fixture suite"
+      ],
+      "kind": "baseline-keyboard-passes-warning-speech-missing",
+      "keyboard": {
+        "fixturePids": [
+          1473545,
+          1476612
+        ],
+        "windowFixturePids": [
+          1473505,
+          1476562
+        ],
+        "normalPid": 1479651,
+        "configRestored": true,
+        "runs": [
+          {
+            "pid": 1473545,
+            "observations": [
+              {
+                "keys": [
+                  65505,
+                  65479
+                ],
+                "sequence": [
+                  "Mở ứng dụng",
+                  "Bỏ ghim",
+                  "Sang phải",
+                  "DeskMorph Window Test 1",
+                  "Đóng DeskMorph Window Test 1",
+                  "DeskMorph Window Test 2",
+                  "Đóng DeskMorph Window Test 2",
+                  "DeskMorph Window Test 3",
+                  "Đóng DeskMorph Window Test 3",
+                  "Buộc dừng…"
+                ],
+                "disabledSkipped": [
+                  "Sang trái"
+                ],
+                "reverseMatches": true,
+                "arrowWrapAndHomeEnd": true,
+                "escapeRestores": true
+              },
+              {
+                "keys": [
+                  65383
+                ],
+                "sequence": [
+                  "Mở ứng dụng",
+                  "Bỏ ghim",
+                  "Sang phải",
+                  "DeskMorph Window Test 1",
+                  "Đóng DeskMorph Window Test 1",
+                  "DeskMorph Window Test 2",
+                  "Đóng DeskMorph Window Test 2",
+                  "DeskMorph Window Test 3",
+                  "Đóng DeskMorph Window Test 3",
+                  "Buộc dừng…"
+                ],
+                "disabledSkipped": [
+                  "Sang trái"
+                ],
+                "reverseMatches": true,
+                "arrowWrapAndHomeEnd": true,
+                "escapeRestores": true
+              }
+            ],
+            "configUnchanged": true,
+            "failedLaunchFocus": true,
+            "forceReviewCancelFocus": true,
+            "removedRowFallback": true,
+            "enterClosesOwnedWindow": true,
+            "keyboardForceConfirm": true,
+            "forceFixturePid": 1473505,
+            "forceFixtureExitCode": 1,
+            "scope": "Native pinned fixture context entry/Tab/arrows/Escape, nonexistent command failure, force review/cancel/Tab-confirm, external row removal and Enter close of owned fixture window2; force quit targets only the owned Popen fixture, no user app actions or unpinned context coverage"
+          },
+          {
+            "pid": 1476612,
+            "observations": [
+              {
+                "keys": [
+                  65505,
+                  65479
+                ],
+                "sequence": [
+                  "Open application",
+                  "Unpin",
+                  "Move right",
+                  "DeskMorph Window Test 1",
+                  "Close DeskMorph Window Test 1",
+                  "DeskMorph Window Test 2",
+                  "Close DeskMorph Window Test 2",
+                  "DeskMorph Window Test 3",
+                  "Close DeskMorph Window Test 3",
+                  "Force quit…"
+                ],
+                "disabledSkipped": [
+                  "Move left"
+                ],
+                "reverseMatches": true,
+                "arrowWrapAndHomeEnd": true,
+                "escapeRestores": true
+              },
+              {
+                "keys": [
+                  65383
+                ],
+                "sequence": [
+                  "Open application",
+                  "Unpin",
+                  "Move right",
+                  "DeskMorph Window Test 1",
+                  "Close DeskMorph Window Test 1",
+                  "DeskMorph Window Test 2",
+                  "Close DeskMorph Window Test 2",
+                  "DeskMorph Window Test 3",
+                  "Close DeskMorph Window Test 3",
+                  "Force quit…"
+                ],
+                "disabledSkipped": [
+                  "Move left"
+                ],
+                "reverseMatches": true,
+                "arrowWrapAndHomeEnd": true,
+                "escapeRestores": true
+              }
+            ],
+            "configUnchanged": true,
+            "failedLaunchFocus": true,
+            "forceReviewCancelFocus": true,
+            "removedRowFallback": true,
+            "enterClosesOwnedWindow": true,
+            "keyboardForceConfirm": true,
+            "forceFixturePid": 1476562,
+            "forceFixtureExitCode": 1,
+            "scope": "Native pinned fixture context entry/Tab/arrows/Escape, nonexistent command failure, force review/cancel/Tab-confirm, external row removal and Enter close of owned fixture window2; force quit targets only the owned Popen fixture, no user app actions or unpinned context coverage"
+          }
+        ]
+      }
+    },
+    {
+      "passed": false,
+      "binarySha256": "64587344963b9e770cdc909c752b68285c5f262913848baaf056a36dc56e8990",
+      "keyboardExitCode": 1,
+      "readerExitCodeBeforeCleanup": null,
+      "speechOutputLines": 158,
+      "capturedAudio": {
+        "samples": 1015808,
+        "nonzeroSamples": 609285,
+        "peak": 32768
+      },
+      "fixtureLabelSpoken": true,
+      "bypassNavigation": {
+        "requested": true,
+        "enabledEvents": 8,
+        "disabledEvents": 8
+      },
+      "applicationCaretNavigationEnabledObserved": true,
+      "orcaSegfaultLogged": false,
+      "readerExitCodeAfterCleanup": 0,
+      "defaultOutputPreserved": true,
+      "ownedProcessesExited": true,
+      "error": "AssertionError('Native context keyboard suite failed; see keyboard.log')",
+      "kind": "first-fix-references-composite-alert-target",
+      "keyboardFailure": "Failed launch missing accessible description; WebKit exports a relation to the composite alert but empty description; this iteration was not accepted"
+    },
+    {
+      "passed": false,
+      "binarySha256": "38490a6882e4458866e43316027ddffef74020f7aee5caeec304c93df28a774f",
+      "keyboardExitCode": 0,
+      "readerExitCodeBeforeCleanup": null,
+      "expectedUtterances": {
+        "DeskMorph Context Keyboard": true,
+        "Hủy": true,
+        "Cancel": true,
+        "Mở ứng dụng": true,
+        "Open application": true,
+        "Không mở được ứng dụng": false,
+        "Unable to launch application": false,
+        "Buộc đóng có thể": true,
+        "Force closing may close": true
+      },
+      "speechOutputLines": 395,
+      "audio": {
+        "rate": 22050,
+        "channels": 1,
+        "samples": 1966080,
+        "nonzeroSamples": 1489779,
+        "peak": 32768,
+        "sha256": "c9c1eb78dfcc271b06accc0ced29cba0fb96fd42fa73365ab434693e07e78fe8"
+      },
+      "capturedAudio": {
+        "samples": 1966080,
+        "nonzeroSamples": 1489779,
+        "peak": 32768
+      },
+      "fixtureLabelSpoken": true,
+      "bypassNavigation": {
+        "requested": true,
+        "enabledEvents": 16,
+        "disabledEvents": 16
+      },
+      "applicationCaretNavigationEnabledObserved": true,
+      "orcaSegfaultLogged": true,
+      "readerExitCodeAfterCleanup": -11,
+      "defaultOutputPreserved": true,
+      "ownedProcessesExited": true,
+      "error": "AssertionError('Orca did not speak all expected context labels')",
+      "kind": "direct-span-native-keyboard-and-warning-speech-pass-launch-speech-missing",
+      "keyboard": {
+        "fixturePids": [
+          1957689,
+          1960858
+        ],
+        "windowFixturePids": [
+          1957622,
+          1960839
+        ],
+        "normalPid": 1964045,
+        "configRestored": true,
+        "runs": [
+          {
+            "pid": 1957689,
+            "observations": [
+              {
+                "keys": [
+                  65505,
+                  65479
+                ],
+                "sequence": [
+                  "Mở ứng dụng",
+                  "Bỏ ghim",
+                  "Sang phải",
+                  "DeskMorph Window Test 1",
+                  "Đóng DeskMorph Window Test 1",
+                  "DeskMorph Window Test 2",
+                  "Đóng DeskMorph Window Test 2",
+                  "DeskMorph Window Test 3",
+                  "Đóng DeskMorph Window Test 3",
+                  "Buộc dừng…"
+                ],
+                "disabledSkipped": [
+                  "Sang trái"
+                ],
+                "reverseMatches": true,
+                "arrowWrapAndHomeEnd": true,
+                "escapeRestores": true
+              },
+              {
+                "keys": [
+                  65383
+                ],
+                "sequence": [
+                  "Mở ứng dụng",
+                  "Bỏ ghim",
+                  "Sang phải",
+                  "DeskMorph Window Test 1",
+                  "Đóng DeskMorph Window Test 1",
+                  "DeskMorph Window Test 2",
+                  "Đóng DeskMorph Window Test 2",
+                  "DeskMorph Window Test 3",
+                  "Đóng DeskMorph Window Test 3",
+                  "Buộc dừng…"
+                ],
+                "disabledSkipped": [
+                  "Sang trái"
+                ],
+                "reverseMatches": true,
+                "arrowWrapAndHomeEnd": true,
+                "escapeRestores": true
+              }
+            ],
+            "configUnchanged": true,
+            "failedLaunchFocus": true,
+            "forceReviewCancelFocus": true,
+            "removedRowFallback": true,
+            "enterClosesOwnedWindow": true,
+            "keyboardForceConfirm": true,
+            "forceFixturePid": 1957622,
+            "forceFixtureExitCode": 1,
+            "scope": "Native pinned fixture context entry/Tab/arrows/Escape, nonexistent command failure, force review/cancel/Tab-confirm, external row removal and Enter close of owned fixture window2; force quit targets only the owned Popen fixture, no user app actions or unpinned context coverage"
+          },
+          {
+            "pid": 1960858,
+            "observations": [
+              {
+                "keys": [
+                  65505,
+                  65479
+                ],
+                "sequence": [
+                  "Open application",
+                  "Unpin",
+                  "Move right",
+                  "DeskMorph Window Test 1",
+                  "Close DeskMorph Window Test 1",
+                  "DeskMorph Window Test 2",
+                  "Close DeskMorph Window Test 2",
+                  "DeskMorph Window Test 3",
+                  "Close DeskMorph Window Test 3",
+                  "Force quit…"
+                ],
+                "disabledSkipped": [
+                  "Move left"
+                ],
+                "reverseMatches": true,
+                "arrowWrapAndHomeEnd": true,
+                "escapeRestores": true
+              },
+              {
+                "keys": [
+                  65383
+                ],
+                "sequence": [
+                  "Open application",
+                  "Unpin",
+                  "Move right",
+                  "DeskMorph Window Test 1",
+                  "Close DeskMorph Window Test 1",
+                  "DeskMorph Window Test 2",
+                  "Close DeskMorph Window Test 2",
+                  "DeskMorph Window Test 3",
+                  "Close DeskMorph Window Test 3",
+                  "Force quit…"
+                ],
+                "disabledSkipped": [
+                  "Move left"
+                ],
+                "reverseMatches": true,
+                "arrowWrapAndHomeEnd": true,
+                "escapeRestores": true
+              }
+            ],
+            "configUnchanged": true,
+            "failedLaunchFocus": true,
+            "forceReviewCancelFocus": true,
+            "removedRowFallback": true,
+            "enterClosesOwnedWindow": true,
+            "keyboardForceConfirm": true,
+            "forceFixturePid": 1960839,
+            "forceFixtureExitCode": 1,
+            "scope": "Native pinned fixture context entry/Tab/arrows/Escape, nonexistent command failure, force review/cancel/Tab-confirm, external row removal and Enter close of owned fixture window2; force quit targets only the owned Popen fixture, no user app actions or unpinned context coverage"
+          }
+        ]
+      }
+    },
+    {
+      "passed": false,
+      "binarySha256": "74de3f182c8a5cc9584b803958fe35b878b969bbee67001a1b5dc58617c2bfce",
+      "keyboardExitCode": 1,
+      "readerExitCodeBeforeCleanup": null,
+      "speechOutputLines": 33,
+      "capturedAudio": {
+        "samples": 655360,
+        "nonzeroSamples": 225181,
+        "peak": 32768
+      },
+      "fixtureLabelSpoken": true,
+      "bypassNavigation": {
+        "requested": true,
+        "enabledEvents": 1,
+        "disabledEvents": 1
+      },
+      "applicationCaretNavigationEnabledObserved": true,
+      "orcaSegfaultLogged": true,
+      "readerExitCodeAfterCleanup": -11,
+      "defaultOutputPreserved": true,
+      "ownedProcessesExited": true,
+      "error": "AssertionError('Native context keyboard suite failed; see keyboard.log')",
+      "kind": "discarded-persistent-summary-gtk-script-bypass-race",
+      "productExperimentKept": false
+    },
+    {
+      "passed": false,
+      "binarySha256": "74de3f182c8a5cc9584b803958fe35b878b969bbee67001a1b5dc58617c2bfce",
+      "keyboardExitCode": 1,
+      "readerExitCodeBeforeCleanup": null,
+      "speechOutputLines": 7,
+      "capturedAudio": {
+        "samples": 622592,
+        "nonzeroSamples": 79847,
+        "peak": 32768
+      },
+      "fixtureLabelSpoken": false,
+      "bypassNavigation": {
+        "requested": true,
+        "enabledEvents": 0,
+        "disabledEvents": 0
+      },
+      "applicationCaretNavigationEnabledObserved": false,
+      "orcaSegfaultLogged": false,
+      "readerExitCodeAfterCleanup": -9,
+      "defaultOutputPreserved": true,
+      "ownedProcessesExited": true,
+      "error": "AssertionError('Native context keyboard suite failed; see keyboard.log')",
+      "kind": "discarded-persistent-summary-reader-script-not-ready",
+      "productExperimentKept": false
+    }
+  ],
+  "harnessCorrections": [
+    "SPT_NOENV=1 prevents setproctitle erasing the procfs environment marker; reproduced without a GUI using a separate child process",
+    "Verify real Alt+Backspace bypass transitions in owned reader log and restore bypass off after each navigation key; shared focus assertions unchanged",
+    "Record initial sink targets for future preflight diagnosis; first sink mismatch lacks target values so no routing root cause is claimed"
+  ],
+  "scope": "Owned context fixtures vi/en on GNOME X11 with real Orca49.4 speech; bypass required for application Home/End/arrow navigation. Baseline lacks spoken launch error and force warning. Not whole-application accessibility certification.",
+  "webkitDescriptionProbe": {
+    "engine": "WebKitGTK2.52.6",
+    "hostInput": false,
+    "windowManager": false,
+    "scope": "Private Xvfb, session/a11y buses; six HTML cases queried through AT-SPI. Diagnostic-only script in /tmp, not a product acceptance test.",
+    "cases": [
+      {
+        "name": "plain",
+        "description": "Static paragraph description",
+        "attributes": {
+          "tag": "button",
+          "toolkit": "WebKitGTK",
+          "computed-role": "button"
+        },
+        "relations": [
+          "<enum ATSPI_RELATION_DESCRIBED_BY of type Atspi.RelationType>"
+        ]
+      },
+      {
+        "name": "alert",
+        "description": "",
+        "attributes": {
+          "tag": "button",
+          "toolkit": "WebKitGTK",
+          "computed-role": "button"
+        },
+        "relations": [
+          "<enum ATSPI_RELATION_DESCRIBED_BY of type Atspi.RelationType>"
+        ]
+      },
+      {
+        "name": "direct",
+        "description": "",
+        "attributes": {
+          "tag": "button",
+          "toolkit": "WebKitGTK",
+          "computed-role": "button"
+        },
+        "relations": []
+      },
+      {
+        "name": "dynamic",
+        "description": "",
+        "attributes": {
+          "tag": "button",
+          "toolkit": "WebKitGTK",
+          "id": "dyn",
+          "computed-role": "button"
+        },
+        "relations": [
+          "<enum ATSPI_RELATION_DESCRIBED_BY of type Atspi.RelationType>"
+        ]
+      },
+      {
+        "name": "hint",
+        "description": "Title description",
+        "attributes": {
+          "tag": "button",
+          "toolkit": "WebKitGTK",
+          "computed-role": "button"
+        },
+        "relations": []
+      },
+      {
+        "name": "dynamicspan",
+        "description": "Dynamic direct summary",
+        "attributes": {
+          "tag": "button",
+          "toolkit": "WebKitGTK",
+          "id": "dynspan",
+          "computed-role": "button"
+        },
+        "relations": [
+          "<enum ATSPI_RELATION_DESCRIBED_BY of type Atspi.RelationType>"
+        ]
+      }
+    ]
+  },
+  "validation": {
+    "frontendTests": {
+      "passed": 55,
+      "total": 55
+    },
+    "contrast": {
+      "passed": 113,
+      "total": 113,
+      "cssSha256": "f68f0969dc61caefb05d5ba03c1d90174d483ef2f6a50b71e16376f9b962e840",
+      "scope": "Computed style fixtures using actual App.css in Gtk.OffscreenWindow; white/black backdrops, flat layers and group opacity. Hover/focus selectors mapped to fixture states. Text 4.5:1; enumerated outlines/borders 3:1 against both interior and exterior flat backgrounds. Eight additional Studio text fixtures retain actual radial gradients/translucent cards, using conservative RGB/luminance bounds over every gradient stop. Unsupported images/interpolation/group opacity are rejected for gradient cases. A failing lower bound requires further measurement. No assertion of full app coverage, artwork, arbitrary gradients, native keyboard focus, native widgets or screen-reader behavior."
+    },
+    "typescriptViteBuild": true,
+    "nativeCustomProtocolBuild": true,
+    "pythonCompile": true
+  },
+  "cleanupAudit": {
+    "liveSpeechLabProcesses": [],
+    "liveGeometryLabProcesses": [],
+    "ownedSpeechSinks": [],
+    "configBytesRestored": true
+  },
+  "acceptedImprovements": {
+    "nativeDescriptionBothLanguages": true,
+    "forceWarningSpokenBothLanguages": true,
+    "contextKeyboardBothLanguages": true,
+    "fullSpeechAcceptance": false
+  },
+  "remaining": "Launch error has a native AT-SPI description but was not spoken automatically. Persistent-summary experiment discarded after GTK/WebKit script failures; final helper now waits for owned WebKit script before toggling bypass, not yet accepted in a full run on the restored product.",
+  "currentProductBinarySha256": "38490a6882e4458866e43316027ddffef74020f7aee5caeec304c93df28a774f",
+  "finalProductRestoresPreviouslyMeasuredBinaryExactly": true
+}

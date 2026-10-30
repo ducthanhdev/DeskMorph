@@ -933,3 +933,14 @@ Script cần AT-SPI, Python GI, GTK3 và libXtst. Chỉ gửi phím khi kiểm t
 
 - [Khảo sát chỉ đọc](benchmarks/dpi-capabilities-2026-10-30/result.json): GNOME X11 renderer=xrandr, layout-mode2, global-scale-required=true; HDMI1920×1080@60 và eDP1920×1080@144 chỉ supported-scales1/2, hiện cùng scale1 và experimental-features=[]. Không đổi GSettings/topology/input.
 - Schema hiện có `x11-randr-fractional-scaling`, mô tả không cần compositor restart. Chưa bật hoặc kiểm feature nên không gọi là hỗ trợ fractional/mixed DPI. Lượt tiếp theo cần backup features/layout, thử tạm trong desktop window đã sắp lịch và đọc lại capabilities trước khi apply125/150%/mixed; phải khôi phục sau kiểm. G2.10 vẫn mở, tổng97/99.
+
+
+## G5.9 — Description native vi/en và đọc warning force, launch announcement còn thiếu (30/10/2026)
+
+- Helper opt-in Alt+Backspace thật của Orca49 kiểm bypass on/off và reader PID/profile ownership; không bỏ assertions. SPT_NOENV=1 giữ marker sau setproctitle (probe child riêng tái hiện); driver metadata không lan ownership marker vào normal app.
+- [Bản ghi baseline/final/failures](benchmarks/orca-bypass-context-2026-10-30/result.json): baseline native keyboard vi/en đạt nhưng thiếu cả launch error/warning force. Bản direct summary span38490a… qua toàn bộ keyboard vi/en,395 speech events/1489779 sample khác0; warning force đã đọc ở cả hai ngôn ngữ, launch error vẫn chưa được phát. Speech acceptance tổng fail, không chốt G5.9 hoặc default browse/Home/End compatibility.
+- Sản phẩm giữ ID summary chữ trực tiếp của ErrorText và describedby ở source launch; nonmodal alertdialog có tên, warning paragraph liên kết Hủy/Xác nhận. Composite alert description của bản thử đầu rỗng; probe WebKit riêng sáu cases xác minh direct text target cần thiết.
+- [4/4 native description +16/16 placement](benchmarks/context-description-lab-2026-10-30/result.json) trên cùng38490a… trong Xvfb/bus/profile riêng: vi/scale1, en/scale2, top/bottom; command cố ý không tồn tại trong lab, source giữ focus sau lỗi. Không Orca hoặc pixel/WM/fractional proof từ lab.
+- Thử nghiệm persistent live summary sau đó chưa qua GTK/WebKit script/navigation guard, đã gỡ. Rebuild trả về đúng SHA25638490a… đã kiểm; giữ cả hai failure. Helper thêm chờ WebKit script trước bypass, guard mới chưa có full acceptance riêng trên restored product. Không dùng failure đó để quy nguyên nhân sản phẩm hoặc tuyên bố announcement đã sửa.
+-55/55 frontend tests, TS/Vite/native custom-protocol build,113/113 contrast, Python compile/diff check qua. Không đổi Rust backend nên không chạy lại Rust unit suite. Audit0 live speech/geometry lab process/sink, bytes config phục hồi. Chốt riêng description/warning và commit phần đã chứng minh; G5.9 tiếp tục mở, tổng97/99, release no-go.
+- Khoảng desktop10phút đã hết; không bật thử fractional feature. `mutter_scaling_probe.py` mới chuẩn bị, nhánh chỉ đọc đã qua và không đổi topology/settings; nhánh thử feature chưa chạy và chưa chốt/commit.

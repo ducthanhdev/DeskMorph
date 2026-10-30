@@ -1,0 +1,89 @@
+{
+  "date": "2026-10-30",
+  "passed": true,
+  "binarySha256": "38490a6882e4458866e43316027ddffef74020f7aee5caeec304c93df28a774f",
+  "command": "DESKMORPH_CONTEXT_DESCRIPTION_LAB=1 python3 tests/negative_origin_smoke.py",
+  "scope": "Owned native missing-command context menu: direct summary description and focus after failure, vi at GTK scale1/en at scale2, top/bottom; also16 popup placement cases",
+  "limits": [
+    "No window manager; negative monitor lies outside Xvfb drawable root",
+    "AT-SPI opens sources; XTest Escape dismisses on the owned display only",
+    "Does not prove visible pixels, host input, physical topology, fractional scaling or mixed DPI",
+    "No Orca/speech or force-warning acceptance in this lab"
+  ],
+  "runs": [
+    {
+      "scale": 1,
+      "position": "top",
+      "language": "vi",
+      "pid": 1949185,
+      "description": {
+        "language": "vi",
+        "expected": "Không mở được ứng dụng",
+        "observed": "Không mở được ứng dụng",
+        "focusRetained": true,
+        "action": "AT-SPI owned missing command; XTest Shift+F10 entry",
+        "scope": "Native accessibility description, no Orca or warning/force coverage"
+      },
+      "geometryCasesPassed": 4,
+      "configUnchanged": true,
+      "appExitCode": -15
+    },
+    {
+      "scale": 1,
+      "position": "bottom",
+      "language": "vi",
+      "pid": 1950410,
+      "description": {
+        "language": "vi",
+        "expected": "Không mở được ứng dụng",
+        "observed": "Không mở được ứng dụng",
+        "focusRetained": true,
+        "action": "AT-SPI owned missing command; XTest Shift+F10 entry",
+        "scope": "Native accessibility description, no Orca or warning/force coverage"
+      },
+      "geometryCasesPassed": 4,
+      "configUnchanged": true,
+      "appExitCode": -15
+    },
+    {
+      "scale": 2,
+      "position": "top",
+      "language": "en",
+      "pid": 1951668,
+      "description": {
+        "language": "en",
+        "expected": "Unable to launch application",
+        "observed": "Unable to launch application",
+        "focusRetained": true,
+        "action": "AT-SPI owned missing command; XTest Shift+F10 entry",
+        "scope": "Native accessibility description, no Orca or warning/force coverage"
+      },
+      "geometryCasesPassed": 4,
+      "configUnchanged": true,
+      "appExitCode": -15
+    },
+    {
+      "scale": 2,
+      "position": "bottom",
+      "language": "en",
+      "pid": 1953431,
+      "description": {
+        "language": "en",
+        "expected": "Unable to launch application",
+        "observed": "Unable to launch application",
+        "focusRetained": true,
+        "action": "AT-SPI owned missing command; XTest Shift+F10 entry",
+        "scope": "Native accessibility description, no Orca or warning/force coverage"
+      },
+      "geometryCasesPassed": 4,
+      "configUnchanged": true,
+      "appExitCode": -15
+    }
+  ],
+  "cleanupAudit": {
+    "liveSpeechLabProcesses": [],
+    "liveGeometryLabProcesses": [],
+    "ownedSpeechSinks": [],
+    "configBytesRestored": true
+  }
+}

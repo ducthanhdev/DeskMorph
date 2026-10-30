@@ -38,3 +38,6 @@ G2.11 đã qua [một vòng rút/cắm HDMI vật lý](benchmarks/physical-hotpl
 
 
 Khảo sát [Mutter DisplayConfig hiện tại](benchmarks/dpi-capabilities-2026-10-30/result.json) chỉ đọc ghi nhận renderer=xrandr, layout-mode=2, global-scale-required=true, cả HDMI/eDP chỉ công bố scale1/2 khi experimental-features=[]; không coi topology này là mixed DPI. Schema đã cài có keyword `x11-randr-fractional-scaling` (mô tả không cần restart), nhưng chưa bật hoặc thử. Hướng kiểm tiếp là lập lượt desktop riêng, backup đầy đủ features/layout, bật tạm feature, đọc lại supported-scales/layout constraints rồi mới chọn125/150% và cấu hình hỗn hợp nếu được compositor chấp nhận; finally khôi phục cả feature và topology. Không suy từ keyword thành hỗ trợ hoạt động hoặc từ text scaling thành fractional proof.
+
+
+Nhánh opt-in `DESKMORPH_CONTEXT_DESCRIPTION_LAB=1` bổ sung pin fixture có command không tồn tại trong private root, mở menu bằng Shift+F10 trên private DISPLAY rồi kiểm accessible description/focus sau lỗi qua AT-SPI. [Lượt4 ca](benchmarks/context-description-lab-2026-10-30/result.json) dùng vi/scale1 và en/scale2, top/bottom;16 popup placement cùng lượt qua. Đây là kiểm bổ sung G5.9 trên binary thật, không tăng phạm vi chứng nhận DPI/pixel/WM.

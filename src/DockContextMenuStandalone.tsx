@@ -1,5 +1,5 @@
 import { ErrorText } from "./components/ErrorText";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { usePopupFocus } from "./hooks/usePopupFocus";
 import { invoke } from "./ipc";
 import { listen } from "@tauri-apps/api/event";
@@ -31,6 +31,8 @@ function ContextActions({ menu }: { menu: DockContextMenuState }) {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [confirmKill, setConfirmKill] = useState(false);
+  const feedbackId = useId();
+  const warningId = useId();
   const root = useRef<HTMLElement>(null);
   const changing = useRef(false);
   const forceButton = useRef<HTMLButtonElement>(null);
@@ -84,8 +86,10 @@ function ContextActions({ menu }: { menu: DockContextMenuState }) {
     {!platform?.windows.enumerate && <p role="status">{capabilityReason(platform, "windowEnumeration", t, platformError)}</p>}
     {missing && <p role="status">{t("unavailable")}</p>}
     {catalogueError && <p role="alert"><ErrorText error={catalogueError} /></p>}
-    {(error || configError || refreshError) && <p role="alert"><ErrorText error={error || configError || refreshError!} /></p>}
-    {(menu.command || installed) && <button disabled={busy || missing} onClick={() => void perform(() => menu.command ? invoke("spawn_app", { execCmd: menu.command }) : invoke("launch_installed_app", { id: installed!.id, action: null }))}><Plus size={16} /> {t("newLaunch")}</button>}
+    <div id={`${feedbackId}-region`} role="alert" aria-live="assertive" aria-atomic="true">
+      {(error || configError || refreshError) && <p><ErrorText error={error || configError || refreshError!} summaryId={feedbackId} /></p>}
+    </div>
+    {(menu.command || installed) && <button aria-describedby={error ? feedbackId : undefined} disabled={busy || missing} onClick={() => void perform(() => menu.command ? invoke("spawn_app", { execCmd: menu.command }) : invoke("launch_installed_app", { id: installed!.id, action: null }))}><Plus size={16} /> {t("newLaunch")}</button>}
     <button disabled={busy || (!menu.isPinned && !menu.desktopId)} onClick={() => void togglePin()}>{menu.isPinned ? <PinOff size={16} /> : <Pin size={16} />}{menu.isPinned ? t("unpin") : t("pin")}</button>
     {menu.isPinned && pinIndex >= 0 && <div className="context-reorder">
       <button disabled={busy || pinIndex === 0} onClick={() => void perform(() => mutatePin("move", menu.appId!, undefined, pinIndex - 1))}><ArrowLeft size={14} /> {t("moveLeft")}</button>
@@ -100,10 +104,10 @@ function ContextActions({ menu }: { menu: DockContextMenuState }) {
     </div>}
     {menu.windowId && windows.some((window) => window.id === menu.windowId) && <>
       <button ref={forceButton} className="context-danger" title={platform?.forceQuit ? undefined : capabilityReason(platform, "forceQuit", t, platformError)} disabled={busy || !platform?.forceQuit} onClick={() => setConfirmKill(true)}><Flame size={16} /> {t("forceQuit")}</button>
-      {confirmKill && <div className="context-confirm" role="alert">
-        <p>{t("forceWarning")}</p>
-        <button ref={cancelButton} disabled={busy} onClick={() => { returnToForce.current = document.hasFocus() && document.activeElement === cancelButton.current; setConfirmKill(false); }}>{t("cancel")}</button>
-        <button className="context-danger" disabled={busy || !platform?.forceQuit} onClick={() => { if (platform?.forceQuit) void perform(() => invoke("force_kill_window", { xid: menu.windowId })); }}>{t("forceConfirm")}</button>
+      {confirmKill && <div className="context-confirm" role="alertdialog" aria-label={t("forceQuit")} aria-describedby={warningId}>
+        <p id={warningId}>{t("forceWarning")}</p>
+        <button ref={cancelButton} aria-describedby={warningId} disabled={busy} onClick={() => { returnToForce.current = document.hasFocus() && document.activeElement === cancelButton.current; setConfirmKill(false); }}>{t("cancel")}</button>
+        <button className="context-danger" aria-describedby={warningId} disabled={busy || !platform?.forceQuit} onClick={() => { if (platform?.forceQuit) void perform(() => invoke("force_kill_window", { xid: menu.windowId })); }}>{t("forceConfirm")}</button>
       </div>}
     </>}
   </section>;

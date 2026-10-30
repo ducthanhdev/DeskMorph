@@ -54,7 +54,10 @@ def worker(root, scale, position):
     gi.require_version('Atspi', '2.0')
     gi.require_version('Gdk', '3.0')
     from gi.repository import Atspi, Gdk, GLib
-    report = dict(passed=False, scale=scale, position=position, cases=[])
+    description_test = os.environ.get('DESKMORPH_CONTEXT_DESCRIPTION_LAB') == '1'
+    language = 'en' if description_test and scale == 2 else 'vi'
+    labels = json.loads((REPO / 'src/i18n/messages.json').read_text())[language]
+    report = dict(passed=False, scale=scale, position=position, language=language, cases=[])
     registry_log = (root / 'registry.log').open('w')
     registry = subprocess.Popen(['/usr/libexec/at-spi2-registryd'], stdout=registry_log, stderr=registry_log)
     app = None
@@ -75,7 +78,11 @@ def worker(root, scale, position):
         cfg = json.loads((REPO / 'src/config/defaults.json').read_text())
         cfg.update(monitor='left', position=position, pinnedApps=[], showStats=False,
                    showShuffle=False, showAudio=True, wallpaperScheduleEnabled=False,
-                   reduceMotion=True, language='vi')
+                   reduceMotion=True, language=language)
+        if description_test:
+            missing = root / 'intentionally-missing-app'
+            assert not missing.exists()
+            cfg['pinnedApps'] = [dict(id='deskmorph-description-lab', name='DeskMorph Description Lab', command=str(missing), matchClasses=['DeskMorphDescriptionLab'], enabled=True, iconType='custom')]
         config = root / 'config/com.ducthanhdev.deskmorph/config.json'
         config.parent.mkdir(parents=True, exist_ok=True)
         config.write_text(json.dumps(dict(schemaVersion=1, revision=0, config=cfg, warning=None)))
@@ -125,7 +132,7 @@ def worker(root, scale, position):
         accessible = wait(owned_accessible, 'Owned accessibility application absent')
         def content_ready():
             try:
-                return any(n.get_role_name() == 'button' and n.get_name() == 'Mở lịch' for n in walk(accessible))
+                return any(n.get_role_name() == 'button' and n.get_name() == labels['calendar'] for n in walk(accessible))
             except GLib.GError:
                 # WebKit may replace its initial empty document during load.
                 return False
@@ -147,24 +154,26 @@ def worker(root, scale, position):
         x11.XSync.argtypes = [ctypes.c_void_p, ctypes.c_int]
         x11.XCloseDisplay.argtypes = [ctypes.c_void_p]
         xtst.XTestFakeKeyEvent.argtypes = [ctypes.c_void_p, ctypes.c_uint, ctypes.c_int, ctypes.c_ulong]
-        def dismiss(popup):
+        def keys(popup, chord):
             # Explicit private DISPLAY: never use the inherited host connection.
             connection = x11.XOpenDisplay((root / 'display').read_text().encode())
             assert connection
             try:
                 x11.XSetInputFocus(connection, int(popup['xid'], 16), 2, 0)
                 x11.XSync(connection, 0)
-                key = x11.XKeysymToKeycode(connection, 0xff1b)
-                assert key
-                assert xtst.XTestFakeKeyEvent(connection, key, 1, 0)
-                assert xtst.XTestFakeKeyEvent(connection, key, 0, 0)
+                codes = [x11.XKeysymToKeycode(connection, sym) for sym in chord]
+                assert all(codes)
+                for code in codes:
+                    assert xtst.XTestFakeKeyEvent(connection, code, 1, 0)
+                for code in reversed(codes):
+                    assert xtst.XTestFakeKeyEvent(connection, code, 0, 0)
                 x11.XSync(connection, 0)
             finally:
                 x11.XCloseDisplay(connection)
-        for label, title in [('Tìm ứng dụng', 'DeskMorph Context Menu'),
-                             ('Âm thanh', 'DeskMorph Context Menu'),
-                             ('Tiện ích hệ thống', 'DeskMorph Context Menu'),
-                             ('Mở lịch', 'DeskMorph Calendar')]:
+        for label, title in [(labels['searchApps'], 'DeskMorph Context Menu'),
+                             (labels['audio'], 'DeskMorph Context Menu'),
+                             (labels['systemTools'], 'DeskMorph Context Menu'),
+                             (labels['calendar'], 'DeskMorph Calendar')]:
             def source():
                 frame = next((n for n in walk(accessible) if n.get_role_name() == 'frame' and n.get_name() == 'DeskMorph Taskbar'), None)
                 return next((n for n in walk(frame) if n.get_role_name() == 'button' and n.get_name() == label), None)
@@ -189,8 +198,26 @@ def worker(root, scale, position):
             expected_py = max(10 * scale, min(ideal_y, 1080 - ph - 10 * scale))
             assert abs(py - expected_py) <= 2, (label, popup, expected_py)
             report['cases'].append(dict(source=label, dock=current_dock, sourceLogicalRect=[anchor.x, anchor.y, anchor.width, anchor.height], sourcePhysicalCenter=center, popup=popup, gap=gap))
-            dismiss(popup)
+            keys(popup, [0xff1b])
             wait(lambda: native(title) is None, 'Popup did not close: ' + label)
+        if description_test:
+            taskbar = next(n for n in walk(accessible) if n.get_role_name() == 'frame' and n.get_name() == 'DeskMorph Taskbar')
+            pin = wait(lambda: next((n for n in walk(taskbar) if n.get_role_name() == 'button' and n.get_name().startswith('DeskMorph Description Lab •')), None), 'Description fixture pin absent')
+            assert pin.get_component_iface().grab_focus()
+            keys(native('DeskMorph Taskbar'), [0xffe1, 0xffc7])
+            popup = stable('DeskMorph Context Menu')
+            def launch_button():
+                frame = next((n for n in walk(accessible) if n.get_role_name() == 'frame' and n.get_name() == 'DeskMorph Context Menu'), None)
+                return next((n for n in walk(frame) if n.get_role_name() == 'button' and n.get_name() == labels['newLaunch']), None)
+            launch = wait(launch_button, 'Fixture launch action absent')
+            assert launch.get_component_iface().grab_focus()
+            assert launch.get_action_iface().do_action(0)
+            expected = 'Không mở được ứng dụng' if language == 'vi' else 'Unable to launch application'
+            wait(lambda: expected in launch_button().get_description(), 'Native launch error description missing')
+            wait(lambda: launch_button().get_state_set().contains(Atspi.StateType.FOCUSED), 'Failed launch lost focus')
+            report['nativeDescription'] = dict(language=language, expected=expected, observed=launch_button().get_description(), focusRetained=True, action='AT-SPI owned missing command; XTest Shift+F10 entry', scope='Native accessibility description, no Orca or warning/force coverage')
+            keys(popup, [0xff1b])
+            wait(lambda: native('DeskMorph Context Menu') is None, 'Fixture menu did not dismiss')
         assert config.read_bytes() == original, 'Private profile changed'
         report['configUnchanged'] = True
         report['passed'] = True
@@ -210,7 +237,7 @@ def run():
     xvfb = os.environ.get('DESKMORPH_XVFB', '/tmp/xvfb-root/usr/bin/Xvfb')
     assert Path(xvfb).is_file(), 'Set DESKMORPH_XVFB to an existing Xvfb executable'
     root = Path(tempfile.mkdtemp(prefix='deskmorph-negative-origin-'))
-    report = dict(passed=False, root=str(root), binarySha256=hashlib.sha256(BINARY.read_bytes()).hexdigest(), runs=[],
+    report = dict(passed=False, root=str(root), contextDescriptionRequested=os.environ.get('DESKMORPH_CONTEXT_DESCRIPTION_LAB') == '1', binarySha256=hashlib.sha256(BINARY.read_bytes()).hexdigest(), runs=[],
         scope='Native allocation/AT-SPI activation on virtual negative-origin RandR monitors, top/bottom at GTK integer scales 1/2',
         limits=['No window manager; negative monitor lies outside Xvfb drawable root',
                 'AT-SPI opens sources; XTest Escape dismisses on the owned display only',

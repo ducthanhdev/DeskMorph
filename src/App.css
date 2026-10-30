@@ -1716,7 +1716,7 @@ button:focus-visible { outline: 2px solid #48b9c7; outline-offset: -2px; }
 .context-actions button:hover { background: #26394e; }
 .context-actions button:disabled { opacity: .4; cursor: default; }
 .context-actions p { font-size: 11px; padding: 8px; }
-.context-actions [role="alert"], .context-actions .context-danger { color: #fda4af; }
+.context-actions [role="alert"], .context-actions [role="alertdialog"], .context-actions .context-danger { color: #fda4af; }
 .context-reorder, .context-window-row { display: flex; gap: 4px; }
 .context-window-items { margin-top: 8px; border-top: 1px solid #334155; padding-top: 8px; max-height: 200px; overflow-y: auto; }
 .context-window-row.is-active { background: #163d4a; border-radius: 7px; }
