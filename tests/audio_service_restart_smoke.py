@@ -119,6 +119,25 @@ def run(app, config_home, focus_studio, native_keys, start_app, set_app):
                 wait(lambda: next(s for s in sinks() if s['name'] == name)['mute'], 'UI mute did not reach private replacement server')
                 report['cycles'].append(dict(kind='core-and-pulse' if index % 3 == 2 else 'pulse-service', oldServicePid=old, newServicePid=server.pulse.pid, oldSubscriptionPid=old_sub, newSubscriptionPid=subscriptions()[0], errorAfterSeconds=outage, recoveredAfterSeconds=restored, autoRecovery=True, externalVolumeSignal=True, uiMuteTargetsPrivateSink=True, privateSinkFactory=sinks()[0]['properties']['factory.name']))
                 print(json.dumps(report['cycles'][-1]), flush=True)
+            # Remove a nondefault null sink while its radio has keyboard focus.
+            # Keep the current output intact so this measures focus recovery,
+            # rather than depending on a missing session manager's fallback.
+            hotplug_label = 'DeskMorph_Keyboard_Removable'
+            module = server.pactl('load-module', 'module-null-sink', 'sink_name=deskmorph_keyboard_removable',
+                'sink_properties=device.description=' + hotplug_label)
+            try:
+                def removable():
+                    return next((n for n in nodes() if n.get_role_name() == 'radio button' and n.get_name() == hotplug_label), None)
+                radio = wait(removable, 'Private hotplug output did not appear in keyboard UI')
+                assert radio.get_component_iface().grab_focus()
+                wait(lambda: radio.get_state_set().contains(Atspi.StateType.FOCUSED), 'Hotplug radio did not focus')
+                server.pactl('unload-module', module); module = None
+                wait(lambda: removable() is None, 'Removed private output radio remained')
+                wait(lambda: any(n.get_role_name() == 'button' and n.get_name() == 'Đóng' and n.get_state_set().contains(Atspi.StateType.FOCUSED) for n in nodes()), 'Removed audio radio did not recover focus to Close')
+                assert json.loads(server.pactl('--format=json', 'info'))['default_sink_name'] == name
+                report['removedAudioRadioFocusClose'] = True
+            finally:
+                if module is not None: server.pactl('unload-module', module)
             native_keys(chord=[0xff1b]); wait(lambda: not subscriptions(), 'Hidden popup kept audio subscription')
             report['hiddenStopsSubscription'] = True
             open_audio(); wait(lambda: len(subscriptions()) == 1, 'Reopen failed after service restarts')
