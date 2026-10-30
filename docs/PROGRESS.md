@@ -1107,3 +1107,12 @@ Các diagnostic trước không đạt được giữ phân loại trong JSON: s
 Đối chiếu REMAINING_ACCEPTANCE.md: focus/names/tab/disabled, contrast control, thao tác chính và Orca menu đều đã có bằng chứng phù hợp G5.9 gốc trong môi trường tham chiếu. Chốt G5.9; không gọi là chứng nhận WCAG toàn diện, mọi trạng thái/theme, human listening hoặc mọi cấu hình reader. Tổng98/99; G2.10 còn bốn tổ hợp HDMI200% ngoài system và topology âm hợp lệ dưới WM. Release vẫn no-go.
 
 Đánh giá commit test: giữ `chooser_keyboard_private.py` và nhánh opt-in trong runner vì tái hiện native keyboard integration còn thiếu, có guard private DISPLAY/PID/XDG; không giữ các probe đường dẫn thử sai hoặc raw tree/ảnh/profile. Audit cuối không còn geometry/DPI/WM helper sống. Commit kèm tài liệu và JSON bằng chứng, không kèm binary.
+
+
+## G2.10 — Chuẩn bị chạy đúng bốn ca HDMI200% còn thiếu (30/10/2026)
+
+Runner native hỗ trợ `--only-case MONITOR/POSITION/SOURCE`: lọc chính xác worker sau readback topology và kiểm monitor tồn tại trước mutation feature/topology. Lệnh đã chuẩn bị: `--run --layouts 200 --only-case HDMI-0/top/calendar HDMI-0/bottom/launcher HDMI-0/bottom/audio HDMI-0/bottom/calendar`. Không lặp lại48ca fractional/mixed hoặc12ca system đã đạt. Ma trận mặc định và restore guard giữ nguyên.
+
+11 orchestration/fault tests qua: chọn đúng4worker, topology/capability restore, sai cú pháp chặn trước bus và monitor không tồn tại không đổi settings. Test success fixture mô phỏng compositor rút capability sau restore feature; lượt đầu thiếu mô phỏng này bị báo capability restore false và không được tính pass. Python compile/CLI help/diff check qua. Giữ các test vì bảo vệ thao tác cấu hình màn hình thật và kiểm phạm vi worker được yêu cầu; không kiểm geometry bằng bản sao công thức sản phẩm.
+
+Chưa chạy4ca host: khoảng desktop rảnh trước đã kết thúc; đã hỏi khoảng2phút mới và đang chờ trả lời. Không suy test orchestration thành acceptance DPI. G2.10 vẫn mở,98/99, release no-go. Bằng chứng negative-origin hiện vẫn chỉ là native allocation ngoài drawable root; yêu cầu âm hợp lệ dưới WM chưa đạt, không đổi tiêu chí để đóng checkbox.

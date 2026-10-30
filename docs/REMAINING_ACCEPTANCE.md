@@ -34,3 +34,5 @@ popup không ổn định trên HDMI, vì lượt host đó không có trace dis
 G5.9 đã chốt bằng tổ hợp bằng chứng trong bảng và [chooser4/4](benchmarks/chooser-keyboard-private-2026-10-30/result.json). Chooser dùng thư mục cwd fixture/private GTK startup-mode=cwd; không chứng nhận mọi đường duyệt filesystem hoặc inline filename completion. Giữ giới hạn Orca bypass-navigation và phạm vi control/state của các báo cáo; không mở rộng thành chứng nhận WCAG hay mọi reader/theme.
 
 Chỉ G2.10 còn mở: bốn tổ hợp HDMI200% ngoài system và topology âm drawable hợp lệ dưới WM. Không dùng các diagnostic chooser thất bại để suy lỗi sản phẩm hoặc làm bằng chứng đạt.
+
+Runner đã chuẩn bị chọn đúng bốn ca: `--run --layouts 200 --only-case HDMI-0/top/calendar HDMI-0/bottom/launcher HDMI-0/bottom/audio HDMI-0/bottom/calendar`. 11 fault/orchestration tests đạt; chưa chạy host khi chưa có khoảng desktop rảnh mới.

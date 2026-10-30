@@ -156,12 +156,14 @@ def worker(root, monitor, position, source='launcher', language='vi', after_open
         (root / 'result.json').write_text(json.dumps(result, ensure_ascii=False, indent=2) + '\n')
     return result
 
-def run(layouts=('125', '150', 'mixed'), sources=None, repetitions=1):
+def run(layouts=('125', '150', 'mixed'), sources=None, repetitions=1, only_cases=None):
     scale_sets = {'100': [1., 1.], '125': [1.25, 1.25], '150': [1.5, 1.5], '200': [2., 2.], 'mixed': [1., 1.5]}
     assert layouts and all(label in scale_sets for label in layouts), 'Unknown or empty DPI layouts'
     sources = tuple(SOURCES) if sources is None else tuple(sources)
     assert sources and all(source in SOURCES for source in sources), 'Unknown or empty sources'
     assert 1 <= repetitions <= 5, 'Repeat count must be between1 and5'
+    targets = None if only_cases is None else {tuple(case.split('/')) for case in only_cases}
+    assert targets is None or (targets and all(len(case) == 3 and case[0] and case[1] in ('top', 'bottom') and case[2] in sources for case in targets)), 'Expected MONITOR/top|bottom/SOURCE within selected sources'
     deadline = time.monotonic() + 420
     root = Path(tempfile.mkdtemp(prefix='deskmorph-dpi-native-'))
     out = root / 'result.json'
@@ -171,6 +173,7 @@ def run(layouts=('125', '150', 'mixed'), sources=None, repetitions=1):
     original = settings.get_user_value('experimental-features')
     features = list(settings.get_strv('experimental-features'))
     report = {'passed': False, 'before': before, 'features': features, 'originalUserValue': None if original is None else original.print_(True), 'root': str(root), 'binarySha256': hashlib.sha256(BINARY.read_bytes()).hexdigest(), 'cases': [], 'restoreErrors': [], 'inputSent': False, 'featureMutationAttempted': False, 'topologyMutationAttempted': False, 'scope': 'Real GNOME X11 fractional/mixed display layouts, native allocation and AT-SPI activation of four popups, top/bottom on both monitors; fresh owned instance per popup; no keyboard, popup sequencing or physical-pixel proof'}
+    report['requestedCases'] = None if targets is None else [list(case) for case in sorted(targets)]
     report.update(topologyRestored=False, userValueRestored=False, capabilitiesRestored=False)
     out.write_text(json.dumps(report, indent=2))
     try:
@@ -179,6 +182,8 @@ def run(layouts=('125', '150', 'mixed'), sources=None, repetitions=1):
         m.apply(display, before, 0)
         assert before['properties']['renderer'] == 'xrandr' and len(before['logicalMonitors']) == 2
         assert all(monitor['transform'] == 0 and len(monitor['connectors']) == 1 for monitor in before['logicalMonitors']), 'Only two unrotated, unmirrored outputs are supported'
+        connectors = {logical['connectors'][0] for logical in before['logicalMonitors']}
+        assert targets is None or all(case[0] in connectors for case in targets), 'Requested monitor absent; no settings changed'
         requested = list(dict.fromkeys(features + [m.FEATURE]))
         if requested != features:
             report['featureMutationAttempted'] = True
@@ -208,6 +213,8 @@ def run(layouts=('125', '150', 'mixed'), sources=None, repetitions=1):
             for logical in ordered:
                 connector = logical['connectors'][0]
                 for position, source, repetition in ((position, source, repetition) for position in ('top', 'bottom') for source in sources for repetition in range(repetitions)):
+                    if targets is not None and (connector, position, source) not in targets:
+                        continue
                     assert time.monotonic() + 40 < deadline, 'Desktop trial time budget exhausted; restoring baseline'
                     folder = root / (label + '-' + connector + '-' + position + '-' + source + '-' + str(repetition))
                     folder.mkdir()
@@ -291,8 +298,9 @@ if __name__ == '__main__':
     parser.add_argument('--run', action='store_true', help='Opt in to reversible host display mutations; requires an agreed idle desktop window')
     parser.add_argument('--layouts', nargs='+', choices=('100', '125', '150', '200', 'mixed'), default=['125', '150', 'mixed'], help='Explicit output scales; default is the 48-case fractional/mixed matrix')
     parser.add_argument('--sources', nargs='+', choices=tuple(SOURCES), default=list(SOURCES), help='Select popup sources for targeted reproduction')
+    parser.add_argument('--only-case', nargs='+', metavar='MONITOR/POSITION/SOURCE', help='Run only these explicit cases; validates monitors before changing settings')
     parser.add_argument('--repeat', type=int, choices=range(1, 6), default=1, help='Fresh owned instances per source,1..5')
     args = parser.parse_args()
     if not args.run:
         parser.error('--run is required; no host settings were changed')
-    sys.exit(0 if run(tuple(args.layouts), args.sources, args.repeat)['passed'] else 1)
+    sys.exit(0 if run(tuple(args.layouts), args.sources, args.repeat, args.only_case)['passed'] else 1)
