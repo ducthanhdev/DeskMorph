@@ -1,0 +1,1117 @@
+{
+  "passed": true,
+  "root": "/tmp/deskmorph-negative-origin-oqz9n6iz",
+  "runnerSha256": "5e6b67d8f1f693cbc2755e8b328d3edd88aa5979e98bdd9803e76275a39cdaf4",
+  "studioWidgetsRequested": false,
+  "studioFocusRequested": false,
+  "contextSpeechRequested": false,
+  "contextDescriptionRequested": false,
+  "binarySha256": "1172029a8dee0dde0b196e4956b2df150522bb1b058c4ed0cf829bc55e449ac9",
+  "runs": [
+    {
+      "passed": true,
+      "monitor": "screen",
+      "position": "top",
+      "source": "audio",
+      "observations": [
+        {
+          "source": "Âm thanh",
+          "popup": [
+            756,
+            114,
+            360,
+            540
+          ],
+          "anchor": 936.0,
+          "expectedOrigin": [
+            756,
+            114
+          ]
+        }
+      ],
+      "gdkMonitors": [
+        {
+          "name": "screen",
+          "gtkScale": 1,
+          "area": [
+            0,
+            32,
+            1920,
+            1048
+          ]
+        }
+      ],
+      "pid": 3233862,
+      "settlingObservations": {
+        "DeskMorph Taskbar": [
+          {
+            "seconds": 0.003,
+            "rectangle": null
+          },
+          {
+            "seconds": 0.16,
+            "rectangle": [
+              410,
+              48,
+              1100,
+              52
+            ]
+          },
+          {
+            "seconds": 1.098,
+            "rectangle": [
+              811,
+              48,
+              298,
+              52
+            ]
+          }
+        ],
+        "DeskMorph Context Menu": [
+          {
+            "seconds": 0.002,
+            "rectangle": null
+          },
+          {
+            "seconds": 0.253,
+            "rectangle": [
+              756,
+              114,
+              360,
+              540
+            ]
+          }
+        ]
+      },
+      "dock": [
+        811,
+        48,
+        298,
+        52
+      ],
+      "dockAfterActivation": [
+        811,
+        48,
+        298,
+        52
+      ],
+      "controlAudit": {
+        "passed": true,
+        "language": "vi",
+        "scale": 1,
+        "captures": [
+          {
+            "name": "radio-checked",
+            "role": "radio button",
+            "rect": [
+              775,
+              200,
+              322,
+              29
+            ],
+            "focusPixels": 104,
+            "contrastRatios": {
+              "focusToBackground": 10.0173332062699,
+              "markToFill": 3.7687294221773,
+              "fillToBackground": 4.462921966055363
+            },
+            "paletteRgbCounts": {
+              "#171d2c": 445,
+              "#65d8e5": 104,
+              "#3584e4": 60,
+              "#ffffff": 12,
+              "#b3b8be": 10,
+              "#767b84": 7,
+              "#2c67b0": 5,
+              "#21426f": 4,
+              "#2b62a8": 4,
+              "#3179d0": 4
+            }
+          },
+          {
+            "name": "range-right",
+            "role": "slider",
+            "rect": [
+              775,
+              337,
+              322,
+              20
+            ],
+            "focusPixels": 1432,
+            "capture": "range-focus.png",
+            "contrastRatios": {
+              "focusToBackground": 10.0173332062699,
+              "markToFill": 3.7687294221773,
+              "fillToBackground": 4.462921966055363,
+              "filledToUnfilledTrack": 4.7020255571619085
+            },
+            "paletteRgbCounts": {
+              "#171d2c": 4294,
+              "#131825": 1122,
+              "#3584e4": 680,
+              "#ffffff": 209,
+              "#161c2a": 10,
+              "#151a28": 10,
+              "#141a27": 6,
+              "#fcfcfc": 5,
+              "#151b29": 4,
+              "#b2b4b9": 4
+            }
+          },
+          {
+            "name": "checkbox-checked",
+            "role": "check box",
+            "rect": [
+              775,
+              373,
+              322,
+              17
+            ],
+            "focusPixels": 160,
+            "contrastRatios": {
+              "focusToBackground": 10.0173332062699,
+              "markToFill": 3.7687294221773,
+              "fillToBackground": 4.462921966055363
+            },
+            "paletteRgbCounts": {
+              "#171d2c": 214,
+              "#3584e4": 79,
+              "#65d8e5": 34,
+              "#ffffff": 17,
+              "#9ea3ab": 8,
+              "#2f73c7": 7,
+              "#213f6a": 3,
+              "#f1f5f9": 3,
+              "#3c88e4": 3,
+              "#cce0f8": 3
+            }
+          },
+          {
+            "name": "checkbox-unchecked",
+            "role": "check box",
+            "rect": [
+              775,
+              373,
+              322,
+              17
+            ],
+            "focusPixels": 160,
+            "contrastRatios": {
+              "focusToBackground": 10.0173332062699,
+              "lightPaintToDarkPaint": 17.909715220371034,
+              "lightPaintToBackground": 16.81954532235421
+            },
+            "paletteRgbCounts": {
+              "#171d2c": 214,
+              "#121723": 68,
+              "#ffffff": 60,
+              "#65d8e5": 34,
+              "#131824": 8,
+              "#9ea3ab": 8,
+              "#151b29": 4,
+              "#c3c4c7": 4,
+              "#f1f5f9": 3,
+              "#191f2e": 3
+            }
+          },
+          {
+            "name": "radio-unchecked",
+            "role": "radio button",
+            "rect": [
+              775,
+              200,
+              322,
+              29
+            ],
+            "focusPixels": 104,
+            "contrastRatios": {
+              "focusToBackground": 10.0173332062699,
+              "lightPaintToDarkPaint": 17.909715220371034,
+              "lightPaintToBackground": 16.81954532235421
+            },
+            "paletteRgbCounts": {
+              "#171d2c": 445,
+              "#65d8e5": 104,
+              "#ffffff": 36,
+              "#121723": 30,
+              "#b3b8be": 10,
+              "#131825": 9,
+              "#767b84": 7,
+              "#151a28": 6,
+              "#141926": 4,
+              "#131824": 4
+            }
+          }
+        ],
+        "checks": [
+          "Space selects private output B and restores focus",
+          "Right/Left write and restore private sink volume",
+          "Space toggles private sink mute and restores focus"
+        ],
+        "auditSha256": "b0ab7c97edf6bea829f414f19c4b0924ad7c36b0308f9919ea312bec316a6799",
+        "privateOutputAndVolumeRestored": true,
+        "contrastStatus": "Enumerated checked/unchecked native paint and focus ratios all >=3:1",
+        "policyEnabled": true,
+        "sinkFactories": [
+          "support.null-audio-sink",
+          "support.null-audio-sink"
+        ]
+      },
+      "configUnchanged": true,
+      "appExit": -15,
+      "windowManager": {
+        "pid": 3233289,
+        "name": "GNOME Shell",
+        "privateDisplay": true,
+        "startupOverviewDismissed": true
+      },
+      "scale": 1,
+      "privateDisplay": true,
+      "privateAudioProcessesExited": true
+    },
+    {
+      "passed": true,
+      "monitor": "screen",
+      "position": "bottom",
+      "source": "audio",
+      "observations": [
+        {
+          "source": "Âm thanh",
+          "popup": [
+            756,
+            458,
+            360,
+            540
+          ],
+          "anchor": 936.0,
+          "expectedOrigin": [
+            756,
+            458
+          ]
+        }
+      ],
+      "gdkMonitors": [
+        {
+          "name": "screen",
+          "gtkScale": 1,
+          "area": [
+            0,
+            32,
+            1920,
+            1048
+          ]
+        }
+      ],
+      "pid": 3235407,
+      "settlingObservations": {
+        "DeskMorph Taskbar": [
+          {
+            "seconds": 0.005,
+            "rectangle": null
+          },
+          {
+            "seconds": 0.165,
+            "rectangle": [
+              410,
+              1012,
+              1100,
+              52
+            ]
+          },
+          {
+            "seconds": 1.606,
+            "rectangle": [
+              811,
+              1012,
+              298,
+              52
+            ]
+          }
+        ],
+        "DeskMorph Context Menu": [
+          {
+            "seconds": 0.003,
+            "rectangle": null
+          },
+          {
+            "seconds": 0.159,
+            "rectangle": [
+              756,
+              458,
+              360,
+              540
+            ]
+          }
+        ]
+      },
+      "dock": [
+        811,
+        1012,
+        298,
+        52
+      ],
+      "dockAfterActivation": [
+        811,
+        1012,
+        298,
+        52
+      ],
+      "controlAudit": {
+        "passed": true,
+        "language": "vi",
+        "scale": 1,
+        "captures": [
+          {
+            "name": "radio-checked",
+            "role": "radio button",
+            "rect": [
+              775,
+              544,
+              322,
+              29
+            ],
+            "focusPixels": 104,
+            "contrastRatios": {
+              "focusToBackground": 10.0173332062699,
+              "markToFill": 3.7687294221773,
+              "fillToBackground": 4.462921966055363
+            },
+            "paletteRgbCounts": {
+              "#171d2c": 445,
+              "#65d8e5": 104,
+              "#3584e4": 60,
+              "#ffffff": 12,
+              "#b3b8be": 10,
+              "#767b84": 7,
+              "#2c67b0": 5,
+              "#21426f": 4,
+              "#2b62a8": 4,
+              "#3179d0": 4
+            }
+          },
+          {
+            "name": "range-right",
+            "role": "slider",
+            "rect": [
+              775,
+              681,
+              322,
+              20
+            ],
+            "focusPixels": 1432,
+            "contrastRatios": {
+              "focusToBackground": 10.0173332062699,
+              "markToFill": 3.7687294221773,
+              "fillToBackground": 4.462921966055363,
+              "filledToUnfilledTrack": 4.7020255571619085
+            },
+            "paletteRgbCounts": {
+              "#171d2c": 4294,
+              "#131825": 1122,
+              "#3584e4": 680,
+              "#ffffff": 209,
+              "#161c2a": 10,
+              "#151a28": 10,
+              "#141a27": 6,
+              "#fcfcfc": 5,
+              "#151b29": 4,
+              "#b2b4b9": 4
+            }
+          },
+          {
+            "name": "checkbox-checked",
+            "role": "check box",
+            "rect": [
+              775,
+              717,
+              322,
+              17
+            ],
+            "focusPixels": 160,
+            "contrastRatios": {
+              "focusToBackground": 10.0173332062699,
+              "markToFill": 3.7687294221773,
+              "fillToBackground": 4.462921966055363
+            },
+            "paletteRgbCounts": {
+              "#171d2c": 214,
+              "#3584e4": 79,
+              "#65d8e5": 34,
+              "#ffffff": 17,
+              "#9ea3ab": 8,
+              "#2f73c7": 7,
+              "#213f6a": 3,
+              "#f1f5f9": 3,
+              "#3c88e4": 3,
+              "#cce0f8": 3
+            }
+          },
+          {
+            "name": "checkbox-unchecked",
+            "role": "check box",
+            "rect": [
+              775,
+              717,
+              322,
+              17
+            ],
+            "focusPixels": 160,
+            "contrastRatios": {
+              "focusToBackground": 10.0173332062699,
+              "lightPaintToDarkPaint": 17.909715220371034,
+              "lightPaintToBackground": 16.81954532235421
+            },
+            "paletteRgbCounts": {
+              "#171d2c": 214,
+              "#121723": 68,
+              "#ffffff": 60,
+              "#65d8e5": 34,
+              "#131824": 8,
+              "#9ea3ab": 8,
+              "#151b29": 4,
+              "#c3c4c7": 4,
+              "#f1f5f9": 3,
+              "#191f2e": 3
+            }
+          },
+          {
+            "name": "radio-unchecked",
+            "role": "radio button",
+            "rect": [
+              775,
+              544,
+              322,
+              29
+            ],
+            "focusPixels": 104,
+            "contrastRatios": {
+              "focusToBackground": 10.0173332062699,
+              "lightPaintToDarkPaint": 17.909715220371034,
+              "lightPaintToBackground": 16.81954532235421
+            },
+            "paletteRgbCounts": {
+              "#171d2c": 445,
+              "#65d8e5": 104,
+              "#ffffff": 36,
+              "#121723": 30,
+              "#b3b8be": 10,
+              "#131825": 9,
+              "#767b84": 7,
+              "#151a28": 6,
+              "#141926": 4,
+              "#131824": 4
+            }
+          }
+        ],
+        "checks": [
+          "Space selects private output B and restores focus",
+          "Right/Left write and restore private sink volume",
+          "Space toggles private sink mute and restores focus"
+        ],
+        "auditSha256": "b0ab7c97edf6bea829f414f19c4b0924ad7c36b0308f9919ea312bec316a6799",
+        "privateOutputAndVolumeRestored": true,
+        "contrastStatus": "Enumerated checked/unchecked native paint and focus ratios all >=3:1",
+        "policyEnabled": true,
+        "sinkFactories": [
+          "support.null-audio-sink",
+          "support.null-audio-sink"
+        ]
+      },
+      "configUnchanged": true,
+      "appExit": -15,
+      "windowManager": {
+        "pid": 3234849,
+        "name": "GNOME Shell",
+        "privateDisplay": true,
+        "startupOverviewDismissed": true
+      },
+      "scale": 1,
+      "privateDisplay": true,
+      "privateAudioProcessesExited": true
+    },
+    {
+      "passed": true,
+      "monitor": "screen",
+      "position": "top",
+      "source": "audio",
+      "observations": [
+        {
+          "source": "Audio",
+          "popup": [
+            566,
+            52,
+            720,
+            1008
+          ],
+          "anchor": 925.0,
+          "expectedOrigin": [
+            565,
+            52
+          ]
+        }
+      ],
+      "gdkMonitors": [
+        {
+          "name": "screen",
+          "gtkScale": 2,
+          "area": [
+            0,
+            32,
+            1920,
+            1048
+          ]
+        }
+      ],
+      "pid": 3236912,
+      "settlingObservations": {
+        "DeskMorph Taskbar": [
+          {
+            "seconds": 0.01,
+            "rectangle": null
+          },
+          {
+            "seconds": 0.325,
+            "rectangle": [
+              32,
+              64,
+              1856,
+              104
+            ]
+          },
+          {
+            "seconds": 1.61,
+            "rectangle": [
+              678,
+              64,
+              566,
+              104
+            ]
+          },
+          {
+            "seconds": 2.573,
+            "rectangle": [
+              676,
+              64,
+              568,
+              104
+            ]
+          }
+        ],
+        "DeskMorph Context Menu": [
+          {
+            "seconds": 0.01,
+            "rectangle": null
+          },
+          {
+            "seconds": 0.168,
+            "rectangle": [
+              566,
+              52,
+              720,
+              1008
+            ]
+          }
+        ]
+      },
+      "dock": [
+        676,
+        64,
+        568,
+        104
+      ],
+      "dockAfterActivation": [
+        676,
+        64,
+        568,
+        104
+      ],
+      "controlAudit": {
+        "passed": true,
+        "language": "en",
+        "scale": 2,
+        "captures": [
+          {
+            "name": "radio-checked",
+            "role": "radio button",
+            "rect": [
+              604,
+              224,
+              644,
+              58
+            ],
+            "focusPixels": 416,
+            "contrastRatios": {
+              "focusToBackground": 10.0173332062699,
+              "markToFill": 3.7687294221773,
+              "fillToBackground": 4.462921966055363
+            },
+            "paletteRgbCounts": {
+              "#171d2c": 1804,
+              "#65d8e5": 416,
+              "#3584e4": 312,
+              "#ffffff": 54,
+              "#f1f5f9": 36,
+              "#767b84": 20,
+              "#d8dde1": 14,
+              "#2b64aa": 6,
+              "#a0c5f2": 5,
+              "#c0d9f7": 5
+            }
+          },
+          {
+            "name": "range-right",
+            "role": "slider",
+            "rect": [
+              604,
+              498,
+              644,
+              40
+            ],
+            "focusPixels": 5728,
+            "contrastRatios": {
+              "focusToBackground": 10.0173332062699,
+              "markToFill": 3.7687294221773,
+              "fillToBackground": 4.462921966055363,
+              "filledToUnfilledTrack": 4.7020255571619085
+            },
+            "paletteRgbCounts": {
+              "#171d2c": 17224,
+              "#131825": 4477,
+              "#3584e4": 2732,
+              "#ffffff": 948,
+              "#121723": 103,
+              "#161c2b": 21,
+              "#141927": 21,
+              "#2a6ab7": 12,
+              "#0f131d": 12,
+              "#141926": 9
+            }
+          },
+          {
+            "name": "checkbox-checked",
+            "role": "check box",
+            "rect": [
+              604,
+              570,
+              644,
+              34
+            ],
+            "focusPixels": 640,
+            "capture": "checkbox-checked-focus.png",
+            "contrastRatios": {
+              "focusToBackground": 10.0173332062699,
+              "markToFill": 3.7687294221773,
+              "fillToBackground": 4.462921966055363
+            },
+            "paletteRgbCounts": {
+              "#171d2c": 843,
+              "#3584e4": 384,
+              "#65d8e5": 136,
+              "#ffffff": 94,
+              "#f1f5f9": 28,
+              "#767b84": 20,
+              "#c1c5cb": 15,
+              "#1f3b62": 4,
+              "#2d6bb9": 4,
+              "#327cd7": 4
+            }
+          },
+          {
+            "name": "checkbox-unchecked",
+            "role": "check box",
+            "rect": [
+              604,
+              570,
+              644,
+              34
+            ],
+            "focusPixels": 640,
+            "contrastRatios": {
+              "focusToBackground": 10.0173332062699,
+              "lightPaintToDarkPaint": 17.909715220371034,
+              "lightPaintToBackground": 16.81954532235421
+            },
+            "paletteRgbCounts": {
+              "#171d2c": 843,
+              "#121723": 296,
+              "#ffffff": 244,
+              "#65d8e5": 136,
+              "#f1f5f9": 28,
+              "#767b84": 20,
+              "#c1c5cb": 15,
+              "#151b29": 8,
+              "#131825": 8,
+              "#dadbdd": 8
+            }
+          },
+          {
+            "name": "radio-unchecked",
+            "role": "radio button",
+            "rect": [
+              604,
+              224,
+              644,
+              58
+            ],
+            "focusPixels": 416,
+            "capture": "radio-unchecked-focus.png",
+            "contrastRatios": {
+              "focusToBackground": 10.0173332062699,
+              "lightPaintToDarkPaint": 17.909715220371034,
+              "lightPaintToBackground": 16.81954532235421
+            },
+            "paletteRgbCounts": {
+              "#171d2c": 1806,
+              "#65d8e5": 416,
+              "#121723": 202,
+              "#ffffff": 164,
+              "#f1f5f9": 36,
+              "#767b84": 20,
+              "#d8dde1": 14,
+              "#151a28": 10,
+              "#161c2b": 9,
+              "#151b29": 8
+            }
+          }
+        ],
+        "checks": [
+          "Space selects private output B and restores focus",
+          "Right/Left write and restore private sink volume",
+          "Space toggles private sink mute and restores focus"
+        ],
+        "auditSha256": "b0ab7c97edf6bea829f414f19c4b0924ad7c36b0308f9919ea312bec316a6799",
+        "privateOutputAndVolumeRestored": true,
+        "contrastStatus": "Enumerated checked/unchecked native paint and focus ratios all >=3:1",
+        "policyEnabled": true,
+        "sinkFactories": [
+          "support.null-audio-sink",
+          "support.null-audio-sink"
+        ]
+      },
+      "configUnchanged": true,
+      "appExit": -15,
+      "windowManager": {
+        "pid": 3236361,
+        "name": "GNOME Shell",
+        "privateDisplay": true,
+        "startupOverviewDismissed": true
+      },
+      "scale": 2,
+      "privateDisplay": true,
+      "privateAudioProcessesExited": true
+    },
+    {
+      "passed": true,
+      "monitor": "screen",
+      "position": "bottom",
+      "source": "audio",
+      "observations": [
+        {
+          "source": "Audio",
+          "popup": [
+            566,
+            52,
+            720,
+            1008
+          ],
+          "anchor": 925.0,
+          "expectedOrigin": [
+            565,
+            52
+          ]
+        }
+      ],
+      "gdkMonitors": [
+        {
+          "name": "screen",
+          "gtkScale": 2,
+          "area": [
+            0,
+            32,
+            1920,
+            1048
+          ]
+        }
+      ],
+      "pid": 3238507,
+      "settlingObservations": {
+        "DeskMorph Taskbar": [
+          {
+            "seconds": 0.003,
+            "rectangle": null
+          },
+          {
+            "seconds": 0.324,
+            "rectangle": [
+              32,
+              944,
+              1856,
+              104
+            ]
+          },
+          {
+            "seconds": 0.986,
+            "rectangle": [
+              676,
+              944,
+              568,
+              104
+            ]
+          },
+          {
+            "seconds": 3.998,
+            "rectangle": [
+              678,
+              944,
+              564,
+              104
+            ]
+          },
+          {
+            "seconds": 4.949,
+            "rectangle": [
+              678,
+              944,
+              566,
+              104
+            ]
+          },
+          {
+            "seconds": 6.047,
+            "rectangle": [
+              676,
+              944,
+              568,
+              104
+            ]
+          }
+        ],
+        "DeskMorph Context Menu": [
+          {
+            "seconds": 0.002,
+            "rectangle": null
+          },
+          {
+            "seconds": 0.159,
+            "rectangle": [
+              566,
+              52,
+              720,
+              1008
+            ]
+          }
+        ]
+      },
+      "dock": [
+        676,
+        944,
+        568,
+        104
+      ],
+      "dockAfterActivation": [
+        676,
+        944,
+        568,
+        104
+      ],
+      "controlAudit": {
+        "passed": true,
+        "language": "en",
+        "scale": 2,
+        "captures": [
+          {
+            "name": "radio-checked",
+            "role": "radio button",
+            "rect": [
+              604,
+              224,
+              644,
+              58
+            ],
+            "focusPixels": 416,
+            "contrastRatios": {
+              "focusToBackground": 10.0173332062699,
+              "markToFill": 3.7687294221773,
+              "fillToBackground": 4.462921966055363
+            },
+            "paletteRgbCounts": {
+              "#171d2c": 1804,
+              "#65d8e5": 416,
+              "#3584e4": 312,
+              "#ffffff": 54,
+              "#f1f5f9": 36,
+              "#767b84": 20,
+              "#d8dde1": 14,
+              "#2b64aa": 6,
+              "#a0c5f2": 5,
+              "#c0d9f7": 5
+            }
+          },
+          {
+            "name": "range-right",
+            "role": "slider",
+            "rect": [
+              604,
+              498,
+              644,
+              40
+            ],
+            "focusPixels": 5728,
+            "contrastRatios": {
+              "focusToBackground": 10.0173332062699,
+              "markToFill": 3.7687294221773,
+              "fillToBackground": 4.462921966055363,
+              "filledToUnfilledTrack": 4.7020255571619085
+            },
+            "paletteRgbCounts": {
+              "#171d2c": 17224,
+              "#131825": 4477,
+              "#3584e4": 2732,
+              "#ffffff": 948,
+              "#121723": 103,
+              "#161c2b": 21,
+              "#141927": 21,
+              "#2a6ab7": 12,
+              "#0f131d": 12,
+              "#141926": 9
+            }
+          },
+          {
+            "name": "checkbox-checked",
+            "role": "check box",
+            "rect": [
+              604,
+              570,
+              644,
+              34
+            ],
+            "focusPixels": 640,
+            "contrastRatios": {
+              "focusToBackground": 10.0173332062699,
+              "markToFill": 3.7687294221773,
+              "fillToBackground": 4.462921966055363
+            },
+            "paletteRgbCounts": {
+              "#171d2c": 843,
+              "#3584e4": 384,
+              "#65d8e5": 136,
+              "#ffffff": 94,
+              "#f1f5f9": 28,
+              "#767b84": 20,
+              "#c1c5cb": 15,
+              "#1f3b62": 4,
+              "#2d6bb9": 4,
+              "#327cd7": 4
+            }
+          },
+          {
+            "name": "checkbox-unchecked",
+            "role": "check box",
+            "rect": [
+              604,
+              570,
+              644,
+              34
+            ],
+            "focusPixels": 640,
+            "contrastRatios": {
+              "focusToBackground": 10.0173332062699,
+              "lightPaintToDarkPaint": 17.909715220371034,
+              "lightPaintToBackground": 16.81954532235421
+            },
+            "paletteRgbCounts": {
+              "#171d2c": 843,
+              "#121723": 296,
+              "#ffffff": 244,
+              "#65d8e5": 136,
+              "#f1f5f9": 28,
+              "#767b84": 20,
+              "#c1c5cb": 15,
+              "#151b29": 8,
+              "#131825": 8,
+              "#dadbdd": 8
+            }
+          },
+          {
+            "name": "radio-unchecked",
+            "role": "radio button",
+            "rect": [
+              604,
+              224,
+              644,
+              58
+            ],
+            "focusPixels": 416,
+            "contrastRatios": {
+              "focusToBackground": 10.0173332062699,
+              "lightPaintToDarkPaint": 17.909715220371034,
+              "lightPaintToBackground": 16.81954532235421
+            },
+            "paletteRgbCounts": {
+              "#171d2c": 1806,
+              "#65d8e5": 416,
+              "#121723": 202,
+              "#ffffff": 164,
+              "#f1f5f9": 36,
+              "#767b84": 20,
+              "#d8dde1": 14,
+              "#151a28": 10,
+              "#161c2b": 9,
+              "#151b29": 8
+            }
+          }
+        ],
+        "checks": [
+          "Space selects private output B and restores focus",
+          "Right/Left write and restore private sink volume",
+          "Space toggles private sink mute and restores focus"
+        ],
+        "auditSha256": "b0ab7c97edf6bea829f414f19c4b0924ad7c36b0308f9919ea312bec316a6799",
+        "privateOutputAndVolumeRestored": true,
+        "contrastStatus": "Enumerated checked/unchecked native paint and focus ratios all >=3:1",
+        "policyEnabled": true,
+        "sinkFactories": [
+          "support.null-audio-sink",
+          "support.null-audio-sink"
+        ]
+      },
+      "configUnchanged": true,
+      "appExit": -15,
+      "windowManager": {
+        "pid": 3237939,
+        "name": "GNOME Shell",
+        "privateDisplay": true,
+        "startupOverviewDismissed": true
+      },
+      "scale": 2,
+      "privateDisplay": true,
+      "privateAudioProcessesExited": true
+    }
+  ],
+  "scope": "Private audio native output/volume/mute keys and rendered control samples, vi/scale1 and en/scale2, top/bottom",
+  "limits": [
+    "No host audio/display mutation; PipeWire/Pulse have private sockets and hardware-free null sinks",
+    "AT-SPI seeds control focus; actual XTest Space/Left/Right activate controls on private DISPLAY",
+    "Native palette captures require contrast evaluation; keyboard pass alone does not certify contrast"
+  ],
+  "nativeControlCaptureCount": 20,
+  "minimumMeasuredContrast": 3.7687294221773,
+  "ownedLabProcessCountAfterCleanup": 0,
+  "measurementScope": "Native pixel palette counts and >=3:1 ratios; unchecked light paint is checkbox border/radio body, not text or anti-aliasing. No host input/audio mutation, arbitrary themes, hardware hotplug, human listening or full WCAG claim.",
+  "software": {
+    "wireplumber": "0.5.12",
+    "pipewire": "1.6.8"
+  },
+  "fixtureFailure": {
+    "uiBeforePolicy": "Space did not select private output B",
+    "directPactlControl": {
+      "before": "deskmorph_a",
+      "requested": "deskmorph_b",
+      "after": "deskmorph_a",
+      "configuredMetadata": "deskmorph_b",
+      "currentMetadata": "deskmorph_a"
+    },
+    "resolution": "Opt-in real WirePlumber policy, hardware monitors disabled; no manual default metadata writes in policy mode"
+  },
+  "currentAnalysisHelperSha256": "c80fdd0261aca716d96f9e2d027a65dc41adea95b47f7a6c8a3f2b9ca71fc4d1"
+}

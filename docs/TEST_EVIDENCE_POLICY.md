@@ -139,3 +139,8 @@ Giữ [integer-output trial thất bại](benchmarks/dpi-output-integer-trial-20
 ## Private GNOME WM geometry (30/10/2026)
 
 Giữ helper GNOME riêng tái dùng negative_origin_smoke.py và [4 ca system native](benchmarks/system-geometry-private-wm-2026-10-30/result.json), không commit các bản sao diagnostic/tmp. Guard test6 subcases cần thiết vì helper gọi Shell --replace và private Escape; phải chặn host DISPLAY/buses/settings/XDG trước Popen. Giữ settling trace có giới hạn và --sources/--repeat để tái hiện failure thật, không thêm unit test mirror polling. Chờ Dock ổn định20samples và assert không đổi qua activation bắt stale-anchor measurement, không làm nhẹ yêu cầu clamp/center/size.4 ca private không thay200% HDMI acceptance, fractional output hoặc negative topology dưới WM.
+
+
+## Audio native controls (30/10/2026)
+
+Giữ helper audio_native_controls.py tái dùng runner/owned private GNOME và PrivateAudioServer optional policy, cùng [4runs/20captures](benchmarks/audio-native-controls-2026-10-30/result.json). Đây là native integration đã yêu cầu cho G5.9: keys làm thay đổi server thật và pixel control, không test lặp markup. Giữ guard callback host vì callback có thể gửi XTest;14 fault/guard tests qua. WirePlumber profile chỉ policy, hardware disabled, private buses/XDG/socket; không viết sessionmanager giả để phản hồi UI. Lưu protocol-control failure khôngpolicy và ba crop gọn, không raw audio/log/private configs hoặc bản sao probe/tmp. Checked/unchecked paints, focus và range track có ratios >=3:1; không chứng nhận mọi theme, mọi trạng thái hoặc WCAG toàn diện. Default helper/Pulse restart probe qua; không đổi code sản phẩm nên không build/unit suite sản phẩm lại.

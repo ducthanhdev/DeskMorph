@@ -12,6 +12,7 @@ DESKMORPH_STUDIO_FOCUS_LAB=1 audits five Studio pages using private Tab/ShiftTab
 control/window bounds, focus pixels and select contrast at integer scales 1/2.
 DESKMORPH_DPI_SOURCE_LAB=launcher/audio/system/calendar exercises the host DPI
 worker against positive private monitors before any host display trial.
+DESKMORPH_AUDIO_CONTROLS_LAB=1 checks private audio keys/readback and pixels.
 DESKMORPH_PRIVATE_GNOME_WM=1 with DPI_SOURCE_LAB uses one drawable1920x1080
 monitor and a guarded private GNOME Shell, instead of synthetic RandR monitors.
 Requires existing Xvfb/GNOME executables; never installs host packages.
@@ -68,7 +69,8 @@ def worker(root, scale, position):
     description_test = os.environ.get('DESKMORPH_CONTEXT_DESCRIPTION_LAB') == '1' or speech_test
     focus_test = os.environ.get('DESKMORPH_STUDIO_FOCUS_LAB') == '1'
     studio_test = os.environ.get('DESKMORPH_STUDIO_WIDGETS_LAB') == '1' or focus_test
-    dpi_source = os.environ.get('DESKMORPH_DPI_SOURCE_LAB')
+    audio_controls = os.environ.get('DESKMORPH_AUDIO_CONTROLS_LAB') == '1'
+    dpi_source = 'audio' if audio_controls else os.environ.get('DESKMORPH_DPI_SOURCE_LAB')
     assert not (description_test and studio_test), 'Select one opt-in lab mode'
     language = 'en' if (description_test or studio_test) and scale == 2 else 'vi'
     labels = json.loads((REPO / 'src/i18n/messages.json').read_text())[language]
@@ -77,19 +79,32 @@ def worker(root, scale, position):
     registry = subprocess.Popen(['/usr/libexec/at-spi2-registryd'], stdout=registry_log, stderr=registry_log)
     app = None
     speech = None
+    audio_server = None
     try:
         # Explicit registry startup avoids activation through host systemd/broker.
         time.sleep(.5)
         assert registry.poll() is None
         if dpi_source:
             from mutter_native_geometry_smoke import worker as dpi_worker
+            after_open = None
+            if audio_controls:
+                from private_audio_server import PrivateAudioServer
+                from audio_native_controls import audit
+                audio_server = PrivateAudioServer(root / 'private-audio', policy=True)
+                audio_server.start()
+                audio_server.sink('deskmorph_audio_b', 'DeskMorph_Audio_B')
+                audio_server.sink('deskmorph_audio_a', 'DeskMorph_Audio_A')
+                audio_server.pactl('set-sink-volume', 'deskmorph_audio_b', '37%')
+                os.environ['PULSE_SERVER'] = audio_server.address
+                after_open = lambda **kwargs: audit(audio_server, **kwargs)
+            audit_language = 'en' if audio_controls and scale == 2 else 'vi'
             if os.environ.get('DESKMORPH_PRIVATE_GNOME_WM') == '1':
                 from private_gnome_wm import private_gnome_wm
                 with private_gnome_wm(root) as wm:
-                    report = dpi_worker(root, 'screen', position, dpi_source)
+                    report = dpi_worker(root, 'screen', position, dpi_source, audit_language, after_open)
                     report['windowManager'] = wm
             else:
-                report = dpi_worker(root, 'right', position, dpi_source)
+                report = dpi_worker(root, 'right', position, dpi_source, audit_language, after_open)
             report.update(scale=scale, privateDisplay=True)
             assert report['passed'], report
             return
@@ -435,6 +450,9 @@ def worker(root, scale, position):
         if app is not None:
             stop(app)
             report['appExitCode'] = app.returncode
+        if audio_server is not None:
+            audio_server.stop()
+            report['privateAudioProcessesExited'] = all(p.poll() is not None for p in audio_server.processes)
         stop(registry)
         registry_log.close()
         (root / 'result.json').write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n')
@@ -447,7 +465,8 @@ def run():
     assert Path(xvfb).is_file(), 'Set DESKMORPH_XVFB to an existing Xvfb executable'
     focus_test = os.environ.get('DESKMORPH_STUDIO_FOCUS_LAB') == '1'
     studio_test = os.environ.get('DESKMORPH_STUDIO_WIDGETS_LAB') == '1' or focus_test
-    dpi_source = os.environ.get('DESKMORPH_DPI_SOURCE_LAB')
+    audio_controls = os.environ.get('DESKMORPH_AUDIO_CONTROLS_LAB') == '1'
+    dpi_source = 'audio' if audio_controls else os.environ.get('DESKMORPH_DPI_SOURCE_LAB')
     wm_test = os.environ.get('DESKMORPH_PRIVATE_GNOME_WM') == '1'
     assert not wm_test or (dpi_source and not studio_test and os.environ.get('DESKMORPH_CONTEXT_DESCRIPTION_LAB') != '1' and os.environ.get('DESKMORPH_CONTEXT_SPEECH_LAB') != '1'), 'Private WM mode requires only DPI_SOURCE_LAB'
     speech_test = os.environ.get('DESKMORPH_CONTEXT_SPEECH_LAB') == '1'
@@ -466,6 +485,8 @@ def run():
             report.update(scope='DPI geometry worker on private positive Xvfb monitor, integer scales1/2, top/bottom, source=' + dpi_source, limits=['Worker/coordinate checks only; no host WM, fractional/mixed DPI, physical pixels or keyboard acceptance'])
         if wm_test:
             report.update(scope='Native DPI worker with GNOME Shell on one drawable1920x1080 Xvfb monitor, integer GTK scales1/2, top/bottom, source=' + dpi_source, limits=['No physical monitor, host input, output-scale fractional/mixed DPI, negative origin or popup sequencing proof', 'Private Shell startup overview is dismissed with private Escape before app launch'])
+        if audio_controls:
+            report.update(scope='Private audio native output/volume/mute keys and rendered control samples, vi/scale1 and en/scale2, top/bottom', limits=['No host audio/display mutation; PipeWire/Pulse have private sockets and hardware-free null sinks', 'AT-SPI seeds control focus; actual XTest Space/Left/Right activate controls on private DISPLAY', 'Pixel ratios cover enumerated native control paints and focus in the reference renderer, not arbitrary themes or full accessibility certification'])
         if speech_test:
             report.update(scope='Native launch error description/focus and Orca speech, vi/scale1 and en/scale2, top/bottom on positive Xvfb monitor', limits=['No host display input, window manager, physical monitor, fractional/mixed DPI or full context keyboard suite proof', 'Private Orca/session/a11y buses; synthesis captured on owned host null sink without speaker playback', 'Whole-application announcements and human evaluation of intelligibility remain outside these fixtures'])
         for scale in (1, 2):

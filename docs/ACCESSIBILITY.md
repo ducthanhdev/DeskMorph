@@ -37,7 +37,7 @@ G5.9 trong kế hoạch triển khai **chưa chốt**. Tài liệu này tách c�
 
 ## Các phần cần hoàn tất trước khi chốt G5.9
 
-Trạng thái hiện tại được đối chiếu trong [REMAINING_ACCEPTANCE.md](REMAINING_ACCEPTANCE.md). Các đoạn dưới ghi lịch sử phát hiện; bằng chứng bổ sung về sau có thể đã giải quyết một phần. Phần còn thiếu cụ thể hiện là audio native contrast/output/volume keys, system Enter và tuyến chooser đến Open.
+Trạng thái hiện tại được đối chiếu trong [REMAINING_ACCEPTANCE.md](REMAINING_ACCEPTANCE.md). Các đoạn dưới ghi lịch sử phát hiện; bằng chứng bổ sung về sau có thể đã giải quyết một phần. Phần còn thiếu cụ thể hiện là system Enter và tuyến chooser đến Open; audio native contrast/output/volume keys đã đạt.
 
 - Kiểm thêm trạng thái động: lỗi/conflict và concurrent review thực tế, thứ tự điều hướng đầy đủ trong hộp thoại file, thao tác wallpaper favorite/filter/paging và focus sau khi control biến mất/disabled. Import/reset review/cancel/confirm/undo đã có kiểm native vi/en.
 - Kiểm đường vào/ra Dock và popup chỉ bằng bàn phím, cùng audio/media/system/context/window actions, kể cả thiếu capability/lỗi và pending.
@@ -156,3 +156,14 @@ Harness dùng nav landmark thay first5buttons, vì status Details có thể đ�
 [Bằng chứng GNOME thật](benchmarks/orca-current-regression-2026-10-30/result.json): binary1172029a… qua toàn bộ context keyboard suite vi/en với Orca bật: Tab/reverse, disabled skip, arrows/Home/End, Escape/source focus, launch error, force review/cancel/confirm và owned fixture exit.342 speech-output lines,1409877 sample khác0; cả tên fixture, Hủy/Cancel, Mở/Open, lỗi launch và warning force hai ngôn ngữ đều được ghi nhận.16 lần bật và16 lần tắt bypass navigation của Orca bằng Alt+Backspace được xác nhận; không coi là default-reader Home/End compatibility.
 
 Harness chờ stream4294967295 resolve về đúng owned sink trước input; sau suite kiểm route lại, xác minh PID service Orca bằng D-Bus rồi gọi Quit chính thức, đợi exit0 trước đọc debug tail. Reader sống suốt suite, không ghi segfault, helper đã thoát và default audio giữ nguyên; config fixture phục hồi. Giữ thay đổi harness vì sửa race/flush và ownership của kiểm tích hợp, không thêm test mirror implementation. Raw audio/debug/preferences ở/tmp, JSON chỉ giữ counts/hash/fixture assertions. Chưa kết luận tính dễ nghe của speech hoặc toàn ứng dụng từ suite menu; G5.9 chờ audit cuối các yêu cầu gốc.
+
+
+## G5.9 — Audio native keys và tương phản control đã đạt (30/10/2026)
+
+[Bằng chứng](benchmarks/audio-native-controls-2026-10-30/result.json): binary1172029a… qua4/4 GNOME/Xvfb private cases, vi/scale1 vàen/scale2, Dock trên/dưới. XTest Space chọn outputB rồi phục hồiA; Right/Left ghi volumeB từ37 lên38 rồi về37; Space mute/unmuteB, kiểm readback thật và focus sau request. Không dùng AT-SPI set-value/do-action cho các mutation audio. Hai sink đều factory support.null-audio-sink, private socket, không hardware modules.
+
+20 native captures có focus pixel và bounds trong popup: checked white mark/thumb với blue fill3,769:1, blue/exterior4,463:1, filled/unfilled track4,702:1, focus/exterior10,017:1. Unchecked light paint (checkbox border/radio body) so dark paint17,910:1 và exterior16,820:1. Đo các mảng màu thật, không suy từ CSS hoặc pixel anti-aliasing. Ba crop đã xem được giữ để review; palette counts/hash/bounds/ratios trong JSON, không commit toàn window/log/profile.
+
+Lab cũ không có session manager: pactl trực tiếp cũng chỉ đổi default.configured.audio.sink sangB trong khi default.audio.sink vẫnA. Giữ failure này như thiếu precondition, không quy lỗi Space/sản phẩm. PrivateAudioServer nay có opt-in WirePlumber0.5 policy thật, hardware audio/bluetooth/video disabled, session/system bus và XDG riêng. Policy mode không tự ghi default metadata; WirePlumber hoàn tất selection. Nhánh mặc định khôngpolicy và Pulse restart probe vẫn qua. Không cài package host.
+
+Giữ audio_native_controls.py và callback chỉ dành private DISPLAY vì kiểm trực tiếp integration keys/daemon/pixel còn thiếu;14 probe/orchestration tests qua, gồm guard từ chối callback trước truy cập display/app của host. Python compile/diff check qua. Không đổi sản phẩm nên không rebuild/lặp frontend/Rust suite.0 live app/Xvfb/GNOME/PipeWire/Pulse/WirePlumber lab cuối lượt. Chốt riêng audio; G5.9 còn system Enter/chooser route theo REMAINING_ACCEPTANCE.md, G2.10 vẫn mở, tổng97/99.

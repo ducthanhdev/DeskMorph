@@ -7,7 +7,8 @@ import time
 
 
 class PrivateAudioServer:
-    def __init__(self, root):
+    def __init__(self, root, policy=False):
+        self.policy = policy
         self.root = Path(root).resolve()
         assert str(self.root).startswith('/tmp/deskmorph-')
         self.root.mkdir(mode=0o700, parents=True, exist_ok=True)
@@ -17,7 +18,8 @@ class PrivateAudioServer:
         self.env = dict(os.environ, DESKMORPH_AUDIO_LAB=str(self.root),
             XDG_RUNTIME_DIR=str(self.root / 'runtime'), PIPEWIRE_RUNTIME_DIR=str(self.root / 'runtime'),
             PIPEWIRE_REMOTE='deskmorph-audio', PULSE_RUNTIME_PATH=str(self.root / 'pulse'),
-            PULSE_SERVER=self.address, DBUS_SESSION_BUS_ADDRESS='unix:path=' + str(self.root / 'no-bus'))
+            PULSE_SERVER=self.address, DBUS_SESSION_BUS_ADDRESS='unix:path=' + str(self.root / 'no-bus'),
+            DBUS_SYSTEM_BUS_ADDRESS='unix:path=' + str(self.root / 'no-system-bus'))
         for key in ('DISPLAY', 'WAYLAND_DISPLAY', 'PIPEWIRE_CORE', 'PIPEWIRE_CONFIG_PREFIX', 'PIPEWIRE_CONFIG_DIR', 'PULSE_CLIENTCONFIG'):
             self.env.pop(key, None)
         self.processes = []
@@ -35,6 +37,9 @@ context.modules = [
 ]
 context.objects = [ { factory = metadata args = { metadata.name = default } } ]
 ''')
+        if self.policy:
+            core = self.root / 'core.conf'
+            core.write_text(core.read_text().replace('context.objects = [ { factory = metadata args = { metadata.name = default } } ]', 'context.objects = []'))
         (self.root / 'pulse.conf').write_text('''context.properties = { core.daemon = false core.name = deskmorph-pulse }
 context.spa-libs = { audio.convert.* = audioconvert/libspa-audioconvert support.* = support/libspa-support }
 context.modules = [
@@ -67,6 +72,27 @@ pulse.cmd = []
             assert time.monotonic() < deadline, 'Private core socket unavailable'
             time.sleep(.1)
         self.start_pulse()
+        if self.policy:
+            self.start_policy()
+
+    def start_policy(self):
+        config = Path('/usr/share/wireplumber/wireplumber.conf').read_text()
+        assert 'wireplumber.profiles = {' in config and '  policy = {' in config, 'Requires installed WirePlumber0.5 policy profile'
+        config = config.replace('wireplumber.profiles = {', 'wireplumber.profiles = {\n deskmorph-lab = { inherits = [ policy, mixin.systemwide-session, mixin.stateless ] hardware.audio = disabled hardware.bluetooth = disabled hardware.video-capture = disabled }', 1)
+        target = self.root / 'private-wp.conf'
+        target.write_text(config)
+        env = dict(self.env, **{key: str(self.root / key) for key in ('XDG_CONFIG_HOME', 'XDG_STATE_HOME', 'XDG_DATA_HOME', 'XDG_CACHE_HOME')})
+        with (self.root / 'wireplumber.log').open('w') as log:
+            process = subprocess.Popen(['wireplumber', '-c', str(target), '--profile', 'deskmorph-lab'], env=env, stdout=log, stderr=log, start_new_session=True)
+        self.processes.append(process)
+        deadline = time.monotonic() + 8
+        while time.monotonic() < deadline:
+            assert process.poll() is None, 'Private WirePlumber exited'
+            metadata = subprocess.check_output(['pw-metadata', '-n', 'default'], env=self.env, text=True, timeout=5)
+            if 'Found "default" metadata' in metadata:
+                return
+            time.sleep(.1)
+        raise AssertionError('Private default-node policy not ready')
 
     def start_pulse(self):
         self.pulse = self.launch('pipewire-pulse', 'pulse.conf')
@@ -88,10 +114,14 @@ pulse.cmd = []
         sinks = json.loads(self.pactl('--format=json', 'list', 'sinks'))
         assert sinks and all(item['properties']['factory.name'] == 'support.null-audio-sink' for item in sinks)
         self.pactl('set-default-sink', name)
-        # No session manager is running in this hardware-free lab. Supply the
-        # actual default metadata normally published by WirePlumber.
-        subprocess.run(['pw-metadata', '-n', 'default', '0', 'default.audio.sink', json.dumps({'name': name}), 'Spa:String:JSON'], env=self.env, check=True, capture_output=True, timeout=5)
-        assert json.loads(self.pactl('--format=json', 'info'))['default_sink_name'] == name
+        if not self.policy:
+            # Without the optional policy, provide the default metadata normally
+            # published by WirePlumber. Selection tests use real policy instead.
+            subprocess.run(['pw-metadata', '-n', 'default', '0', 'default.audio.sink', json.dumps({'name': name}), 'Spa:String:JSON'], env=self.env, check=True, capture_output=True, timeout=5)
+        deadline = time.monotonic() + 5
+        while json.loads(self.pactl('--format=json', 'info'))['default_sink_name'] != name:
+            assert time.monotonic() < deadline, 'Private default output did not settle'
+            time.sleep(.1)
         return module
 
     def stop_process(self, process):

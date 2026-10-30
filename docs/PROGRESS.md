@@ -1069,3 +1069,14 @@ Khoảng desktop rảnh đã kết thúc và đã trả desktop cho người dù
 Giữ helper private_gnome_wm.py thay bản sao runner lớn: chỉ --replace sau khi kiểm root/marker/DISPLAY/session+system bus/keyfile/XDG riêng; Escape chỉ trên display riêng trước mở app để đóng startup overview. Guard test với6 subcases chặn host resources trước Popen,13 restore fault tests qua; Python compile/diff check qua. Audit0lab helpers. Các lỗi chuẩn bị thư mục config/repeated lab, Dock init và synthetic-monitor probes không được tính acceptance host; chỉ JSON đo cần thiết được giữ.
 
 [Kiểm toán phần còn thiếu](REMAINING_ACCEPTANCE.md) đối chiếu trực tiếp hai ID gốc, chỉ ra audio native contrast/output/volume keys, system Enter và chooser route chưa có bằng chứng tương ứng. Không mở rộng thành chứng nhận mọi desktop/Orca hoặc chạy lại resolution đã đạt. Câu hỏi desktop rảnh3phút để tái hiện system200% trên host đang chờ; chưa có xác nhận mới nên chưa mutate host. G2.10/G5.9 vẫn mở,97/99.
+
+
+## G5.9 — Audio native keys và tương phản control đã đạt (30/10/2026)
+
+[Bằng chứng](benchmarks/audio-native-controls-2026-10-30/result.json): binary1172029a… qua4/4 GNOME/Xvfb private cases, vi/scale1 vàen/scale2, Dock trên/dưới. XTest Space chọn outputB rồi phục hồiA; Right/Left ghi volumeB từ37 lên38 rồi về37; Space mute/unmuteB, kiểm readback thật và focus sau request. Không dùng AT-SPI set-value/do-action cho các mutation audio. Hai sink đều factory support.null-audio-sink, private socket, không hardware modules.
+
+20 native captures có focus pixel và bounds trong popup: checked white mark/thumb với blue fill3,769:1, blue/exterior4,463:1, filled/unfilled track4,702:1, focus/exterior10,017:1. Unchecked light paint (checkbox border/radio body) so dark paint17,910:1 và exterior16,820:1. Đo các mảng màu thật, không suy từ CSS hoặc pixel anti-aliasing. Ba crop đã xem được giữ để review; palette counts/hash/bounds/ratios trong JSON, không commit toàn window/log/profile.
+
+Lab cũ không có session manager: pactl trực tiếp cũng chỉ đổi default.configured.audio.sink sangB trong khi default.audio.sink vẫnA. Giữ failure này như thiếu precondition, không quy lỗi Space/sản phẩm. PrivateAudioServer nay có opt-in WirePlumber0.5 policy thật, hardware audio/bluetooth/video disabled, session/system bus và XDG riêng. Policy mode không tự ghi default metadata; WirePlumber hoàn tất selection. Nhánh mặc định khôngpolicy và Pulse restart probe vẫn qua. Không cài package host.
+
+Giữ audio_native_controls.py và callback chỉ dành private DISPLAY vì kiểm trực tiếp integration keys/daemon/pixel còn thiếu;14 probe/orchestration tests qua, gồm guard từ chối callback trước truy cập display/app của host. Python compile/diff check qua. Không đổi sản phẩm nên không rebuild/lặp frontend/Rust suite.0 live app/Xvfb/GNOME/PipeWire/Pulse/WirePlumber lab cuối lượt. Chốt riêng audio; G5.9 còn system Enter/chooser route theo REMAINING_ACCEPTANCE.md, G2.10 vẫn mở, tổng97/99.

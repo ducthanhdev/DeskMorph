@@ -35,14 +35,15 @@ def walk(n):
     for i in range(n.get_child_count()):
         yield from walk(n.get_child_at_index(i))
 
-def worker(root, monitor, position, source='launcher'):
+def worker(root, monitor, position, source='launcher', language='vi', after_open=None):
     result = {'passed': False, 'monitor': monitor, 'position': position, 'source': source, 'observations': []}
     app = None
     try:
         host_trial = os.environ.get('DESKMORPH_DPI_WORKER_ROOT') == str(root) and root.parent.name.startswith('deskmorph-dpi-native-') and root.parent.parent == Path('/tmp')
         private_trial = os.environ.get('DESKMORPH_GEOMETRY_LAB') == str(root) and root.parent.name.startswith('deskmorph-negative-origin-') and root.parent.parent == Path('/tmp') and os.environ.get('DISPLAY') == (root / 'display').read_text()
         assert host_trial or private_trial, 'Worker must belong to the host trial or private Xvfb runner'
-        assert source in SOURCES and position in ('top', 'bottom')
+        assert source in SOURCES and position in ('top', 'bottom') and language in ('vi', 'en')
+        assert after_open is None or private_trial, 'Additional control actions require private DISPLAY'
         d = Gdk.Display.get_default()
         mns = []
         for i in range(d.get_n_monitors()):
@@ -55,7 +56,7 @@ def worker(root, monitor, position, source='launcher'):
         s = target['gtkScale']
         ax, ay, aw, ah = target['area']
         cfg = json.loads((REPO / 'src/config/defaults.json').read_text())
-        cfg.update(monitor=monitor, position=position, language='vi', autoHide=False, enabled=True, showStats=False, showShuffle=False, pinnedApps=[], reduceMotion=True, wallpaperScheduleEnabled=False)
+        cfg.update(monitor=monitor, position=position, language=language, autoHide=False, enabled=True, showStats=False, showShuffle=False, pinnedApps=[], reduceMotion=True, wallpaperScheduleEnabled=False)
         config = root / 'config/com.ducthanhdev.deskmorph/config.json'
         config.parent.mkdir(parents=True, exist_ok=True)
         config.write_text(json.dumps({'schemaVersion': 1, 'revision': 0, 'config': cfg, 'warning': None}))
@@ -70,6 +71,7 @@ def worker(root, monitor, position, source='launcher'):
             return next((desktop.get_child_at_index(i) for i in range(desktop.get_child_count()) if desktop.get_child_at_index(i).get_process_id() == app.pid), None)
         accessible = wait(owned, 'Owned accessibility app absent')
 
+        window_ids = {}
         def raw_native(title):
             tree = subprocess.check_output(['xwininfo', '-root', '-tree'], text=True)
             for xid in re.findall('(0x[0-9a-f]+) "' + re.escape(title) + '"', tree):
@@ -79,6 +81,7 @@ def worker(root, monitor, position, source='launcher'):
                 info = subprocess.check_output(['xwininfo', '-id', xid], text=True)
                 if 'Map State: IsViewable' not in info:
                     continue
+                window_ids[title] = xid
                 return [int(re.search(k + ':\\s+(-?\\d+)', info).group(1)) for k in ('Absolute upper-left X', 'Absolute upper-left Y', 'Width', 'Height')]
 
         def native(title):
@@ -110,12 +113,16 @@ def worker(root, monitor, position, source='launcher'):
         result['dock'] = dock
         assert dock[3] == 52 * s and abs(dock[0] + dock[2] / 2 - ax - aw / 2) <= 2, (dock, target)
         assert abs(dock[1] - (ay + 16 * s if position == 'top' else ay + ah - 68 * s)) <= 2, (dock, target)
-        for label, title, size in [SOURCES[source]]:
+        label, title, size = SOURCES[source]
+        if language == 'en':
+            messages = json.loads((REPO / 'src/i18n/messages.json').read_text())[language]
+            label = messages[{'launcher': 'searchApps', 'audio': 'audio', 'system': 'systemTools', 'calendar': 'calendar'}[source]]
+        for label, title, size in [(label, title, size)]:
 
-            def source():
+            def find_source():
                 f = next((n for n in walk(accessible) if n.get_role_name() == 'frame' and n.get_name() == 'DeskMorph Taskbar'), None)
                 return next((n for n in walk(f) if n.get_role_name() == 'button' and n.get_name() == label), None) if f else None
-            b = wait(source, 'Dock source absent ' + label)
+            b = wait(find_source, 'Dock source absent ' + label)
             a = b.get_component_iface().get_extents(Atspi.CoordType.SCREEN)
             anchor = (a.x + a.width / 2) * s
             assert b.get_action_iface().do_action(0)
@@ -131,6 +138,8 @@ def worker(root, monitor, position, source='launcher'):
             assert ax <= x and ay <= y and (x + w <= ax + aw) and (y + h <= ay + ah), (popup, target)
             assert abs(x - ex) <= 2 and abs(y - ey) <= 2, (label, popup, ex, ey)
             result['observations'].append({'source': label, 'popup': popup, 'anchor': anchor, 'expectedOrigin': [ex, ey]})
+        if after_open is not None:
+            result['controlAudit'] = after_open(app=accessible, root=root, scale=s, xid=window_ids[title], popup=popup, language=language, pid=app.pid)
         assert config.read_bytes() == original
         result.update(passed=True, configUnchanged=True)
     except Exception as e:

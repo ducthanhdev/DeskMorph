@@ -12,6 +12,19 @@ from mutter_scaling_probe_test import state, Settings
 
 
 class NativeRestoration(unittest.TestCase):
+    def test_control_callback_rejected_before_host_display_or_app_access(self):
+        with tempfile.TemporaryDirectory(prefix='deskmorph-dpi-native-') as folder:
+            root = Path(folder) / 'case'
+            root.mkdir()
+            with patch.dict(runner.os.environ, {'DESKMORPH_DPI_WORKER_ROOT': str(root)}, clear=True), \
+                    patch.object(runner.Gdk.Display, 'get_default') as display, \
+                    patch.object(runner.subprocess, 'Popen') as launch:
+                result = runner.worker(root, 'fixture', 'top', 'audio', after_open=lambda **_: None)
+                self.assertFalse(result['passed'])
+                self.assertIn('Additional control actions require private DISPLAY', result['error'])
+                display.assert_not_called()
+                launch.assert_not_called()
+
     def execute(self, failure, settings=None):
         settings = settings or Settings()
         before = state()
