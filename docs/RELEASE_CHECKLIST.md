@@ -12,7 +12,7 @@ trước khi tạo release candidate mới.
 | GUI packaged / HOME mới | Pass trong lab | [clean-account report](benchmarks/deb-clean-account-2026-10-29/launcher.json); không thay thế cài apt trên account thật |
 | GNOME X11 core flow | Pass trong môi trường tham chiếu | Ma trận [PLATFORM_SUPPORT_MATRIX](PLATFORM_SUPPORT_MATRIX.md) |
 | GNOME Wayland/COSMIC/KDE scope | Có giới hạn rõ | Wayland/COSMIC wallpaper-only experimental; KDE unsupported vì thiếu pixel/readback |
-| Accessibility toàn ứng dụng | Chưa đạt | [G5.9 còn mở](REMAINING_ACCEPTANCE.md): chooser route; system Enter, audio native controls/keys và Orca menu vi/en đã đạt |
+| Accessibility theo G5.9 | Đạt trong phạm vi tham chiếu | [Kiểm toán G5.9](REMAINING_ACCEPTANCE.md); [chooser4/4 vi/en](benchmarks/chooser-keyboard-private-2026-10-30/result.json), system Enter, audio controls/keys và Orca menu; giữ giới hạn states/theme/reader, không chứng nhận WCAG toàn diện |
 | Physical HDMI hotplug / fallback | Pass trên GNOME X11 tham chiếu | [Physical hotplug](benchmarks/physical-hotplug-2026-10-30/result.json), G2.11; output được bật lại bằng saved XRandR layout sau reconnect |
 | Scheduler qua sleep thật | Pass trên GNOME X11 tham chiếu | [Suspend 138,922s](benchmarks/scheduler-suspend-2026-10-30/result.json), G6.7; operator đánh thức và mở khóa |
 | Lifecycle dài | Pass trong phạm vi tham chiếu | [Soak122 vòng/1808,461s, Quit/survivors](benchmarks/popup-soak-2026-10-30/result.json), kết hợp restart/suspend/hotplug ghi trong PROGRESS; không chứng nhận zero leaks/uptime vô hạn |

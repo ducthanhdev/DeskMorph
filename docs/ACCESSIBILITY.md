@@ -176,3 +176,12 @@ Giữ audio_native_controls.py và callback chỉ dành private DISPLAY vì ki�
 Tái dùng system_locations_smoke.py, chỉ thêm language/report_root tùy chọn; đường cũ mặc định vi giữ nguyên. Adapter mới seed focus AT-SPI rồi Enter, không gọi do_action cho system mutations; PrivateKeyboard kiểm private marker/DISPLAY, owned PID và native activation trước XTest. Hai guard tests (4 subcases) chặn DISPLAY/marker sai, PID sai và focus đổi trước input; compile/diff check qua. Không đổi mã sản phẩm nên không build/lặp unit sản phẩm.
 
 Giữ một initial private driver AssertionError không có stacktrace, không quy lỗi sản phẩm hoặc coi pass; thêm traceback rồi lượt đầy đủ đạt, chưa xác định nguyên nhân failure chuẩn bị đầu.0 live system/geometry/WM/DPI helpers sau suite. Chốt system Enter; G5.9 còn tuyến bàn phím chooser→Open, G2.10 vẫn mở. Tổng97/99.
+
+
+## Chốt G5.9 trong môi trường tham chiếu — 30/10/2026
+
+[Chooser native4/4](benchmarks/chooser-keyboard-private-2026-10-30/result.json) bổ sung phần còn thiếu: private GNOME/Xvfb, vi/scale1 vàen/scale2, Dock trên/dưới. App cwd và GTK startup-mode=cwd riêng đặt thư mục fixture ban đầu; sau đó chỉ XTest Tab/Home chọn file, Tab/ShiftTab đến Open, Enter mở review, Tab/Cancel trả focus trigger. Không đặt focus/selection bằng AT-SPI trong chooser. Escape chooser và config bytes không đổi đều được xác nhận. Không suy mọi cách duyệt filesystem hoặc filename completion từ fixture này; diagnostic trước được ghi riêng, không tính pass.
+
+[Kiểm toán cuối](REMAINING_ACCEPTANCE.md) đối chiếu G5.9 gốc và chốt phạm vi GNOME X11 tham chiếu. Các đoạn còn-mở phía trên là lịch sử theo thời điểm; giữ giới hạn cụ thể của từng báo cáo. Đây không phải chứng nhận WCAG toàn diện, mọi trạng thái/theme hay mọi cấu hình Orca.
+
+Chạy lại riêng: `DESKMORPH_CHOOSER_KEYS_LAB=1 DESKMORPH_PRIVATE_GNOME_WM=1 /usr/bin/python3 tests/negative_origin_smoke.py`. Cần Xvfb/GNOME có sẵn; runner tạo display/bus/XDG/keyfile riêng, không input desktop host.

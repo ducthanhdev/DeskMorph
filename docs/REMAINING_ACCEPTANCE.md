@@ -1,6 +1,6 @@
-# Kiểm toán hai mục còn mở
+# Kiểm toán phạm vi còn mở
 
-Ngày 30/10/2026. Đối chiếu yêu cầu gốc trong IMPLEMENTATION_PLAN.md; tổng vẫn97/99.
+Ngày 30/10/2026. Đối chiếu yêu cầu gốc trong IMPLEMENTATION_PLAN.md; tổng98/99; G5.9 đã chốt trong môi trường tham chiếu.
 Tài liệu này chỉ xác định bằng chứng còn thiếu, không thêm yêu cầu hỗ trợ desktop khác
 hoặc chứng nhận WCAG/Orca toàn diện vào kế hoạch.
 
@@ -21,17 +21,16 @@ Dock co chiều rộng gây một geometry mismatch trong lab. Worker mới ch�
 định và kiểm Dock không đổi qua activation. Chưa dùng kết quả này để giải thích lỗi
 popup không ổn định trên HDMI, vì lượt host đó không có trace dismiss.
 
-## G5.9 — Các yêu cầu accessibility
+## G5.9 — Đã chốt các yêu cầu accessibility tham chiếu
 
 | Yêu cầu | Bằng chứng hiện tại | Cần hoàn tất |
 | --- | --- | --- |
-| Nhãn, Tab hai chiều và disabled | [Studio năm trang vi/en](benchmarks/studio-focus-scroll-2026-10-30/result.json), [popup](benchmarks/popup-keyboard-2026-10-29.json), [Dock](benchmarks/dock-keyboard-2026-10-29.json) | Kiểm tuyến bàn phím của chooser đến Open; ca import hiện seed focus Open bằng AT-SPI |
+| Nhãn, Tab hai chiều và disabled | [Studio năm trang vi/en](benchmarks/studio-focus-scroll-2026-10-30/result.json), [popup](benchmarks/popup-keyboard-2026-10-29.json), [Dock](benchmarks/dock-keyboard-2026-10-29.json) | [Chooser4/4 vi/en](benchmarks/chooser-keyboard-private-2026-10-30/result.json) đã đạt Tab/Home/Tab→Open, reverse/forward và Enter; không seed focus/selection trong chooser |
 | Focus-visible |406 control samples Studio, select và wallpaper focus pixel; các native keyboard suites cho Dock/popup/lịch | Giữ các giới hạn trạng thái động đã nêu trong ACCESSIBILITY.md; không suy mọi cạnh outline từ số pixel |
 | Contrast |209 computed fixtures, native Studio checkbox/range/select và black/white wallpaper focus | [Audio native20 captures](benchmarks/audio-native-controls-2026-10-30/result.json) đã đạt; radio/range/checkbox checked/unchecked và focus được đo riêng, không suy từ Studio |
-| Các thao tác chính bằng bàn phím | Launcher, cửa sổ/context, preset, accent, import/reset/undo, wallpaper, lịch và media có native keys; audio mute có Space sau reconnect | [Audio output selection/volume/mute vi/en](benchmarks/audio-native-controls-2026-10-30/result.json) đã đạt với keys/readback private PipeWire/Pulse/WirePlumber; [System Downloads/Trash/monitor native Enter vi/en](benchmarks/system-keyboard-private-2026-10-30/result.json) đã đạt4cases/32Enter, gồm failure/retry/missing capability. Còn tuyến chooser→Open trong dòng Tab order |
+| Các thao tác chính bằng bàn phím | Launcher, cửa sổ/context, preset, accent, import/reset/undo, wallpaper, lịch và media có native keys; audio mute có Space sau reconnect | [Audio output selection/volume/mute vi/en](benchmarks/audio-native-controls-2026-10-30/result.json) đã đạt với keys/readback private PipeWire/Pulse/WirePlumber; [System Downloads/Trash/monitor native Enter vi/en](benchmarks/system-keyboard-private-2026-10-30/result.json) đã đạt4cases/32Enter, gồm failure/retry/missing capability. [Chooser4/4](benchmarks/chooser-keyboard-private-2026-10-30/result.json) đã chọn file bằng Home, Tab→Open/Enter, review/Cancel trả focus và không đổi config |
 | Trình đọc màn hình bổ sung | [Orca menu vi/en đạt](benchmarks/orca-current-regression-2026-10-30/result.json), launch error/warning đều được đọc | Không mở thêm yêu cầu human listening hoặc mọi cấu hình Orca: không nằm trong G5.9. Giữ giới hạn bypass-navigation rõ ràng |
 
-Các mục thiếu phía trên là kiểm tích hợp có thể thực hiện với fixture/private bus và
-private audio. Không cần gửi lệnh đến ứng dụng hay thiết bị audio của người dùng.
-Chỉ đánh dấu G5.9 khi các thao tác và control còn thiếu được kiểm, sửa nếu thất bại,
-và bằng chứng được đối chiếu lại với bảng này.
+G5.9 đã chốt bằng tổ hợp bằng chứng trong bảng và [chooser4/4](benchmarks/chooser-keyboard-private-2026-10-30/result.json). Chooser dùng thư mục cwd fixture/private GTK startup-mode=cwd; không chứng nhận mọi đường duyệt filesystem hoặc inline filename completion. Giữ giới hạn Orca bypass-navigation và phạm vi control/state của các báo cáo; không mở rộng thành chứng nhận WCAG hay mọi reader/theme.
+
+Chỉ G2.10 còn mở: bốn tổ hợp HDMI200% ngoài system và topology âm drawable hợp lệ dưới WM. Không dùng các diagnostic chooser thất bại để suy lỗi sản phẩm hoặc làm bằng chứng đạt.

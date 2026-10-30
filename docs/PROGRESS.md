@@ -2,7 +2,7 @@
 
 Mục tiêu giữ nguyên toàn bộ 99 đầu việc trong IMPLEMENTATION_PLAN.md. Chưa đạt cổng hoàn thành toàn dự án. Checkbox chưa đánh dấu không đồng nghĩa chưa có code: nhiều mục đang chờ kiểm thử đủ phạm vi.
 
-Hiện đã đánh dấu **97/99 mục (~98%)**. Các mục còn mở: G2.10 (DPI/tọa độ âm) và G5.9 (accessibility đầy đủ). G9.8 đã chốt bằng soak native122 vòng/1808,461s, Quit/survivors và tổ hợp bằng chứng restart/suspend/HDMI thật. G2.11 đã chốt bằng rút/cắm HDMI vật lý; G6.7 đã chốt bằng scheduler qua system suspend thật138,922s. Chi tiết/phạm vi nằm trong các bản ghi cuối tài liệu. Quyết định phát hành vẫn là **không phát hành** theo RELEASE_CHECKLIST.md.
+Hiện đã đánh dấu **98/99 mục (~99%)**. Mục còn mở: G2.10 (DPI/tọa độ âm). G5.9 đã chốt trong phạm vi GNOME X11 tham chiếu bằng kiểm toán và bằng chứng bổ sung cuối tài liệu. G9.8 đã chốt bằng soak native122 vòng/1808,461s, Quit/survivors và tổ hợp bằng chứng restart/suspend/HDMI thật. G2.11 đã chốt bằng rút/cắm HDMI vật lý; G6.7 đã chốt bằng scheduler qua system suspend thật138,922s. Chi tiết/phạm vi nằm trong các bản ghi cuối tài liệu. Quyết định phát hành vẫn là **không phát hành** theo RELEASE_CHECKLIST.md.
 
 ## Môi trường tham chiếu đã xác minh
 
@@ -1096,3 +1096,14 @@ Giữ một initial private driver AssertionError không có stacktrace, không 
 [Bằng chứng](benchmarks/system-output200-regression-2026-10-30/result.json): output200%/200%, eDP/HDMI ×Dock trên/dưới ×3fresh instances =12/12 native allocations đạt. Không keyboard/mouse input; source được AT-SPI activate. Dwell20stable Dock samples, assert Dock không đổi xuyên activation và settling/dismiss trace được bật. Failure host cũ chưa tái hiện trong lượt này; không tuyên bố đã xác định root cause chỉ từ pass.
 
 Guard restore bổ sung đã chạy host thật: topology/primary/modes/refresh/user value/capabilities khớp baseline, cooldown readback đạt, restoreErrors rỗng và restoreApplyAttempts0 (không cần fallback). Bốn tổ hợp output200% còn thiếu là HDMI/top/calendar và HDMI/bottom/launcher,audio,calendar; system/bottom được chốt trong lượt mới. Negative topology hợp lệ dưới WM vẫn chưa có. Không mở rộng thêm ca khi window3phút sắp hết, đã trả desktop sau verifyrestore.
+
+
+## G5.9 — Chooser bằng phím thật đạt, chốt accessibility tham chiếu (30/10/2026)
+
+[Bằng chứng chooser](benchmarks/chooser-keyboard-private-2026-10-30/result.json): binary1172029a… đạt4/4 private GNOME cases, vi/scale1 vàen/scale2 ×Dock trên/dưới. Fixture khởi đầu trong thư mục cwd riêng với GTK startup-mode=cwd trên keyfile riêng; không seed focus/selection bên trong chooser. XTest Tab đến Files nếu cần, Home chọn import.json có SELECTED readback, Tab qua Cancel đến Open; Shift+Tab/Tab quay đúng Open, Enter đưa focus vào review. Tab đến Hủy/Cancel và Enter trả focus nút nhập; Escape chooser cũng trả trigger. Config bytes không đổi, fixture được dọn, không host input/preferences/audio mutation.
+
+Các diagnostic trước không đạt được giữ phân loại trong JSON: sai lời gọi Python AT-SPI; inline completion/path-entry và danh sách chưa chọn file không chứng minh Open; last-folder URI không đủ làm precondition. Ảnh riêng cho thấy danh sách rỗng ở một lượt; không quy root cause cho GTK hoặc sản phẩm, không chuyển các lượt đó thành pass. Cách dựng fixture cuối loại phụ thuộc completion nhưng không chứng nhận mọi cách duyệt filesystem. Giữ runner/callback opt-in vì lấp thiếu sót kiểm tích hợp thực; không thêm test sao chép implementation. Guard keyboard/WM tests và8 orchestration tests qua, Python compile/diff check qua; không đổi sản phẩm nên không rebuild/lặp unit sản phẩm.
+
+Đối chiếu REMAINING_ACCEPTANCE.md: focus/names/tab/disabled, contrast control, thao tác chính và Orca menu đều đã có bằng chứng phù hợp G5.9 gốc trong môi trường tham chiếu. Chốt G5.9; không gọi là chứng nhận WCAG toàn diện, mọi trạng thái/theme, human listening hoặc mọi cấu hình reader. Tổng98/99; G2.10 còn bốn tổ hợp HDMI200% ngoài system và topology âm hợp lệ dưới WM. Release vẫn no-go.
+
+Đánh giá commit test: giữ `chooser_keyboard_private.py` và nhánh opt-in trong runner vì tái hiện native keyboard integration còn thiếu, có guard private DISPLAY/PID/XDG; không giữ các probe đường dẫn thử sai hoặc raw tree/ảnh/profile. Audit cuối không còn geometry/DPI/WM helper sống. Commit kèm tài liệu và JSON bằng chứng, không kèm binary.

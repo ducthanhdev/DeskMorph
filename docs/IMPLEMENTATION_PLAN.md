@@ -1,6 +1,6 @@
 # Kế hoạch phát triển DeskMorph
 
-Ngày lập: 28/10/2026. Trạng thái: đang triển khai. Bằng chứng và phần chưa xác minh được ghi trong [PROGRESS.md](PROGRESS.md). Hai mục còn mở được đối chiếu tại [REMAINING_ACCEPTANCE.md](REMAINING_ACCEPTANCE.md).
+Ngày lập: 28/10/2026. Trạng thái: đang triển khai. Bằng chứng và phần chưa xác minh được ghi trong [PROGRESS.md](PROGRESS.md). Mục còn mở được đối chiếu tại [REMAINING_ACCEPTANCE.md](REMAINING_ACCEPTANCE.md).
 
 ## 1. Mục tiêu và phạm vi
 
@@ -126,7 +126,7 @@ Phụ thuộc G1/G4.
 - [x] G5.6 Reset cấu hình có xác nhận cụ thể và phương án khôi phục; xác định rõ có xóa preset cá nhân hay không.
 - [x] G5.7 Định dạng giờ 12/24, hiện giây, ngày tháng theo locale.
 - [x] G5.8 Gom chuỗi giao diện vào tài nguyên vi/en; lưu ngôn ngữ, hỗ trợ chuỗi dài, plural và thông báo lỗi.
-- [ ] G5.9 Focus-visible, nhãn accessible, tab order, contrast và trạng thái disabled; mọi thao tác chính dùng được bằng bàn phím.
+- [x] G5.9 Focus-visible, nhãn accessible, tab order, contrast và trạng thái disabled; mọi thao tác chính dùng được bằng bàn phím.
 - [x] G5.10 Capability được phản ánh trong UI: tính năng chưa hỗ trợ có lý do cụ thể, không nút hoạt động giả; tách mục đang phát triển khỏi chức năng dùng được.
 
 Tiêu chí: preview đúng Dock; import/reset không mất dữ liệu ngoài phạm vi đã thông báo; toàn bộ luồng chính hoạt động bằng bàn phím ở vi/en và reduced-motion.

@@ -1,0 +1,582 @@
+{
+  "passed": true,
+  "root": "/tmp/deskmorph-negative-origin-0bqlouv9",
+  "runnerSha256": "9803934f847dd1161aa867a11d52e0c904ba7eeed232cc1ddbfead00f4df8127",
+  "studioWidgetsRequested": false,
+  "studioFocusRequested": false,
+  "contextSpeechRequested": false,
+  "contextDescriptionRequested": false,
+  "binarySha256": "1172029a8dee0dde0b196e4956b2df150522bb1b058c4ed0cf829bc55e449ac9",
+  "runs": [
+    {
+      "passed": true,
+      "monitor": "screen",
+      "position": "top",
+      "source": "system",
+      "observations": [
+        {
+          "source": "Tiện ích hệ thống",
+          "popup": [
+            794,
+            114,
+            380,
+            620
+          ],
+          "anchor": 984.0,
+          "expectedOrigin": [
+            794,
+            114
+          ]
+        }
+      ],
+      "gdkMonitors": [
+        {
+          "name": "screen",
+          "gtkScale": 1,
+          "area": [
+            0,
+            32,
+            1920,
+            1048
+          ]
+        }
+      ],
+      "pid": 3533526,
+      "settlingObservations": {
+        "DeskMorph Taskbar": [
+          {
+            "seconds": 0.003,
+            "rectangle": null
+          },
+          {
+            "seconds": 0.16,
+            "rectangle": [
+              410,
+              48,
+              1100,
+              52
+            ]
+          },
+          {
+            "seconds": 0.631,
+            "rectangle": [
+              811,
+              48,
+              298,
+              52
+            ]
+          }
+        ],
+        "DeskMorph Context Menu": [
+          {
+            "seconds": 0.006,
+            "rectangle": null
+          },
+          {
+            "seconds": 0.165,
+            "rectangle": [
+              794,
+              114,
+              380,
+              620
+            ]
+          }
+        ]
+      },
+      "dock": [
+        811,
+        48,
+        298,
+        52
+      ],
+      "dockAfterActivation": [
+        811,
+        48,
+        298,
+        52
+      ],
+      "controlAudit": {
+        "passed": true,
+        "language": "vi",
+        "chooserEscapeReturnsTrigger": true,
+        "privateInitialFolder": true,
+        "homeSelectsFile": true,
+        "tabRoute": [
+          {
+            "key": "Tab",
+            "role": "button",
+            "name": "Cancel"
+          },
+          {
+            "key": "Tab",
+            "role": "button",
+            "name": "Open"
+          }
+        ],
+        "reverseForwardOpen": true,
+        "enterOpensReview": true,
+        "reviewCancelReturnsTrigger": true,
+        "configUnchanged": true,
+        "scope": "AT-SPI seeds Studio controls only; chooser initial fixture folder then Tab/Home/ShiftTab/Open Enter and review Tab/Cancel use owned private XTest"
+      },
+      "configUnchanged": true,
+      "appExit": -15,
+      "windowManager": {
+        "pid": 3532979,
+        "name": "GNOME Shell",
+        "privateDisplay": true,
+        "startupOverviewDismissed": true
+      },
+      "scale": 1,
+      "privateDisplay": true
+    },
+    {
+      "passed": true,
+      "monitor": "screen",
+      "position": "bottom",
+      "source": "system",
+      "observations": [
+        {
+          "source": "Tiện ích hệ thống",
+          "popup": [
+            794,
+            378,
+            380,
+            620
+          ],
+          "anchor": 984.0,
+          "expectedOrigin": [
+            794,
+            378
+          ]
+        }
+      ],
+      "gdkMonitors": [
+        {
+          "name": "screen",
+          "gtkScale": 1,
+          "area": [
+            0,
+            32,
+            1920,
+            1048
+          ]
+        }
+      ],
+      "pid": 3534877,
+      "settlingObservations": {
+        "DeskMorph Taskbar": [
+          {
+            "seconds": 0.003,
+            "rectangle": null
+          },
+          {
+            "seconds": 0.161,
+            "rectangle": [
+              410,
+              1012,
+              1100,
+              52
+            ]
+          },
+          {
+            "seconds": 1.434,
+            "rectangle": [
+              811,
+              1012,
+              298,
+              52
+            ]
+          }
+        ],
+        "DeskMorph Context Menu": [
+          {
+            "seconds": 0.008,
+            "rectangle": null
+          },
+          {
+            "seconds": 0.167,
+            "rectangle": [
+              794,
+              378,
+              380,
+              620
+            ]
+          }
+        ]
+      },
+      "dock": [
+        811,
+        1012,
+        298,
+        52
+      ],
+      "dockAfterActivation": [
+        811,
+        1012,
+        298,
+        52
+      ],
+      "controlAudit": {
+        "passed": true,
+        "language": "vi",
+        "chooserEscapeReturnsTrigger": true,
+        "privateInitialFolder": true,
+        "homeSelectsFile": true,
+        "tabRoute": [
+          {
+            "key": "Tab",
+            "role": "button",
+            "name": "Cancel"
+          },
+          {
+            "key": "Tab",
+            "role": "button",
+            "name": "Open"
+          }
+        ],
+        "reverseForwardOpen": true,
+        "enterOpensReview": true,
+        "reviewCancelReturnsTrigger": true,
+        "configUnchanged": true,
+        "scope": "AT-SPI seeds Studio controls only; chooser initial fixture folder then Tab/Home/ShiftTab/Open Enter and review Tab/Cancel use owned private XTest"
+      },
+      "configUnchanged": true,
+      "appExit": -15,
+      "windowManager": {
+        "pid": 3534308,
+        "name": "GNOME Shell",
+        "privateDisplay": true,
+        "startupOverviewDismissed": true
+      },
+      "scale": 1,
+      "privateDisplay": true
+    },
+    {
+      "passed": true,
+      "monitor": "screen",
+      "position": "top",
+      "source": "system",
+      "observations": [
+        {
+          "source": "System utilities",
+          "popup": [
+            646,
+            52,
+            760,
+            1008
+          ],
+          "anchor": 1025.0,
+          "expectedOrigin": [
+            645,
+            52
+          ]
+        }
+      ],
+      "gdkMonitors": [
+        {
+          "name": "screen",
+          "gtkScale": 2,
+          "area": [
+            0,
+            32,
+            1920,
+            1048
+          ]
+        }
+      ],
+      "pid": 3536268,
+      "settlingObservations": {
+        "DeskMorph Taskbar": [
+          {
+            "seconds": 0.006,
+            "rectangle": null
+          },
+          {
+            "seconds": 0.327,
+            "rectangle": [
+              32,
+              64,
+              1856,
+              104
+            ]
+          },
+          {
+            "seconds": 0.964,
+            "rectangle": [
+              680,
+              64,
+              560,
+              104
+            ]
+          },
+          {
+            "seconds": 2.071,
+            "rectangle": [
+              682,
+              64,
+              558,
+              104
+            ]
+          },
+          {
+            "seconds": 3.968,
+            "rectangle": [
+              680,
+              64,
+              560,
+              104
+            ]
+          }
+        ],
+        "DeskMorph Context Menu": [
+          {
+            "seconds": 0.003,
+            "rectangle": null
+          },
+          {
+            "seconds": 0.158,
+            "rectangle": [
+              646,
+              52,
+              760,
+              1008
+            ]
+          }
+        ]
+      },
+      "dock": [
+        680,
+        64,
+        560,
+        104
+      ],
+      "dockAfterActivation": [
+        680,
+        64,
+        560,
+        104
+      ],
+      "controlAudit": {
+        "passed": true,
+        "language": "en",
+        "chooserEscapeReturnsTrigger": true,
+        "privateInitialFolder": true,
+        "homeSelectsFile": true,
+        "tabRoute": [
+          {
+            "key": "Tab",
+            "role": "button",
+            "name": "Cancel"
+          },
+          {
+            "key": "Tab",
+            "role": "button",
+            "name": "Open"
+          }
+        ],
+        "reverseForwardOpen": true,
+        "enterOpensReview": true,
+        "reviewCancelReturnsTrigger": true,
+        "configUnchanged": true,
+        "scope": "AT-SPI seeds Studio controls only; chooser initial fixture folder then Tab/Home/ShiftTab/Open Enter and review Tab/Cancel use owned private XTest"
+      },
+      "configUnchanged": true,
+      "appExit": -15,
+      "windowManager": {
+        "pid": 3535688,
+        "name": "GNOME Shell",
+        "privateDisplay": true,
+        "startupOverviewDismissed": true
+      },
+      "scale": 2,
+      "privateDisplay": true
+    },
+    {
+      "passed": true,
+      "monitor": "screen",
+      "position": "bottom",
+      "source": "system",
+      "observations": [
+        {
+          "source": "System utilities",
+          "popup": [
+            644,
+            52,
+            760,
+            1008
+          ],
+          "anchor": 1023.0,
+          "expectedOrigin": [
+            643,
+            52
+          ]
+        }
+      ],
+      "gdkMonitors": [
+        {
+          "name": "screen",
+          "gtkScale": 2,
+          "area": [
+            0,
+            32,
+            1920,
+            1048
+          ]
+        }
+      ],
+      "pid": 3537830,
+      "settlingObservations": {
+        "DeskMorph Taskbar": [
+          {
+            "seconds": 0.002,
+            "rectangle": null
+          },
+          {
+            "seconds": 0.16,
+            "rectangle": [
+              32,
+              944,
+              1856,
+              104
+            ]
+          },
+          {
+            "seconds": 1.297,
+            "rectangle": [
+              680,
+              944,
+              560,
+              104
+            ]
+          },
+          {
+            "seconds": 2.387,
+            "rectangle": [
+              680,
+              944,
+              562,
+              104
+            ]
+          },
+          {
+            "seconds": 4.317,
+            "rectangle": [
+              678,
+              944,
+              564,
+              104
+            ]
+          },
+          {
+            "seconds": 5.284,
+            "rectangle": [
+              680,
+              944,
+              560,
+              104
+            ]
+          },
+          {
+            "seconds": 6.407,
+            "rectangle": [
+              680,
+              944,
+              562,
+              104
+            ]
+          },
+          {
+            "seconds": 7.351,
+            "rectangle": [
+              678,
+              944,
+              564,
+              104
+            ]
+          }
+        ],
+        "DeskMorph Context Menu": [
+          {
+            "seconds": 0.008,
+            "rectangle": null
+          },
+          {
+            "seconds": 0.165,
+            "rectangle": [
+              644,
+              52,
+              760,
+              1008
+            ]
+          }
+        ]
+      },
+      "dock": [
+        678,
+        944,
+        564,
+        104
+      ],
+      "dockAfterActivation": [
+        678,
+        944,
+        564,
+        104
+      ],
+      "controlAudit": {
+        "passed": true,
+        "language": "en",
+        "chooserEscapeReturnsTrigger": true,
+        "privateInitialFolder": true,
+        "homeSelectsFile": true,
+        "tabRoute": [
+          {
+            "key": "Tab",
+            "role": "button",
+            "name": "Cancel"
+          },
+          {
+            "key": "Tab",
+            "role": "button",
+            "name": "Open"
+          }
+        ],
+        "reverseForwardOpen": true,
+        "enterOpensReview": true,
+        "reviewCancelReturnsTrigger": true,
+        "configUnchanged": true,
+        "scope": "AT-SPI seeds Studio controls only; chooser initial fixture folder then Tab/Home/ShiftTab/Open Enter and review Tab/Cancel use owned private XTest"
+      },
+      "configUnchanged": true,
+      "appExit": -15,
+      "windowManager": {
+        "pid": 3537282,
+        "name": "GNOME Shell",
+        "privateDisplay": true,
+        "startupOverviewDismissed": true
+      },
+      "scale": 2,
+      "privateDisplay": true
+    }
+  ],
+  "scope": "Private GNOME chooser keyboard route, vi/scale1 and en/scale2, top/bottom",
+  "limits": [
+    "No host input or preferences mutation",
+    "AT-SPI seeds Studio focus; chooser path, Tab/reverse/Open and review Cancel use private XTest; no new Orca proof"
+  ],
+  "preliminaryTrials": {
+    "passed": false,
+    "scope": "Earlier private harness diagnostics, not product acceptance",
+    "observations": [
+      "Incorrect Python AT-SPI text API call corrected",
+      "GTK filename inline completion and traversal through an unselected file list did not establish a selected file; Open trials did not reach review",
+      "Private last-folder URI alone did not establish the initial folder",
+      "Final fixture starts the owned app in its dedicated cwd with private GTK startup-mode=cwd; no focus or selection is seeded inside chooser"
+    ],
+    "limits": [
+      "No established product defect or GTK root cause from these diagnostic trials",
+      "No raw profiles, accessibility trees or screenshots included"
+    ]
+  }
+}

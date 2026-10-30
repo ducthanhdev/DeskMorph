@@ -15,6 +15,7 @@ worker against positive private monitors before any host display trial.
 DESKMORPH_AUDIO_CONTROLS_LAB=1 checks private audio keys/readback and pixels.
 DESKMORPH_PRIVATE_GNOME_WM=1 with DPI_SOURCE_LAB uses one drawable1920x1080
 monitor and a guarded private GNOME Shell, instead of synthetic RandR monitors.
+DESKMORPH_CHOOSER_KEYS_LAB=1 checks import Tab/Home/Open with a private cwd fixture.
 Requires existing Xvfb/GNOME executables; never installs host packages.
 """
 import hashlib
@@ -71,8 +72,9 @@ def worker(root, scale, position):
     studio_test = os.environ.get('DESKMORPH_STUDIO_WIDGETS_LAB') == '1' or focus_test
     audio_controls = os.environ.get('DESKMORPH_AUDIO_CONTROLS_LAB') == '1'
     system_keys = os.environ.get('DESKMORPH_SYSTEM_KEYS_LAB') == '1'
-    assert not (audio_controls and system_keys), 'Select one private control audit'
-    dpi_source = 'audio' if audio_controls else 'system' if system_keys else os.environ.get('DESKMORPH_DPI_SOURCE_LAB')
+    chooser_keys = os.environ.get('DESKMORPH_CHOOSER_KEYS_LAB') == '1'
+    assert sum((audio_controls, system_keys, chooser_keys)) <= 1, 'Select one private control audit'
+    dpi_source = 'audio' if audio_controls else 'system' if system_keys or chooser_keys else os.environ.get('DESKMORPH_DPI_SOURCE_LAB')
     assert not (description_test and studio_test), 'Select one opt-in lab mode'
     language = 'en' if (description_test or studio_test) and scale == 2 else 'vi'
     labels = json.loads((REPO / 'src/i18n/messages.json').read_text())[language]
@@ -102,7 +104,19 @@ def worker(root, scale, position):
             if system_keys:
                 from system_keyboard_private import audit
                 after_open = audit
-            audit_language = 'en' if (audio_controls or system_keys) and scale == 2 else 'vi'
+            if chooser_keys:
+                from chooser_keyboard_private import audit
+                from gi.repository import Gio
+                assert os.environ['GSETTINGS_BACKEND'] == 'keyfile'
+                assert Path(os.environ['XDG_CONFIG_HOME']).resolve().is_relative_to(root.resolve())
+                folder = root / 'chooser-fixture'
+                folder.mkdir()
+                os.chdir(folder)
+                settings = Gio.Settings.new('org.gtk.Settings.FileChooser')
+                settings.set_string('startup-mode', 'cwd')
+                Gio.Settings.sync()
+                after_open = audit
+            audit_language = 'en' if (audio_controls or system_keys or chooser_keys) and scale == 2 else 'vi'
             if os.environ.get('DESKMORPH_PRIVATE_GNOME_WM') == '1':
                 from private_gnome_wm import private_gnome_wm
                 with private_gnome_wm(root) as wm:
@@ -472,10 +486,11 @@ def run():
     studio_test = os.environ.get('DESKMORPH_STUDIO_WIDGETS_LAB') == '1' or focus_test
     audio_controls = os.environ.get('DESKMORPH_AUDIO_CONTROLS_LAB') == '1'
     system_keys = os.environ.get('DESKMORPH_SYSTEM_KEYS_LAB') == '1'
-    assert not (audio_controls and system_keys), 'Select one private control audit'
-    dpi_source = 'audio' if audio_controls else 'system' if system_keys else os.environ.get('DESKMORPH_DPI_SOURCE_LAB')
+    chooser_keys = os.environ.get('DESKMORPH_CHOOSER_KEYS_LAB') == '1'
+    assert sum((audio_controls, system_keys, chooser_keys)) <= 1, 'Select one private control audit'
+    dpi_source = 'audio' if audio_controls else 'system' if system_keys or chooser_keys else os.environ.get('DESKMORPH_DPI_SOURCE_LAB')
     wm_test = os.environ.get('DESKMORPH_PRIVATE_GNOME_WM') == '1'
-    assert not system_keys or wm_test, 'System key audit requires private GNOME WM'
+    assert not (system_keys or chooser_keys) or wm_test, 'Keyboard audit requires private GNOME WM'
     assert not wm_test or (dpi_source and not studio_test and os.environ.get('DESKMORPH_CONTEXT_DESCRIPTION_LAB') != '1' and os.environ.get('DESKMORPH_CONTEXT_SPEECH_LAB') != '1'), 'Private WM mode requires only DPI_SOURCE_LAB'
     speech_test = os.environ.get('DESKMORPH_CONTEXT_SPEECH_LAB') == '1'
     root = Path(tempfile.mkdtemp(prefix='deskmorph-negative-origin-'))
@@ -495,6 +510,8 @@ def run():
             report.update(scope='Native DPI worker with GNOME Shell on one drawable1920x1080 Xvfb monitor, integer GTK scales1/2, top/bottom, source=' + dpi_source, limits=['No physical monitor, host input, output-scale fractional/mixed DPI, negative origin or popup sequencing proof', 'Private Shell startup overview is dismissed with private Escape before app launch'])
         if system_keys:
             report.update(scope='Private GNOME X11 system actions via XTest Enter, receiver fixtures, vi/scale1 and en/scale2, top/bottom', limits=['No host input, files, app launches or system preferences mutation', 'AT-SPI seeds control focus; XTest Enter invokes private desktop receivers; not whole-app Tab route or third-party package certification'])
+        if chooser_keys:
+            report.update(scope='Private GNOME chooser keyboard route, vi/scale1 and en/scale2, top/bottom', limits=['No host input or preferences mutation', 'AT-SPI seeds Studio focus; chooser Tab/Home/reverse/Open and review Cancel use private XTest; no new Orca proof'])
         if audio_controls:
             report.update(scope='Private audio native output/volume/mute keys and rendered control samples, vi/scale1 and en/scale2, top/bottom', limits=['No host audio/display mutation; PipeWire/Pulse have private sockets and hardware-free null sinks', 'AT-SPI seeds control focus; actual XTest Space/Left/Right activate controls on private DISPLAY', 'Pixel ratios cover enumerated native control paints and focus in the reference renderer, not arbitrary themes or full accessibility certification'])
         if speech_test:
@@ -537,7 +554,7 @@ def run():
                         session = subprocess.Popen(['dbus-run-session', '--', '/usr/bin/python3', str(Path(__file__).resolve()), '--worker', str(case), str(scale), position], env=env, stdout=log, stderr=log, start_new_session=True)
                     # Five-page pixel traversal includes the installed app
                     # catalogue; unlike a popup smoke its work scales with it.
-                    assert session.wait(timeout=300 if focus_test or system_keys else 90) == 0, str(case / 'session.log')
+                    assert session.wait(timeout=300 if focus_test or system_keys or chooser_keys else 90) == 0, str(case / 'session.log')
                     print(json.dumps(dict(scale=scale, position=position, passed=True)), flush=True)
                 finally:
                     if session is not None:
