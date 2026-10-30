@@ -51,3 +51,5 @@ Tài liệu này ghi quyết định kỹ thuật theo yêu cầu người dùng
 - Context force keyboard: mở rộng harness hiện có thay vì tạo bản sao, thêm kiểm environment/Popen owner và quan sát exit sau Tab/Enter. Giữ JSON hai lượt vi/en và cleanup; ảnh review đã có từ ca trước nên không thêm ảnh trùng. Không dùng fixture exit để tuyên bố mọi ứng dụng được force quit hoặc toàn bộ accessibility đã đạt.
 
 - Soak hoàn chỉnh: giữ một JSON summary122 mẫu/first/last và hash binary;122 raw samples ở/tmp. Giữ riêng failure trước sửa harness. Chốt lifecycle bằng liên kết các lượt riêng restart/suspend/hotplug, không gộp thành một soak có mọi sự kiện hoặc chứng nhận leak-free. Không thêm ảnh chụp cho số đo/procfs.
+
+- Gradient Studio: mở rộng audit hiện có thay vì thêm harness WebKit trùng. Giữ2 reference tests mới vì bảo vệ alpha/composite, continuous interpolation, luminance crossing và từ chối cấu hình không hỗ trợ; không phải test lặp markup. JSON chỉ8 ca mới/bounds/hash CSS, tổng113 và giới hạn; không commit computed tree/log của các lượt parser lỗi. Bằng chứng cận tương phản không thay pixel/native-focus/screen-reader audit.

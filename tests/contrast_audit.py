@@ -6,6 +6,7 @@ is explicit and does not certify arbitrary UI, artwork or screen-reader behavior
 import argparse
 import json
 import hashlib
+import re
 from pathlib import Path
 import os
 os.environ.setdefault('WEBKIT_DISABLE_DMABUF_RENDERER', '1')
@@ -27,6 +28,60 @@ def contrast(a, b):
         return sum(v * weight for v, weight in zip(linear, (.2126, .7152, .0722)))
     x, y = sorted((luminance(a), luminance(b)))
     return (y + .05) / (x + .05)
+
+
+def background_bounds(chain):
+    """Conservative RGB bounds for opaque backgrounds under CSS gradients.
+
+    sRGB gradient interpolation, including varying alpha, stays within the
+    composited stop bounds. Independent channel bounds can be wider than the
+    actual gradient; a failed lower bound requires further measurement.
+    Group opacity, images and other interpolation spaces are rejected.
+    """
+    lower = upper = [255, 255, 255, 1]
+
+    def composite(colors):
+        nonlocal lower, upper
+        candidates = [over(color, background) for color in colors for background in (lower, upper)]
+        lower = [min(value[i] for value in candidates) for i in range(3)] + [1]
+        upper = [max(value[i] for value in candidates) for i in range(3)] + [1]
+
+    for layer in reversed(chain):
+        assert layer['opacity'] == 1, 'Gradient bounds do not support group opacity'
+        composite([layer['background']])
+        image = layer['image']
+        if image == 'none': continue
+        groups, depth, start = [], 0, 0
+        for index, char in enumerate(image):
+            if char == '(': depth += 1
+            elif char == ')': depth -= 1
+            elif char == ',' and depth == 0:
+                groups.append(image[start:index].strip()); start = index + 1
+        groups.append(image[start:].strip())
+        for gradient in reversed(groups):
+            if gradient == 'none': continue
+            assert gradient.startswith(('linear-gradient(', 'radial-gradient(')), 'Unsupported background image: ' + gradient
+            assert not re.search(r'[\s(]in\s', gradient), 'Only default sRGB interpolation is supported'
+            colors = []
+            for match in re.finditer(r'rgba?\(([^)]+)\)', gradient):
+                color = list(map(float, re.findall(r'[\d.]+', match.group(1))))
+                if len(color) == 3: color.append(1)
+                assert len(color) == 4
+                colors.append(color)
+            assert len(colors) >= 2, 'Gradient stops were not resolved to RGB'
+            composite(colors)
+    return lower, upper
+
+
+def contrast_lower_bound(foreground, lower, upper):
+    assert foreground[3] == 1, 'Gradient contrast requires an opaque foreground'
+    # Luminance is monotone in each RGB channel. If the foreground's
+    # luminance lies inside the interval, the safe lower bound is 1:1.
+    def light(color): return (contrast(color, [0, 0, 0, 1]) - 1) * .05
+    value, low, high = map(light, (foreground, lower, upper))
+    if low <= value <= high: return 1.0
+    nearest = low if value < low else high
+    return (max(value, nearest) + .05) / (min(value, nearest) + .05)
 
 
 def fixtures():
@@ -54,6 +109,11 @@ def fixtures():
         ('range-output', '<label class="settings-range"><output data-target>100%</output></label>'),
     ]:
         add('studio/' + name, '<div class="studio-card" style="background:#1e293b">' + markup + '</div>')
+        # Keep the actual page radial gradients and translucent card instead
+        # of substituting a flat surface. These cases use conservative bounds.
+        cases.append(dict(name='studio-gradient/' + name,
+            markup='<div class="studio-app"><div class="studio-card">' + markup + '</div></div>',
+            threshold=4.5, gradientBounds=True))
     for backdrop in ('#000000', '#ffffff'):
         for surface, markup in [
             ('launcher', '<div class="app-launcher"><span data-target>Applications</span></div>'),
@@ -122,6 +182,14 @@ def run(output, enforce, css_path, screenshot):
             for record in raw:
                 case = cases[record['index']]
                 metric = case.get('metric', 'color')
+                if case.get('gradientBounds'):
+                    assert metric == 'color'
+                    lower, upper = background_bounds(record['chain'])
+                    ratio = contrast_lower_bound(record['color'], lower, upper)
+                    case.update(ratio=ratio, foreground=record['color'], backgroundBounds=[lower, upper],
+                        conservativeLowerBound=True, computed=record, passed=ratio >= case['threshold'])
+                    del case['markup']
+                    continue
                 if metric != 'color': assert record[metric + 'Width'] > 0, 'Indicator has no width'
                 bg = [0, 0, 0, 0]; fg = record[metric]
                 for layer in record['chain']:
@@ -144,7 +212,7 @@ def run(output, enforce, css_path, screenshot):
                 del case['markup']
             result.update(cssSha256=hashlib.sha256(css.encode()).hexdigest(), ephemeralContext=True, engine=f'WebKitGTK {WebKit2.get_major_version()}.{WebKit2.get_minor_version()}.{WebKit2.get_micro_version()}', cases=cases,
                           passed=sum(c['passed'] for c in cases), total=len(cases), inputSent=False,
-                          scope='Computed style fixtures using actual App.css in Gtk.OffscreenWindow; white/black backdrops, flat layers and group opacity. Hover/focus selectors mapped to fixture states. Text 4.5:1; enumerated outlines/borders 3:1 against both interior and exterior flat backgrounds. Studio fixture replaces the page gradient with an explicit flat background. No assertion of full app coverage, artwork, gradients, native keyboard focus, native widgets or screen-reader behavior.')
+                          scope='Computed style fixtures using actual App.css in Gtk.OffscreenWindow; white/black backdrops, flat layers and group opacity. Hover/focus selectors mapped to fixture states. Text 4.5:1; enumerated outlines/borders 3:1 against both interior and exterior flat backgrounds. Eight additional Studio text fixtures retain actual radial gradients/translucent cards, using conservative RGB/luminance bounds over every gradient stop. Unsupported images/interpolation/group opacity are rejected for gradient cases. A failing lower bound requires further measurement. No assertion of full app coverage, artwork, arbitrary gradients, native keyboard focus, native widgets or screen-reader behavior.')
         except Exception as error:
             result['error'] = repr(error)
         if screenshot and 'error' not in result:
