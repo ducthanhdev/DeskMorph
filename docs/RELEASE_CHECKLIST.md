@@ -14,7 +14,8 @@ trước khi tạo release candidate mới.
 | GNOME Wayland/COSMIC/KDE scope | Có giới hạn rõ | Wayland/COSMIC wallpaper-only experimental; KDE unsupported vì thiếu pixel/readback |
 | Accessibility toàn ứng dụng | Chưa đạt | G5.9 còn mở |
 | Physical HDMI hotplug / fallback | Pass trên GNOME X11 tham chiếu | [Physical hotplug](benchmarks/physical-hotplug-2026-10-30/result.json), G2.11; output được bật lại bằng saved XRandR layout sau reconnect |
-| Sleep thật, DPI, lifecycle dài | Chưa đạt | G2.10/G6.7/G9.8 còn mở |
+| Scheduler qua sleep thật | Pass trên GNOME X11 tham chiếu | [Suspend 138,922s](benchmarks/scheduler-suspend-2026-10-30/result.json), G6.7; operator đánh thức và mở khóa |
+| DPI, lifecycle dài | Chưa đạt | G2.10/G9.8 còn mở |
 | Cài account/máy sạch, autostart login, migration tiền nhiệm | Pass trong isolated lab | dpkg root + HOME mới + GUI packaged + autostart G1.13 + predecessor khác payload; không chứng nhận apt trên máy vật lý khác |
 | Ký artifact / publish | Không thực hiện | Quyết định no-go; không upload hoặc công bố |
 

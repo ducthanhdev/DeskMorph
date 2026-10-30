@@ -26,7 +26,13 @@ Chạy trong GNOME/X11 đã mở khóa với instance có `DESKMORPH_CONFIG_HOME
 
 Ca này dùng hai PNG riêng, kiểm tra cả hai khóa GNOME, phản ánh hai lần thay đổi từ bên ngoài, deadline một phút khi Studio đóng và mở lại cùng instance. Sau đó tạm dừng riêng PID ứng dụng test bằng SIGSTOP 125 giây, SIGCONT, kiểm tra thay đổi khi quá hạn và không đổi tiếp trong mười giây. Xóa hai PNG để tạo lỗi ở deadline kế tiếp, khôi phục ảnh để xác minh tự phục hồi mà không bật/tắt lại. Có watchdog SIGCONT riêng, cùng finally khôi phục ảnh, tắt lịch, thư viện/cấu hình và hai URI hình nền ban đầu.
 
-SIGSTOP không phải system suspend. Ca này xác minh worker tiếp tục xử lý hạn quá hạn sau khi tiến trình ngừng chạy; chưa xác minh login/session/compositor hoặc clock hoạt động qua sleep thật. Kiểm thử sleep thật và thay đổi phần cứng vẫn là cổng còn mở, không được suy ra từ ca này.
+SIGSTOP không phải system suspend; nhánh mặc định chỉ xác minh process pause. Nhánh opt-in dưới đây gọi `systemctl suspend` và cần người đánh thức sau ít nhất125s, rồi mở khóa desktop:
+
+```sh
+DESKMORPH_REAL_SUSPEND=1 python3 tests/desktop_smoke.py --restart --scheduler-recovery-smoke
+```
+
+[Ca native GNOME X11 đầy đủ](benchmarks/scheduler-suspend-2026-10-30/result.json) ngủ thật138,922s, đo bằng BOOTTIME−MONOTONIC, đã qua resume/missing-image/recovery/disable và finally khôi phục cả hai URI/config/thư viện. Harness mở Chi tiết của đúng scheduler alert để đọc diagnostic gốc sau bản địa hóa, lưu checkpoint nếu bước sau thất bại. Chốt G6.7 trong môi trường này; không suy thành scheduler COSMIC, mọi compositor hoặc soak dài hạn đạt.
 
 
 ## Hình nền hiển thị trên GNOME46 Wayland

@@ -141,9 +141,11 @@ Phụ thuộc G1/G2; capability backend cho từng desktop được xác minh tr
 - [x] G6.4 Thumbnail nền và cache có invalidation theo mtime/kích thước; lazy render/pagination cho thư viện lớn.
 - [x] G6.5 Tìm theo tên, lọc thư mục/định dạng và ảnh yêu thích; favorite không mất khi thư mục tạm không truy cập được.
 - [x] G6.6 Shuffle không chọn lại ảnh hiện tại khi có lựa chọn khác; xử lý thư viện 0/1 ảnh.
-- [ ] G6.7 Lịch đổi ảnh theo chu kỳ, bật/tắt rõ ràng, một scheduler duy nhất; xử lý resume sau sleep và ảnh bị xóa.
+- [x] G6.7 Lịch đổi ảnh theo chu kỳ, bật/tắt rõ ràng, một scheduler duy nhất; xử lý resume sau sleep và ảnh bị xóa.
 - [x] G6.8 Kiểm tra exit status/kết quả backend trước báo thành công; phản ánh hình nền đổi từ bên ngoài nếu adapter hỗ trợ.
 - [x] G6.9 Adapter GNOME/COSMIC/KDE được bổ sung riêng sau thử nghiệm API thực tế; chỉ bật adapter đã xác minh, có unsupported state. GNOME và COSMIC đã kiểm UI/IPC/pixel; KDE giữ unsupported sau nghiên cứu API nhưng chưa đạt pixel/readback.
+
+G6.7: [native system suspend 138,922 giây](benchmarks/scheduler-suspend-2026-10-30/result.json) đã qua trên GNOME X11: deadline khi Studio đóng/cùng instance, một thay đổi quan sát sau resume và ổn định10s, ảnh xóa báo lỗi/giữ URI, ảnh phục hồi tự chạy ở kỳ sau và tắt lịch giữ ảnh. Clock BOOTTIME−MONOTONIC chứng minh sleep thật; không thay thế bằng SIGSTOP. Scheduler COSMIC/desktop khác chưa được chứng nhận sleep.
 
 G6.9 đã chốt theo phạm vi adapter xác minh: GNOME có UI/pixel; COSMIC RON v1 có adapter và [Studio/IPC/pixel vi/en](benchmarks/cosmic-studio-2026-10-29/results.json), gồm defaults và entry per-output thiếu, lỗi/read-only/Retry/Shuffle; KDE đã nghiên cứu API trong runtime riêng nhưng giữ unsupported vì chưa có pixel/readback. Scheduler, hotplug và multi-output vẫn là giới hạn riêng.
 

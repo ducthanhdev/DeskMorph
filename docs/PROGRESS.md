@@ -2,13 +2,13 @@
 
 Mục tiêu giữ nguyên toàn bộ 99 đầu việc trong IMPLEMENTATION_PLAN.md. Chưa đạt cổng hoàn thành toàn dự án. Checkbox chưa đánh dấu không đồng nghĩa chưa có code: nhiều mục đang chờ kiểm thử đủ phạm vi.
 
-Hiện đã đánh dấu 90/99 mục, gồm G3.2–G3.3 bằng fixture môi trường cô lập và G0.5/G2.1/G2.3 qua capability EWMH, kiểm thử lỗi adapter và native startup thiếu xprop. Đã bổ sung G0.4/G2.4/G2.5 qua popup/auto-hide native và G9.6/G9.9 bằng hồi quy policy/asset/force-close và ảnh Studio thật trong README. Các cổng GUI, Wayland và phát hành vẫn chưa hoàn tất.
+Hiện đã đánh dấu **96/99 mục (~97%)**. Các mục còn mở: G2.10 (DPI/tọa độ âm), G5.9 (accessibility đầy đủ) và G9.8 (vòng đời dài). G2.11 đã chốt bằng rút/cắm HDMI vật lý; G6.7 đã chốt bằng scheduler qua system suspend thật 138,922 giây. Chi tiết/phạm vi nằm trong các bản ghi cuối tài liệu. Quyết định phát hành vẫn là **không phát hành** theo RELEASE_CHECKLIST.md.
 
 ## Môi trường tham chiếu đã xác minh
 
 - Pop!_OS 24.04 LTS, x86_64; GNOME Shell 46.0; X11, DISPLAY=:1.
 - GTK 3.24.41, WebKitGTK 2.52.6.
-- Hai màn hình: eDP-1-1 1920×1080 tại (0,0); HDMI-0 chính 1920×1080 tại (1920,0).
+- Hai màn hình hiện tại: eDP-1-1 chính 1920×1080 tại (0,0); HDMI-0 1920×1080 tại (1920,0).
 - GNOME scaling-factor=0 (tự động), text-scaling-factor=1.0; chưa có bằng chứng chạy thực tế ở mixed DPI.
 - Có một phiên phát triển khác đang dùng target/debug và cổng dev. Build kiểm thử dùng riêng target/agent để tránh tranh chấp; script chỉ thao tác instance có DESKMORPH_CONFIG_HOME=/tmp/deskmorph-desktop-test/config (nhận diện XDG_CONFIG_HOME cũ chỉ để restart bản test cũ). Các ca hình nền giữ XDG_CONFIG_HOME của desktop để GSettings và dconf service đọc/ghi cùng namespace; ca system-locations cố ý dùng MIME/user-dirs riêng và không thay hình nền.
 
@@ -19,7 +19,7 @@ Hiện đã đánh dấu 90/99 mục, gồm G3.2–G3.3 bằng fixture môi trư
 - G1: single-instance đọc request phân mảnh với deadline/giới hạn kích thước, xác nhận kết quả mở Studio qua ACK, báo lỗi dispatch và dừng/join worker khi thoát. Startup lỗi trả exit code 1. Monitor topology chuyển từ worker tách rời sang GTK timeout được remove khi thoát; đồng hồ Dock dừng khi tắt widget/Dock, đồng hồ lịch dừng khi popup ẩn và lấy snapshot visibility sau đăng ký listener.
 - G2: adapter X11 tách khỏi commands, kiểm tra lỗi xprop, so sánh XID chính xác, loại cửa sổ của chính tiến trình; popup coordinator có generation, bàn phím danh sách cửa sổ; tọa độ monitor origin/scale/work area.
 - G0/G2: [CAPABILITIES.md](CAPABILITIES.md) mô tả ma trận ban đầu. Runtime đọc `_NET_CLIENT_LIST` kiểu WINDOW và `_NET_SUPPORTED` kiểu ATOM, tách enumerate/activate/close, từ chối action chưa công bố; UI thể hiện trạng thái riêng. Missing/malformed property và xprop thất bại không còn trả danh sách rỗng như thành công. Outside-click X11 không chạy trong phiên Wayland/XWayland.
-- G2: chọn màn hình, fallback về màn hình chính khi màn hình chọn không còn, theo dõi topology; phần hotplug thực tế còn cần kiểm thử.
+- G2: chọn màn hình, fallback về màn hình chính khi màn hình chọn không còn, theo dõi topology; đã kiểm rút/cắm HDMI vật lý và giữ monitor preference trên GNOME X11 tham chiếu (G2.11).
 - G3: GIO AppInfo/desktop entry discovery, native launch không qua sh -c, cache + AppInfoMonitor, launcher tìm tiếng Việt không dấu, pin theo desktop ID, icon theo GTK theme, actions theo desktop entry.
 - G1/G3: sửa polling có thể sinh nhiều timer khi visibility đổi trong lúc request chưa xong; mỗi vòng có một timer, effect mới chờ native request cũ, hủy consumer cũ và dừng khi ẩn. Giữ AppInfoMonitor trên GTK thread thay vì thả ngay sau đăng ký; disconnect khi thay watch/thoát. Thêm invalidation khi GTK icon theme thay đổi; phần theme/render native chưa được kiểm thử tương tác.
 - G4: kéo thả và Ctrl+Shift+trái/phải để sắp xếp, menu đổi thứ tự, middle-click, menu cửa sổ/actions, chiều rộng Dock theo nội dung và vùng cuộn, tùy chỉnh icon/khoảng cách, reduced-motion và tooltip native riêng.
@@ -844,3 +844,13 @@ Script cần AT-SPI, Python GI, GTK3 và libXtst. Chỉ gửi phím khi kiểm t
 - Kết hợp geometry chọn độc lập cả hai monitor và sáu output cycles top/bottom trước đó, chốt G2.11 trong phạm vi GNOME X11 tham chiếu/scale1. Tổng **95/99**; G2.10, G5.9, G6.7, G9.8 tiếp tục mở. Không suy một lần physical hotplug thành soak hoặc mixed DPI đạt.
 - Config sau cleanup khớp snapshot restore; native topology cuối eDP primary1920x1080+0+0 và HDMI1920x1080+1920+0. Python compile/diff check qua; sản phẩm không đổi từ native build/test ở commit focus trước.
 - Đánh giá file: giữ chế độ physical opt-in với marker giai đoạn, timeout180s, kiểm connector thật và finally restore; giữ JSON gọn chỉ hai connector liên quan, rectangle/lệnh/hash/giới hạn. Không commit stage marker, config, log hay binary.
+
+
+## G6.7 — Chốt scheduler qua system suspend thật (30/10/2026)
+
+- Logind `CanSuspend=yes`, kernel hỗ trợ deep suspend; người dùng nhận đánh thức sau ít nhất130s và mở khóa, nên không cần quyền `/dev/rtc0`. Harness opt-in gọi `systemctl suspend`, đo BOOTTIME−MONOTONIC và chờ desktop unlocked trước input.
+- [Lượt đầy đủ](benchmarks/scheduler-suspend-2026-10-30/result.json) exit0 PID993520: **138,922 giây ngủ thật**, deadline1phút khi Studio đóng và mở lại cùng instance qua; sau resume có một thay đổi quan sát và ổn định10s; xóa hai PNG tạo đúng diagnostic trong scheduler alert và giữ cả URI; phục hồi ảnh tự chạy kỳ sau, xóa lỗi không toggle; tắt lịch giữ ảnh.
+- Lượt trước đã qua resume nhưng dừng ở missing-image vì diagnostic tiếng Anh bị ErrorText giữ trong Chi tiết. Harness nay định vị alert theo nhãn locale, mở đúng Chi tiết rồi kiểm raw diagnostic; checkpoint giữ kết quả/cleanup ngay cả khi bước sau thất bại. Không tính lượt thiếu này là ca hoàn chỉnh. Một lượt preflight trước đó dừng vì WM không activate Studio cũng không được tính đạt.
+- Sau finally: hai PNG khôi phục; scheduler tắt, interval15, folders/favorites rỗng, recursive=false; cả hai GNOME URI về Sonoma-dark.jpg và desktop unlocked. Python compile/diff check qua. Không đổi sản phẩm nên không chạy lại suite Rust đã qua ở commit focus.
+- Chốt G6.7 trong phạm vi GNOME X11 tham chiếu; **96/99**, còn G2.10/G5.9/G9.8. G9.8 nay có thành phần sleep thật và physical HDMI, nhưng vẫn thiếu soak dài hạn/resource audit; không dùng một sleep cycle để chốt lifecycle dài.
+- Đánh giá file: giữ nhánh suspend thật opt-in với operator wake/unlock, clock proof và checkpoint; giữ JSON gọn kèm wallpaper flow/cleanup. SIGSTOP mặc định vẫn được ghi là process pause. Không commit log/profile/binary hoặc biến thử nghiệm thành chứng nhận compositor khác.
