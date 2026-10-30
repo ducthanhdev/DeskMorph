@@ -53,3 +53,5 @@ Tài liệu này ghi quyết định kỹ thuật theo yêu cầu người dùng
 - Soak hoàn chỉnh: giữ một JSON summary122 mẫu/first/last và hash binary;122 raw samples ở/tmp. Giữ riêng failure trước sửa harness. Chốt lifecycle bằng liên kết các lượt riêng restart/suspend/hotplug, không gộp thành một soak có mọi sự kiện hoặc chứng nhận leak-free. Không thêm ảnh chụp cho số đo/procfs.
 
 - Gradient Studio: mở rộng audit hiện có thay vì thêm harness WebKit trùng. Giữ2 reference tests mới vì bảo vệ alpha/composite, continuous interpolation, luminance crossing và từ chối cấu hình không hỗ trợ; không phải test lặp markup. JSON chỉ8 ca mới/bounds/hash CSS, tổng113 và giới hạn; không commit computed tree/log của các lượt parser lỗi. Bằng chứng cận tương phản không thay pixel/native-focus/screen-reader audit.
+
+- Unpinned desktop actions: giữ harness native riêng dùng lại desktop driver, private catalogue/window fixture và marker phân biệt default Exec với action. Đây là bằng chứng cho đường keyboard/mutation thật, không phải test mirror markup; giữ JSON vi/en/cleanup, không thêm ảnh/log/profile. Không nâng fixture launch thành chứng nhận mọi ứng dụng.

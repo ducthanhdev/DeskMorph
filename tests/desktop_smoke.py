@@ -78,6 +78,7 @@ if __name__ == '__main__':
     parser.add_argument('--media-bus-restart-smoke', action='store_true')
     parser.add_argument('--audio-service-restart-smoke', action='store_true')
     parser.add_argument('--context-keyboard-smoke', action='store_true')
+    parser.add_argument('--context-actions-keyboard-smoke', action='store_true')
     parser.add_argument('--popup-keyboard-smoke', action='store_true')
     parser.add_argument('--dock-keyboard-smoke', action='store_true')
     parser.add_argument('--contrast-native-smoke', action='store_true')
@@ -158,7 +159,7 @@ if __name__ == '__main__':
     input_tests = any((args.media_bus_restart_smoke, args.audio_service_restart_smoke, args.context_keyboard_smoke, args.popup_keyboard_smoke, args.dock_keyboard_smoke, args.contrast_native_smoke, args.config_review_smoke, args.studio_tab_smoke, args.removal_focus_smoke, args.calendar_keyboard_smoke, args.localization_smoke, args.performance_matrix, args.preview_smoke, args.capabilities_smoke, args.clock_smoke, args.icon_render_smoke, args.launcher_keyboard_smoke, args.missing_app_smoke, args.pinning_smoke, args.pin_identity_smoke, args.catalogue_refresh_smoke, args.exports_smoke, args.action, args.screenshot, args.basic, args.popup_smoke, args.focus_smoke, args.autohide_smoke, args.shortcut_smoke, args.lifecycle_smoke, args.registration_smoke, args.window_list_smoke, args.reorder_smoke, args.tooltip_smoke, args.launch_smoke, args.overflow_smoke, args.layout_smoke, args.indicator_smoke, args.mapping_smoke, args.internal_smoke, args.polling_smoke, args.launcher_smoke, args.studio_smoke, args.config_smoke, args.command_errors_smoke,
                        args.wallpaper_smoke, args.scheduler_smoke, args.library_stress, args.audio_smoke, args.media_smoke,
                        args.audio_exit, args.audio_unavailable, args.system_smoke, args.system_unavailable, args.system_open_smoke, args.system_locations_smoke))
-    if input_tests or args.geometry_smoke: require_unlocked_desktop()
+    if input_tests or args.geometry_smoke or args.context_actions_keyboard_smoke: require_unlocked_desktop()
     if args.window_fixture or args.indicator_fixture or args.mapping_fixture or args.internal_fixture:
         if args.indicator_fixture or args.mapping_fixture or args.internal_fixture: assert os.environ.get('DESKMORPH_CONFIG_HOME') == TEST_CONFIG
         gi.require_version('Gtk', '3.0')
@@ -729,6 +730,9 @@ if __name__ == '__main__':
     if args.context_keyboard_smoke:
         from context_keyboard_smoke import run_matrix
         app = run_matrix(app, TEST_CONFIG, focus_studio, native_keys, start_isolated_app, lambda current: globals().__setitem__("app", current))
+    if args.context_actions_keyboard_smoke:
+        from context_desktop_actions_smoke import run
+        app = run(app, TEST_CONFIG, focus_studio, native_keys, start_isolated_app, lambda current: globals().__setitem__("app", current))
     if args.popup_keyboard_smoke:
         from popup_keyboard_smoke import run_matrix
         app = run_matrix(app, TEST_CONFIG, click, focus_studio, native_keys, start_isolated_app, lambda current: globals().__setitem__("app", current))

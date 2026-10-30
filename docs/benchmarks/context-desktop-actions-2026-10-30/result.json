@@ -1,0 +1,60 @@
+{
+  "runs": [
+    {
+      "language": "vi",
+      "pid": 1335264,
+      "fixturePid": 1335230,
+      "tabSequence": [
+        "Mở ứng dụng",
+        "Ghim",
+        "DeskMorph Keyboard Action",
+        "DeskMorph Window Test 1",
+        "Đóng DeskMorph Window Test 1",
+        "DeskMorph Window Test 2",
+        "Đóng DeskMorph Window Test 2",
+        "DeskMorph Window Test 3",
+        "Đóng DeskMorph Window Test 3",
+        "Buộc dừng…"
+      ],
+      "reverseMatches": true,
+      "exactDesktopActionMarker": true,
+      "defaultLaunchMarker": true,
+      "keyboardPinUnpin": true,
+      "configFieldsRestored": true
+    },
+    {
+      "language": "en",
+      "pid": 1336360,
+      "fixturePid": 1336302,
+      "tabSequence": [
+        "Open application",
+        "Pin",
+        "DeskMorph Keyboard Action",
+        "DeskMorph Window Test 1",
+        "Close DeskMorph Window Test 1",
+        "DeskMorph Window Test 2",
+        "Close DeskMorph Window Test 2",
+        "DeskMorph Window Test 3",
+        "Close DeskMorph Window Test 3",
+        "Force quit…"
+      ],
+      "reverseMatches": true,
+      "exactDesktopActionMarker": true,
+      "defaultLaunchMarker": true,
+      "keyboardPinUnpin": true,
+      "configFieldsRestored": true
+    }
+  ],
+  "fixtureAppPids": [
+    1335264,
+    1336360
+  ],
+  "normalPid": 1337434,
+  "configBytesRestored": true,
+  "privateCatalogueRemoved": true,
+  "scope": "Native GNOME X11 vi/en, owned unpinned group, Shift+F10/Tab both directions and Enter default/desktop-action/pin/unpin; AT-SPI seeds action focus, no user application launches",
+  "date": "2026-10-30",
+  "command": "python3 tests/desktop_smoke.py --restart --context-actions-keyboard-smoke",
+  "exitCode": 0,
+  "binarySha256": "1c2a54f8e3fd3e5dca7ece576d6301f714853ee996f352b6340a3a1b37b77f4b"
+}
