@@ -9,7 +9,7 @@ Hiện đã đánh dấu **98/99 mục (~99%)**. Mục còn mở: G2.10 (DPI/t�
 - Pop!_OS 24.04 LTS, x86_64; GNOME Shell 46.0; X11, DISPLAY=:1.
 - GTK 3.24.41, WebKitGTK 2.52.6.
 - Hai màn hình hiện tại: eDP-1-1 chính 1920×1080 tại (0,0); HDMI-0 1920×1080 tại (1920,0).
-- GNOME scaling-factor=0 (tự động), text-scaling-factor=1.0; chưa có bằng chứng chạy thực tế ở mixed DPI.
+- Baseline GNOME scaling-factor=0 (tự động), text-scaling-factor=1.0; [48/48 ca fractional/mixed DPI](benchmarks/dpi-native-full-matrix-2026-10-30/result.json) về sau đã chạy thật và khôi phục baseline.
 - Có một phiên phát triển khác đang dùng target/debug và cổng dev. Build kiểm thử dùng riêng target/agent để tránh tranh chấp; script chỉ thao tác instance có DESKMORPH_CONFIG_HOME=/tmp/deskmorph-desktop-test/config (nhận diện XDG_CONFIG_HOME cũ chỉ để restart bản test cũ). Các ca hình nền giữ XDG_CONFIG_HOME của desktop để GSettings và dconf service đọc/ghi cùng namespace; ca system-locations cố ý dùng MIME/user-dirs riêng và không thay hình nền.
 
 ## Đã có implementation
@@ -1123,3 +1123,5 @@ Chưa chạy4ca host: khoảng desktop rảnh trước đã kết thúc; đã h�
 [Bằng chứng mới](benchmarks/negative-origin-mutter-verify-2026-10-30/result.json): baseline VERIFY đạt; cùng topology/modes/refresh/primary/scale, chỉ dịch cả hai logical monitors1920px sang trái, bị compositor từ chối `org.freedesktop.DBus.Error.InvalidArgs: Invalid logical monitor position (-1920, 0)`. Chỉ method0 hai lần, không feature/topology mutation hoặc input; topology, capabilities, user value readback không đổi. Không dùng failure này để quy lỗi placement sản phẩm hoặc tính acceptance âm đạt.
 
 Sửa GEOMETRY.md để cập nhật các đoạn feature/mixed-DPI chưa-chạy đã cũ bằng48ca host và12ca system200% hiện có. Không thêm test source cho probe một lần: dùng lại API snapshot/apply/VERIFY có sẵn, chỉ giữ JSON bằng chứng và kết luận môi trường. Yêu cầu gốc origin âm drawable dưới WM vẫn cần môi trường cho phép; không nâng synthetic allocation hoặc origin tương đối primary thành native proof. Bốn ca HDMI200% vẫn chưa chạy vì chưa có trả lời cho khoảng desktop rảnh mới. G2.10 mở,98/99; release no-go.
+
+Kiểm toán tính nhất quán tài liệu: bỏ ba mô tả cũ trong IMPLEMENTATION_PLAN.md còn ghi G9.4/G9.11/spike Wayland chưa xong dù đã có bằng chứng chốt; sửa summary mixed DPI đầu PROGRESS thành baseline lịch sử và liên kết48ca thực. Không đổi checklist hoặc phạm vi acceptance, không thêm test cho sửa văn bản.

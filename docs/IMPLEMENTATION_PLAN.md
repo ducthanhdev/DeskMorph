@@ -200,11 +200,11 @@ Phần tài liệu/kiểm thử bắt đầu từ G0; cổng phát hành tổng 
 - [x] G9.11 Chọn định dạng gói cho distro mục tiêu, cài trong isolated clean account/machine lab; kiểm tra icon/menu/autostart, nâng cấp giữ dữ liệu và gỡ cài đặt. Phạm vi không mở rộng thành chứng nhận apt trên máy vật lý khác.
 - [x] G9.12 Checklist release có kết quả, version và artifact; quyết định phát hành sau kiểm thử, không tự công bố chỉ vì build thành công. [Checklist](RELEASE_CHECKLIST.md) quyết định không phát hành bản development 0.1.0 khi các cổng còn mở.
 
-Bằng chứng G9.2/G9.3: [prototype extension GNOME 46](benchmarks/wayland-prototype-2026-10-29.json) đã qua placement top/bottom, auto-hide sáu vòng, enumerate/activate/close hai GTK native Wayland fixture và cleanup trong compositor riêng. [Quyết định adapter](WAYLAND_ADAPTER_DECISION.md) công bố sản phẩm hiện chưa hỗ trợ các capability đó trên GNOME Wayland; extension Shell là hướng kỹ thuật đã thử, chưa tích hợp Tauri hoặc phát hành. G9.4 giữ mở.
+Bằng chứng G9.2/G9.3: [prototype extension GNOME 46](benchmarks/wayland-prototype-2026-10-29.json) đã qua placement top/bottom, auto-hide sáu vòng, enumerate/activate/close hai GTK native Wayland fixture và cleanup trong compositor riêng. [Quyết định adapter](WAYLAND_ADAPTER_DECISION.md) công bố sản phẩm hiện chưa hỗ trợ các capability đó trên GNOME Wayland; extension Shell là hướng kỹ thuật đã thử, chưa tích hợp Tauri hoặc phát hành. G9.4 đã chốt theo phạm vi công bố cụ thể trong PLATFORM_SUPPORT_MATRIX.md; không suy prototype thành tính năng sản phẩm.
 
 Tiêu chí: mỗi artifact cài/chạy được trên môi trường công bố; không lỗi nghiêm trọng trong luồng chính; giới hạn Wayland và backend được ghi rõ; nâng cấp không mất cấu hình.
 
-Bằng chứng G9.6/G9.9: quyền plugin opener đã bỏ, core chỉ cho listen/unlisten; CSP không tải script/font remote và asset scope ban đầu rỗng, cấp từng file. Native startup/IPC, icon trong ảnh Studio thật, thumbnail kiểm tra pixel và force-close với PID giả đều đã qua; chi tiết trong PROGRESS.md. README có ảnh `docs/images/studio.png`, hướng dẫn dependency (gồm libXi), build/cài/gỡ và giới hạn. Đã có [recipe deb và kiểm thử dpkg/GUI release](PACKAGING.md); cài sạch/nâng cấp từ artifact tiền nhiệm thực vẫn thuộc G9.11, không suy từ reinstall hoặc upgrade metadata tổng hợp.
+Bằng chứng G9.6/G9.9: quyền plugin opener đã bỏ, core chỉ cho listen/unlisten; CSP không tải script/font remote và asset scope ban đầu rỗng, cấp từng file. Native startup/IPC, icon trong ảnh Studio thật, thumbnail kiểm tra pixel và force-close với PID giả đều đã qua; chi tiết trong PROGRESS.md. README có ảnh `docs/images/studio.png`, hướng dẫn dependency (gồm libXi), build/cài/gỡ và giới hạn. Đã có [recipe deb và kiểm thử dpkg/GUI release](PACKAGING.md); [nâng cấp từ artifact tiền nhiệm khác payload](benchmarks/deb-real-migration-2026-10-30/result.json) và [GUI với HOME mới](benchmarks/deb-clean-account-2026-10-29/launcher.json), kết hợp autostart G1.13, đã chốt G9.11 trong isolated clean lab. Không suy thành cài apt/login boot trên máy vật lý khác.
 
 ## 13. Thứ tự triển khai cụ thể cho đợt đầu
 
@@ -217,7 +217,7 @@ Bằng chứng G9.6/G9.9: quyền plugin opener đã bỏ, core chỉ cho listen
 7. G4.1–G4.10: sắp xếp, actions, tooltip, layout/overflow và giảm hoạt ảnh.
 8. Hoàn thành G1.11–G1.13, G2.1–G2.3/G2.11 và tài liệu/checklist release liên quan trước phát hành preview.
 
-Cập nhật triển khai: nền tảng cấu hình/window backend đã có code và kiểm thử trọng tâm; Studio, wallpaper scheduler và audio/media đã được tích hợp tiếp trên cùng nhánh. Các cổng G0–G4 vẫn chưa hoàn tất toàn bộ ma trận desktop; tính năng mới không thay thế các kiểm tra đó và chưa đủ điều kiện phát hành preview. Wayland adapter vẫn chờ spike riêng.
+Cập nhật triển khai: nền tảng cấu hình/window backend đã có code và kiểm thử trọng tâm; Studio, wallpaper scheduler và audio/media đã được tích hợp tiếp trên cùng nhánh. Hiện98/99 đầu việc đã chốt trong phạm vi tham chiếu; chỉ G2.10 còn mở theo REMAINING_ACCEPTANCE.md. Spike Wayland đã có kết quả và quyết định adapter; sản phẩm vẫn công bố giới hạn Wayland rõ ràng. Chưa đủ điều kiện phát hành vì G2.10 chưa đạt, không coi tổng checkbox là quyết định release.
 
 ## 14. Mốc phát hành và quy mô ước lượng
 
