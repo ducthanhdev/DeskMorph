@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-30",
+  "scope": "Read-only org.gnome.Mutter.DisplayConfig.GetCurrentState and GSettings introspection on the current GNOME X11 session; no scaling/topology mutation or GUI test",
+  "renderer": "xrandr",
+  "layoutMode": 2,
+  "globalScaleRequired": true,
+  "legacyUiScalingFactor": 1,
+  "experimentalFeatures": [],
+  "currentMonitors": [
+    {"connector": "HDMI-0", "mode": [1920, 1080], "refresh": 60.0, "supportedScales": [1.0, 2.0], "currentScale": 1.0, "origin": [1920, 0]},
+    {"connector": "eDP-1-1", "mode": [1920, 1080], "refresh": 144.0028076171875, "supportedScales": [1.0, 2.0], "currentScale": 1.0, "origin": [0, 0]}
+  ],
+  "fractionalFeaturePresentInInstalledSchemaDescription": "x11-randr-fractional-scaling",
+  "featureDescriptionSaysRestartRequired": false,
+  "featureEnabledOrTested": false,
+  "conclusion": "The current disabled-feature configuration advertises only integer global scaling. It cannot supply the pending native125/150% or mixed-DPI proof as-is. The installed schema advertises an XRandR fractional experimental feature; its effective supported scales/layout constraints must be re-queried after an explicitly scheduled reversible trial, not inferred from schema presence.",
+  "g210Complete": false,
+  "inputSent": false,
+  "hostSettingsChanged": false
+}

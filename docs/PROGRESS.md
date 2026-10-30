@@ -927,3 +927,9 @@ Script cần AT-SPI, Python GI, GTK3 và libXtst. Chỉ gửi phím khi kiểm t
 - [Bằng chứng bổ sung](benchmarks/orca-speech-2026-10-30/result.json):61 speech events,295819 sample khác0 và đọc tên fixture; vẫn fail Home/End context navigation. Debug WebKitGTK script bật caret navigation dù preferences yêu cầu false; do đó chưa chứng minh đã thực sự tắt chế độ đó. Khảo sát source Orca49.4 thấy activate dùng field default=True sau load app settings, không sửa hệ thống hoặc kết luận lỗi upstream.
 - Reader còn sống ngay trước cleanup; process exit−11 và segfault log sau cleanup vẫn giữ trong báo cáo, không xác nhận reader ổn định. Default audio/profile bytes giữ nguyên,0 live speech helper/owned null sink. Runner thêm tên cấu hình yêu cầu và diagnostics trạng thái caret/reader; Python compile/diff check qua, diagnostics cuối chưa chạy GUI thêm. Không rebuild/unit sản phẩm vì không đổi code sản phẩm.
 - G5.9 và G2.10 vẫn mở, tổng97/99; release no-go. Đã kết thúc chiếm dụng desktop. Cần tiếp tục đường focus/browse mode hiệu lực và semantic popup, thay vì bỏ assertion hoặc coi preferences yêu cầu là trạng thái đã áp dụng.
+
+
+## G2.10 — Khả năng scale do Mutter công bố (30/10/2026)
+
+- [Khảo sát chỉ đọc](benchmarks/dpi-capabilities-2026-10-30/result.json): GNOME X11 renderer=xrandr, layout-mode2, global-scale-required=true; HDMI1920×1080@60 và eDP1920×1080@144 chỉ supported-scales1/2, hiện cùng scale1 và experimental-features=[]. Không đổi GSettings/topology/input.
+- Schema hiện có `x11-randr-fractional-scaling`, mô tả không cần compositor restart. Chưa bật hoặc kiểm feature nên không gọi là hỗ trợ fractional/mixed DPI. Lượt tiếp theo cần backup features/layout, thử tạm trong desktop window đã sắp lịch và đọc lại capabilities trước khi apply125/150%/mixed; phải khôi phục sau kiểm. G2.10 vẫn mở, tổng97/99.

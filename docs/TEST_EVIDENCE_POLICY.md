@@ -65,3 +65,6 @@ Tài liệu này ghi quyết định kỹ thuật theo yêu cầu người dùng
 
 
 - Orca navigation preferences: giữ tùy chọn opt-in để tái lập cấu hình yêu cầu và ghi riêng caret-enabled đã quan sát; không thay assertions shared keyboard. JSON giữ failure mới, waveform counts, exit−11/cleanup và giới hạn preferences không có hiệu lực; không lưu raw speech/debug. Không tính lượt này thành kiểm focus mode thành công; diagnostics bổ sung sau run chỉ compile, không tuyên bố đã chạy GUI phiên bản đó.
+
+
+- Mutter scale capabilities: chỉ lưu JSON đã bỏ serial/EDID và mô tả GetCurrentState/GSettings; không thêm harness/unit test cho một capability snapshot. Ghi riêng feature có trong schema với feature thực sự bật/chạy đạt; không dùng survey integer-global hiện tại để chốt fractional/mixed DPI.

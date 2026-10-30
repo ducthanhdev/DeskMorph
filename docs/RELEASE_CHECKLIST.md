@@ -16,7 +16,7 @@ trước khi tạo release candidate mới.
 | Physical HDMI hotplug / fallback | Pass trên GNOME X11 tham chiếu | [Physical hotplug](benchmarks/physical-hotplug-2026-10-30/result.json), G2.11; output được bật lại bằng saved XRandR layout sau reconnect |
 | Scheduler qua sleep thật | Pass trên GNOME X11 tham chiếu | [Suspend 138,922s](benchmarks/scheduler-suspend-2026-10-30/result.json), G6.7; operator đánh thức và mở khóa |
 | Lifecycle dài | Pass trong phạm vi tham chiếu | [Soak122 vòng/1808,461s, Quit/survivors](benchmarks/popup-soak-2026-10-30/result.json), kết hợp restart/suspend/hotplug ghi trong PROGRESS; không chứng nhận zero leaks/uptime vô hạn |
-| DPI | Chưa đạt | G2.10 còn fractional/mixed DPI và origin âm native |
+| DPI | Chưa đạt | G2.10 còn fractional/mixed DPI và negative topology dưới GNOME WM; origin âm có16 ca native allocation trong Xvfb riêng, chưa kiểm pixel/WM |
 | Cài account/máy sạch, autostart login, migration tiền nhiệm | Pass trong isolated lab | dpkg root + HOME mới + GUI packaged + autostart G1.13 + predecessor khác payload; không chứng nhận apt trên máy vật lý khác |
 | Ký artifact / publish | Không thực hiện | Quyết định no-go; không upload hoặc công bố |
 
