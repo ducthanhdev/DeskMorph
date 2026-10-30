@@ -1,0 +1,710 @@
+{
+  "passed": true,
+  "binarySha256": "1c2a54f8e3fd3e5dca7ece576d6301f714853ee996f352b6340a3a1b37b77f4b",
+  "runs": [
+    {
+      "passed": true,
+      "scale": 1,
+      "position": "top",
+      "cases": [
+        {
+          "source": "Tìm ứng dụng",
+          "dock": {
+            "xid": "0x600018",
+            "rect": [
+              -1109,
+              16,
+              298,
+              52
+            ]
+          },
+          "sourceLogicalRect": [
+            -1090,
+            25,
+            34,
+            34
+          ],
+          "sourcePhysicalCenter": -1073.0,
+          "popup": {
+            "xid": "0x6001f7",
+            "rect": [
+              -1323,
+              82,
+              500,
+              580
+            ]
+          },
+          "gap": 14
+        },
+        {
+          "source": "Âm thanh",
+          "dock": {
+            "xid": "0x600018",
+            "rect": [
+              -1109,
+              16,
+              298,
+              52
+            ]
+          },
+          "sourceLogicalRect": [
+            -1005,
+            27,
+            42,
+            30
+          ],
+          "sourcePhysicalCenter": -984.0,
+          "popup": {
+            "xid": "0x6001f7",
+            "rect": [
+              -1164,
+              82,
+              360,
+              540
+            ]
+          },
+          "gap": 14
+        },
+        {
+          "source": "Tiện ích hệ thống",
+          "dock": {
+            "xid": "0x600018",
+            "rect": [
+              -1109,
+              16,
+              298,
+              52
+            ]
+          },
+          "sourceLogicalRect": [
+            -951,
+            27,
+            30,
+            30
+          ],
+          "sourcePhysicalCenter": -936.0,
+          "popup": {
+            "xid": "0x6001f7",
+            "rect": [
+              -1126,
+              82,
+              380,
+              620
+            ]
+          },
+          "gap": 14
+        },
+        {
+          "source": "Mở lịch",
+          "dock": {
+            "xid": "0x600018",
+            "rect": [
+              -1109,
+              16,
+              298,
+              52
+            ]
+          },
+          "sourceLogicalRect": [
+            -909,
+            25,
+            79,
+            34
+          ],
+          "sourcePhysicalCenter": -869.5,
+          "popup": {
+            "xid": "0x6002d9",
+            "rect": [
+              -1029,
+              82,
+              320,
+              340
+            ]
+          },
+          "gap": 14
+        }
+      ],
+      "monitors": [
+        {
+          "name": "left",
+          "scale": 1,
+          "physicalWorkarea": [
+            -1920,
+            0,
+            1920,
+            1080
+          ]
+        },
+        {
+          "name": "right",
+          "scale": 1,
+          "physicalWorkarea": [
+            0,
+            0,
+            1920,
+            1080
+          ]
+        },
+        {
+          "name": "screen",
+          "scale": 1,
+          "physicalWorkarea": [
+            0,
+            0,
+            3840,
+            1080
+          ]
+        }
+      ],
+      "pid": 1416238,
+      "dock": {
+        "xid": "0x600018",
+        "rect": [
+          -1109,
+          16,
+          298,
+          52
+        ]
+      },
+      "configUnchanged": true,
+      "appExitCode": -15
+    },
+    {
+      "passed": true,
+      "scale": 1,
+      "position": "bottom",
+      "cases": [
+        {
+          "source": "Tìm ứng dụng",
+          "dock": {
+            "xid": "0x600018",
+            "rect": [
+              -1109,
+              1012,
+              298,
+              52
+            ]
+          },
+          "sourceLogicalRect": [
+            -1090,
+            1021,
+            34,
+            34
+          ],
+          "sourcePhysicalCenter": -1073.0,
+          "popup": {
+            "xid": "0x60027f",
+            "rect": [
+              -1323,
+              418,
+              500,
+              580
+            ]
+          },
+          "gap": 14
+        },
+        {
+          "source": "Âm thanh",
+          "dock": {
+            "xid": "0x600018",
+            "rect": [
+              -1109,
+              1012,
+              298,
+              52
+            ]
+          },
+          "sourceLogicalRect": [
+            -1005,
+            1023,
+            42,
+            30
+          ],
+          "sourcePhysicalCenter": -984.0,
+          "popup": {
+            "xid": "0x60027f",
+            "rect": [
+              -1164,
+              458,
+              360,
+              540
+            ]
+          },
+          "gap": 14
+        },
+        {
+          "source": "Tiện ích hệ thống",
+          "dock": {
+            "xid": "0x600018",
+            "rect": [
+              -1109,
+              1012,
+              298,
+              52
+            ]
+          },
+          "sourceLogicalRect": [
+            -951,
+            1023,
+            30,
+            30
+          ],
+          "sourcePhysicalCenter": -936.0,
+          "popup": {
+            "xid": "0x60027f",
+            "rect": [
+              -1126,
+              378,
+              380,
+              620
+            ]
+          },
+          "gap": 14
+        },
+        {
+          "source": "Mở lịch",
+          "dock": {
+            "xid": "0x600018",
+            "rect": [
+              -1109,
+              1012,
+              298,
+              52
+            ]
+          },
+          "sourceLogicalRect": [
+            -909,
+            1021,
+            79,
+            34
+          ],
+          "sourcePhysicalCenter": -869.5,
+          "popup": {
+            "xid": "0x6002d5",
+            "rect": [
+              -1029,
+              658,
+              320,
+              340
+            ]
+          },
+          "gap": 14
+        }
+      ],
+      "monitors": [
+        {
+          "name": "left",
+          "scale": 1,
+          "physicalWorkarea": [
+            -1920,
+            0,
+            1920,
+            1080
+          ]
+        },
+        {
+          "name": "right",
+          "scale": 1,
+          "physicalWorkarea": [
+            0,
+            0,
+            1920,
+            1080
+          ]
+        },
+        {
+          "name": "screen",
+          "scale": 1,
+          "physicalWorkarea": [
+            0,
+            0,
+            3840,
+            1080
+          ]
+        }
+      ],
+      "pid": 1417385,
+      "dock": {
+        "xid": "0x600018",
+        "rect": [
+          -1109,
+          1012,
+          298,
+          52
+        ]
+      },
+      "configUnchanged": true,
+      "appExitCode": -15
+    },
+    {
+      "passed": true,
+      "scale": 2,
+      "position": "top",
+      "cases": [
+        {
+          "source": "Tìm ứng dụng",
+          "dock": {
+            "xid": "0x600018",
+            "rect": [
+              -1258,
+              32,
+              596,
+              104
+            ]
+          },
+          "sourceLogicalRect": [
+            -610,
+            25,
+            34,
+            34
+          ],
+          "sourcePhysicalCenter": -1186.0,
+          "popup": {
+            "xid": "0x600285",
+            "rect": [
+              -1686,
+              20,
+              1000,
+              1040
+            ]
+          },
+          "gap": -116
+        },
+        {
+          "source": "Âm thanh",
+          "dock": {
+            "xid": "0x600018",
+            "rect": [
+              -1258,
+              32,
+              596,
+              104
+            ]
+          },
+          "sourceLogicalRect": [
+            -525,
+            27,
+            42,
+            30
+          ],
+          "sourcePhysicalCenter": -1008.0,
+          "popup": {
+            "xid": "0x600285",
+            "rect": [
+              -1368,
+              20,
+              720,
+              1040
+            ]
+          },
+          "gap": -116
+        },
+        {
+          "source": "Tiện ích hệ thống",
+          "dock": {
+            "xid": "0x600018",
+            "rect": [
+              -1258,
+              32,
+              596,
+              104
+            ]
+          },
+          "sourceLogicalRect": [
+            -471,
+            27,
+            30,
+            30
+          ],
+          "sourcePhysicalCenter": -912.0,
+          "popup": {
+            "xid": "0x600285",
+            "rect": [
+              -1292,
+              20,
+              760,
+              1040
+            ]
+          },
+          "gap": -116
+        },
+        {
+          "source": "Mở lịch",
+          "dock": {
+            "xid": "0x600018",
+            "rect": [
+              -1258,
+              32,
+              596,
+              104
+            ]
+          },
+          "sourceLogicalRect": [
+            -429,
+            25,
+            79,
+            34
+          ],
+          "sourcePhysicalCenter": -779.0,
+          "popup": {
+            "xid": "0x6002dc",
+            "rect": [
+              -1098,
+              164,
+              640,
+              680
+            ]
+          },
+          "gap": 28
+        }
+      ],
+      "monitors": [
+        {
+          "name": "left",
+          "scale": 2,
+          "physicalWorkarea": [
+            -1920,
+            0,
+            1920,
+            1080
+          ]
+        },
+        {
+          "name": "right",
+          "scale": 2,
+          "physicalWorkarea": [
+            0,
+            0,
+            1920,
+            1080
+          ]
+        },
+        {
+          "name": "screen",
+          "scale": 2,
+          "physicalWorkarea": [
+            0,
+            0,
+            3840,
+            1080
+          ]
+        }
+      ],
+      "pid": 1418558,
+      "dock": {
+        "xid": "0x600018",
+        "rect": [
+          -1258,
+          32,
+          596,
+          104
+        ]
+      },
+      "configUnchanged": true,
+      "appExitCode": -15
+    },
+    {
+      "passed": true,
+      "scale": 2,
+      "position": "bottom",
+      "cases": [
+        {
+          "source": "Tìm ứng dụng",
+          "dock": {
+            "xid": "0x600018",
+            "rect": [
+              -1258,
+              944,
+              596,
+              104
+            ]
+          },
+          "sourceLogicalRect": [
+            -610,
+            481,
+            34,
+            34
+          ],
+          "sourcePhysicalCenter": -1186.0,
+          "popup": {
+            "xid": "0x600282",
+            "rect": [
+              -1686,
+              20,
+              1000,
+              1040
+            ]
+          },
+          "gap": -116
+        },
+        {
+          "source": "Âm thanh",
+          "dock": {
+            "xid": "0x600018",
+            "rect": [
+              -1258,
+              944,
+              596,
+              104
+            ]
+          },
+          "sourceLogicalRect": [
+            -525,
+            483,
+            42,
+            30
+          ],
+          "sourcePhysicalCenter": -1008.0,
+          "popup": {
+            "xid": "0x600282",
+            "rect": [
+              -1368,
+              20,
+              720,
+              1040
+            ]
+          },
+          "gap": -116
+        },
+        {
+          "source": "Tiện ích hệ thống",
+          "dock": {
+            "xid": "0x600018",
+            "rect": [
+              -1258,
+              944,
+              596,
+              104
+            ]
+          },
+          "sourceLogicalRect": [
+            -471,
+            483,
+            30,
+            30
+          ],
+          "sourcePhysicalCenter": -912.0,
+          "popup": {
+            "xid": "0x600282",
+            "rect": [
+              -1292,
+              20,
+              760,
+              1040
+            ]
+          },
+          "gap": -116
+        },
+        {
+          "source": "Mở lịch",
+          "dock": {
+            "xid": "0x600018",
+            "rect": [
+              -1258,
+              944,
+              596,
+              104
+            ]
+          },
+          "sourceLogicalRect": [
+            -429,
+            481,
+            79,
+            34
+          ],
+          "sourcePhysicalCenter": -779.0,
+          "popup": {
+            "xid": "0x6002d9",
+            "rect": [
+              -1098,
+              236,
+              640,
+              680
+            ]
+          },
+          "gap": 28
+        }
+      ],
+      "monitors": [
+        {
+          "name": "left",
+          "scale": 2,
+          "physicalWorkarea": [
+            -1920,
+            0,
+            1920,
+            1080
+          ]
+        },
+        {
+          "name": "right",
+          "scale": 2,
+          "physicalWorkarea": [
+            0,
+            0,
+            1920,
+            1080
+          ]
+        },
+        {
+          "name": "screen",
+          "scale": 2,
+          "physicalWorkarea": [
+            0,
+            0,
+            3840,
+            1080
+          ]
+        }
+      ],
+      "pid": 1419715,
+      "dock": {
+        "xid": "0x600018",
+        "rect": [
+          -1258,
+          944,
+          596,
+          104
+        ]
+      },
+      "configUnchanged": true,
+      "appExitCode": -15
+    }
+  ],
+  "scope": "Native allocation/AT-SPI activation on virtual negative-origin RandR monitors, top/bottom at GTK integer scales 1/2",
+  "limits": [
+    "No window manager; negative monitor lies outside Xvfb drawable root",
+    "AT-SPI opens sources; XTest Escape dismisses on the owned display only",
+    "Does not prove visible pixels, host input, physical topology, fractional scaling or mixed DPI"
+  ],
+  "date": "2026-10-30",
+  "command": "python3 tests/negative_origin_smoke.py",
+  "nativeCases": 16,
+  "cleanup": {
+    "liveLabProcessesAfterRun": [],
+    "hostDisplayInput": false,
+    "hostTopologyChanged": false
+  },
+  "priorHarnessDiagnostics": [
+    {
+      "kind": "source-toggle-does-not-dismiss-launcher",
+      "passed": false,
+      "resolution": "Use Escape on owned X server after verifying popup PID/XID"
+    },
+    {
+      "kind": "atspi-scale-unit-mismatch",
+      "passed": false,
+      "resolution": "Convert GDK logical accessibility extents to physical pixels at integer scale2"
+    },
+    {
+      "kind": "initial-allocation-snapshot",
+      "passed": false,
+      "resolution": "Wait for Dock content and 20 stable samples; measure Dock again before each popup"
+    },
+    {
+      "kind": "initial-document-replaced",
+      "passed": false,
+      "resolution": "Retry transient GLib accessible error only during content-ready polling"
+    }
+  ]
+}
