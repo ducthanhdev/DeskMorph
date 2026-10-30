@@ -85,3 +85,10 @@ Tài liệu này ghi quyết định kỹ thuật theo yêu cầu người dùng
 
 
 - Mutter restore preflight: giữ probe opt-in và6 fault tests vì host settings/topology restoration cần kiểm failure paths, user-value unset/explicit và read-only invariant. Giữ JSON method0 reject/pass cùng normalized topology không EDID/serial; backup/user-value/raw state ở/tmp. Method0 chỉ VERIFY, không gọi là monitor apply hoặc fractional acceptance. Method1 fallback mới chuẩn bị/chưa chạy; không dùng unit mocks để chứng nhận host restore. Không bật feature khi chưa có desktop availability mới.
+
+
+## G2.10 — Fractional feature: khả năng có, trial chưa đạt (30/10/2026)
+
+[Trial trên Mutter thật](benchmarks/dpi-feature-trial-2026-10-30/result.json) công bố scale1,25/1,5 sau khi bật tạm `x11-randr-fractional-scaling`, nhưng đổi primary từ eDP sang HDMI và refresh eDP144Hz thành60Hz. Guard phát hiện topology khác, dừng ca; `passed:false` được giữ nguyên. Không apply scale fractional hoặc tính đây là acceptance ứng dụng.
+
+Cleanup đã phục hồi đúng features/user value, topology, primary, mode/refresh và capabilities ban đầu; fallback ApplyMonitorsConfig method1 TEMPORARY thực sự được dùng, không persistent method2. Không gửi input. Bằng chứng JSON cần giữ vì ghi cả failure và khôi phục thật; không thêm test trùng hoặc raw log. G2.10/G5.9 tiếp tục mở,97/99; release no-go.

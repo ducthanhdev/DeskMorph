@@ -979,3 +979,10 @@ Script cần AT-SPI, Python GI, GTK3 và libXtst. Chỉ gửi phím khi kiểm t
 - [Bằng chứng](benchmarks/dpi-restore-preflight-2026-10-30/result.json): gọi ApplyMonitorsConfig method0/VERIFY trên baseline thật. Lượt đầu từ chối layout-mode property; sau khi gửi thuộc tính chỉ khi supports-changing-layout-mode, server xác nhận payload hợp lệ. Chưa apply bố trí hoặc bật feature; topology, capabilities, features và user-value state giữ nguyên.
 -6 fault-injection tests qua: unset/explicit user values, settings/display restore exception không mất report, read-only external drift, payload layout-mode/persistent method guard và empty/disabled output handling. Python compile/diff check qua. Đây là test cần thiết cho helper có thể đổi cài đặt host, không phải fake DPI acceptance; không rebuild/unit sản phẩm vì không đổi sản phẩm.
 - Đã hỏi desktop rảnh3phút để bật tạm fractional feature rồi khôi phục; chưa có xác nhận mới nên chưa chạy nhánh mutation. Feature trial/method1 fallback/fractional/mixed DPI/native negative topology dưới host WM vẫn chưa có acceptance. Tổng97/99, G2.10/G5.9 mở, release no-go.
+
+
+## G2.10 — Fractional feature: khả năng có, trial chưa đạt (30/10/2026)
+
+[Trial trên Mutter thật](benchmarks/dpi-feature-trial-2026-10-30/result.json) công bố scale1,25/1,5 sau khi bật tạm `x11-randr-fractional-scaling`, nhưng đổi primary từ eDP sang HDMI và refresh eDP144Hz thành60Hz. Guard phát hiện topology khác, dừng ca; `passed:false` được giữ nguyên. Không apply scale fractional hoặc tính đây là acceptance ứng dụng.
+
+Cleanup đã phục hồi đúng features/user value, topology, primary, mode/refresh và capabilities ban đầu; fallback ApplyMonitorsConfig method1 TEMPORARY thực sự được dùng, không persistent method2. Không gửi input. Bằng chứng JSON cần giữ vì ghi cả failure và khôi phục thật; không thêm test trùng hoặc raw log. G2.10/G5.9 tiếp tục mở,97/99; release no-go.
