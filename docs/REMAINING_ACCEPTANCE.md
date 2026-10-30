@@ -12,7 +12,7 @@ hoặc chứng nhận WCAG/Orca toàn diện vào kế hoạch.
 |125%,150%,mixed DPI, bốn popup/hai monitor | [48/48](benchmarks/dpi-native-full-matrix-2026-10-30/result.json) | Đạt native allocation; không chứng nhận độ sắc nét hoặc click mapping |
 |200% | Integer trial10 pass; [system mới12/12](benchmarks/system-output200-regression-2026-10-30/result.json) trên hai monitor/top-bottom/3repeats | Còn HDMI/top/calendar và HDMI/bottom/launcher,audio,calendar; failure system cũ chưa tái hiện, chưa xác định root cause |
 | Đổi độ phân giải | [1680×1050 và restore](benchmarks/geometry-multimonitor-2026-10-30/result.json) | Đạt; không cần lặp vì chưa có thay đổi sản phẩm mới |
-| Monitor bên trái có tọa độ âm | [16 allocations trong Xvfb](benchmarks/negative-origin-2026-10-30/result.json); Mutter/NVIDIA chuẩn hóa bố trí host về x=0 | Chưa chứng minh topology âm drawable dưới WM; không nâng synthetic monitor ngoài root thành màn hình thật |
+| Monitor bên trái có tọa độ âm | [16 allocations trong Xvfb](benchmarks/negative-origin-2026-10-30/result.json); [Mutter VERIFY](benchmarks/negative-origin-mutter-verify-2026-10-30/result.json) chấp nhận baseline nhưng từ chối x=−1920 với InvalidArgs; topology/settings không đổi | Chưa chứng minh topology âm drawable dưới WM; không nâng synthetic monitor ngoài root thành màn hình thật |
 | Khôi phục sau kiểm |48-ca restore exact; integer trial cần recovery bổ sung, sau đó baseline giữ nguyên | Guard cooldown/bounded retry qua14 fault/guard tests; [system200% host12/12](benchmarks/system-output200-regression-2026-10-30/result.json) restore exact, không cần reapply |
 
 [4 ca system trên GNOME riêng](benchmarks/system-geometry-private-wm-2026-10-30/result.json)
@@ -36,3 +36,5 @@ G5.9 đã chốt bằng tổ hợp bằng chứng trong bảng và [chooser4/4](
 Chỉ G2.10 còn mở: bốn tổ hợp HDMI200% ngoài system và topology âm drawable hợp lệ dưới WM. Không dùng các diagnostic chooser thất bại để suy lỗi sản phẩm hoặc làm bằng chứng đạt.
 
 Runner đã chuẩn bị chọn đúng bốn ca: `--run --layouts 200 --only-case HDMI-0/top/calendar HDMI-0/bottom/launcher HDMI-0/bottom/audio HDMI-0/bottom/calendar`. 11 fault/orchestration tests đạt; chưa chạy host khi chưa có khoảng desktop rảnh mới.
+
+Giới hạn môi trường cho origin âm đã xác minh bằng method0; không chỉ là thiếu test. Cần native WM/display backend chấp nhận topology âm drawable để hoàn thành yêu cầu gốc; không đổi yêu cầu thành allocation synthetic. Phép VERIFY không cần chiếm desktop và không được tính là ca DPI đạt.

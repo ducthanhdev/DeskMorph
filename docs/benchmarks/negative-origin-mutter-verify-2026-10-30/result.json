@@ -1,0 +1,220 @@
+{
+  "date": "2026-10-30T15:38:45.994757+00:00",
+  "acceptancePassed": false,
+  "scope": "Read-only Mutter method0 VERIFY of translated negative-origin layout; no application/input or output mutation",
+  "methodsUsed": [
+    0,
+    0
+  ],
+  "before": {
+    "configSerial": 195,
+    "monitors": [
+      {
+        "connector": "HDMI-0",
+        "configProperties": {},
+        "currentModes": [
+          {
+            "id": "1920x1080@60.000",
+            "width": 1920,
+            "height": 1080,
+            "refresh": 60.0,
+            "preferredScale": 1.0,
+            "supportedScales": [
+              1.0,
+              2.0
+            ]
+          }
+        ]
+      },
+      {
+        "connector": "eDP-1-1",
+        "configProperties": {},
+        "currentModes": [
+          {
+            "id": "1920x1080@144.003",
+            "width": 1920,
+            "height": 1080,
+            "refresh": 144.0028076171875,
+            "preferredScale": 1.0,
+            "supportedScales": [
+              1.0,
+              2.0
+            ]
+          }
+        ]
+      }
+    ],
+    "logicalMonitors": [
+      {
+        "x": 1920,
+        "y": 0,
+        "scale": 1.0,
+        "transform": 0,
+        "primary": false,
+        "connectors": [
+          "HDMI-0"
+        ]
+      },
+      {
+        "x": 0,
+        "y": 0,
+        "scale": 1.0,
+        "transform": 0,
+        "primary": true,
+        "connectors": [
+          "eDP-1-1"
+        ]
+      }
+    ],
+    "properties": {
+      "renderer": "xrandr",
+      "layout-mode": 2,
+      "global-scale-required": true,
+      "legacy-ui-scaling-factor": 1
+    }
+  },
+  "originalUserValue": "@as []",
+  "baselineVerified": true,
+  "requested": {
+    "configSerial": 195,
+    "monitors": [
+      {
+        "connector": "HDMI-0",
+        "configProperties": {},
+        "currentModes": [
+          {
+            "id": "1920x1080@60.000",
+            "width": 1920,
+            "height": 1080,
+            "refresh": 60.0,
+            "preferredScale": 1.0,
+            "supportedScales": [
+              1.0,
+              2.0
+            ]
+          }
+        ]
+      },
+      {
+        "connector": "eDP-1-1",
+        "configProperties": {},
+        "currentModes": [
+          {
+            "id": "1920x1080@144.003",
+            "width": 1920,
+            "height": 1080,
+            "refresh": 144.0028076171875,
+            "preferredScale": 1.0,
+            "supportedScales": [
+              1.0,
+              2.0
+            ]
+          }
+        ]
+      }
+    ],
+    "logicalMonitors": [
+      {
+        "x": 0,
+        "y": 0,
+        "scale": 1.0,
+        "transform": 0,
+        "primary": false,
+        "connectors": [
+          "HDMI-0"
+        ]
+      },
+      {
+        "x": -1920,
+        "y": 0,
+        "scale": 1.0,
+        "transform": 0,
+        "primary": true,
+        "connectors": [
+          "eDP-1-1"
+        ]
+      }
+    ],
+    "properties": {
+      "renderer": "xrandr",
+      "layout-mode": 2,
+      "global-scale-required": true,
+      "legacy-ui-scaling-factor": 1
+    }
+  },
+  "negativeVerified": false,
+  "negativeVerifyError": "g-dbus-error-quark: GDBus.Error:org.freedesktop.DBus.Error.InvalidArgs: Invalid logical monitor position (-1920, 0) (16)",
+  "after": {
+    "configSerial": 195,
+    "monitors": [
+      {
+        "connector": "HDMI-0",
+        "configProperties": {},
+        "currentModes": [
+          {
+            "id": "1920x1080@60.000",
+            "width": 1920,
+            "height": 1080,
+            "refresh": 60.0,
+            "preferredScale": 1.0,
+            "supportedScales": [
+              1.0,
+              2.0
+            ]
+          }
+        ]
+      },
+      {
+        "connector": "eDP-1-1",
+        "configProperties": {},
+        "currentModes": [
+          {
+            "id": "1920x1080@144.003",
+            "width": 1920,
+            "height": 1080,
+            "refresh": 144.0028076171875,
+            "preferredScale": 1.0,
+            "supportedScales": [
+              1.0,
+              2.0
+            ]
+          }
+        ]
+      }
+    ],
+    "logicalMonitors": [
+      {
+        "x": 1920,
+        "y": 0,
+        "scale": 1.0,
+        "transform": 0,
+        "primary": false,
+        "connectors": [
+          "HDMI-0"
+        ]
+      },
+      {
+        "x": 0,
+        "y": 0,
+        "scale": 1.0,
+        "transform": 0,
+        "primary": true,
+        "connectors": [
+          "eDP-1-1"
+        ]
+      }
+    ],
+    "properties": {
+      "renderer": "xrandr",
+      "layout-mode": 2,
+      "global-scale-required": true,
+      "legacy-ui-scaling-factor": 1
+    }
+  },
+  "topologyUnchanged": true,
+  "capabilitiesUnchanged": true,
+  "userValueUnchanged": true,
+  "featureMutationAttempted": false,
+  "topologyMutationAttempted": false,
+  "inputSent": false
+}

@@ -1116,3 +1116,10 @@ Runner native hỗ trợ `--only-case MONITOR/POSITION/SOURCE`: lọc chính xá
 11 orchestration/fault tests qua: chọn đúng4worker, topology/capability restore, sai cú pháp chặn trước bus và monitor không tồn tại không đổi settings. Test success fixture mô phỏng compositor rút capability sau restore feature; lượt đầu thiếu mô phỏng này bị báo capability restore false và không được tính pass. Python compile/CLI help/diff check qua. Giữ các test vì bảo vệ thao tác cấu hình màn hình thật và kiểm phạm vi worker được yêu cầu; không kiểm geometry bằng bản sao công thức sản phẩm.
 
 Chưa chạy4ca host: khoảng desktop rảnh trước đã kết thúc; đã hỏi khoảng2phút mới và đang chờ trả lời. Không suy test orchestration thành acceptance DPI. G2.10 vẫn mở,98/99, release no-go. Bằng chứng negative-origin hiện vẫn chỉ là native allocation ngoài drawable root; yêu cầu âm hợp lệ dưới WM chưa đạt, không đổi tiêu chí để đóng checkbox.
+
+
+## G2.10 — Xác minh ràng buộc origin âm bằng Mutter VERIFY (30/10/2026)
+
+[Bằng chứng mới](benchmarks/negative-origin-mutter-verify-2026-10-30/result.json): baseline VERIFY đạt; cùng topology/modes/refresh/primary/scale, chỉ dịch cả hai logical monitors1920px sang trái, bị compositor từ chối `org.freedesktop.DBus.Error.InvalidArgs: Invalid logical monitor position (-1920, 0)`. Chỉ method0 hai lần, không feature/topology mutation hoặc input; topology, capabilities, user value readback không đổi. Không dùng failure này để quy lỗi placement sản phẩm hoặc tính acceptance âm đạt.
+
+Sửa GEOMETRY.md để cập nhật các đoạn feature/mixed-DPI chưa-chạy đã cũ bằng48ca host và12ca system200% hiện có. Không thêm test source cho probe một lần: dùng lại API snapshot/apply/VERIFY có sẵn, chỉ giữ JSON bằng chứng và kết luận môi trường. Yêu cầu gốc origin âm drawable dưới WM vẫn cần môi trường cho phép; không nâng synthetic allocation hoặc origin tương đối primary thành native proof. Bốn ca HDMI200% vẫn chưa chạy vì chưa có trả lời cho khoảng desktop rảnh mới. G2.10 mở,98/99; release no-go.
