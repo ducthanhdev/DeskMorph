@@ -2,7 +2,7 @@
 
 Mục tiêu giữ nguyên toàn bộ 99 đầu việc trong IMPLEMENTATION_PLAN.md. Chưa đạt cổng hoàn thành toàn dự án. Checkbox chưa đánh dấu không đồng nghĩa chưa có code: nhiều mục đang chờ kiểm thử đủ phạm vi.
 
-Hiện đã đánh dấu **98/99 mục (~99%)**. Mục còn mở: G2.10 (DPI/tọa độ âm). G5.9 đã chốt trong phạm vi GNOME X11 tham chiếu bằng kiểm toán và bằng chứng bổ sung cuối tài liệu. G9.8 đã chốt bằng soak native122 vòng/1808,461s, Quit/survivors và tổ hợp bằng chứng restart/suspend/HDMI thật. G2.11 đã chốt bằng rút/cắm HDMI vật lý; G6.7 đã chốt bằng scheduler qua system suspend thật138,922s. Chi tiết/phạm vi nằm trong các bản ghi cuối tài liệu. Quyết định phát hành vẫn là **không phát hành** theo RELEASE_CHECKLIST.md.
+Hiện đã đánh dấu **98/99 mục (~99%)**. Mục còn mở: G2.10 (topology tọa độ âm hợp lệ dưới WM; ma trận scale đã đủ bằng chứng). G5.9 đã chốt trong phạm vi GNOME X11 tham chiếu bằng kiểm toán và bằng chứng bổ sung cuối tài liệu. G9.8 đã chốt bằng soak native122 vòng/1808,461s, Quit/survivors và tổ hợp bằng chứng restart/suspend/HDMI thật. G2.11 đã chốt bằng rút/cắm HDMI vật lý; G6.7 đã chốt bằng scheduler qua system suspend thật138,922s. Chi tiết/phạm vi nằm trong các bản ghi cuối tài liệu. Quyết định phát hành vẫn là **không phát hành** theo RELEASE_CHECKLIST.md.
 
 ## Môi trường tham chiếu đã xác minh
 
@@ -1125,3 +1125,12 @@ Chưa chạy4ca host: khoảng desktop rảnh trước đã kết thúc; đã h�
 Sửa GEOMETRY.md để cập nhật các đoạn feature/mixed-DPI chưa-chạy đã cũ bằng48ca host và12ca system200% hiện có. Không thêm test source cho probe một lần: dùng lại API snapshot/apply/VERIFY có sẵn, chỉ giữ JSON bằng chứng và kết luận môi trường. Yêu cầu gốc origin âm drawable dưới WM vẫn cần môi trường cho phép; không nâng synthetic allocation hoặc origin tương đối primary thành native proof. Bốn ca HDMI200% vẫn chưa chạy vì chưa có trả lời cho khoảng desktop rảnh mới. G2.10 mở,98/99; release no-go.
 
 Kiểm toán tính nhất quán tài liệu: bỏ ba mô tả cũ trong IMPLEMENTATION_PLAN.md còn ghi G9.4/G9.11/spike Wayland chưa xong dù đã có bằng chứng chốt; sửa summary mixed DPI đầu PROGRESS thành baseline lịch sử và liên kết48ca thực. Không đổi checklist hoặc phạm vi acceptance, không thêm test cho sửa văn bản.
+
+
+## G2.10 — Bốn ca HDMI200% còn thiếu đạt4/4 trên host (30/10/2026)
+
+[Bằng chứng](benchmarks/dpi-output200-remaining-2026-10-30/result.json): binary1172029a… đạtHDMI/top/calendar vàHDMI/bottom/launcher,audio,calendar ởoutput200%/200%. Chỉ chạy bốn worker được chỉ định sau khi người dùng xác nhận khoảng desktop rảnh2phút mới; không lặp48ca fractional/mixed hoặc12ca system. Native allocation/anchor/clamp, Dock ổn định trước và sau activation đều qua; không keyboard/mouse input hoặc chứng nhận sharpness/sequence.
+
+Readback finally: topology/primary/origins/modes/refresh, feature user value và capabilities khớp baseline; restoreErrors rỗng, restoreApplyAttempts0. Audit0 owned helper sống, đã trả desktop ngay sau verifyrestore. Trên cùng binary, union10ca integer200% đạt trước +4tổ hợp system đạt trong12repeats +4ca mới phủ đủ16/16 tổ hợp monitor×position×source. JSON mới ghi mapping bằng chứng từng tổ hợp; không biến trial integer cũ passed:false thành pass hoặc gọi union là một lần chạy16ca.
+
+Cập nhật GEOMETRY/REMAINING_ACCEPTANCE/RELEASE_CHECKLIST: G2.10 chỉ còn topology âm drawable dưới WM. Ràng buộc Mutter InvalidArgs đã có VERIFY baseline/candidate và readback không mutation; không chốt bằng synthetic allocation. Tổng98/99, release no-go. Không đổi code sản phẩm hoặc harness ở lượt này; không cần rebuild hay lặp unit suite đã qua. Chỉ giữ JSON bằng chứng và tài liệu đánh giá; không thêm file test hay commit raw worker logs/config/binary. Commit kết quả bằng tiếng Việt theo yêu cầu.

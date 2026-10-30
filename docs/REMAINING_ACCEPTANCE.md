@@ -10,7 +10,7 @@ hoặc chứng nhận WCAG/Orca toàn diện vào kế hoạch.
 | --- | --- | --- |
 | Dock trên/dưới,100% | [16/16 output-scale cases](benchmarks/dpi-output-integer-trial-2026-10-30/result.json) | Đạt trong GNOME X11 tham chiếu |
 |125%,150%,mixed DPI, bốn popup/hai monitor | [48/48](benchmarks/dpi-native-full-matrix-2026-10-30/result.json) | Đạt native allocation; không chứng nhận độ sắc nét hoặc click mapping |
-|200% | Integer trial10 pass; [system mới12/12](benchmarks/system-output200-regression-2026-10-30/result.json) trên hai monitor/top-bottom/3repeats | Còn HDMI/top/calendar và HDMI/bottom/launcher,audio,calendar; failure system cũ chưa tái hiện, chưa xác định root cause |
+|200% | Integer trial10 pass; [system12/12](benchmarks/system-output200-regression-2026-10-30/result.json); [bốn ca HDMI còn lại4/4](benchmarks/dpi-output200-remaining-2026-10-30/result.json) | Đủ16/16 tổ hợp duy nhất qua ba lượt trên cùng binary; không gọi là một lượt16/16. Failure system cũ giữ nguyên, chưa xác định root cause |
 | Đổi độ phân giải | [1680×1050 và restore](benchmarks/geometry-multimonitor-2026-10-30/result.json) | Đạt; không cần lặp vì chưa có thay đổi sản phẩm mới |
 | Monitor bên trái có tọa độ âm | [16 allocations trong Xvfb](benchmarks/negative-origin-2026-10-30/result.json); [Mutter VERIFY](benchmarks/negative-origin-mutter-verify-2026-10-30/result.json) chấp nhận baseline nhưng từ chối x=−1920 với InvalidArgs; topology/settings không đổi | Chưa chứng minh topology âm drawable dưới WM; không nâng synthetic monitor ngoài root thành màn hình thật |
 | Khôi phục sau kiểm |48-ca restore exact; integer trial cần recovery bổ sung, sau đó baseline giữ nguyên | Guard cooldown/bounded retry qua14 fault/guard tests; [system200% host12/12](benchmarks/system-output200-regression-2026-10-30/result.json) restore exact, không cần reapply |
@@ -33,8 +33,8 @@ popup không ổn định trên HDMI, vì lượt host đó không có trace dis
 
 G5.9 đã chốt bằng tổ hợp bằng chứng trong bảng và [chooser4/4](benchmarks/chooser-keyboard-private-2026-10-30/result.json). Chooser dùng thư mục cwd fixture/private GTK startup-mode=cwd; không chứng nhận mọi đường duyệt filesystem hoặc inline filename completion. Giữ giới hạn Orca bypass-navigation và phạm vi control/state của các báo cáo; không mở rộng thành chứng nhận WCAG hay mọi reader/theme.
 
-Chỉ G2.10 còn mở: bốn tổ hợp HDMI200% ngoài system và topology âm drawable hợp lệ dưới WM. Không dùng các diagnostic chooser thất bại để suy lỗi sản phẩm hoặc làm bằng chứng đạt.
+Chỉ G2.10 còn mở vì topology âm drawable hợp lệ dưới WM; bốn tổ hợp HDMI200% đã đạt. Không dùng các diagnostic chooser thất bại để suy lỗi sản phẩm hoặc làm bằng chứng đạt.
 
-Runner đã chuẩn bị chọn đúng bốn ca: `--run --layouts 200 --only-case HDMI-0/top/calendar HDMI-0/bottom/launcher HDMI-0/bottom/audio HDMI-0/bottom/calendar`. 11 fault/orchestration tests đạt; chưa chạy host khi chưa có khoảng desktop rảnh mới.
+Runner đã chuẩn bị chọn đúng bốn ca: `--run --layouts 200 --only-case HDMI-0/top/calendar HDMI-0/bottom/launcher HDMI-0/bottom/audio HDMI-0/bottom/calendar`. [Lượt host4/4](benchmarks/dpi-output200-remaining-2026-10-30/result.json) đã chạy sau xác nhận desktop rảnh mới; topology/primary/modes/refresh/user value/capabilities khôi phục đúng, restoreErrors rỗng,0 owned helper cuối lượt.
 
 Giới hạn môi trường cho origin âm đã xác minh bằng method0; không chỉ là thiếu test. Cần native WM/display backend chấp nhận topology âm drawable để hoàn thành yêu cầu gốc; không đổi yêu cầu thành allocation synthetic. Phép VERIFY không cần chiếm desktop và không được tính là ca DPI đạt.

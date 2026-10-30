@@ -1,0 +1,884 @@
+{
+  "passed": true,
+  "before": {
+    "configSerial": 195,
+    "monitors": [
+      {
+        "connector": "HDMI-0",
+        "configProperties": {},
+        "currentModes": [
+          {
+            "id": "1920x1080@60.000",
+            "width": 1920,
+            "height": 1080,
+            "refresh": 60.0,
+            "preferredScale": 1.0,
+            "supportedScales": [
+              1.0,
+              2.0
+            ]
+          }
+        ]
+      },
+      {
+        "connector": "eDP-1-1",
+        "configProperties": {},
+        "currentModes": [
+          {
+            "id": "1920x1080@144.003",
+            "width": 1920,
+            "height": 1080,
+            "refresh": 144.0028076171875,
+            "preferredScale": 1.0,
+            "supportedScales": [
+              1.0,
+              2.0
+            ]
+          }
+        ]
+      }
+    ],
+    "logicalMonitors": [
+      {
+        "x": 1920,
+        "y": 0,
+        "scale": 1.0,
+        "transform": 0,
+        "primary": false,
+        "connectors": [
+          "HDMI-0"
+        ]
+      },
+      {
+        "x": 0,
+        "y": 0,
+        "scale": 1.0,
+        "transform": 0,
+        "primary": true,
+        "connectors": [
+          "eDP-1-1"
+        ]
+      }
+    ],
+    "properties": {
+      "renderer": "xrandr",
+      "layout-mode": 2,
+      "global-scale-required": true,
+      "legacy-ui-scaling-factor": 1
+    }
+  },
+  "features": [],
+  "originalUserValue": "@as []",
+  "root": "/tmp/deskmorph-dpi-native-sl5qxhl8",
+  "binarySha256": "1172029a8dee0dde0b196e4956b2df150522bb1b058c4ed0cf829bc55e449ac9",
+  "cases": [
+    {
+      "layout": "200",
+      "requestedScales": [
+        2.0,
+        2.0
+      ],
+      "observed": {
+        "configSerial": 195,
+        "monitors": [
+          {
+            "connector": "HDMI-0",
+            "configProperties": {},
+            "currentModes": [
+              {
+                "id": "1920x1080@60.000",
+                "width": 1920,
+                "height": 1080,
+                "refresh": 60.0,
+                "preferredScale": 1.0,
+                "supportedScales": [
+                  1.0,
+                  1.25,
+                  1.5,
+                  1.7391303777694702,
+                  2.0,
+                  2.307692289352417
+                ]
+              }
+            ]
+          },
+          {
+            "connector": "eDP-1-1",
+            "configProperties": {},
+            "currentModes": [
+              {
+                "id": "1920x1080@144.003",
+                "width": 1920,
+                "height": 1080,
+                "refresh": 144.0028076171875,
+                "preferredScale": 1.0,
+                "supportedScales": [
+                  1.0,
+                  1.25,
+                  1.5,
+                  1.7391303777694702,
+                  2.0,
+                  2.307692289352417
+                ]
+              }
+            ]
+          }
+        ],
+        "logicalMonitors": [
+          {
+            "x": 1920,
+            "y": 0,
+            "scale": 2.0,
+            "transform": 0,
+            "primary": false,
+            "connectors": [
+              "HDMI-0"
+            ]
+          },
+          {
+            "x": 0,
+            "y": 0,
+            "scale": 2.0,
+            "transform": 0,
+            "primary": true,
+            "connectors": [
+              "eDP-1-1"
+            ]
+          }
+        ],
+        "properties": {
+          "renderer": "xrandr",
+          "layout-mode": 3,
+          "legacy-ui-scaling-factor": 2,
+          "supports-changing-layout-mode": true
+        }
+      },
+      "runs": [
+        {
+          "passed": true,
+          "monitor": "HDMI-0",
+          "position": "top",
+          "source": "calendar",
+          "observations": [
+            {
+              "source": "Mở lịch",
+              "popup": [
+                2910,
+                164,
+                640,
+                680
+              ],
+              "anchor": 3230.0,
+              "expectedOrigin": [
+                2910,
+                164
+              ]
+            }
+          ],
+          "gdkMonitors": [
+            {
+              "name": "eDP-1-1",
+              "gtkScale": 2,
+              "area": [
+                0,
+                64,
+                1920,
+                1016
+              ]
+            },
+            {
+              "name": "HDMI-0",
+              "gtkScale": 2,
+              "area": [
+                1920,
+                0,
+                1920,
+                1080
+              ]
+            }
+          ],
+          "pid": 3629832,
+          "settlingObservations": {
+            "DeskMorph Taskbar": [
+              {
+                "seconds": 0.185,
+                "rectangle": null
+              },
+              {
+                "seconds": 0.63,
+                "rectangle": [
+                  1952,
+                  32,
+                  1856,
+                  104
+                ]
+              },
+              {
+                "seconds": 1.026,
+                "rectangle": [
+                  2416,
+                  32,
+                  930,
+                  104
+                ]
+              }
+            ],
+            "DeskMorph Calendar": [
+              {
+                "seconds": 0.19,
+                "rectangle": null
+              },
+              {
+                "seconds": 0.522,
+                "rectangle": [
+                  2910,
+                  164,
+                  640,
+                  680
+                ]
+              }
+            ]
+          },
+          "dock": [
+            2416,
+            32,
+            930,
+            104
+          ],
+          "dockAfterActivation": [
+            2416,
+            32,
+            930,
+            104
+          ],
+          "configUnchanged": true,
+          "appExit": -15,
+          "repetition": 0
+        },
+        {
+          "passed": true,
+          "monitor": "HDMI-0",
+          "position": "bottom",
+          "source": "launcher",
+          "observations": [
+            {
+              "source": "Tìm ứng dụng",
+              "popup": [
+                1988,
+                20,
+                1000,
+                1040
+              ],
+              "anchor": 2488.0,
+              "expectedOrigin": [
+                1988,
+                20
+              ]
+            }
+          ],
+          "gdkMonitors": [
+            {
+              "name": "eDP-1-1",
+              "gtkScale": 2,
+              "area": [
+                0,
+                64,
+                1920,
+                1016
+              ]
+            },
+            {
+              "name": "HDMI-0",
+              "gtkScale": 2,
+              "area": [
+                1920,
+                0,
+                1920,
+                1080
+              ]
+            }
+          ],
+          "pid": 3630628,
+          "settlingObservations": {
+            "DeskMorph Taskbar": [
+              {
+                "seconds": 0.328,
+                "rectangle": null
+              },
+              {
+                "seconds": 1.648,
+                "rectangle": [
+                  1952,
+                  944,
+                  1856,
+                  104
+                ]
+              },
+              {
+                "seconds": 2.17,
+                "rectangle": [
+                  2416,
+                  944,
+                  930,
+                  104
+                ]
+              }
+            ],
+            "DeskMorph Context Menu": [
+              {
+                "seconds": 0.202,
+                "rectangle": null
+              },
+              {
+                "seconds": 0.536,
+                "rectangle": [
+                  1988,
+                  20,
+                  1000,
+                  1040
+                ]
+              }
+            ]
+          },
+          "dock": [
+            2416,
+            944,
+            930,
+            104
+          ],
+          "dockAfterActivation": [
+            2416,
+            944,
+            930,
+            104
+          ],
+          "configUnchanged": true,
+          "appExit": -15,
+          "repetition": 0
+        },
+        {
+          "passed": true,
+          "monitor": "HDMI-0",
+          "position": "bottom",
+          "source": "audio",
+          "observations": [
+            {
+              "source": "Âm thanh",
+              "popup": [
+                2642,
+                20,
+                720,
+                1040
+              ],
+              "anchor": 3003.0,
+              "expectedOrigin": [
+                2643,
+                20
+              ]
+            }
+          ],
+          "gdkMonitors": [
+            {
+              "name": "eDP-1-1",
+              "gtkScale": 2,
+              "area": [
+                0,
+                64,
+                1920,
+                1016
+              ]
+            },
+            {
+              "name": "HDMI-0",
+              "gtkScale": 2,
+              "area": [
+                1920,
+                0,
+                1920,
+                1080
+              ]
+            }
+          ],
+          "pid": 3631510,
+          "settlingObservations": {
+            "DeskMorph Taskbar": [
+              {
+                "seconds": 0.206,
+                "rectangle": null
+              },
+              {
+                "seconds": 0.588,
+                "rectangle": [
+                  1952,
+                  944,
+                  1856,
+                  104
+                ]
+              },
+              {
+                "seconds": 0.946,
+                "rectangle": [
+                  2416,
+                  944,
+                  930,
+                  104
+                ]
+              }
+            ],
+            "DeskMorph Context Menu": [
+              {
+                "seconds": 0.198,
+                "rectangle": null
+              },
+              {
+                "seconds": 0.528,
+                "rectangle": [
+                  2642,
+                  20,
+                  720,
+                  1040
+                ]
+              }
+            ]
+          },
+          "dock": [
+            2416,
+            944,
+            930,
+            104
+          ],
+          "dockAfterActivation": [
+            2416,
+            944,
+            930,
+            104
+          ],
+          "configUnchanged": true,
+          "appExit": -15,
+          "repetition": 0
+        },
+        {
+          "passed": true,
+          "monitor": "HDMI-0",
+          "position": "bottom",
+          "source": "calendar",
+          "observations": [
+            {
+              "source": "Mở lịch",
+              "popup": [
+                2910,
+                236,
+                640,
+                680
+              ],
+              "anchor": 3230.0,
+              "expectedOrigin": [
+                2910,
+                236
+              ]
+            }
+          ],
+          "gdkMonitors": [
+            {
+              "name": "eDP-1-1",
+              "gtkScale": 2,
+              "area": [
+                0,
+                64,
+                1920,
+                1016
+              ]
+            },
+            {
+              "name": "HDMI-0",
+              "gtkScale": 2,
+              "area": [
+                1920,
+                0,
+                1920,
+                1080
+              ]
+            }
+          ],
+          "pid": 3632313,
+          "settlingObservations": {
+            "DeskMorph Taskbar": [
+              {
+                "seconds": 0.216,
+                "rectangle": null
+              },
+              {
+                "seconds": 0.609,
+                "rectangle": [
+                  1952,
+                  944,
+                  1856,
+                  104
+                ]
+              },
+              {
+                "seconds": 0.986,
+                "rectangle": [
+                  2416,
+                  944,
+                  930,
+                  104
+                ]
+              }
+            ],
+            "DeskMorph Calendar": [
+              {
+                "seconds": 0.178,
+                "rectangle": null
+              },
+              {
+                "seconds": 0.517,
+                "rectangle": [
+                  2910,
+                  236,
+                  640,
+                  680
+                ]
+              }
+            ]
+          },
+          "dock": [
+            2416,
+            944,
+            930,
+            104
+          ],
+          "dockAfterActivation": [
+            2416,
+            944,
+            930,
+            104
+          ],
+          "configUnchanged": true,
+          "appExit": -15,
+          "repetition": 0
+        }
+      ]
+    }
+  ],
+  "restoreErrors": [],
+  "inputSent": false,
+  "featureMutationAttempted": true,
+  "topologyMutationAttempted": true,
+  "scope": "Four remaining native geometry cases at output200%/200%: HDMI top/calendar and bottom/launcher,audio,calendar; AT-SPI source activation, no keyboard/mouse input",
+  "requestedCases": [
+    [
+      "HDMI-0",
+      "bottom",
+      "audio"
+    ],
+    [
+      "HDMI-0",
+      "bottom",
+      "calendar"
+    ],
+    [
+      "HDMI-0",
+      "bottom",
+      "launcher"
+    ],
+    [
+      "HDMI-0",
+      "top",
+      "calendar"
+    ]
+  ],
+  "topologyRestored": true,
+  "userValueRestored": true,
+  "capabilitiesRestored": true,
+  "afterFeature": {
+    "configSerial": 195,
+    "monitors": [
+      {
+        "connector": "HDMI-0",
+        "configProperties": {},
+        "currentModes": [
+          {
+            "id": "1920x1080@60.000",
+            "width": 1920,
+            "height": 1080,
+            "refresh": 60.0,
+            "preferredScale": 1.0,
+            "supportedScales": [
+              1.0,
+              1.25,
+              1.5,
+              1.7391303777694702,
+              2.0,
+              2.307692289352417
+            ]
+          }
+        ]
+      },
+      {
+        "connector": "eDP-1-1",
+        "configProperties": {},
+        "currentModes": [
+          {
+            "id": "1920x1080@144.003",
+            "width": 1920,
+            "height": 1080,
+            "refresh": 144.0028076171875,
+            "preferredScale": 1.0,
+            "supportedScales": [
+              1.0,
+              1.25,
+              1.5,
+              1.7391303777694702,
+              2.0,
+              2.307692289352417
+            ]
+          }
+        ]
+      }
+    ],
+    "logicalMonitors": [
+      {
+        "x": 1920,
+        "y": 0,
+        "scale": 1.0,
+        "transform": 0,
+        "primary": false,
+        "connectors": [
+          "HDMI-0"
+        ]
+      },
+      {
+        "x": 0,
+        "y": 0,
+        "scale": 1.0,
+        "transform": 0,
+        "primary": true,
+        "connectors": [
+          "eDP-1-1"
+        ]
+      }
+    ],
+    "properties": {
+      "renderer": "xrandr",
+      "layout-mode": 3,
+      "legacy-ui-scaling-factor": 1,
+      "supports-changing-layout-mode": true
+    }
+  },
+  "restoreApplyAttempts": 0,
+  "after": {
+    "configSerial": 195,
+    "monitors": [
+      {
+        "connector": "HDMI-0",
+        "configProperties": {},
+        "currentModes": [
+          {
+            "id": "1920x1080@60.000",
+            "width": 1920,
+            "height": 1080,
+            "refresh": 60.0,
+            "preferredScale": 1.0,
+            "supportedScales": [
+              1.0,
+              2.0
+            ]
+          }
+        ]
+      },
+      {
+        "connector": "eDP-1-1",
+        "configProperties": {},
+        "currentModes": [
+          {
+            "id": "1920x1080@144.003",
+            "width": 1920,
+            "height": 1080,
+            "refresh": 144.0028076171875,
+            "preferredScale": 1.0,
+            "supportedScales": [
+              1.0,
+              2.0
+            ]
+          }
+        ]
+      }
+    ],
+    "logicalMonitors": [
+      {
+        "x": 1920,
+        "y": 0,
+        "scale": 1.0,
+        "transform": 0,
+        "primary": false,
+        "connectors": [
+          "HDMI-0"
+        ]
+      },
+      {
+        "x": 0,
+        "y": 0,
+        "scale": 1.0,
+        "transform": 0,
+        "primary": true,
+        "connectors": [
+          "eDP-1-1"
+        ]
+      }
+    ],
+    "properties": {
+      "renderer": "xrandr",
+      "layout-mode": 2,
+      "global-scale-required": true,
+      "legacy-ui-scaling-factor": 1
+    }
+  },
+  "runnerSha256": "30052fc0b9d0c360d9f882941c73556f6a65a1095c06f3944af1bee937287aa0",
+  "limits": [
+    "Native allocation/source anchor/clamp checks, not physical-pixel sharpness or keyboard sequencing acceptance",
+    "Combined16/16 unique output200% combinations span three trials; original failed integer trial remains failed",
+    "Negative-origin drawable WM topology is still unverified; Mutter reference backend rejected its VERIFY candidate"
+  ],
+  "postRunOwnedHelperPids": [],
+  "output200CoverageAcrossTrials": [
+    {
+      "monitor": "HDMI-0",
+      "position": "bottom",
+      "source": "audio",
+      "reports": [
+        "dpi-output200-remaining-2026-10-30/result.json"
+      ]
+    },
+    {
+      "monitor": "HDMI-0",
+      "position": "bottom",
+      "source": "calendar",
+      "reports": [
+        "dpi-output200-remaining-2026-10-30/result.json"
+      ]
+    },
+    {
+      "monitor": "HDMI-0",
+      "position": "bottom",
+      "source": "launcher",
+      "reports": [
+        "dpi-output200-remaining-2026-10-30/result.json"
+      ]
+    },
+    {
+      "monitor": "HDMI-0",
+      "position": "bottom",
+      "source": "system",
+      "reports": [
+        "system-output200-regression-2026-10-30/result.json",
+        "system-output200-regression-2026-10-30/result.json",
+        "system-output200-regression-2026-10-30/result.json"
+      ]
+    },
+    {
+      "monitor": "HDMI-0",
+      "position": "top",
+      "source": "audio",
+      "reports": [
+        "dpi-output-integer-trial-2026-10-30/result.json"
+      ]
+    },
+    {
+      "monitor": "HDMI-0",
+      "position": "top",
+      "source": "calendar",
+      "reports": [
+        "dpi-output200-remaining-2026-10-30/result.json"
+      ]
+    },
+    {
+      "monitor": "HDMI-0",
+      "position": "top",
+      "source": "launcher",
+      "reports": [
+        "dpi-output-integer-trial-2026-10-30/result.json"
+      ]
+    },
+    {
+      "monitor": "HDMI-0",
+      "position": "top",
+      "source": "system",
+      "reports": [
+        "system-output200-regression-2026-10-30/result.json",
+        "system-output200-regression-2026-10-30/result.json",
+        "system-output200-regression-2026-10-30/result.json"
+      ]
+    },
+    {
+      "monitor": "eDP-1-1",
+      "position": "bottom",
+      "source": "audio",
+      "reports": [
+        "dpi-output-integer-trial-2026-10-30/result.json"
+      ]
+    },
+    {
+      "monitor": "eDP-1-1",
+      "position": "bottom",
+      "source": "calendar",
+      "reports": [
+        "dpi-output-integer-trial-2026-10-30/result.json"
+      ]
+    },
+    {
+      "monitor": "eDP-1-1",
+      "position": "bottom",
+      "source": "launcher",
+      "reports": [
+        "dpi-output-integer-trial-2026-10-30/result.json"
+      ]
+    },
+    {
+      "monitor": "eDP-1-1",
+      "position": "bottom",
+      "source": "system",
+      "reports": [
+        "dpi-output-integer-trial-2026-10-30/result.json",
+        "system-output200-regression-2026-10-30/result.json",
+        "system-output200-regression-2026-10-30/result.json",
+        "system-output200-regression-2026-10-30/result.json"
+      ]
+    },
+    {
+      "monitor": "eDP-1-1",
+      "position": "top",
+      "source": "audio",
+      "reports": [
+        "dpi-output-integer-trial-2026-10-30/result.json"
+      ]
+    },
+    {
+      "monitor": "eDP-1-1",
+      "position": "top",
+      "source": "calendar",
+      "reports": [
+        "dpi-output-integer-trial-2026-10-30/result.json"
+      ]
+    },
+    {
+      "monitor": "eDP-1-1",
+      "position": "top",
+      "source": "launcher",
+      "reports": [
+        "dpi-output-integer-trial-2026-10-30/result.json"
+      ]
+    },
+    {
+      "monitor": "eDP-1-1",
+      "position": "top",
+      "source": "system",
+      "reports": [
+        "dpi-output-integer-trial-2026-10-30/result.json",
+        "system-output200-regression-2026-10-30/result.json",
+        "system-output200-regression-2026-10-30/result.json",
+        "system-output200-regression-2026-10-30/result.json"
+      ]
+    }
+  ]
+}
