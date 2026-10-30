@@ -66,8 +66,10 @@ Phụ thuộc G1. Module dự kiến: platform/capabilities, window-manager/x11,
 - [x] G2.8 Đóng bằng Escape/bấm ngoài có hành vi nhất quán; trả focus về nguồn mở khi phù hợp, không giành focus sau khi người dùng đã chọn app khác.
 - [x] G2.9 Chuẩn hóa tọa độ logical/physical, monitor origin và work area; tính vị trí từ kích thước Dock thực, clamp popup vào màn hình.
 - [ ] G2.10 Kiểm tra Dock trên/dưới, monitor bên trái có tọa độ âm, scale 100/125/150/200%, màn hình hỗn hợp DPI và đổi độ phân giải.
-- [ ] G2.11 Chọn màn hình đặt Dock; xử lý rút/cắm màn hình và fallback về màn hình còn lại. Dock trên tất cả màn hình là phần mở rộng sau khi chế độ chọn một màn hình ổn định.
+- [x] G2.11 Chọn màn hình đặt Dock; xử lý rút/cắm màn hình và fallback về màn hình còn lại. Dock trên tất cả màn hình là phần mở rộng sau khi chế độ chọn một màn hình ổn định.
 - [x] G2.12 Tránh hiển thị cửa sổ nội bộ DeskMorph trong danh sách app; active indicator phải chính xác với ID cửa sổ.
+
+G2.11: chọn monitor và sáu vòng output off/on đã qua top/bottom; [rút/cắm cáp HDMI thật](benchmarks/physical-hotplug-2026-10-30/result.json) chứng minh fallback về eDP, dọn popup cũ, giữ lựa chọn monitor và trở về HDMI sau khi output được bật lại. Phạm vi GNOME X11 tham chiếu, scale 1; compositor có thể để output connected nhưng chưa active nên harness khôi phục mode/layout đã lưu. DPI và compositor khác vẫn theo các cổng riêng.
 
 Tiêu chí: không bị cắt popup, không đóng nhầm, không popup mồ côi; danh sách và Dock cùng phản ánh trạng thái. Test thuần cho geometry/grouping, kiểm thử desktop cho focus/outside-click/DPI và hotplug nếu có thiết bị.
 

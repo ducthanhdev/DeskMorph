@@ -1,6 +1,6 @@
 # Checklist phát hành DeskMorph 0.1.0
 
-Ngày đánh giá: 29/10/2026. Quyết định: **Không phát hành** và không công bố artifact
+Ngày đánh giá: 30/10/2026. Quyết định: **Không phát hành** và không công bố artifact
 này. Đây là quyết định có chủ ý sau kiểm thử; các cổng còn thiếu phải hoàn thành
 trước khi tạo release candidate mới.
 
@@ -13,7 +13,8 @@ trước khi tạo release candidate mới.
 | GNOME X11 core flow | Pass trong môi trường tham chiếu | Ma trận [PLATFORM_SUPPORT_MATRIX](PLATFORM_SUPPORT_MATRIX.md) |
 | GNOME Wayland/COSMIC/KDE scope | Có giới hạn rõ | Wayland/COSMIC wallpaper-only experimental; KDE unsupported vì thiếu pixel/readback |
 | Accessibility toàn ứng dụng | Chưa đạt | G5.9 còn mở |
-| Sleep thật, DPI/hotplug, lifecycle dài | Chưa đạt | G2.10/G2.11/G6.7/G9.8 còn mở |
+| Physical HDMI hotplug / fallback | Pass trên GNOME X11 tham chiếu | [Physical hotplug](benchmarks/physical-hotplug-2026-10-30/result.json), G2.11; output được bật lại bằng saved XRandR layout sau reconnect |
+| Sleep thật, DPI, lifecycle dài | Chưa đạt | G2.10/G6.7/G9.8 còn mở |
 | Cài account/máy sạch, autostart login, migration tiền nhiệm | Pass trong isolated lab | dpkg root + HOME mới + GUI packaged + autostart G1.13 + predecessor khác payload; không chứng nhận apt trên máy vật lý khác |
 | Ký artifact / publish | Không thực hiện | Quyết định no-go; không upload hoặc công bố |
 

@@ -1,0 +1,63 @@
+{
+  "pid": 949917,
+  "output": "HDMI-0",
+  "remaining": "eDP-1-1",
+  "cycles": [
+    {
+      "position": "bottom",
+      "index": 0,
+      "fallbackDock": [
+        494,
+        1012,
+        932,
+        52
+      ],
+      "fallbackPopup": [
+        1208,
+        658,
+        320,
+        340
+      ],
+      "returnedDock": [
+        2414,
+        1012,
+        932,
+        52
+      ],
+      "fallbackSeconds": 0.5,
+      "returnSeconds": 1.816
+    }
+  ],
+  "scope": "Physical connector state change reported by XRandR",
+  "disconnectedTopology": [
+    "HDMI-0 disconnected 1920x1080+1920+0 (normal left inverted right x axis y axis) 0mm x 0mm",
+    "eDP-1-1 connected primary 1920x1080+0+0 (normal left inverted right x axis y axis) 344mm x 193mm"
+  ],
+  "reconnectedTopology": [
+    "HDMI-0 connected (normal left inverted right x axis y axis)",
+    "eDP-1-1 connected primary 1920x1080+0+0 (normal left inverted right x axis y axis) 344mm x 193mm"
+  ],
+  "outputsRestored": true,
+  "passed": true,
+  "date": "2026-10-30",
+  "command": "DESKMORPH_GEOMETRY_OUTPUT_CYCLE=HDMI-0 DESKMORPH_GEOMETRY_PHYSICAL_HOTPLUG=1 python3 tests/desktop_smoke.py --geometry-smoke",
+  "exitCode": 0,
+  "binarySha256": "1c2a54f8e3fd3e5dca7ece576d6301f714853ee996f352b6340a3a1b37b77f4b",
+  "configRestored": true,
+  "restoredTopology": [
+    "HDMI-0 1920x1080+1920+0",
+    "eDP-1-1 primary 1920x1080+0+0"
+  ],
+  "checks": [
+    "User physically unplugged and replugged HDMI cable; XRandR connector state observed",
+    "Preferred monitor setting preserved through disconnection",
+    "Fallback Dock and calendar remain inside laptop work area",
+    "Old calendar dismissed on topology change",
+    "Dock returns to HDMI after connected output is enabled and layout restored"
+  ],
+  "limits": [
+    "One physical cable cycle with bottom Dock; six software output cycles previously tested both top and bottom",
+    "Compositor reported HDMI connected but inactive on replug; harness restored saved output mode/layout using XRandR before checking preferred Dock placement",
+    "Reference GNOME X11 and scale1; not mixed DPI or other compositor certification"
+  ]
+}

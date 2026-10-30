@@ -83,6 +83,7 @@ def run(app, config_home, click, focus_studio, native_keys):
 
     def output_cycle(output):
         # Explicitly opt in: this changes the real desktop output topology.
+        physical = os.environ.get('DESKMORPH_GEOMETRY_PHYSICAL_HOTPLUG') == '1'
         assert expected_scale == 1 and len(monitors) == 2
         areas = dict(monitors)
         assert output in areas
@@ -104,6 +105,18 @@ def run(app, config_home, click, focus_studio, native_keys):
         def active_outputs():
             query = subprocess.check_output(['xrandr', '--query'], text=True, timeout=8)
             return re.findall(r'^(\S+) connected (?:primary )?\d+x\d+[+-]\d+[+-]\d+', query, re.M)
+
+        def cable_state(connected, stage):
+            (root / 'physical-hotplug-stage.json').write_text(json.dumps(dict(stage=stage, output=output)))
+            print(f'PHYSICAL_HOTPLUG {stage}: {output}', flush=True)
+            deadline = time.monotonic() + 180
+            while time.monotonic() < deadline:
+                query = subprocess.check_output(['xrandr', '--query'], text=True, timeout=8)
+                state = re.search(r'^' + re.escape(output) + r' (connected|disconnected)\b', query, re.M)
+                if state and (state.group(1) == 'connected') == connected:
+                    return query
+                time.sleep(1)
+            raise AssertionError('Timed out waiting for physical cable ' + stage)
 
         def dock_on(area, position):
             rect = native_rect('DeskMorph Taskbar')
@@ -134,22 +147,29 @@ def run(app, config_home, click, focus_studio, native_keys):
             return rect
 
         result = dict(pid=app.get_process_id(), output=output, remaining=remaining, cycles=[],
-            scope='Real XRandR output off/on; cable remains connected, not physical unplug evidence')
+            scope='Physical connector state change reported by XRandR' if physical else 'Real XRandR output off/on; cable remains connected, not physical unplug evidence')
         try:
-            for position in ('top', 'bottom'):
+            for position in (('bottom',) if physical else ('top', 'bottom')):
                 desired = dict(original, language='vi', enabled=True, autoHide=False, monitor=output, position=position, height=52)
                 import_config(desired, 'output-cycle')
                 wait(lambda: dock_on(areas[output], position), 'Dock not on preferred output before cycle')
-                for index in range(3):
+                for index in range(1 if physical else 3):
                     calendar(areas[output], position)
                     started = time.monotonic()
-                    subprocess.run(['xrandr', '--output', output, '--off'], check=True, timeout=10)
+                    if physical:
+                        result['disconnectedTopology'] = cable_state(False, 'unplug')
+                        started = time.monotonic()
+                    else:
+                        subprocess.run(['xrandr', '--output', output, '--off'], check=True, timeout=10)
                     wait(lambda: active_outputs() == [remaining], 'Output remained active after off')
                     fallback = wait(lambda: dock_on(areas[remaining], position), 'Dock did not fall back to remaining output')
                     wait(lambda: native_rect('DeskMorph Calendar') is None, 'Old calendar survived topology removal')
                     fallback_seconds = round(time.monotonic() - started, 3)
                     popup = calendar(areas[remaining], position)
                     started = time.monotonic()
+                    if physical:
+                        result['reconnectedTopology'] = cable_state(True, 'replug')
+                        started = time.monotonic()
                     subprocess.run(restore, check=True, timeout=10)
                     wait(lambda: set(active_outputs()) == set(areas), 'Outputs not restored')
                     returned = wait(lambda: dock_on(areas[output], position), 'Dock did not return to preferred output')
@@ -163,7 +183,7 @@ def run(app, config_home, click, focus_studio, native_keys):
             wait(lambda: set(active_outputs()) == set(areas), 'Final output restoration failed')
         result['outputsRestored'] = True
         result['passed'] = True
-        (root / 'output-cycle-result.json').write_text(json.dumps(result, ensure_ascii=False, indent=2) + '\n')
+        (root / ('physical-hotplug-result.json' if physical else 'output-cycle-result.json')).write_text(json.dumps(result, ensure_ascii=False, indent=2) + '\n')
 
     try:
         if output := os.environ.get('DESKMORPH_GEOMETRY_OUTPUT_CYCLE'):

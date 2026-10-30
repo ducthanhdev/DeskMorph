@@ -835,3 +835,12 @@ Script cần AT-SPI, Python GI, GTK3 và libXtst. Chỉ gửi phím khi kiểm t
 - [Bằng chứng](benchmarks/dock-input-focus-2026-10-30/result.json): native `--focus-delay`500ms và `--focus-smoke`0ms đều exit0, mỗi lượt 11 nhóm kiểm tra: Enter/Escape/reopen bốn popup, outside click, Close audio/system, focus cửa sổ GTK riêng, window-list selection, right-click context và launcher shortcut. Lượt500ms bỏ qua 4 live-unfocused và 14 inactive callbacks; lựa chọn cửa sổ ngoài thắng các callback trễ. Cấu hình khôi phục, fixture đã thoát, app test trở về binary không có timing override.
 - Đóng phần lỗi focus được ghi trong audit output-fallback; không thay bằng chứng cũ thành đạt. G5.9 còn speech/contrast/dynamic coverage, G2.10/G2.11/G6.7/G9.8 vẫn mở; tổng giữ 94/99.
 - Đánh giá file: dùng lại native focus harness hiện có vì đã tái hiện baseline lỗi và chứng minh final; không thêm test cấu trúc mô phỏng timestamp. Giữ JSON hai lượt có hash/phạm vi/lệnh; không commit runtime trace, profile, fixture log hay binary. Diff check qua.
+
+
+## G2.11 — Chốt lựa chọn monitor và physical HDMI hotplug (30/10/2026)
+
+- Người dùng phối hợp rút/cắm cáp thật. Harness quan sát HDMI-0 `disconnected` (không dùng `--off` để giả trạng thái này), eDP còn hoạt động; Dock fallback `[494,1012,932,52]`, lịch cũ đóng và lịch mới `[1208,658,320,340]` nằm trên laptop. Sau reconnect, khôi phục mode/layout đã lưu; Dock trở về HDMI `[2414,1012,932,52]`. Cấu hình monitor không bị ghi đè.
+- [Bằng chứng](benchmarks/physical-hotplug-2026-10-30/result.json), exit0 PID949917; fallback0,5 giây từ lần nhận disconnected, return1,816 giây từ connector connected và khôi phục output. Compositor báo HDMI connected nhưng chưa active lúc cắm lại; harness bật lại output đúng mode/layout ban đầu, không tuyên bố app tự bật màn hình.
+- Kết hợp geometry chọn độc lập cả hai monitor và sáu output cycles top/bottom trước đó, chốt G2.11 trong phạm vi GNOME X11 tham chiếu/scale1. Tổng **95/99**; G2.10, G5.9, G6.7, G9.8 tiếp tục mở. Không suy một lần physical hotplug thành soak hoặc mixed DPI đạt.
+- Config sau cleanup khớp snapshot restore; native topology cuối eDP primary1920x1080+0+0 và HDMI1920x1080+1920+0. Python compile/diff check qua; sản phẩm không đổi từ native build/test ở commit focus trước.
+- Đánh giá file: giữ chế độ physical opt-in với marker giai đoạn, timeout180s, kiểm connector thật và finally restore; giữ JSON gọn chỉ hai connector liên quan, rectangle/lệnh/hash/giới hạn. Không commit stage marker, config, log hay binary.
