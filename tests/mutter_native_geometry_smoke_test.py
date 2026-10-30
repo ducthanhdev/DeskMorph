@@ -24,6 +24,7 @@ class NativeRestoration(unittest.TestCase):
         during['properties'].update({'layout-mode': 3, 'supports-changing-layout-mode': True})
         current = copy.deepcopy(before)
         calls = []
+        drift_count = 0
 
         def apply(display, desired, method):
             nonlocal current
@@ -44,6 +45,13 @@ class NativeRestoration(unittest.TestCase):
             (root / 'result.json').write_text(json.dumps(dict(passed=False, error='fixture worker failed')))
             return SimpleNamespace(returncode=1)
 
+        def sleep(_seconds):
+            nonlocal current, drift_count
+            if failure in ('delayed', 'persistent-drift') and len(calls) >= 5 and current == before:
+                if failure == 'persistent-drift' or drift_count == 0:
+                    current = copy.deepcopy(calls[2][1])
+                    drift_count += 1
+
         with tempfile.TemporaryDirectory() as folder, \
                 patch.object(runner.tempfile, 'mkdtemp', return_value=folder), \
                 patch.object(runner.m, 'proxy', return_value=object()), \
@@ -53,7 +61,7 @@ class NativeRestoration(unittest.TestCase):
                 patch.object(runner.m, 'settled', side_effect=lambda *_: copy.deepcopy(current)), \
                 patch.object(runner.m, 'apply', side_effect=apply), \
                 patch.object(runner, 'wait', return_value=during), \
-                patch.object(runner.time, 'sleep'), \
+                patch.object(runner.time, 'sleep', side_effect=sleep), \
                 patch.object(runner.subprocess, 'check_output', return_value='(true,)' if failure == 'locked' else '(false,)'), \
                 patch.object(runner.subprocess, 'run', side_effect=worker):
             result = runner.run()
@@ -69,11 +77,27 @@ class NativeRestoration(unittest.TestCase):
                     self.assertTrue(result['topologyRestored'])
                     self.assertTrue(result['userValueRestored'])
                     self.assertTrue(result['capabilitiesRestored'])
-                    self.assertEqual([method for method, _ in calls], [0, 0, 1, 1])
+                    self.assertEqual([method for method, _ in calls], [0, 0, 1, 0, 1])
                     requested = calls[1][1]
                     self.assertEqual([monitor['x'] for monitor in requested['logicalMonitors']], [0, 3072])
                     self.assertEqual([monitor['scale'] for monitor in requested['logicalMonitors']], [1.25, 1.25])
                     self.assertEqual(requested['monitors'], calls[0][1]['monitors'], 'Scaling must retain saved mode and refresh')
+
+    def test_delayed_compositor_update_reapplies_and_verifies_saved_baseline(self):
+        result, calls = self.execute('delayed')
+        self.assertTrue(result['topologyRestored'])
+        self.assertTrue(result['capabilitiesRestored'])
+        self.assertEqual(result['restoreApplyAttempts'], 2)
+        self.assertEqual([method for method, _ in calls], [0, 0, 1, 0, 1, 0, 1])
+        self.assertEqual(result['restoreErrors'], [])
+
+    def test_persistent_drift_stops_retrying_and_reports_restore_failure(self):
+        result, calls = self.execute('persistent-drift')
+        self.assertFalse(result['topologyRestored'])
+        self.assertFalse(result['passed'])
+        self.assertEqual(result['restoreApplyAttempts'], 2)
+        self.assertEqual([method for method, _ in calls], [0, 0, 1, 0, 1, 0, 1])
+        self.assertIn('baseline did not remain restored', result['restoreErrors'][0])
 
     def test_locked_desktop_never_mutates_features_or_topology(self):
         result, calls = self.execute('locked')
@@ -94,7 +118,7 @@ class NativeRestoration(unittest.TestCase):
         self.assertTrue(result['topologyRestored'])
         self.assertFalse(result['userValueRestored'])
         self.assertIn('Settings:', result['restoreErrors'][0])
-        self.assertEqual([method for method, _ in calls], [0, 0, 1, 1])
+        self.assertEqual([method for method, _ in calls], [0, 0, 1, 0, 1])
 
     def test_display_restore_failure_preserves_feature_restore_and_report(self):
         result, calls = self.execute('restore')

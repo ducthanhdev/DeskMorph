@@ -1,0 +1,1890 @@
+{
+  "passed": false,
+  "before": {
+    "configSerial": 193,
+    "monitors": [
+      {
+        "connector": "HDMI-0",
+        "configProperties": {},
+        "currentModes": [
+          {
+            "id": "1920x1080@60.000",
+            "width": 1920,
+            "height": 1080,
+            "refresh": 60.0,
+            "preferredScale": 1.0,
+            "supportedScales": [
+              1.0,
+              2.0
+            ]
+          }
+        ]
+      },
+      {
+        "connector": "eDP-1-1",
+        "configProperties": {},
+        "currentModes": [
+          {
+            "id": "1920x1080@144.003",
+            "width": 1920,
+            "height": 1080,
+            "refresh": 144.0028076171875,
+            "preferredScale": 1.0,
+            "supportedScales": [
+              1.0,
+              2.0
+            ]
+          }
+        ]
+      }
+    ],
+    "logicalMonitors": [
+      {
+        "x": 1920,
+        "y": 0,
+        "scale": 1.0,
+        "transform": 0,
+        "primary": false,
+        "connectors": [
+          "HDMI-0"
+        ]
+      },
+      {
+        "x": 0,
+        "y": 0,
+        "scale": 1.0,
+        "transform": 0,
+        "primary": true,
+        "connectors": [
+          "eDP-1-1"
+        ]
+      }
+    ],
+    "properties": {
+      "renderer": "xrandr",
+      "layout-mode": 2,
+      "global-scale-required": true,
+      "legacy-ui-scaling-factor": 1
+    }
+  },
+  "features": [],
+  "originalUserValue": "@as []",
+  "root": "/tmp/deskmorph-dpi-native-4josiudn",
+  "binarySha256": "1172029a8dee0dde0b196e4956b2df150522bb1b058c4ed0cf829bc55e449ac9",
+  "cases": [
+    {
+      "layout": "100",
+      "requestedScales": [
+        1.0,
+        1.0
+      ],
+      "observed": {
+        "configSerial": 193,
+        "monitors": [
+          {
+            "connector": "HDMI-0",
+            "configProperties": {},
+            "currentModes": [
+              {
+                "id": "1920x1080@60.000",
+                "width": 1920,
+                "height": 1080,
+                "refresh": 60.0,
+                "preferredScale": 1.0,
+                "supportedScales": [
+                  1.0,
+                  1.25,
+                  1.5,
+                  1.7391303777694702,
+                  2.0,
+                  2.307692289352417
+                ]
+              }
+            ]
+          },
+          {
+            "connector": "eDP-1-1",
+            "configProperties": {},
+            "currentModes": [
+              {
+                "id": "1920x1080@144.003",
+                "width": 1920,
+                "height": 1080,
+                "refresh": 144.0028076171875,
+                "preferredScale": 1.0,
+                "supportedScales": [
+                  1.0,
+                  1.25,
+                  1.5,
+                  1.7391303777694702,
+                  2.0,
+                  2.307692289352417
+                ]
+              }
+            ]
+          }
+        ],
+        "logicalMonitors": [
+          {
+            "x": 1920,
+            "y": 0,
+            "scale": 1.0,
+            "transform": 0,
+            "primary": false,
+            "connectors": [
+              "HDMI-0"
+            ]
+          },
+          {
+            "x": 0,
+            "y": 0,
+            "scale": 1.0,
+            "transform": 0,
+            "primary": true,
+            "connectors": [
+              "eDP-1-1"
+            ]
+          }
+        ],
+        "properties": {
+          "renderer": "xrandr",
+          "layout-mode": 3,
+          "legacy-ui-scaling-factor": 1,
+          "supports-changing-layout-mode": true
+        }
+      },
+      "runs": [
+        {
+          "passed": true,
+          "monitor": "eDP-1-1",
+          "position": "top",
+          "source": "launcher",
+          "observations": [
+            {
+              "source": "Tìm ứng dụng",
+              "popup": [
+                513,
+                114,
+                500,
+                580
+              ],
+              "anchor": 763.0,
+              "expectedOrigin": [
+                513,
+                114
+              ]
+            }
+          ],
+          "gdkMonitors": [
+            {
+              "name": "eDP-1-1",
+              "gtkScale": 1,
+              "area": [
+                0,
+                32,
+                1920,
+                1048
+              ]
+            },
+            {
+              "name": "HDMI-0",
+              "gtkScale": 1,
+              "area": [
+                1920,
+                0,
+                1920,
+                1080
+              ]
+            }
+          ],
+          "pid": 3070365,
+          "dock": [
+            727,
+            48,
+            465,
+            52
+          ],
+          "configUnchanged": true,
+          "appExit": -15
+        },
+        {
+          "passed": true,
+          "monitor": "eDP-1-1",
+          "position": "top",
+          "source": "audio",
+          "observations": [
+            {
+              "source": "Âm thanh",
+              "popup": [
+                840,
+                114,
+                360,
+                540
+              ],
+              "anchor": 1020.5,
+              "expectedOrigin": [
+                840,
+                114
+              ]
+            }
+          ],
+          "gdkMonitors": [
+            {
+              "name": "eDP-1-1",
+              "gtkScale": 1,
+              "area": [
+                0,
+                32,
+                1920,
+                1048
+              ]
+            },
+            {
+              "name": "HDMI-0",
+              "gtkScale": 1,
+              "area": [
+                1920,
+                0,
+                1920,
+                1080
+              ]
+            }
+          ],
+          "pid": 3070862,
+          "dock": [
+            727,
+            48,
+            465,
+            52
+          ],
+          "configUnchanged": true,
+          "appExit": -15
+        },
+        {
+          "passed": true,
+          "monitor": "eDP-1-1",
+          "position": "top",
+          "source": "system",
+          "observations": [
+            {
+              "source": "Tiện ích hệ thống",
+              "popup": [
+                878,
+                114,
+                380,
+                620
+              ],
+              "anchor": 1068.5,
+              "expectedOrigin": [
+                878,
+                114
+              ]
+            }
+          ],
+          "gdkMonitors": [
+            {
+              "name": "eDP-1-1",
+              "gtkScale": 1,
+              "area": [
+                0,
+                32,
+                1920,
+                1048
+              ]
+            },
+            {
+              "name": "HDMI-0",
+              "gtkScale": 1,
+              "area": [
+                1920,
+                0,
+                1920,
+                1080
+              ]
+            }
+          ],
+          "pid": 3071363,
+          "dock": [
+            727,
+            48,
+            465,
+            52
+          ],
+          "configUnchanged": true,
+          "appExit": -15
+        },
+        {
+          "passed": true,
+          "monitor": "eDP-1-1",
+          "position": "top",
+          "source": "calendar",
+          "observations": [
+            {
+              "source": "Mở lịch",
+              "popup": [
+                974,
+                114,
+                320,
+                340
+              ],
+              "anchor": 1134.5,
+              "expectedOrigin": [
+                974,
+                114
+              ]
+            }
+          ],
+          "gdkMonitors": [
+            {
+              "name": "eDP-1-1",
+              "gtkScale": 1,
+              "area": [
+                0,
+                32,
+                1920,
+                1048
+              ]
+            },
+            {
+              "name": "HDMI-0",
+              "gtkScale": 1,
+              "area": [
+                1920,
+                0,
+                1920,
+                1080
+              ]
+            }
+          ],
+          "pid": 3071873,
+          "dock": [
+            727,
+            48,
+            465,
+            52
+          ],
+          "configUnchanged": true,
+          "appExit": -15
+        },
+        {
+          "passed": true,
+          "monitor": "eDP-1-1",
+          "position": "bottom",
+          "source": "launcher",
+          "observations": [
+            {
+              "source": "Tìm ứng dụng",
+              "popup": [
+                513,
+                418,
+                500,
+                580
+              ],
+              "anchor": 763.0,
+              "expectedOrigin": [
+                513,
+                418
+              ]
+            }
+          ],
+          "gdkMonitors": [
+            {
+              "name": "eDP-1-1",
+              "gtkScale": 1,
+              "area": [
+                0,
+                32,
+                1920,
+                1048
+              ]
+            },
+            {
+              "name": "HDMI-0",
+              "gtkScale": 1,
+              "area": [
+                1920,
+                0,
+                1920,
+                1080
+              ]
+            }
+          ],
+          "pid": 3072393,
+          "dock": [
+            727,
+            1012,
+            465,
+            52
+          ],
+          "configUnchanged": true,
+          "appExit": -15
+        },
+        {
+          "passed": true,
+          "monitor": "eDP-1-1",
+          "position": "bottom",
+          "source": "audio",
+          "observations": [
+            {
+              "source": "Âm thanh",
+              "popup": [
+                840,
+                458,
+                360,
+                540
+              ],
+              "anchor": 1020.5,
+              "expectedOrigin": [
+                840,
+                458
+              ]
+            }
+          ],
+          "gdkMonitors": [
+            {
+              "name": "eDP-1-1",
+              "gtkScale": 1,
+              "area": [
+                0,
+                32,
+                1920,
+                1048
+              ]
+            },
+            {
+              "name": "HDMI-0",
+              "gtkScale": 1,
+              "area": [
+                1920,
+                0,
+                1920,
+                1080
+              ]
+            }
+          ],
+          "pid": 3072849,
+          "dock": [
+            727,
+            1012,
+            465,
+            52
+          ],
+          "configUnchanged": true,
+          "appExit": -15
+        },
+        {
+          "passed": true,
+          "monitor": "eDP-1-1",
+          "position": "bottom",
+          "source": "system",
+          "observations": [
+            {
+              "source": "Tiện ích hệ thống",
+              "popup": [
+                878,
+                378,
+                380,
+                620
+              ],
+              "anchor": 1068.5,
+              "expectedOrigin": [
+                878,
+                378
+              ]
+            }
+          ],
+          "gdkMonitors": [
+            {
+              "name": "eDP-1-1",
+              "gtkScale": 1,
+              "area": [
+                0,
+                32,
+                1920,
+                1048
+              ]
+            },
+            {
+              "name": "HDMI-0",
+              "gtkScale": 1,
+              "area": [
+                1920,
+                0,
+                1920,
+                1080
+              ]
+            }
+          ],
+          "pid": 3073259,
+          "dock": [
+            727,
+            1012,
+            465,
+            52
+          ],
+          "configUnchanged": true,
+          "appExit": -15
+        },
+        {
+          "passed": true,
+          "monitor": "eDP-1-1",
+          "position": "bottom",
+          "source": "calendar",
+          "observations": [
+            {
+              "source": "Mở lịch",
+              "popup": [
+                974,
+                658,
+                320,
+                340
+              ],
+              "anchor": 1134.5,
+              "expectedOrigin": [
+                974,
+                658
+              ]
+            }
+          ],
+          "gdkMonitors": [
+            {
+              "name": "eDP-1-1",
+              "gtkScale": 1,
+              "area": [
+                0,
+                32,
+                1920,
+                1048
+              ]
+            },
+            {
+              "name": "HDMI-0",
+              "gtkScale": 1,
+              "area": [
+                1920,
+                0,
+                1920,
+                1080
+              ]
+            }
+          ],
+          "pid": 3073696,
+          "dock": [
+            727,
+            1012,
+            465,
+            52
+          ],
+          "configUnchanged": true,
+          "appExit": -15
+        },
+        {
+          "passed": true,
+          "monitor": "HDMI-0",
+          "position": "top",
+          "source": "launcher",
+          "observations": [
+            {
+              "source": "Tìm ứng dụng",
+              "popup": [
+                2433,
+                82,
+                500,
+                580
+              ],
+              "anchor": 2683.0,
+              "expectedOrigin": [
+                2433,
+                82
+              ]
+            }
+          ],
+          "gdkMonitors": [
+            {
+              "name": "eDP-1-1",
+              "gtkScale": 1,
+              "area": [
+                0,
+                32,
+                1920,
+                1048
+              ]
+            },
+            {
+              "name": "HDMI-0",
+              "gtkScale": 1,
+              "area": [
+                1920,
+                0,
+                1920,
+                1080
+              ]
+            }
+          ],
+          "pid": 3074177,
+          "dock": [
+            2647,
+            16,
+            465,
+            52
+          ],
+          "configUnchanged": true,
+          "appExit": -15
+        },
+        {
+          "passed": true,
+          "monitor": "HDMI-0",
+          "position": "top",
+          "source": "audio",
+          "observations": [
+            {
+              "source": "Âm thanh",
+              "popup": [
+                2760,
+                82,
+                360,
+                540
+              ],
+              "anchor": 2940.5,
+              "expectedOrigin": [
+                2760,
+                82
+              ]
+            }
+          ],
+          "gdkMonitors": [
+            {
+              "name": "eDP-1-1",
+              "gtkScale": 1,
+              "area": [
+                0,
+                32,
+                1920,
+                1048
+              ]
+            },
+            {
+              "name": "HDMI-0",
+              "gtkScale": 1,
+              "area": [
+                1920,
+                0,
+                1920,
+                1080
+              ]
+            }
+          ],
+          "pid": 3074643,
+          "dock": [
+            2647,
+            16,
+            465,
+            52
+          ],
+          "configUnchanged": true,
+          "appExit": -15
+        },
+        {
+          "passed": true,
+          "monitor": "HDMI-0",
+          "position": "top",
+          "source": "system",
+          "observations": [
+            {
+              "source": "Tiện ích hệ thống",
+              "popup": [
+                2798,
+                82,
+                380,
+                620
+              ],
+              "anchor": 2988.5,
+              "expectedOrigin": [
+                2798,
+                82
+              ]
+            }
+          ],
+          "gdkMonitors": [
+            {
+              "name": "eDP-1-1",
+              "gtkScale": 1,
+              "area": [
+                0,
+                32,
+                1920,
+                1048
+              ]
+            },
+            {
+              "name": "HDMI-0",
+              "gtkScale": 1,
+              "area": [
+                1920,
+                0,
+                1920,
+                1080
+              ]
+            }
+          ],
+          "pid": 3075110,
+          "dock": [
+            2647,
+            16,
+            465,
+            52
+          ],
+          "configUnchanged": true,
+          "appExit": -15
+        },
+        {
+          "passed": true,
+          "monitor": "HDMI-0",
+          "position": "top",
+          "source": "calendar",
+          "observations": [
+            {
+              "source": "Mở lịch",
+              "popup": [
+                2894,
+                82,
+                320,
+                340
+              ],
+              "anchor": 3054.5,
+              "expectedOrigin": [
+                2894,
+                82
+              ]
+            }
+          ],
+          "gdkMonitors": [
+            {
+              "name": "eDP-1-1",
+              "gtkScale": 1,
+              "area": [
+                0,
+                32,
+                1920,
+                1048
+              ]
+            },
+            {
+              "name": "HDMI-0",
+              "gtkScale": 1,
+              "area": [
+                1920,
+                0,
+                1920,
+                1080
+              ]
+            }
+          ],
+          "pid": 3075548,
+          "dock": [
+            2647,
+            16,
+            465,
+            52
+          ],
+          "configUnchanged": true,
+          "appExit": -15
+        },
+        {
+          "passed": true,
+          "monitor": "HDMI-0",
+          "position": "bottom",
+          "source": "launcher",
+          "observations": [
+            {
+              "source": "Tìm ứng dụng",
+              "popup": [
+                2433,
+                418,
+                500,
+                580
+              ],
+              "anchor": 2683.0,
+              "expectedOrigin": [
+                2433,
+                418
+              ]
+            }
+          ],
+          "gdkMonitors": [
+            {
+              "name": "eDP-1-1",
+              "gtkScale": 1,
+              "area": [
+                0,
+                32,
+                1920,
+                1048
+              ]
+            },
+            {
+              "name": "HDMI-0",
+              "gtkScale": 1,
+              "area": [
+                1920,
+                0,
+                1920,
+                1080
+              ]
+            }
+          ],
+          "pid": 3075990,
+          "dock": [
+            2647,
+            1012,
+            465,
+            52
+          ],
+          "configUnchanged": true,
+          "appExit": -15
+        },
+        {
+          "passed": true,
+          "monitor": "HDMI-0",
+          "position": "bottom",
+          "source": "audio",
+          "observations": [
+            {
+              "source": "Âm thanh",
+              "popup": [
+                2760,
+                458,
+                360,
+                540
+              ],
+              "anchor": 2940.5,
+              "expectedOrigin": [
+                2760,
+                458
+              ]
+            }
+          ],
+          "gdkMonitors": [
+            {
+              "name": "eDP-1-1",
+              "gtkScale": 1,
+              "area": [
+                0,
+                32,
+                1920,
+                1048
+              ]
+            },
+            {
+              "name": "HDMI-0",
+              "gtkScale": 1,
+              "area": [
+                1920,
+                0,
+                1920,
+                1080
+              ]
+            }
+          ],
+          "pid": 3076427,
+          "dock": [
+            2647,
+            1012,
+            465,
+            52
+          ],
+          "configUnchanged": true,
+          "appExit": -15
+        },
+        {
+          "passed": true,
+          "monitor": "HDMI-0",
+          "position": "bottom",
+          "source": "system",
+          "observations": [
+            {
+              "source": "Tiện ích hệ thống",
+              "popup": [
+                2798,
+                378,
+                380,
+                620
+              ],
+              "anchor": 2988.5,
+              "expectedOrigin": [
+                2798,
+                378
+              ]
+            }
+          ],
+          "gdkMonitors": [
+            {
+              "name": "eDP-1-1",
+              "gtkScale": 1,
+              "area": [
+                0,
+                32,
+                1920,
+                1048
+              ]
+            },
+            {
+              "name": "HDMI-0",
+              "gtkScale": 1,
+              "area": [
+                1920,
+                0,
+                1920,
+                1080
+              ]
+            }
+          ],
+          "pid": 3076878,
+          "dock": [
+            2647,
+            1012,
+            465,
+            52
+          ],
+          "configUnchanged": true,
+          "appExit": -15
+        },
+        {
+          "passed": true,
+          "monitor": "HDMI-0",
+          "position": "bottom",
+          "source": "calendar",
+          "observations": [
+            {
+              "source": "Mở lịch",
+              "popup": [
+                2894,
+                658,
+                320,
+                340
+              ],
+              "anchor": 3054.5,
+              "expectedOrigin": [
+                2894,
+                658
+              ]
+            }
+          ],
+          "gdkMonitors": [
+            {
+              "name": "eDP-1-1",
+              "gtkScale": 1,
+              "area": [
+                0,
+                32,
+                1920,
+                1048
+              ]
+            },
+            {
+              "name": "HDMI-0",
+              "gtkScale": 1,
+              "area": [
+                1920,
+                0,
+                1920,
+                1080
+              ]
+            }
+          ],
+          "pid": 3077351,
+          "dock": [
+            2647,
+            1012,
+            465,
+            52
+          ],
+          "configUnchanged": true,
+          "appExit": -15
+        }
+      ]
+    },
+    {
+      "layout": "200",
+      "requestedScales": [
+        2.0,
+        2.0
+      ],
+      "observed": {
+        "configSerial": 193,
+        "monitors": [
+          {
+            "connector": "HDMI-0",
+            "configProperties": {},
+            "currentModes": [
+              {
+                "id": "1920x1080@60.000",
+                "width": 1920,
+                "height": 1080,
+                "refresh": 60.0,
+                "preferredScale": 1.0,
+                "supportedScales": [
+                  1.0,
+                  1.25,
+                  1.5,
+                  1.7391303777694702,
+                  2.0,
+                  2.307692289352417
+                ]
+              }
+            ]
+          },
+          {
+            "connector": "eDP-1-1",
+            "configProperties": {},
+            "currentModes": [
+              {
+                "id": "1920x1080@144.003",
+                "width": 1920,
+                "height": 1080,
+                "refresh": 144.0028076171875,
+                "preferredScale": 1.0,
+                "supportedScales": [
+                  1.0,
+                  1.25,
+                  1.5,
+                  1.7391303777694702,
+                  2.0,
+                  2.307692289352417
+                ]
+              }
+            ]
+          }
+        ],
+        "logicalMonitors": [
+          {
+            "x": 1920,
+            "y": 0,
+            "scale": 2.0,
+            "transform": 0,
+            "primary": false,
+            "connectors": [
+              "HDMI-0"
+            ]
+          },
+          {
+            "x": 0,
+            "y": 0,
+            "scale": 2.0,
+            "transform": 0,
+            "primary": true,
+            "connectors": [
+              "eDP-1-1"
+            ]
+          }
+        ],
+        "properties": {
+          "renderer": "xrandr",
+          "layout-mode": 3,
+          "legacy-ui-scaling-factor": 2,
+          "supports-changing-layout-mode": true
+        }
+      },
+      "runs": [
+        {
+          "passed": true,
+          "monitor": "eDP-1-1",
+          "position": "top",
+          "source": "launcher",
+          "observations": [
+            {
+              "source": "Tìm ứng dụng",
+              "popup": [
+                68,
+                84,
+                1000,
+                976
+              ],
+              "anchor": 568.0,
+              "expectedOrigin": [
+                68,
+                84
+              ]
+            }
+          ],
+          "gdkMonitors": [
+            {
+              "name": "eDP-1-1",
+              "gtkScale": 2,
+              "area": [
+                0,
+                64,
+                1920,
+                1016
+              ]
+            },
+            {
+              "name": "HDMI-0",
+              "gtkScale": 2,
+              "area": [
+                1920,
+                0,
+                1920,
+                1080
+              ]
+            }
+          ],
+          "pid": 3077972,
+          "dock": [
+            496,
+            96,
+            930,
+            104
+          ],
+          "configUnchanged": true,
+          "appExit": -15
+        },
+        {
+          "passed": true,
+          "monitor": "eDP-1-1",
+          "position": "top",
+          "source": "audio",
+          "observations": [
+            {
+              "source": "Âm thanh",
+              "popup": [
+                722,
+                84,
+                720,
+                976
+              ],
+              "anchor": 1083.0,
+              "expectedOrigin": [
+                723,
+                84
+              ]
+            }
+          ],
+          "gdkMonitors": [
+            {
+              "name": "eDP-1-1",
+              "gtkScale": 2,
+              "area": [
+                0,
+                64,
+                1920,
+                1016
+              ]
+            },
+            {
+              "name": "HDMI-0",
+              "gtkScale": 2,
+              "area": [
+                1920,
+                0,
+                1920,
+                1080
+              ]
+            }
+          ],
+          "pid": 3078465,
+          "dock": [
+            496,
+            96,
+            930,
+            104
+          ],
+          "configUnchanged": true,
+          "appExit": -15
+        },
+        {
+          "passed": true,
+          "monitor": "eDP-1-1",
+          "position": "top",
+          "source": "system",
+          "observations": [
+            {
+              "source": "Tiện ích hệ thống",
+              "popup": [
+                798,
+                84,
+                760,
+                976
+              ],
+              "anchor": 1179.0,
+              "expectedOrigin": [
+                799,
+                84
+              ]
+            }
+          ],
+          "gdkMonitors": [
+            {
+              "name": "eDP-1-1",
+              "gtkScale": 2,
+              "area": [
+                0,
+                64,
+                1920,
+                1016
+              ]
+            },
+            {
+              "name": "HDMI-0",
+              "gtkScale": 2,
+              "area": [
+                1920,
+                0,
+                1920,
+                1080
+              ]
+            }
+          ],
+          "pid": 3078940,
+          "dock": [
+            496,
+            96,
+            930,
+            104
+          ],
+          "configUnchanged": true,
+          "appExit": -15
+        },
+        {
+          "passed": true,
+          "monitor": "eDP-1-1",
+          "position": "top",
+          "source": "calendar",
+          "observations": [
+            {
+              "source": "Mở lịch",
+              "popup": [
+                990,
+                228,
+                640,
+                680
+              ],
+              "anchor": 1310.0,
+              "expectedOrigin": [
+                990,
+                228
+              ]
+            }
+          ],
+          "gdkMonitors": [
+            {
+              "name": "eDP-1-1",
+              "gtkScale": 2,
+              "area": [
+                0,
+                64,
+                1920,
+                1016
+              ]
+            },
+            {
+              "name": "HDMI-0",
+              "gtkScale": 2,
+              "area": [
+                1920,
+                0,
+                1920,
+                1080
+              ]
+            }
+          ],
+          "pid": 3079413,
+          "dock": [
+            496,
+            96,
+            930,
+            104
+          ],
+          "configUnchanged": true,
+          "appExit": -15
+        },
+        {
+          "passed": true,
+          "monitor": "eDP-1-1",
+          "position": "bottom",
+          "source": "launcher",
+          "observations": [
+            {
+              "source": "Tìm ứng dụng",
+              "popup": [
+                68,
+                84,
+                1000,
+                976
+              ],
+              "anchor": 568.0,
+              "expectedOrigin": [
+                68,
+                84
+              ]
+            }
+          ],
+          "gdkMonitors": [
+            {
+              "name": "eDP-1-1",
+              "gtkScale": 2,
+              "area": [
+                0,
+                64,
+                1920,
+                1016
+              ]
+            },
+            {
+              "name": "HDMI-0",
+              "gtkScale": 2,
+              "area": [
+                1920,
+                0,
+                1920,
+                1080
+              ]
+            }
+          ],
+          "pid": 3079847,
+          "dock": [
+            496,
+            944,
+            930,
+            104
+          ],
+          "configUnchanged": true,
+          "appExit": -15
+        },
+        {
+          "passed": true,
+          "monitor": "eDP-1-1",
+          "position": "bottom",
+          "source": "audio",
+          "observations": [
+            {
+              "source": "Âm thanh",
+              "popup": [
+                722,
+                84,
+                720,
+                976
+              ],
+              "anchor": 1083.0,
+              "expectedOrigin": [
+                723,
+                84
+              ]
+            }
+          ],
+          "gdkMonitors": [
+            {
+              "name": "eDP-1-1",
+              "gtkScale": 2,
+              "area": [
+                0,
+                64,
+                1920,
+                1016
+              ]
+            },
+            {
+              "name": "HDMI-0",
+              "gtkScale": 2,
+              "area": [
+                1920,
+                0,
+                1920,
+                1080
+              ]
+            }
+          ],
+          "pid": 3080315,
+          "dock": [
+            496,
+            944,
+            930,
+            104
+          ],
+          "configUnchanged": true,
+          "appExit": -15
+        },
+        {
+          "passed": true,
+          "monitor": "eDP-1-1",
+          "position": "bottom",
+          "source": "system",
+          "observations": [
+            {
+              "source": "Tiện ích hệ thống",
+              "popup": [
+                798,
+                84,
+                760,
+                976
+              ],
+              "anchor": 1179.0,
+              "expectedOrigin": [
+                799,
+                84
+              ]
+            }
+          ],
+          "gdkMonitors": [
+            {
+              "name": "eDP-1-1",
+              "gtkScale": 2,
+              "area": [
+                0,
+                64,
+                1920,
+                1016
+              ]
+            },
+            {
+              "name": "HDMI-0",
+              "gtkScale": 2,
+              "area": [
+                1920,
+                0,
+                1920,
+                1080
+              ]
+            }
+          ],
+          "pid": 3080796,
+          "dock": [
+            496,
+            944,
+            930,
+            104
+          ],
+          "configUnchanged": true,
+          "appExit": -15
+        },
+        {
+          "passed": true,
+          "monitor": "eDP-1-1",
+          "position": "bottom",
+          "source": "calendar",
+          "observations": [
+            {
+              "source": "Mở lịch",
+              "popup": [
+                990,
+                236,
+                640,
+                680
+              ],
+              "anchor": 1310.0,
+              "expectedOrigin": [
+                990,
+                236
+              ]
+            }
+          ],
+          "gdkMonitors": [
+            {
+              "name": "eDP-1-1",
+              "gtkScale": 2,
+              "area": [
+                0,
+                64,
+                1920,
+                1016
+              ]
+            },
+            {
+              "name": "HDMI-0",
+              "gtkScale": 2,
+              "area": [
+                1920,
+                0,
+                1920,
+                1080
+              ]
+            }
+          ],
+          "pid": 3081264,
+          "dock": [
+            496,
+            944,
+            930,
+            104
+          ],
+          "configUnchanged": true,
+          "appExit": -15
+        },
+        {
+          "passed": true,
+          "monitor": "HDMI-0",
+          "position": "top",
+          "source": "launcher",
+          "observations": [
+            {
+              "source": "Tìm ứng dụng",
+              "popup": [
+                1988,
+                20,
+                1000,
+                1040
+              ],
+              "anchor": 2488.0,
+              "expectedOrigin": [
+                1988,
+                20
+              ]
+            }
+          ],
+          "gdkMonitors": [
+            {
+              "name": "eDP-1-1",
+              "gtkScale": 2,
+              "area": [
+                0,
+                64,
+                1920,
+                1016
+              ]
+            },
+            {
+              "name": "HDMI-0",
+              "gtkScale": 2,
+              "area": [
+                1920,
+                0,
+                1920,
+                1080
+              ]
+            }
+          ],
+          "pid": 3081711,
+          "dock": [
+            2416,
+            32,
+            930,
+            104
+          ],
+          "configUnchanged": true,
+          "appExit": -15
+        },
+        {
+          "passed": true,
+          "monitor": "HDMI-0",
+          "position": "top",
+          "source": "audio",
+          "observations": [
+            {
+              "source": "Âm thanh",
+              "popup": [
+                2642,
+                20,
+                720,
+                1040
+              ],
+              "anchor": 3003.0,
+              "expectedOrigin": [
+                2643,
+                20
+              ]
+            }
+          ],
+          "gdkMonitors": [
+            {
+              "name": "eDP-1-1",
+              "gtkScale": 2,
+              "area": [
+                0,
+                64,
+                1920,
+                1016
+              ]
+            },
+            {
+              "name": "HDMI-0",
+              "gtkScale": 2,
+              "area": [
+                1920,
+                0,
+                1920,
+                1080
+              ]
+            }
+          ],
+          "pid": 3082222,
+          "dock": [
+            2416,
+            32,
+            930,
+            104
+          ],
+          "configUnchanged": true,
+          "appExit": -15
+        },
+        {
+          "passed": false,
+          "monitor": "HDMI-0",
+          "position": "top",
+          "source": "system",
+          "observations": [],
+          "gdkMonitors": [
+            {
+              "name": "eDP-1-1",
+              "gtkScale": 2,
+              "area": [
+                0,
+                64,
+                1920,
+                1016
+              ]
+            },
+            {
+              "name": "HDMI-0",
+              "gtkScale": 2,
+              "area": [
+                1920,
+                0,
+                1920,
+                1080
+              ]
+            }
+          ],
+          "pid": 3082764,
+          "dock": [
+            2416,
+            32,
+            930,
+            104
+          ],
+          "error": "AssertionError('DeskMorph Context Menu unstable')",
+          "appExit": -15
+        }
+      ]
+    }
+  ],
+  "restoreErrors": [],
+  "inputSent": false,
+  "featureMutationAttempted": true,
+  "topologyMutationAttempted": true,
+  "scope": "Real GNOME X11 fractional/mixed display layouts, native allocation and AT-SPI activation of four popups, top/bottom on both monitors; fresh owned instance per popup; no keyboard, popup sequencing or physical-pixel proof",
+  "topologyRestored": false,
+  "userValueRestored": true,
+  "capabilitiesRestored": false,
+  "afterFeature": {
+    "configSerial": 193,
+    "monitors": [
+      {
+        "connector": "HDMI-0",
+        "configProperties": {},
+        "currentModes": [
+          {
+            "id": "1920x1080@60.000",
+            "width": 1920,
+            "height": 1080,
+            "refresh": 60.0,
+            "preferredScale": 1.0,
+            "supportedScales": [
+              1.0,
+              1.25,
+              1.5,
+              1.7391303777694702,
+              2.0,
+              2.307692289352417
+            ]
+          }
+        ]
+      },
+      {
+        "connector": "eDP-1-1",
+        "configProperties": {},
+        "currentModes": [
+          {
+            "id": "1920x1080@144.003",
+            "width": 1920,
+            "height": 1080,
+            "refresh": 144.0028076171875,
+            "preferredScale": 1.0,
+            "supportedScales": [
+              1.0,
+              1.25,
+              1.5,
+              1.7391303777694702,
+              2.0,
+              2.307692289352417
+            ]
+          }
+        ]
+      }
+    ],
+    "logicalMonitors": [
+      {
+        "x": 1920,
+        "y": 0,
+        "scale": 1.0,
+        "transform": 0,
+        "primary": false,
+        "connectors": [
+          "HDMI-0"
+        ]
+      },
+      {
+        "x": 0,
+        "y": 0,
+        "scale": 1.0,
+        "transform": 0,
+        "primary": true,
+        "connectors": [
+          "eDP-1-1"
+        ]
+      }
+    ],
+    "properties": {
+      "renderer": "xrandr",
+      "layout-mode": 3,
+      "legacy-ui-scaling-factor": 1,
+      "supports-changing-layout-mode": true
+    }
+  },
+  "error": "AssertionError({'passed': False, 'monitor': 'HDMI-0', 'position': 'top', 'source': 'system', 'observations': [], 'gdkMonitors': [{'name': 'eDP-1-1', 'gtkScale': 2, 'area': [0, 64, 1920, 1016]}, {'name': 'HDMI-0', 'gtkScale': 2, 'area': [1920, 0, 1920, 1080]}], 'pid': 3082764, 'dock': [2416, 32, 930, 104], 'error': \"AssertionError('DeskMorph Context Menu unstable')\", 'appExit': -15})",
+  "after": {
+    "configSerial": 195,
+    "monitors": [
+      {
+        "connector": "HDMI-0",
+        "configProperties": {},
+        "currentModes": [
+          {
+            "id": "1920x1080@60.000",
+            "width": 1920,
+            "height": 1080,
+            "refresh": 60.0,
+            "preferredScale": 1.0,
+            "supportedScales": [
+              1.0,
+              2.0
+            ]
+          }
+        ]
+      },
+      {
+        "connector": "eDP-1-1",
+        "configProperties": {},
+        "currentModes": [
+          {
+            "id": "1920x1080@144.003",
+            "width": 1920,
+            "height": 1080,
+            "refresh": 144.0028076171875,
+            "preferredScale": 1.0,
+            "supportedScales": [
+              1.0,
+              2.0
+            ]
+          }
+        ]
+      }
+    ],
+    "logicalMonitors": [
+      {
+        "x": 1920,
+        "y": 0,
+        "scale": 2.0,
+        "transform": 0,
+        "primary": false,
+        "connectors": [
+          "HDMI-0"
+        ]
+      },
+      {
+        "x": 0,
+        "y": 0,
+        "scale": 2.0,
+        "transform": 0,
+        "primary": true,
+        "connectors": [
+          "eDP-1-1"
+        ]
+      }
+    ],
+    "properties": {
+      "renderer": "xrandr",
+      "layout-mode": 2,
+      "global-scale-required": true,
+      "legacy-ui-scaling-factor": 2
+    }
+  },
+  "operatorRecovery": {
+    "after": {
+      "configSerial": 195,
+      "monitors": [
+        {
+          "connector": "HDMI-0",
+          "configProperties": {},
+          "currentModes": [
+            {
+              "id": "1920x1080@60.000",
+              "width": 1920,
+              "height": 1080,
+              "refresh": 60.0,
+              "preferredScale": 1.0,
+              "supportedScales": [
+                1.0,
+                2.0
+              ]
+            }
+          ]
+        },
+        {
+          "connector": "eDP-1-1",
+          "configProperties": {},
+          "currentModes": [
+            {
+              "id": "1920x1080@144.003",
+              "width": 1920,
+              "height": 1080,
+              "refresh": 144.0028076171875,
+              "preferredScale": 1.0,
+              "supportedScales": [
+                1.0,
+                2.0
+              ]
+            }
+          ]
+        }
+      ],
+      "logicalMonitors": [
+        {
+          "x": 1920,
+          "y": 0,
+          "scale": 1.0,
+          "transform": 0,
+          "primary": false,
+          "connectors": [
+            "HDMI-0"
+          ]
+        },
+        {
+          "x": 0,
+          "y": 0,
+          "scale": 1.0,
+          "transform": 0,
+          "primary": true,
+          "connectors": [
+            "eDP-1-1"
+          ]
+        }
+      ],
+      "properties": {
+        "renderer": "xrandr",
+        "layout-mode": 2,
+        "global-scale-required": true,
+        "legacy-ui-scaling-factor": 1
+      }
+    },
+    "topologyRestored": true,
+    "capabilitiesRestored": true,
+    "baselineRetainedOnLaterRead": true,
+    "ownedLabProcessCountAfterCleanup": 0,
+    "ownedSpeechSinkCountAfterCleanup": 0
+  },
+  "runnerSha256": "d76c2046b9b4ef97aae6f946d61be52ef6a254660e13c77b059829d510ea3de7",
+  "limits": [
+    "Failed output200% system popup stability; 100%16/16, 200%10 passed then1 failed, remaining5 not run",
+    "Initial cleanup did not retain baseline; immediate operator VERIFY/TEMPORARY recovery proved exact topology/capabilities. Overall passed remains false."
+  ]
+}

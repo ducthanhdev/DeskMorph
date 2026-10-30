@@ -137,7 +137,9 @@ def worker(root, monitor, position, source='launcher'):
         (root / 'result.json').write_text(json.dumps(result, ensure_ascii=False, indent=2) + '\n')
     return result
 
-def run():
+def run(layouts=('125', '150', 'mixed')):
+    scale_sets = {'100': [1., 1.], '125': [1.25, 1.25], '150': [1.5, 1.5], '200': [2., 2.], 'mixed': [1., 1.5]}
+    assert layouts and all(label in scale_sets for label in layouts), 'Unknown or empty DPI layouts'
     deadline = time.monotonic() + 420
     root = Path(tempfile.mkdtemp(prefix='deskmorph-dpi-native-'))
     out = root / 'result.json'
@@ -162,7 +164,8 @@ def run():
             Gio.Settings.sync()
         during = wait(lambda: (lambda s: s if m.fractional_advertised(s) else None)(m.snapshot(display)), 'Fractional support absent')
         report['afterFeature'] = during
-        for label, scales in [('125', [1.25, 1.25]), ('150', [1.5, 1.5]), ('mixed', [1, 1.5])]:
+        for label in layouts:
+            scales = scale_sets[label]
             desired = copy.deepcopy(before)
             desired['properties'] = during['properties']
             ordered = sorted(desired['logicalMonitors'], key=lambda x: x['x'])
@@ -223,10 +226,28 @@ def run():
             report['restoreErrors'].append('Settings: ' + repr(e))
         try:
             after = m.settled(display, before)
-            if (report['featureMutationAttempted'] or report['topologyMutationAttempted']) and m.topology(after) != m.topology(before):
-                m.apply(display, before, 1)
+            mutated = report['featureMutationAttempted'] or report['topologyMutationAttempted']
+            # Feature changes and ApplyMonitorsConfig can race: an immediately
+            # matching snapshot may be superseded by a delayed compositor update.
+            # Require a second observation after a cooldown; reapply at most twice.
+            report['restoreApplyAttempts'] = 0
+            for attempt in range(3):
+                if mutated and m.topology(after) != m.topology(before):
+                    if attempt == 2:
+                        break
+                    m.apply(display, before, 0)
+                    m.apply(display, before, 1)
+                    report['restoreApplyAttempts'] += 1
+                    after = m.settled(display, before)
+                if not mutated:
+                    break
+                time.sleep(2)
                 after = m.settled(display, before)
+                if m.topology(after) == m.topology(before) and after['properties'] == before['properties'] and after['monitors'] == before['monitors']:
+                    break
             report.update(after=after, topologyRestored=m.topology(after) == m.topology(before), capabilitiesRestored=after['properties'] == before['properties'] and after['monitors'] == before['monitors'])
+            if mutated and not (report['topologyRestored'] and report['capabilitiesRestored']):
+                report['restoreErrors'].append('Display: baseline did not remain restored after bounded retries')
         except Exception as e:
             report['restoreErrors'].append('Display: ' + repr(e))
         try:
@@ -245,6 +266,8 @@ if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--run', action='store_true', help='Opt in to reversible host display mutations; requires an agreed idle desktop window')
-    if not parser.parse_args().run:
+    parser.add_argument('--layouts', nargs='+', choices=('100', '125', '150', '200', 'mixed'), default=['125', '150', 'mixed'], help='Explicit output scales; default is the 48-case fractional/mixed matrix')
+    args = parser.parse_args()
+    if not args.run:
         parser.error('--run is required; no host settings were changed')
-    sys.exit(0 if run()['passed'] else 1)
+    sys.exit(0 if run(tuple(args.layouts))['passed'] else 1)

@@ -129,3 +129,8 @@ Giữ [48 native observations](benchmarks/dpi-native-full-matrix-2026-10-30/resu
 ## Current Orca regression (30/10/2026)
 
 Giữ [JSON hồi quy đạt](benchmarks/orca-current-regression-2026-10-30/result.json) và sửa harness screen_reader_smoke.py vì chạy kiểm bàn phím vi/en không hạ assertions, kiểm speech lỗi/warning trên binary hiện tại, route sink và reader exit0. Chờ stream resolve, PID-guard official Quit và đọc log sau shutdown giải quyết các preparation/flush failures đã ghi trước. Không commit raw speech/audio; bypass-navigation và giới hạn default-reader/human listening ghi rõ, không nâng menu suite thành chứng nhận toàn bộ accessibility.
+
+
+## Integer output failure and recovery guard (30/10/2026)
+
+Giữ [integer-output trial thất bại](benchmarks/dpi-output-integer-trial-2026-10-30/result.json) riêng với48-ca pass:100%16/16,200%10pass/1fail/5not-run; flags cleanup thất bại không bị ghi đè bởi operatorRecovery đạt.13 fault tests bảo vệ bounded reapply/cooldown và ghi lỗi persistent drift; không thay acceptance host guard mới. Giữ --layouts để tái lập200% độc lập, không phải chạy lại48ca đã đạt. Baseline được xác minh giữ nguyên sau recovery và0helper/sink. Không giữ private GNOME diagnostic không đạt precondition synthetic monitor như test sản phẩm.
