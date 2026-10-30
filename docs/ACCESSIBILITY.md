@@ -147,3 +147,10 @@ Harness dùng nav landmark thay first5buttons, vì status Details có thể đ�
 [Bằng chứng](benchmarks/functional-glyph-contrast-2026-10-30/result.json):209/209 computed-style cases đạt, gồm72 ca mới cho glyph Dock, context menu, đóng cửa sổ và launcher. Render lucide-react đang cài với kích thước thật (X context14px, X đóng cửa sổ16px), CSS/control classes thật, nền đen/trắng, thường/hover khi có. Cận tương phản nhỏ nhất trong72 ca mới là5,246:1 (yêu cầu3:1); SVG bounds nằm trong parent. Lưu riêng72 kết quả mới, hash CSS/runner và tổng suite; không nhân bản137 ca cũ hoặc raw computed tree.
 
 Đây là cận bảo thủ từ màu stroke/background và gradient stops trong WebKitGTK offscreen, không chứng nhận artwork/logo ngoài, native controls, focus bàn phím hay toàn bộ accessibility. Không đổi mã sản phẩm; không rebuild hoặc lặp unit suite sản phẩm. G5.9 vẫn mở, tổng97/99.
+
+
+## G5.9 — Hồi quy Orca trên bản hiện tại đã đạt (30/10/2026)
+
+[Bằng chứng GNOME thật](benchmarks/orca-current-regression-2026-10-30/result.json): binary1172029a… qua toàn bộ context keyboard suite vi/en với Orca bật: Tab/reverse, disabled skip, arrows/Home/End, Escape/source focus, launch error, force review/cancel/confirm và owned fixture exit.342 speech-output lines,1409877 sample khác0; cả tên fixture, Hủy/Cancel, Mở/Open, lỗi launch và warning force hai ngôn ngữ đều được ghi nhận.16 lần bật và16 lần tắt bypass navigation của Orca bằng Alt+Backspace được xác nhận; không coi là default-reader Home/End compatibility.
+
+Harness chờ stream4294967295 resolve về đúng owned sink trước input; sau suite kiểm route lại, xác minh PID service Orca bằng D-Bus rồi gọi Quit chính thức, đợi exit0 trước đọc debug tail. Reader sống suốt suite, không ghi segfault, helper đã thoát và default audio giữ nguyên; config fixture phục hồi. Giữ thay đổi harness vì sửa race/flush và ownership của kiểm tích hợp, không thêm test mirror implementation. Raw audio/debug/preferences ở/tmp, JSON chỉ giữ counts/hash/fixture assertions. Chưa kết luận tính dễ nghe của speech hoặc toàn ứng dụng từ suite menu; G5.9 chờ audit cuối các yêu cầu gốc.

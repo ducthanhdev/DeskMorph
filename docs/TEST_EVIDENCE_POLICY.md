@@ -119,3 +119,13 @@ Giữ72 fixture mở rộng trong contrast_audit.py vì đo stroke/gradient và 
 ## DPI worker preflight (30/10/2026)
 
 Giữ nhánh opt-in dùng chung worker giữa Xvfb và Mutter, cùng [16 kết quả native riêng](benchmarks/dpi-worker-private-2026-10-30/result.json), để phát hiện sai nguồn/kích thước/đơn vị trước host mutation.11 fault tests tiếp tục qua; ma trận48 ca host mới chỉ chuẩn bị, chưa có acceptance. Không commit bản sao probe GNOME Shell/tmp: negative RandR monitor ngoài drawable root không phải topology vật lý dưới WM. Không dùng kết quả đó để đánh dấu G2.10 hoặc quy lỗi sản phẩm.
+
+
+## Fractional/mixed full matrix (30/10/2026)
+
+Giữ [48 native observations](benchmarks/dpi-native-full-matrix-2026-10-30/result.json) vì mở rộng acceptance từ Dock trên/launcher sang Dock dưới và bốn nguồn trên hai màn hình. JSON giữ before/requested/readback/after, restore flags, PID và binary/runner hash; raw logs/private configs ở/tmp. Mỗi nguồn instance mới nên không nâng thành popup sequencing, keyboard hoặc physical-pixel proof. Không thêm test mirror geometry đã có;11 fault tests hiện có bảo vệ thao tác host, runner mới đã chạy thật và restore đạt.
+
+
+## Current Orca regression (30/10/2026)
+
+Giữ [JSON hồi quy đạt](benchmarks/orca-current-regression-2026-10-30/result.json) và sửa harness screen_reader_smoke.py vì chạy kiểm bàn phím vi/en không hạ assertions, kiểm speech lỗi/warning trên binary hiện tại, route sink và reader exit0. Chờ stream resolve, PID-guard official Quit và đọc log sau shutdown giải quyết các preparation/flush failures đã ghi trước. Không commit raw speech/audio; bypass-navigation và giới hạn default-reader/human listening ghi rõ, không nâng menu suite thành chứng nhận toàn bộ accessibility.

@@ -105,7 +105,11 @@ def run():
         def speech_inputs():
             owned_pids = speech_pids()
             return [item for item in json.loads(pactl('--format=json', 'list', 'sink-inputs')) if item.get('properties', {}).get('application.process.id') in owned_pids]
-        inputs = wait(speech_inputs, 'Speech playback stream missing')
+        def routed_inputs():
+            inputs = speech_inputs()
+            return inputs if inputs and all(item['sink'] == sink_id for item in inputs) else None
+        # PipeWire may briefly report sink4294967295 before routing resolves.
+        inputs = wait(routed_inputs, 'Speech playback stream did not resolve to the owned sink')
         report['initialPlaybackTargets'] = dict(expectedSink=sink_id, observed=[dict(index=item['index'], sink=item['sink']) for item in inputs])
         assert all(item['sink'] == sink_id for item in inputs), 'Speech stream escaped the private sink'
         report['playbackStreamsTargetOwnedNullSink'] = True
@@ -118,7 +122,22 @@ def run():
         time.sleep(3)
         report['readerExitCodeBeforeCleanup'] = reader.poll()
         assert reader.poll() is None, 'Orca exited during the native keyboard suite'
-        assert all(item['sink'] == sink_id for item in speech_inputs())
+        inputs = speech_inputs()
+        assert inputs and all(item['sink'] == sink_id for item in inputs)
+        # Flush Orca's buffered debug tail using its official service, only
+        # after verifying the service belongs to the reader we started.
+        owner = subprocess.check_output(['gdbus', 'call', '--session', '--dest',
+            'org.freedesktop.DBus', '--object-path', '/org/freedesktop/DBus',
+            '--method', 'org.freedesktop.DBus.GetConnectionUnixProcessID',
+            'org.gnome.Orca.Service'], text=True, timeout=5)
+        assert owner.strip() == f'(uint32 {reader.pid},)', 'Orca service is not the owned reader; no Quit sent'
+        quit_result = subprocess.check_output(['gdbus', 'call', '--session', '--dest',
+            'org.gnome.Orca.Service', '--object-path', '/org/gnome/Orca/Service',
+            '--method', 'org.gnome.Orca.Service.Quit'], text=True, timeout=5)
+        assert 'true' in quit_result
+        reader.wait(timeout=8)
+        report.update(readerExitCodeAfterObservation=reader.returncode, speechLogReadAfterReaderStop=True)
+        assert reader.returncode == 0, 'Orca failed during graceful shutdown'
         capture.terminate(); capture.wait(timeout=5)
         samples = array.array('h', raw.read_bytes())
         assert samples and max(map(abs, samples)) > 500 and sum(value != 0 for value in samples) > 10000, 'Speech capture was silent'
@@ -139,7 +158,7 @@ def run():
         report['error'] = repr(error)
         raise
     finally:
-        if reader is not None: report['readerExitCodeBeforeCleanup'] = reader.poll()
+        if reader is not None: report.setdefault('readerExitCodeBeforeCleanup', reader.poll())
         for process in reversed(processes):
             if process.poll() is None:
                 os.killpg(process.pid, signal.SIGTERM)

@@ -1,0 +1,208 @@
+{
+  "passed": true,
+  "root": "/tmp/deskmorph-orca-speech-sdw6n6ps",
+  "navigationProfileRequested": "bypass-navigation",
+  "binarySha256": "1172029a8dee0dde0b196e4956b2df150522bb1b058c4ed0cf829bc55e449ac9",
+  "command": "/usr/bin/python3 tests/screen_reader_smoke.py",
+  "scope": "Orca speech enabled with native pinned-context keyboard fixtures in vi/en; speech synthesis captured from an owned null sink, no speaker playback or full application certification",
+  "navigationSettingsRequested": {},
+  "initialPlaybackTargets": {
+    "expectedSink": 11645,
+    "observed": [
+      {
+        "index": 11673,
+        "sink": 11645
+      }
+    ]
+  },
+  "playbackStreamsTargetOwnedNullSink": true,
+  "keyboardExitCode": 0,
+  "readerExitCodeBeforeCleanup": null,
+  "readerExitCodeAfterObservation": 0,
+  "speechLogReadAfterReaderStop": true,
+  "speechEnabled": true,
+  "expectedUtterances": {
+    "DeskMorph Context Keyboard": true,
+    "Hủy": true,
+    "Cancel": true,
+    "Mở ứng dụng": true,
+    "Open application": true,
+    "Không mở được ứng dụng": true,
+    "Unable to launch application": true,
+    "Buộc đóng có thể": true,
+    "Force closing may close": true
+  },
+  "speechOutputLines": 342,
+  "audio": {
+    "rate": 22050,
+    "channels": 1,
+    "samples": 2228224,
+    "nonzeroSamples": 1409877,
+    "peak": 32768,
+    "sha256": "413533d72ee637ba07f2c796fbd6dd845802ef47ee5d2ec5ce81424b3205e6fe"
+  },
+  "keyboard": {
+    "runs": [
+      {
+        "pid": 3058782,
+        "screenshot": "/tmp/deskmorph-desktop-test/context-confirm-vi.png",
+        "observations": [
+          {
+            "keys": [
+              65505,
+              65479
+            ],
+            "sequence": [
+              "Mở ứng dụng",
+              "Bỏ ghim",
+              "Sang phải",
+              "DeskMorph Window Test 1",
+              "Đóng DeskMorph Window Test 1",
+              "DeskMorph Window Test 2",
+              "Đóng DeskMorph Window Test 2",
+              "DeskMorph Window Test 3",
+              "Đóng DeskMorph Window Test 3",
+              "Buộc dừng…"
+            ],
+            "disabledSkipped": [
+              "Sang trái"
+            ],
+            "reverseMatches": true,
+            "arrowWrapAndHomeEnd": true,
+            "escapeRestores": true
+          },
+          {
+            "keys": [
+              65383
+            ],
+            "sequence": [
+              "Mở ứng dụng",
+              "Bỏ ghim",
+              "Sang phải",
+              "DeskMorph Window Test 1",
+              "Đóng DeskMorph Window Test 1",
+              "DeskMorph Window Test 2",
+              "Đóng DeskMorph Window Test 2",
+              "DeskMorph Window Test 3",
+              "Đóng DeskMorph Window Test 3",
+              "Buộc dừng…"
+            ],
+            "disabledSkipped": [
+              "Sang trái"
+            ],
+            "reverseMatches": true,
+            "arrowWrapAndHomeEnd": true,
+            "escapeRestores": true
+          }
+        ],
+        "configUnchanged": true,
+        "failedLaunchFocus": true,
+        "forceReviewCancelFocus": true,
+        "removedRowFallback": true,
+        "enterClosesOwnedWindow": true,
+        "keyboardForceConfirm": true,
+        "forceFixturePid": 3058721,
+        "forceFixtureExitCode": 1,
+        "scope": "Native pinned fixture context entry/Tab/arrows/Escape, nonexistent command failure, force review/cancel/Tab-confirm, external row removal and Enter close of owned fixture window2; force quit targets only the owned Popen fixture, no user app actions or unpinned context coverage"
+      },
+      {
+        "pid": 3062312,
+        "screenshot": "/tmp/deskmorph-desktop-test/context-confirm-en.png",
+        "observations": [
+          {
+            "keys": [
+              65505,
+              65479
+            ],
+            "sequence": [
+              "Open application",
+              "Unpin",
+              "Move right",
+              "DeskMorph Window Test 1",
+              "Close DeskMorph Window Test 1",
+              "DeskMorph Window Test 2",
+              "Close DeskMorph Window Test 2",
+              "DeskMorph Window Test 3",
+              "Close DeskMorph Window Test 3",
+              "Force quit…"
+            ],
+            "disabledSkipped": [
+              "Move left"
+            ],
+            "reverseMatches": true,
+            "arrowWrapAndHomeEnd": true,
+            "escapeRestores": true
+          },
+          {
+            "keys": [
+              65383
+            ],
+            "sequence": [
+              "Open application",
+              "Unpin",
+              "Move right",
+              "DeskMorph Window Test 1",
+              "Close DeskMorph Window Test 1",
+              "DeskMorph Window Test 2",
+              "Close DeskMorph Window Test 2",
+              "DeskMorph Window Test 3",
+              "Close DeskMorph Window Test 3",
+              "Force quit…"
+            ],
+            "disabledSkipped": [
+              "Move left"
+            ],
+            "reverseMatches": true,
+            "arrowWrapAndHomeEnd": true,
+            "escapeRestores": true
+          }
+        ],
+        "configUnchanged": true,
+        "failedLaunchFocus": true,
+        "forceReviewCancelFocus": true,
+        "removedRowFallback": true,
+        "enterClosesOwnedWindow": true,
+        "keyboardForceConfirm": true,
+        "forceFixturePid": 3062288,
+        "forceFixtureExitCode": 1,
+        "scope": "Native pinned fixture context entry/Tab/arrows/Escape, nonexistent command failure, force review/cancel/Tab-confirm, external row removal and Enter close of owned fixture window2; force quit targets only the owned Popen fixture, no user app actions or unpinned context coverage"
+      }
+    ],
+    "fixturePids": [
+      3058782,
+      3062312
+    ],
+    "windowFixturePids": [
+      3058721,
+      3062288
+    ],
+    "normalPid": 3065497,
+    "configRestored": true
+  },
+  "limits": [
+    "No human listening evaluation or certification of intelligibility",
+    "Whole-application reading order, every live region and other Orca settings remain outside this fixture suite"
+  ],
+  "capturedAudio": {
+    "samples": 2228224,
+    "nonzeroSamples": 1409877,
+    "peak": 32768
+  },
+  "fixtureLabelSpoken": true,
+  "bypassNavigation": {
+    "requested": true,
+    "enabledEvents": 16,
+    "disabledEvents": 16
+  },
+  "applicationCaretNavigationEnabledObserved": true,
+  "orcaSegfaultLogged": false,
+  "readerExitCodeAfterCleanup": 0,
+  "processExitCodesAfterCleanup": [
+    0,
+    0,
+    0
+  ],
+  "defaultOutputPreserved": true,
+  "ownedProcessesExited": true,
+  "runnerSha256": "64e289f8d09765e55216071df2520dde87d090debcfb5b073649e02571de5445"
+}

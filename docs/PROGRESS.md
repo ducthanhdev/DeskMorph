@@ -1037,3 +1037,17 @@ Mở rộng runner Mutter opt-in:3 layouts fractional/mixed ×2 monitor ×2 vị
 Giữ nhánh dùng lại worker trong negative_origin_smoke.py để kiểm phép đo trước khi đổi topology host; không thêm harness bản sao. Một probe GNOME Shell riêng nhận vai trò WM nhưng monitor âm nằm ngoài drawable root, Dock bị đặt về vùng dương; đây không phải bố trí màn hình vật lý hợp lệ để kết luận lỗi sản phẩm hoặc chốt negative topology. Không giữ probe tạm như regression test.
 
 Chưa chạy48 ca trên host trong lượt này: khoảng desktop rảnh trước đã hết, cần xác nhận khoảng mới đang chờ.16 ca riêng không thay fractional/mixed/WM/physical-pixel acceptance;6 ca host đã lưu trước vẫn là phạm vi host được chứng minh. G2.10/G5.9 vẫn mở,97/99; release no-go.
+
+
+## G2.10 — Ma trận fractional/mixed DPI48/48 đạt trên GNOME (30/10/2026)
+
+[Bằng chứng native đầy đủ](benchmarks/dpi-native-full-matrix-2026-10-30/result.json): binary1172029a… đạt48/48 ca =125%/125%,150%/150%,100%/150% ×eDP/HDMI ×Dock trên/dưới ×launcher/audio/system/calendar. Mỗi layout qua Mutter VERIFY rồi TEMPORARY apply, readback scale/origin/mode/primary khớp; fresh owned app cho mỗi nguồn. GDK global UI scale2 được chuyển đúng sang framebuffer rectangles, kiểm Dock center/margin, popup kích thước/clamp và source anchor. Không input phím/chuột, không kiểm sequencing hoặc độ sắc nét pixel.
+
+Cleanup exact: topology/primary/origins/modes/refresh, experimental-features user value và capabilities đều khớp baseline; restoreErrors rỗng. Runner đã chạy thật sau các safety guards được fault-test, không còn chỉ dựa diagnostic cũ. Đổi resolution1680×1050 và scale100% đã có bằng chứng geometry-multimonitor trước; scale200% có application-scale native riêng. Negative origin vẫn chỉ có private native allocation ngoài drawable root, chưa có topology âm hợp lệ dưới WM. Giữ G2.10 mở trong lúc audit phạm vi; không gọi48 ca này là toàn bộ G2.10.
+
+
+## G5.9 — Hồi quy Orca trên bản hiện tại đã đạt (30/10/2026)
+
+[Bằng chứng GNOME thật](benchmarks/orca-current-regression-2026-10-30/result.json): binary1172029a… qua toàn bộ context keyboard suite vi/en với Orca bật: Tab/reverse, disabled skip, arrows/Home/End, Escape/source focus, launch error, force review/cancel/confirm và owned fixture exit.342 speech-output lines,1409877 sample khác0; cả tên fixture, Hủy/Cancel, Mở/Open, lỗi launch và warning force hai ngôn ngữ đều được ghi nhận.16 lần bật và16 lần tắt bypass navigation của Orca bằng Alt+Backspace được xác nhận; không coi là default-reader Home/End compatibility.
+
+Harness chờ stream4294967295 resolve về đúng owned sink trước input; sau suite kiểm route lại, xác minh PID service Orca bằng D-Bus rồi gọi Quit chính thức, đợi exit0 trước đọc debug tail. Reader sống suốt suite, không ghi segfault, helper đã thoát và default audio giữ nguyên; config fixture phục hồi. Giữ thay đổi harness vì sửa race/flush và ownership của kiểm tích hợp, không thêm test mirror implementation. Raw audio/debug/preferences ở/tmp, JSON chỉ giữ counts/hash/fixture assertions. Chưa kết luận tính dễ nghe của speech hoặc toàn ứng dụng từ suite menu; G5.9 chờ audit cuối các yêu cầu gốc.
