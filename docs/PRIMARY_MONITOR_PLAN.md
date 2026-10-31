@@ -4,6 +4,8 @@ Ngày lập: 31/10/2026. Trạng thái: chỉ lập kế hoạch, chưa triển 
 
 Tài liệu giai đoạn tiếp theo: [Phân tích hệ thống](PRIMARY_MONITOR_SYSTEM_ANALYSIS.md), gồm khảo sát API chỉ đọc, yêu cầu, mô hình dữ liệu và các điểm cần kiểm chứng trước khi thiết kế.
 
+Thiết kế triển khai: [System Design v1](PRIMARY_MONITOR_SYSTEM_DESIGN.md), quy định module, IPC, recovery agent, khóa theo session và các cổng kiểm chứng GNOME.
+
 ## 1. Kết quả mong muốn
 
 Trong Studio → Màn hình, người dùng thấy các màn hình đang hoạt động, biết màn nào là chính và có thể đặt màn khác làm màn hình chính của desktop. Thiết lập này tác động đến hệ điều hành; lựa chọn “Màn hình đặt Dock” tiếp tục điều khiển riêng vị trí Dock.

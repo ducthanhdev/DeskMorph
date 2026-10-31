@@ -171,3 +171,5 @@ Các quyết định còn cần bằng chứng: policy xác nhận, cơ chế cr
 | FR08–09 | P3.5, P5–P6 | vi/en, keyboard/Orca, single-screen/mirror |
 
 Đã hoàn thành đầu ra phân tích: hiện trạng có tham chiếu mã, xác nhận API chỉ đọc, ranh giới/tác nhân, yêu cầu và dữ liệu, luồng nghiệp vụ, tác động, rủi ro và tiêu chí kiểm chứng. Chưa hoàn thành toàn bộ P1 của kế hoạch: VERIFY/apply, persistence và recovery chưa được thử ở bước này. Bước tiếp theo là System Design, đồng thời làm spike trong môi trường riêng để chốt các điểm còn mở trước khi xây mutation production.
+
+Tài liệu đầu ra giai đoạn kế tiếp: [Thiết kế hệ thống v1](PRIMARY_MONITOR_SYSTEM_DESIGN.md). Các khảo sát mutation/persistence/recovery vẫn là điều kiện kiểm chứng trước khi bật chức năng.
