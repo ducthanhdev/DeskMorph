@@ -1,0 +1,54 @@
+{
+  "date": "2026-10-31",
+  "scope": "Installed environment inventory and source capability review; no compositor launch, session switch, display mutation or input",
+  "executables": {
+    "Xorg": "/usr/bin/Xorg",
+    "Xephyr": "/usr/bin/Xephyr",
+    "Xvfb": null,
+    "gnome-shell": "/usr/bin/gnome-shell",
+    "cosmic-comp": "/usr/bin/cosmic-comp",
+    "cosmic-randr": "/usr/bin/cosmic-randr",
+    "kwin_wayland": null,
+    "kwin_x11": null,
+    "sway": null,
+    "weston": null,
+    "labwc": null,
+    "openbox": null,
+    "xfwm4": null,
+    "qemu-system-x86_64": null,
+    "virsh": null,
+    "VBoxManage": null,
+    "wine": "/usr/bin/wine"
+  },
+  "extractedXvfb": true,
+  "sessions": {
+    "xsessions": [
+      "gnome-xorg.desktop",
+      "gnome.desktop"
+    ],
+    "wayland-sessions": [
+      "cosmic.desktop",
+      "gnome-wayland.desktop",
+      "gnome.desktop"
+    ]
+  },
+  "versions": [
+    "cosmic-comp 0.1~1792508925~24.04~8cb1802",
+    "gnome-shell 46.0-0ubuntu6~24.04.16",
+    "mutter-common 46.2-1ubuntu0.24.04.18",
+    "wine 9.0~repack-4build3",
+    "xserver-xephyr 2:21.1.12-1ubuntu1.9",
+    "xserver-xorg-core 2:21.1.12-1ubuntu1.9"
+  ],
+  "findings": [
+    "GNOME X11 candidate at negative x was rejected by Mutter method0 in the existing verified report",
+    "COSMIC and GNOME Wayland are installed; DeskMorph dock_placement_available requires XDG_SESSION_TYPE=x11 and a nonempty DISPLAY",
+    "cosmic-randr exposes position and --test; help alone does not establish supported negative positions or DeskMorph placement",
+    "Xephyr and extracted Xvfb provide isolated display infrastructure; their presence does not establish a negative monitor inside a drawable root under WM",
+    "No QEMU, libvirt CLI or VirtualBox CLI found in current PATH; this does not prove absence of every VM installation",
+    "Wine is installed but the repository native client is a Linux GTK/Tauri build, not a Windows binary for a negative-coordinate acceptance run"
+  ],
+  "acceptancePassed": false,
+  "hostMutationAttempted": false,
+  "remaining": "G2.10 native negative-origin drawable monitor under WM"
+}

@@ -1134,3 +1134,10 @@ Kiểm toán tính nhất quán tài liệu: bỏ ba mô tả cũ trong IMPLEMEN
 Readback finally: topology/primary/origins/modes/refresh, feature user value và capabilities khớp baseline; restoreErrors rỗng, restoreApplyAttempts0. Audit0 owned helper sống, đã trả desktop ngay sau verifyrestore. Trên cùng binary, union10ca integer200% đạt trước +4tổ hợp system đạt trong12repeats +4ca mới phủ đủ16/16 tổ hợp monitor×position×source. JSON mới ghi mapping bằng chứng từng tổ hợp; không biến trial integer cũ passed:false thành pass hoặc gọi union là một lần chạy16ca.
 
 Cập nhật GEOMETRY/REMAINING_ACCEPTANCE/RELEASE_CHECKLIST: G2.10 chỉ còn topology âm drawable dưới WM. Ràng buộc Mutter InvalidArgs đã có VERIFY baseline/candidate và readback không mutation; không chốt bằng synthetic allocation. Tổng98/99, release no-go. Không đổi code sản phẩm hoặc harness ở lượt này; không cần rebuild hay lặp unit suite đã qua. Chỉ giữ JSON bằng chứng và tài liệu đánh giá; không thêm file test hay commit raw worker logs/config/binary. Commit kết quả bằng tiếng Việt theo yêu cầu.
+
+
+## G2.10 — Tự khảo sát môi trường thay thế theo yêu cầu (31/10/2026)
+
+[Inventory thực](benchmarks/environment-inventory-2026-10-31/result.json) ghi các session/executable/version và đối chiếu capability source. Máy có GNOME X11/Wayland, COSMIC, Xephyr, Xvfb trích riêng và Wine; không tìm thấy WM X11 khác hoặc QEMU/libvirt/VirtualBox CLI trong PATH. COSMIC có lệnh position/test nhưng chưa chứng minh negative topology hoặc quyền đặt Dock của ứng dụng. `src-tauri/src/platform.rs` chỉ bật placement trên X11; ma trận hiện giữ hai Wayland environments ở wallpaper-only experimental. Không giả định compositor có sẵn là môi trường acceptance hợp lệ.
+
+Không launch compositor, đổi login, đổi layout hay settings của người dùng. Lượt này chỉ giữ JSON inventory và tài liệu đánh giá; không thêm test vì không đổi implementation và inventory không phải regression hành vi. G2.10 vẫn mở,98/99; chưa có bằng chứng để chốt topology âm hoặc phát hành.

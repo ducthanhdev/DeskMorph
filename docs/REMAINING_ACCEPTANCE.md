@@ -38,3 +38,12 @@ Chỉ G2.10 còn mở vì topology âm drawable hợp lệ dưới WM; bốn t�
 Runner đã chuẩn bị chọn đúng bốn ca: `--run --layouts 200 --only-case HDMI-0/top/calendar HDMI-0/bottom/launcher HDMI-0/bottom/audio HDMI-0/bottom/calendar`. [Lượt host4/4](benchmarks/dpi-output200-remaining-2026-10-30/result.json) đã chạy sau xác nhận desktop rảnh mới; topology/primary/modes/refresh/user value/capabilities khôi phục đúng, restoreErrors rỗng,0 owned helper cuối lượt.
 
 Giới hạn môi trường cho origin âm đã xác minh bằng method0; không chỉ là thiếu test. Cần native WM/display backend chấp nhận topology âm drawable để hoàn thành yêu cầu gốc; không đổi yêu cầu thành allocation synthetic. Phép VERIFY không cần chiếm desktop và không được tính là ca DPI đạt.
+
+
+## Khảo sát môi trường thay thế — 31/10/2026
+
+[Kiểm tra trực tiếp trên máy](benchmarks/environment-inventory-2026-10-31/result.json) tìm thấy GNOME X11/Wayland và COSMIC; Xephyr và Xvfb trích riêng có sẵn. Không tìm thấy KWin/Sway/Weston hoặc QEMU/libvirt/VirtualBox CLI trong PATH. Đây là inventory, không phải kết luận mọi môi trường khác đều không thể chạy.
+
+COSMIC có `cosmic-randr position --test`, nhưng chưa có acceptance topology âm. Sản phẩm hiện giới hạn `dock_placement_available()` ở X11; COSMIC/GNOME Wayland chỉ được công bố wallpaper-only experimental. Vì vậy khởi chạy compositor đó hoặc đổi phiên desktop không tự hoàn thành ca Dock G2.10. Wine có sẵn nhưng không có Windows client tương ứng để kiểm. Không đổi session/settings, không cài package hay tạo máy ảo ở lượt khảo sát này.
+
+Hướng khả thi cần nghiên cứu thêm là topology âm được backend native chấp nhận và ứng dụng có quyền đặt cửa sổ tương ứng. Không dùng override session X11 trên Wayland, sửa tọa độ báo cáo hoặc monitor nằm ngoài drawable root để tạo bằng chứng đạt. Giữ G2.10 mở trong khi xác định môi trường phù hợp.
