@@ -10,6 +10,8 @@ Dock tùy biến cho Linux, xây bằng React 19, TypeScript và Tauri 2/Rust. M
 
 Trong Studio → Dock → Màn hình đặt Dock, chọn **Tất cả màn hình** để hiện Dock trên cả màn laptop và màn ngoài (X11). Các Dock dùng chung thiết lập và ứng dụng ghim; popup mở cạnh Dock vừa thao tác. Bạn vẫn có thể chọn màn hình chính hoặc một màn hình cụ thể.
 
+Studio → **Màn hình** hiển thị primary/secondary và thông số màn hình trên GNOME, có nút mở cài đặt màn hình hệ thống để chuyển primary. Đổi trực tiếp trong DeskMorph chưa bật vì policy xác nhận/lưu/phục hồi chưa được kiểm chứng đầy đủ; xem [phạm vi triển khai](docs/PRIMARY_MONITOR_IMPLEMENTATION.md).
+
 ## Môi trường hỗ trợ
 
 | Môi trường/chức năng | Trạng thái |

@@ -9,7 +9,7 @@ export interface PlatformInfo {
   unavailableReasons: Partial<Record<"dockPlacement" | "autoHide" | "windowEnumeration" | "windowActivation" | "windowClose" | "forceQuit" | "wallpaper" | "workspaces", string>>;
   windows: { enumerate: boolean; activate: boolean; close: boolean };
   workspaces: boolean; reasons: string[];
-  monitors: { name: string; x: number; y: number; width: number; height: number; scale: number }[];
+  monitors: { primary: boolean; name: string; x: number; y: number; width: number; height: number; scale: number }[];
 }
 export function usePlatform() {
   const [platform, setPlatform] = useState<PlatformInfo | null>(null);

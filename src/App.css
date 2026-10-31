@@ -1900,3 +1900,9 @@ button:focus-visible { outline: 2px solid #48b9c7; outline-offset: -2px; }
 .taskbar-container .clock-section { padding: 3px 6px; border-radius: 8px; }
 .taskbar-container .clock-section.interactive-widget:hover { background: #253348; }
 .taskbar-container .dock-action-btn:hover { background: #48b9c7; color: #0c1017; }
+
+.display-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin: 1rem 0; }
+.display-list { list-style: none; padding: 0; display: grid; gap: 1rem; }
+.display-item { border: 1px solid currentColor; border-radius: 12px; padding: 1rem; overflow-wrap: anywhere; }
+.display-item h3 { margin-top: 0; }
+.display-item p { margin: 0.5rem 0; }

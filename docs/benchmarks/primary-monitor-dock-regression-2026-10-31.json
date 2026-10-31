@@ -1,0 +1,435 @@
+{
+  "passed": true,
+  "binarySha256": "a84c8f7a701286f09722e24d0fed5d9a90f1103c0d57aad99bdcf198d373c8f8",
+  "monitors": [
+    {
+      "name": "eDP-1-1",
+      "scale": 1,
+      "area": [
+        0,
+        32,
+        1920,
+        1048
+      ]
+    },
+    {
+      "name": "HDMI-0",
+      "scale": 1,
+      "area": [
+        1920,
+        0,
+        1920,
+        1080
+      ]
+    }
+  ],
+  "runs": [
+    {
+      "language": "vi",
+      "sourcePopups": [
+        {
+          "position": "bottom",
+          "monitor": "eDP-1-1",
+          "source": "Tìm ứng dụng",
+          "popup": [
+            418,
+            418,
+            500,
+            580
+          ]
+        },
+        {
+          "position": "bottom",
+          "monitor": "eDP-1-1",
+          "source": "Âm thanh",
+          "popup": [
+            939,
+            458,
+            360,
+            540
+          ]
+        },
+        {
+          "position": "bottom",
+          "monitor": "eDP-1-1",
+          "source": "Tiện ích hệ thống",
+          "popup": [
+            977,
+            378,
+            380,
+            620
+          ]
+        },
+        {
+          "position": "bottom",
+          "monitor": "eDP-1-1",
+          "source": "Mở lịch",
+          "popup": [
+            1071,
+            658,
+            320,
+            340
+          ]
+        },
+        {
+          "position": "bottom",
+          "monitor": "HDMI-0",
+          "source": "Tìm ứng dụng",
+          "popup": [
+            2338,
+            418,
+            500,
+            580
+          ]
+        },
+        {
+          "position": "bottom",
+          "monitor": "HDMI-0",
+          "source": "Âm thanh",
+          "popup": [
+            2859,
+            458,
+            360,
+            540
+          ]
+        },
+        {
+          "position": "bottom",
+          "monitor": "HDMI-0",
+          "source": "Tiện ích hệ thống",
+          "popup": [
+            2897,
+            378,
+            380,
+            620
+          ]
+        },
+        {
+          "position": "bottom",
+          "monitor": "HDMI-0",
+          "source": "Mở lịch",
+          "popup": [
+            2991,
+            658,
+            320,
+            340
+          ]
+        },
+        {
+          "position": "top",
+          "monitor": "eDP-1-1",
+          "source": "Tìm ứng dụng",
+          "popup": [
+            418,
+            114,
+            500,
+            580
+          ]
+        },
+        {
+          "position": "top",
+          "monitor": "eDP-1-1",
+          "source": "Âm thanh",
+          "popup": [
+            939,
+            114,
+            360,
+            540
+          ]
+        },
+        {
+          "position": "top",
+          "monitor": "eDP-1-1",
+          "source": "Tiện ích hệ thống",
+          "popup": [
+            977,
+            114,
+            380,
+            620
+          ]
+        },
+        {
+          "position": "top",
+          "monitor": "eDP-1-1",
+          "source": "Mở lịch",
+          "popup": [
+            1071,
+            114,
+            320,
+            340
+          ]
+        },
+        {
+          "position": "top",
+          "monitor": "HDMI-0",
+          "source": "Tìm ứng dụng",
+          "popup": [
+            2338,
+            82,
+            500,
+            580
+          ]
+        },
+        {
+          "position": "top",
+          "monitor": "HDMI-0",
+          "source": "Âm thanh",
+          "popup": [
+            2859,
+            82,
+            360,
+            540
+          ]
+        },
+        {
+          "position": "top",
+          "monitor": "HDMI-0",
+          "source": "Tiện ích hệ thống",
+          "popup": [
+            2897,
+            82,
+            380,
+            620
+          ]
+        },
+        {
+          "position": "top",
+          "monitor": "HDMI-0",
+          "source": "Mở lịch",
+          "popup": [
+            2991,
+            82,
+            320,
+            340
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "value": null,
+          "count": 1
+        },
+        {
+          "value": "*",
+          "count": 2
+        },
+        {
+          "value": "HDMI-0",
+          "count": 1
+        },
+        {
+          "value": "*",
+          "count": 2
+        }
+      ],
+      "disableEnableAll": true,
+      "restartPersistsAll": true
+    },
+    {
+      "language": "en",
+      "sourcePopups": [
+        {
+          "position": "bottom",
+          "monitor": "eDP-1-1",
+          "source": "Search applications",
+          "popup": [
+            424,
+            418,
+            500,
+            580
+          ]
+        },
+        {
+          "position": "bottom",
+          "monitor": "eDP-1-1",
+          "source": "Audio",
+          "popup": [
+            945,
+            458,
+            360,
+            540
+          ]
+        },
+        {
+          "position": "bottom",
+          "monitor": "eDP-1-1",
+          "source": "System utilities",
+          "popup": [
+            983,
+            378,
+            380,
+            620
+          ]
+        },
+        {
+          "position": "bottom",
+          "monitor": "eDP-1-1",
+          "source": "Open calendar",
+          "popup": [
+            1071,
+            658,
+            320,
+            340
+          ]
+        },
+        {
+          "position": "bottom",
+          "monitor": "HDMI-0",
+          "source": "Search applications",
+          "popup": [
+            2344,
+            418,
+            500,
+            580
+          ]
+        },
+        {
+          "position": "bottom",
+          "monitor": "HDMI-0",
+          "source": "Audio",
+          "popup": [
+            2865,
+            458,
+            360,
+            540
+          ]
+        },
+        {
+          "position": "bottom",
+          "monitor": "HDMI-0",
+          "source": "System utilities",
+          "popup": [
+            2903,
+            378,
+            380,
+            620
+          ]
+        },
+        {
+          "position": "bottom",
+          "monitor": "HDMI-0",
+          "source": "Open calendar",
+          "popup": [
+            2992,
+            658,
+            320,
+            340
+          ]
+        },
+        {
+          "position": "top",
+          "monitor": "eDP-1-1",
+          "source": "Search applications",
+          "popup": [
+            424,
+            114,
+            500,
+            580
+          ]
+        },
+        {
+          "position": "top",
+          "monitor": "eDP-1-1",
+          "source": "Audio",
+          "popup": [
+            944,
+            114,
+            360,
+            540
+          ]
+        },
+        {
+          "position": "top",
+          "monitor": "eDP-1-1",
+          "source": "System utilities",
+          "popup": [
+            984,
+            114,
+            380,
+            620
+          ]
+        },
+        {
+          "position": "top",
+          "monitor": "eDP-1-1",
+          "source": "Open calendar",
+          "popup": [
+            1072,
+            114,
+            320,
+            340
+          ]
+        },
+        {
+          "position": "top",
+          "monitor": "HDMI-0",
+          "source": "Search applications",
+          "popup": [
+            2344,
+            82,
+            500,
+            580
+          ]
+        },
+        {
+          "position": "top",
+          "monitor": "HDMI-0",
+          "source": "Audio",
+          "popup": [
+            2867,
+            82,
+            360,
+            540
+          ]
+        },
+        {
+          "position": "top",
+          "monitor": "HDMI-0",
+          "source": "System utilities",
+          "popup": [
+            2905,
+            82,
+            380,
+            620
+          ]
+        },
+        {
+          "position": "top",
+          "monitor": "HDMI-0",
+          "source": "Open calendar",
+          "popup": [
+            2991,
+            82,
+            320,
+            340
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "value": null,
+          "count": 1
+        },
+        {
+          "value": "*",
+          "count": 2
+        },
+        {
+          "value": "HDMI-0",
+          "count": 1
+        },
+        {
+          "value": "*",
+          "count": 2
+        }
+      ],
+      "disableEnableAll": true,
+      "restartPersistsAll": true
+    }
+  ],
+  "hostInputSent": false,
+  "hostTopologyChanged": false,
+  "scope": "Owned native app on actual X11 monitors, AT-SPI settings/source actions; allocation, popup source routing and lifecycle; no real keyboard/mouse or hotplug acceptance",
+  "ownedProcessExited": true,
+  "build": "release; custom-protocol"
+}

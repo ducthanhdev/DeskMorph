@@ -17,6 +17,7 @@ mod instance;
 mod registration;
 mod window_manager;
 mod platform;
+mod displays;
 mod geometry;
 mod popup;
 mod config;
@@ -309,6 +310,7 @@ fn run_app() -> Result<(), String> {
         .manage(system_widgets::SystemStatusState::default())
         .manage(media::MediaState::default())
         .manage(audio::AudioState::default())
+        .manage(displays::DisplayState::default())
         .manage(wallpaper::WallpaperState::default())
         .manage(tooltip::TooltipState::default())
         .manage(layout::LayoutState::default())
@@ -342,6 +344,7 @@ fn run_app() -> Result<(), String> {
             wallpaper::start_scheduler(app.handle());
             audio::start(app.handle());
             media::start(app.handle());
+            displays::start(app.handle());
             Ok(())
         })
         .on_window_event(|window, event| {
@@ -399,6 +402,8 @@ fn run_app() -> Result<(), String> {
             show_studio,
             focus_dock,
             quit_app,
+            displays::get_display_state,
+            displays::open_display_settings,
             platform::get_platform_info,
             platform::refresh_platform_info,
             config::get_config,
@@ -442,6 +447,7 @@ fn run_app() -> Result<(), String> {
                 wallpaper::stop_scheduler(app);
                 audio::stop(app);
                 media::stop(app);
+                displays::stop(app);
             }
         });
     Ok(())

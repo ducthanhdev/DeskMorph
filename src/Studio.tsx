@@ -6,6 +6,7 @@ import { useConfig } from "./config/store";
 import { useAsyncLifetime } from "./hooks/useAsyncLifetime";
 import { usePlatform } from "./hooks/usePlatform";
 import { useI18n } from "./i18n/useI18n";
+import { DisplaySettings } from "./components/studio/DisplaySettings";
 import { DockSettings } from "./components/studio/DockSettings";
 import { AppsSettings } from "./components/studio/AppsSettings";
 import { AppearanceSettings } from "./components/studio/AppearanceSettings";
@@ -13,7 +14,7 @@ import { SystemSettings } from "./components/studio/SystemSettings";
 import { WallpaperSettings } from "./components/studio/WallpaperSettings";
 import { DockPreview } from "./components/studio/DockPreview";
 
-const tabs = ["dock", "apps", "appearance", "wallpaper", "system"] as const;
+const tabs = ["dock", "displays", "apps", "appearance", "wallpaper", "system"] as const;
 type Tab = typeof tabs[number];
 export function Studio() {
   const lifetime = useAsyncLifetime();
@@ -44,6 +45,7 @@ export function Studio() {
           setRestoring(true); try { await updateConfig(originalAppearance); } finally { if (!signal.aborted) setRestoring(false); }
         }}>{t("restoreAppearance")}</button></>}
         {activeTab === "dock" && <DockSettings />}
+        {activeTab === "displays" && <DisplaySettings />}
         {activeTab === "apps" && <AppsSettings />}
         {activeTab === "appearance" && <AppearanceSettings />}
         {activeTab === "wallpaper" && <WallpaperSettings />}

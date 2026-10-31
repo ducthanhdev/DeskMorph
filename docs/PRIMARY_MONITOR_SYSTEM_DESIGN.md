@@ -139,7 +139,7 @@ Invariant: tập output active/mirror, mode ID và refresh, vị trí, scale, tr
 
 Mutation chỉ chấp nhận caller WebviewWindow label `main`, lấy từ Tauri injection; không tin label/sourceDock do JavaScript gửi. Global event chỉ mang snapshot đã lược dữ liệu; token điều khiển không broadcast cho Dock. Transaction ID ở event là ID hiển thị; quyền điều khiển gắn native owner với IPC session của Studio. Nếu cần secret cho kênh agent, nó không được đi qua frontend.
 
-Event `deskmorph:display-state` có envelope `{epoch, sequence, state}`. Hook subscribe trước khi lấy snapshot; chỉ nhận sequence mới cùng epoch, khi epoch thay đọc lại. Response trễ không ghi đè event mới. Native cache requestId có giới hạn 32 kết quả, tối đa 5 phút; mất kết nối command thì UI đọc lại transaction thay vì tạo request ID mới để retry mutation.
+Event `deskmorph:display-state` mang trực tiếp `DisplayState`, có `epoch` và `sequence` ở cấp đầu; không bọc thêm một bản metadata trùng lặp. Hook subscribe trước khi lấy snapshot; chỉ nhận sequence mới cùng epoch, khi epoch thay đọc lại. Response trễ không ghi đè event mới. Native cache requestId có giới hạn 32 kết quả, tối đa 5 phút; mất kết nối command thì UI đọc lại transaction thay vì tạo request ID mới để retry mutation.
 
 Ứng dụng không sở hữu giao dịch agent của instance khác: UI hiển thị busy và trạng thái OS đọc được; không cấp quyền xác nhận giao dịch đó. Sau restart ứng dụng, agent còn sống giữ quyền phục hồi, không tự nhận confirm từ process mới.
 
@@ -285,3 +285,5 @@ Không dùng read-back primary active để thay bài kiểm persistence; persis
 | FR08 | IPC lỗi, dialog, vi/en và screen reader | Keyboard/Orca native và UI tests |
 
 Ước lượng 4–7 ngày trong kế hoạch ban đầu cần đánh giá lại sau spike, vì agent phục hồi, khóa liên tiến trình và kiểm persistence bổ sung công sức đáng kể. Chưa đưa ra cam kết thời gian triển khai mới khi chưa chốt policy GNOME.
+
+Kết quả triển khai đợt đầu: [Implementation & Transition](PRIMARY_MONITOR_IMPLEMENTATION.md). Native mutation chưa được bật; đang dùng nhánh read-only + system Settings theo §11.

@@ -206,7 +206,7 @@ pub fn watch(app: &AppHandle) {
             return gio::glib::ControlFlow::Continue;
         };
         if let Ok(monitors) = window.available_monitors() {
-            let signature = format!("{monitors:?}");
+            let signature = format!("{monitors:?}|primary={:?}", window.primary_monitor().ok().flatten());
             if signature != previous {
                 if !previous.is_empty() {
                     let _ = crate::popup::hide(&app, "dock-context-menu", None);

@@ -1,0 +1,28 @@
+{
+  "passed": true,
+  "binarySha256": "a84c8f7a701286f09722e24d0fed5d9a90f1103c0d57aad99bdcf198d373c8f8",
+  "hostInput": false,
+  "hostMutation": false,
+  "settingsFixture": true,
+  "runs": [
+    {
+      "language": "vi",
+      "primary": "eDP-1-1",
+      "logicalMonitors": 2,
+      "disabledMutation": true,
+      "refresh": true,
+      "gioSettingsFixture": true
+    },
+    {
+      "language": "en",
+      "primary": "eDP-1-1",
+      "logicalMonitors": 2,
+      "disabledMutation": true,
+      "refresh": true,
+      "gioSettingsFixture": true
+    }
+  ],
+  "hostStateUnchanged": true,
+  "ownedAppExited": true,
+  "build": "release; custom-protocol"
+}

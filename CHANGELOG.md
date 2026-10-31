@@ -2,6 +2,8 @@
 
 ## Unreleased — development 0.1.0
 
+- Thêm tab Màn hình vi/en: đọc GNOME primary/logical groups/mode/Hz, cập nhật sự kiện và mở Display Settings qua GIO. Đổi primary trực tiếp chưa bật; spike chỉ xác nhận preview và timeout auto-revert trong GNOME headless, chưa chứng nhận keep/persistence/crash recovery.
+
 - Thêm lựa chọn “Tất cả màn hình” cho Dock trên X11; mỗi màn hình có Dock riêng, popup bám đúng nguồn, đồng bộ cấu hình và tắt/bật toàn bộ.
 
 - Tích hợp hình nền COSMIC RON v1: resolve user/system/builtin, giữ thiết lập khác, preflight/etag/rollback có điều kiện, tạo file thiếu không thay thế đích và refresh per-output list. Studio vi/en Apply/error/Retry/Shuffle đã qua cosmic-bg1.11.0/cosmic-comp8cb1802 lồng với pixel thật; GNOME hồi quy qua. KDE, scheduler COSMIC và ma trận desktop đầy đủ chưa chứng nhận.

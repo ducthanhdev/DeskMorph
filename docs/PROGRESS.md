@@ -11,6 +11,10 @@ Hiện đã đánh dấu **98/99 mục (~99%)**. Mục còn mở: G2.10 (topolog
 - Một lượt harness trước thiếu thao tác đóng launcher; đã sửa theo coordinator thay popup. Lượt sau dừng vì không quan sát được popup đầu tiếng Anh; ba lượt chạy trọn sau đó đạt (hai debug, một release). Không dùng các lượt lỗi làm bằng chứng đạt.
 - Phạm vi mới xác minh: GNOME/X11, hai màn hình 1920×1080 scale 100%. Chưa kiểm hotplug, mixed DPI, Orca hay auto-hide end-to-end cho chế độ nhiều Dock; các bằng chứng cũ của chế độ một Dock không thay thế các ca này. G2.10 tọa độ âm vẫn mở.
 
+## Chuyển màn hình chính — đợt thực thi đầu
+
+Đã triển khai native read path, tab Màn hình vi/en và mở Settings hệ thống; xem [phạm vi, bằng chứng và công việc còn lại](PRIMARY_MONITOR_IMPLEMENTATION.md). Không coi chức năng đổi primary trực tiếp đã hoàn thành: canSetPrimary=false cho đến khi policy giữ/lưu/phục hồi được kiểm chứng. Không thay topology trên desktop người dùng.
+
 ## Môi trường tham chiếu đã xác minh
 
 - Pop!_OS 24.04 LTS, x86_64; GNOME Shell 46.0; X11, DISPLAY=:1.

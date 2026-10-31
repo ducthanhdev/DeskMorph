@@ -6,6 +6,8 @@ Tài liệu giai đoạn tiếp theo: [Phân tích hệ thống](PRIMARY_MONITOR
 
 Thiết kế triển khai: [System Design v1](PRIMARY_MONITOR_SYSTEM_DESIGN.md), quy định module, IPC, recovery agent, khóa theo session và các cổng kiểm chứng GNOME.
 
+Tiến độ thực thi: [đợt read path và chuyển sang cài đặt hệ thống](PRIMARY_MONITOR_IMPLEMENTATION.md). Chưa hoàn thành mutation trực tiếp; checklist dưới đây không được coi đã đạt toàn bộ.
+
 ## 1. Kết quả mong muốn
 
 Trong Studio → Màn hình, người dùng thấy các màn hình đang hoạt động, biết màn nào là chính và có thể đặt màn khác làm màn hình chính của desktop. Thiết lập này tác động đến hệ điều hành; lựa chọn “Màn hình đặt Dock” tiếp tục điều khiển riêng vị trí Dock.
@@ -44,7 +46,7 @@ Khi đổi primary, giữ nguyên vị trí trái/phải/trên/dưới, mode, t�
 
 ## 5. Giao diện Studio
 
-- [ ] P3.1 Thêm mục “Màn hình” vào Studio, có tên/connector, độ phân giải, scale và nhãn “Màn hình chính”. Danh sách là bắt buộc; sơ đồ vị trí chỉ thêm nếu hỗ trợ nhận diện rõ hơn.
+- [x] P3.1 Thêm mục “Màn hình” vào Studio, có tên/connector, độ phân giải, scale và nhãn “Màn hình chính”. Danh sách là bắt buộc; sơ đồ vị trí chỉ thêm nếu hỗ trợ nhận diện rõ hơn.
 - [ ] P3.2 Nút “Đặt làm màn hình chính” cho từng logical monitor hợp lệ. Vô hiệu hóa nút trên primary hiện tại và trong lúc có giao dịch.
 - [ ] P3.3 Mô tả ngắn tác động đến desktop và giữ nguyên bố trí. Chọn → áp dụng thử → “Giữ thay đổi” hoặc “Hoàn tác”, thời gian dự kiến 15–20 giây, chốt theo cơ chế compositor đã xác minh.
 - [ ] P3.4 Chỉ có một nơi điều khiển xác nhận. Nếu compositor cung cấp hộp xác nhận, Studio theo dõi kết quả thay vì dựng countdown độc lập không cùng deadline.

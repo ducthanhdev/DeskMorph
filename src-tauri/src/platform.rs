@@ -48,6 +48,7 @@ fn unavailable_reasons(
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 struct MonitorInfo {
+    primary: bool,
     name: String,
     x: i32,
     y: i32,
@@ -104,11 +105,13 @@ pub fn get_platform_info(app: AppHandle) -> Result<PlatformInfo, String> {
     let window = app
         .get_webview_window("taskbar")
         .ok_or("Không tìm thấy Dock")?;
+    let primary = window.primary_monitor().map_err(|e| e.to_string())?;
     let monitors = window
         .available_monitors()
         .map_err(|e| e.to_string())?
         .into_iter()
         .map(|m| MonitorInfo {
+            primary: primary.as_ref().is_some_and(|p| p.position() == m.position() && p.name() == m.name()),
             name: m.name().cloned().unwrap_or_else(|| "Monitor".into()),
             x: m.position().x,
             y: m.position().y,

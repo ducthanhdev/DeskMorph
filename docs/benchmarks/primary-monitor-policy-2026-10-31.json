@@ -1,0 +1,78 @@
+{
+  "passed": true,
+  "policyCertified": false,
+  "hostMutation": false,
+  "hostInput": false,
+  "cases": [
+    {
+      "name": "verify-primary-only",
+      "passed": true
+    },
+    {
+      "name": "temporary-primary-only-preserves-layout",
+      "passed": true
+    },
+    {
+      "name": "persistent-request-applies-preview",
+      "passed": true
+    },
+    {
+      "name": "compositor-auto-revert-without-confirm",
+      "passed": true
+    }
+  ],
+  "scope": "Primary-only VERIFY, TEMPORARY and persistent request auto-revert on an owned headless compositor; keep, persistence and client crash recovery are not certified",
+  "before": {
+    "logicalMonitors": [
+      {
+        "x": 0,
+        "y": 0,
+        "scale": 1.0,
+        "transform": 0,
+        "primary": true,
+        "connectors": [
+          "Meta-0"
+        ]
+      },
+      {
+        "x": 1280,
+        "y": 0,
+        "scale": 1.0,
+        "transform": 0,
+        "primary": false,
+        "connectors": [
+          "Meta-1"
+        ]
+      }
+    ],
+    "modes": [
+      {
+        "connector": "Meta-0",
+        "configProperties": {},
+        "modes": [
+          {
+            "id": "1280x720@60.000",
+            "width": 1280,
+            "height": 720,
+            "refresh": 60.0
+          }
+        ]
+      },
+      {
+        "connector": "Meta-1",
+        "configProperties": {},
+        "modes": [
+          {
+            "id": "1024x768@60.000",
+            "width": 1024,
+            "height": 768,
+            "refresh": 60.0
+          }
+        ]
+      }
+    ]
+  },
+  "monitorsXmlPresent": false,
+  "publicConfirmationObservation": "No confirmation result method/signal in DisplayConfig introspection; active topology alone cannot distinguish kept preview from persisted configuration.",
+  "ownedProcessesExited": true
+}
