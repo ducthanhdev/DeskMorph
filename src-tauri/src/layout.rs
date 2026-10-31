@@ -1,5 +1,6 @@
 use crate::geometry;
-use std::sync::Mutex;
+use std::{sync::Mutex, collections::{HashMap, HashSet}, hash::{Hash, Hasher}};
+use gtk::prelude::*;
 use tauri::{AppHandle, Emitter, Manager, PhysicalPosition, PhysicalSize};
 #[derive(Clone)]
 pub struct Preferences {
@@ -9,6 +10,8 @@ pub struct Preferences {
     top: bool,
     hidden: bool,
     pending_position: Option<geometry::Rect>,
+    docks: HashMap<String, DockState>,
+    enabled: bool,
 }
 impl Default for Preferences {
     fn default() -> Self {
@@ -19,8 +22,18 @@ impl Default for Preferences {
             top: false,
             hidden: false,
             pending_position: None,
+            docks: HashMap::new(),
+            enabled: true,
         }
     }
+}
+#[derive(Clone, Default)]
+struct DockState { width: u32, hidden: bool, pending: Option<geometry::Rect> }
+pub fn is_dock(label: &str) -> bool { label == "taskbar" || label.starts_with("taskbar-monitor-") }
+pub fn dock(app: &AppHandle, source: Option<&str>) -> Result<tauri::WebviewWindow, String> {
+    let label = source.unwrap_or("taskbar");
+    if !is_dock(label) { return Err("invalid_dock_source".into()); }
+    app.get_webview_window(label).ok_or("Không tìm thấy Dock".into())
 }
 #[derive(Default)]
 pub struct LayoutState(pub Mutex<Preferences>);
@@ -30,11 +43,13 @@ thread_local! {
 pub fn configure(app: &AppHandle, config: &serde_json::Value) -> Result<(), String> {
     let state = app.state::<LayoutState>();
     let mut p = state.0.lock().map_err(|e| e.to_string())?;
+    p.enabled = config["enabled"] == true;
     p.monitor = config["monitor"].as_str().map(String::from);
     p.height = config["height"].as_u64().unwrap_or(52) as u32;
     p.top = config["position"] == "top";
     if config["autoHide"] != true {
         p.hidden = false;
+        for state in p.docks.values_mut() { state.hidden = false; }
     }
     Ok(())
 }
@@ -49,32 +64,63 @@ pub fn apply(app: &AppHandle) -> Result<bool, String> {
         .map_err(|e| e.to_string())?
         .clone();
     let monitors = window.available_monitors().map_err(|e| e.to_string())?;
-    let preferred = p
-        .monitor
-        .as_ref()
-        .and_then(|name| monitors.iter().find(|m| m.name() == Some(name)))
-        .cloned();
-    let monitor = preferred
-        .or(window.primary_monitor().map_err(|e| e.to_string())?)
-        .or(monitors.into_iter().next())
-        .ok_or("Không tìm thấy màn hình")?;
-    let hidden = crate::platform::dock_placement_available() && p.hidden
-        && !crate::popup::is_active(app, "dock-context-menu")
-        && !crate::popup::is_active(app, "calendar-flyout");
+    let preferred = p.monitor.as_ref().and_then(|name| monitors.iter().find(|m| m.name() == Some(name))).cloned();
+    let primary = window.primary_monitor().map_err(|e| e.to_string())?.or_else(|| monitors.first().cloned()).ok_or("Không tìm thấy màn hình")?;
+    let all = p.monitor.as_deref() == Some("*") && crate::platform::dock_placement_available();
+    let mut targets = vec![("taskbar".to_string(), preferred.unwrap_or(primary.clone()))];
+    if all {
+        for monitor in &monitors {
+            if monitor.position() == primary.position() { continue; }
+            let mut hash = std::collections::hash_map::DefaultHasher::new();
+            (monitor.name(), monitor.position().x, monitor.position().y).hash(&mut hash);
+            targets.push((format!("taskbar-monitor-{:x}", hash.finish()), monitor.clone()));
+        }
+    }
+    let wanted: HashSet<_> = targets.iter().map(|(label, _)| label.clone()).collect();
+    for (label, extra) in app.webview_windows() {
+        if is_dock(&label) && !wanted.contains(&label) {
+            extra.destroy().map_err(|e| e.to_string())?;
+            app.state::<LayoutState>().0.lock().map_err(|e| e.to_string())?.docks.remove(&label);
+        }
+    }
+    for (label, monitor) in targets {
+        let created = app.get_webview_window(&label).is_none();
+        let window = if let Some(window) = app.get_webview_window(&label) { window } else {
+            let window = tauri::WebviewWindowBuilder::new(app, &label,
+                tauri::WebviewUrl::App(format!("index.html?window=taskbar&dock={label}").into()))
+                .title("DeskMorph Taskbar").inner_size(220., 52.)
+                .decorations(false).transparent(true).shadow(false).always_on_top(true)
+                .skip_taskbar(true).resizable(true).focused(false).visible(false)
+                .build().map_err(|e| e.to_string())?;
+            window.gtk_window().map_err(|e| e.to_string())?.set_focus_on_map(false);
+            crate::popup::install_window_keyboard(app, &window)?;
+            window
+        };
+        let state = p.docks.get(&label).cloned().unwrap_or_default();
+        let (width, requested_hidden) = if label == "taskbar" { (p.width, p.hidden) }
+            else { (if state.width == 0 { p.width } else { state.width }, state.hidden) };
+    let hidden = crate::platform::dock_placement_available() && requested_hidden
+        && !crate::popup::is_for_dock(app, &label);
     let rect = geometry::dock_rect(
         crate::monitor_area(&monitor),
         monitor.scale_factor(),
         p.top,
         p.height,
         hidden,
-        p.width,
+        width,
     );
     // GTK/WM can constrain a cross-monitor move using the old wide allocation.
     // Once the requested size is acknowledged, correct position once. A newer
     // apply replaces this target; no timer or unbounded configure loop is used.
     let width_changes = window.outer_size().map_err(|e| e.to_string())?.width != rect.width;
     let placement_available = crate::platform::dock_placement_available();
-    app.state::<LayoutState>().0.lock().map_err(|e| e.to_string())?.pending_position = (width_changes && placement_available).then_some(rect);
+    {
+        let layout = app.state::<LayoutState>();
+        let mut prefs = layout.0.lock().map_err(|e| e.to_string())?;
+        let pending = (width_changes && placement_available).then_some(rect);
+        if label == "taskbar" { prefs.pending_position = pending; }
+        else { prefs.docks.entry(label.clone()).or_default().pending = pending; }
+    }
     window
         .set_min_size(Some(PhysicalSize::new(1, 1)))
         .map_err(|e| e.to_string())?;
@@ -84,17 +130,21 @@ pub fn apply(app: &AppHandle) -> Result<bool, String> {
     if placement_available {
         window.set_position(PhysicalPosition::new(rect.x, rect.y)).map_err(|e| e.to_string())?;
     }
+    if p.enabled && (created || !window.is_visible().unwrap_or(false)) { window.show().map_err(|e| e.to_string())?; }
+    else if !p.enabled { window.hide().map_err(|e| e.to_string())?; }
+    }
     Ok(true)
 }
-pub fn settle_size(app: &AppHandle, size: &PhysicalSize<u32>) -> Result<(), String> {
+pub fn settle_size(app: &AppHandle, label: &str, size: &PhysicalSize<u32>) -> Result<(), String> {
     if crate::popup::is_active(app, "dock-context-menu") || crate::popup::is_active(app, "calendar-flyout") { return Ok(()); }
     let target = {
         let state = app.state::<LayoutState>();
         let mut p = state.0.lock().map_err(|e| e.to_string())?;
-        if !p.pending_position.is_some_and(|rect| rect.width == size.width && rect.height == size.height) { return Ok(()); }
-        p.pending_position.take().unwrap()
+        let pending = if label == "taskbar" { &mut p.pending_position } else { &mut p.docks.entry(label.into()).or_default().pending };
+        if !pending.is_some_and(|rect| rect.width == size.width && rect.height == size.height) { return Ok(()); }
+        pending.take().unwrap()
     };
-    let window = app.get_webview_window("taskbar").ok_or("Không tìm thấy Dock")?;
+    let window = dock(app, Some(label))?;
     let position = window.outer_position().map_err(|e| e.to_string())?;
     if position.x != target.x || position.y != target.y {
         window.set_position(PhysicalPosition::new(target.x, target.y)).map_err(|e| e.to_string())?;
@@ -102,12 +152,14 @@ pub fn settle_size(app: &AppHandle, size: &PhysicalSize<u32>) -> Result<(), Stri
     Ok(())
 }
 #[tauri::command]
-pub fn set_dock_content_width(app: AppHandle, width: u32) -> Result<bool, String> {
-    app.state::<LayoutState>()
-        .0
-        .lock()
-        .map_err(|e| e.to_string())?
-        .width = width.clamp(220, 6000);
+pub fn set_dock_content_width(app: AppHandle, width: u32, source_dock: Option<String>) -> Result<bool, String> {
+    let window = dock(&app, source_dock.as_deref())?;
+    {
+        let layout = app.state::<LayoutState>();
+        let mut p = layout.0.lock().map_err(|e| e.to_string())?;
+        if window.label() == "taskbar" { p.width = width.clamp(220, 6000); }
+        else { p.docks.entry(window.label().into()).or_default().width = width.clamp(220, 6000); }
+    }
     // Keep the popup anchored until the interaction ends.
     if crate::popup::is_active(&app, "dock-context-menu")
         || crate::popup::is_active(&app, "calendar-flyout")
@@ -117,12 +169,12 @@ pub fn set_dock_content_width(app: AppHandle, width: u32) -> Result<bool, String
     apply(&app)
 }
 #[tauri::command]
-pub fn is_pointer_over_dock(app: AppHandle) -> Result<bool, String> {
+pub fn is_pointer_over_dock(app: AppHandle, source_dock: Option<String>) -> Result<bool, String> {
     let _trace = crate::diagnostics::command("is_pointer_over_dock");
     if std::env::var("XDG_SESSION_TYPE").as_deref() != Ok("x11") {
         return Err("Global pointer position requires X11".into());
     }
-    let dock = app.get_webview_window("taskbar").ok_or("Không tìm thấy Dock")?;
+    let dock = dock(&app, source_dock.as_deref())?;
     let pointer = dock.cursor_position().map_err(|e| e.to_string())?;
     let position = dock.outer_position().map_err(|e| e.to_string())?;
     let size = dock.outer_size().map_err(|e| e.to_string())?;
@@ -130,15 +182,17 @@ pub fn is_pointer_over_dock(app: AppHandle) -> Result<bool, String> {
         .contains(pointer.x.floor() as i32, pointer.y.floor() as i32))
 }
 #[tauri::command]
-pub fn set_taskbar_autohide_state(app: AppHandle, hidden: bool) -> Result<bool, String> {
+pub fn set_taskbar_autohide_state(app: AppHandle, hidden: bool, source_dock: Option<String>) -> Result<bool, String> {
     if !crate::platform::dock_placement_available() {
         return if hidden { Err("dock_autohide_unverified".into()) } else { Ok(false) };
     }
-    app.state::<LayoutState>()
-        .0
-        .lock()
-        .map_err(|e| e.to_string())?
-        .hidden = hidden;
+    let window = dock(&app, source_dock.as_deref())?;
+    {
+        let layout = app.state::<LayoutState>();
+        let mut p = layout.0.lock().map_err(|e| e.to_string())?;
+        if window.label() == "taskbar" { p.hidden = hidden; }
+        else { p.docks.entry(window.label().into()).or_default().hidden = hidden; }
+    }
     apply(&app)
 }
 pub fn watch(app: &AppHandle) {

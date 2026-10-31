@@ -293,7 +293,8 @@
     "shortcutDesktopLimits": "Thêm --launcher để mở cửa sổ tìm ứng dụng của cùng profile, kể cả khi Dock tắt. GNOME quản lý tổ hợp phím, vị trí và focus; nếu chưa nhận focus, chọn DeskMorph Launcher từ trình chuyển cửa sổ. Hướng dẫn này đã kiểm trên GNOME 46, chưa xác minh desktop khác.",
     "shortcutDesktopRemove": "Để gỡ, xóa riêng mục DeskMorph Launcher trong Custom Shortcuts. Tắt phím tắt trong DeskMorph không xóa phím do GNOME quản lý.",
     "wallpaperConfigInvalid": "Cấu hình hình nền không hợp lệ hoặc không thể đọc được; dữ liệu hiện có được giữ nguyên.",
-    "wallpaperWriteUnverified": "Chưa thể xác nhận đổi hình nền hoàn tất. Hãy kiểm tra hình nền và thiết lập từng màn hình trước khi thử lại."
+    "wallpaperWriteUnverified": "Chưa thể xác nhận đổi hình nền hoàn tất. Hãy kiểm tra hình nền và thiết lập từng màn hình trước khi thử lại.",
+    "allMonitors": "Tất cả màn hình"
   },
   "en": {
     "configRepaired": "Some configuration fields were repaired or reset to defaults; the original was kept in a recovery file.",
@@ -589,6 +590,7 @@
     "shortcutDesktopLimits": "Add --launcher to open application search for the same profile, even when the Dock is disabled. GNOME manages the shortcut, placement and focus; if needed, select DeskMorph Launcher in the window switcher. This guide was tested on GNOME 46; other desktops are not verified.",
     "shortcutDesktopRemove": "To remove it, delete only DeskMorph Launcher in Custom Shortcuts. Disabling the shortcut inside DeskMorph does not remove GNOME-managed shortcuts.",
     "wallpaperConfigInvalid": "Wallpaper configuration is invalid or unreadable; existing data is preserved.",
-    "wallpaperWriteUnverified": "The wallpaper change could not be fully verified. Check the wallpaper and per-display settings before retrying."
+    "wallpaperWriteUnverified": "The wallpaper change could not be fully verified. Check the wallpaper and per-display settings before retrying.",
+    "allMonitors": "All monitors"
   }
 }

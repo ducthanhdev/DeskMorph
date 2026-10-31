@@ -52,15 +52,16 @@ unsafe fn raw_buttons(display: *mut std::ffi::c_void, root: std::os::raw::c_ulon
 #[derive(Default)]
 pub struct PopupState(pub Mutex<Coordinator>);
 #[derive(Default)]
-pub struct Coordinator { generation: u64, active: Option<(&'static str, Rect)>, audio: bool, dismiss_on_blur: bool }
+pub struct Coordinator { generation: u64, active: Option<(&'static str, Rect)>, audio: bool, dismiss_on_blur: bool, source: Option<String> }
 
-fn hidden_events(app: &AppHandle, label: &str, generation: u64) {
+fn hidden_events(app: &AppHandle, label: &str, generation: u64, source: Option<&str>) {
     let event = if label == "calendar-flyout" { "deskmorph:calendar-visibility" } else { "deskmorph:context-menu-visibility" };
     let _ = app.emit(event, false);
     if label == "dock-context-menu" {
         let _ = app.emit("deskmorph:context-visibility-generation", serde_json::json!({"generation": generation, "visible": false}));
     }
     let _ = app.emit("deskmorph:popup-visible", false);
+    let _ = app.emit("deskmorph:dock-popup", serde_json::json!({"source":source.unwrap_or("taskbar"),"visible":false,"context":false}));
 }
 #[track_caller]
 pub fn hide(app: &AppHandle, label: &str, generation: Option<u64>) -> Result<bool, String> {
@@ -75,7 +76,7 @@ pub fn hide(app: &AppHandle, label: &str, generation: Option<u64>) -> Result<boo
         }
         if let Some(window) = app.get_webview_window(label) { window.hide().map_err(|e| e.to_string())?; }
         c.active = None;
-        hidden_events(app, label, c.generation);
+        hidden_events(app, label, c.generation, c.source.as_deref());
         c.generation = c.generation.wrapping_add(1);
     }
     drop(c);
@@ -87,6 +88,9 @@ pub fn hide(app: &AppHandle, label: &str, generation: Option<u64>) -> Result<boo
 }
 pub fn active_generation(app: &AppHandle, label: &str) -> Option<u64> {
     app.state::<PopupState>().0.lock().ok().and_then(|c| c.active.filter(|(active, _)| *active == label).map(|_| c.generation))
+}
+pub fn is_for_dock(app: &AppHandle, dock: &str) -> bool {
+    app.state::<PopupState>().0.lock().map(|c| c.active.is_some() && c.source.as_deref().unwrap_or("taskbar") == dock).unwrap_or(false)
 }
 pub fn is_audio_active(app: &AppHandle) -> bool {
     app.state::<PopupState>().0.lock().map(|c| c.audio && c.active.is_some()).unwrap_or(false)
@@ -123,8 +127,8 @@ fn after_mapping(callback: impl FnOnce() + 'static) {
     if delay == 0 { gio::glib::idle_add_local_once(callback); }
     else { gio::glib::timeout_add_local_once(std::time::Duration::from_millis(delay), callback); }
 }
-pub fn show(app: &AppHandle, label: &'static str, anchor: i32, width: u32, height: u32, data: Option<serde_json::Value>) -> Result<bool, String> {
-    let dock = app.get_webview_window("taskbar").ok_or("Không tìm thấy Dock")?;
+pub fn show(app: &AppHandle, label: &'static str, anchor: i32, width: u32, height: u32, data: Option<serde_json::Value>, source_dock: Option<&str>) -> Result<bool, String> {
+    let dock = crate::layout::dock(app, source_dock)?;
     if !dock.is_visible().map_err(|e| e.to_string())? { return Err("Dock đang tắt".into()); }
     // IPC has no current GTK input event. Reuse the originating display's
     // native input timestamp only while the Dock owns activation, as we do
@@ -146,23 +150,24 @@ pub fn show(app: &AppHandle, label: &'static str, anchor: i32, width: u32, heigh
     if std::env::var_os("DESKMORPH_TRACE_POPUP_DISMISS").is_some() {
         eprintln!("deskmorph-popup-placement area={area:?} dock={dock_rect:?} popup={rect:?}");
     }
-    present(app, label, Some(rect), data, None)?;
+    present(app, label, Some(rect), data, None, Some(dock.label()))?;
     if let Some(timestamp) = input_time { focus_at(app, label, timestamp)?; }
     Ok(true)
 }
 /// A desktop-managed launcher is an ordinary toplevel on Wayland. Its position
 /// belongs to the compositor; it does not require Dock placement or an anchor.
 pub fn show_unanchored_launcher(app: &AppHandle, token: Option<&str>) -> Result<bool, String> {
-    present(app, "dock-context-menu", None, Some(serde_json::json!({"mode":"launcher","appName":"Ứng dụng"})), token)
+    present(app, "dock-context-menu", None, Some(serde_json::json!({"mode":"launcher","appName":"Ứng dụng"})), token, None)
 }
-fn present(app: &AppHandle, label: &'static str, placement: Option<Rect>, data: Option<serde_json::Value>, token: Option<&str>) -> Result<bool, String> {
+fn present(app: &AppHandle, label: &'static str, placement: Option<Rect>, data: Option<serde_json::Value>, token: Option<&str>, source: Option<&str>) -> Result<bool, String> {
     let state = app.state::<PopupState>();
     let mut c = state.0.lock().map_err(|e| e.to_string())?;
     if let Some(tooltip) = app.get_webview_window("dock-tooltip") { let _ = tooltip.hide(); }
     if let Some((old, _)) = c.active.take() {
         if let Some(window) = app.get_webview_window(old) { window.hide().map_err(|e| e.to_string())?; }
-        hidden_events(app, old, c.generation);
+        hidden_events(app, old, c.generation, c.source.as_deref());
     }
+    c.source = source.map(String::from);
     c.generation = c.generation.wrapping_add(1);
     let generation = c.generation;
     let window = app.get_webview_window(label).ok_or("Không tìm thấy popup")?;
@@ -202,6 +207,7 @@ fn present(app: &AppHandle, label: &'static str, placement: Option<Rect>, data: 
         app.emit("deskmorph:context-visibility-generation", serde_json::json!({"generation": generation, "visible": true})).map_err(|e| e.to_string())?;
     }
     app.emit("deskmorph:popup-visible", true).map_err(|e| e.to_string())?;
+    app.emit("deskmorph:dock-popup", serde_json::json!({"source":c.source.as_deref().unwrap_or("taskbar"),"visible":true,"context":label == "dock-context-menu"})).map_err(|e| e.to_string())?;
     drop(c);
     let handle = app.clone();
     let focus_window = window.clone();
@@ -237,8 +243,13 @@ fn present(app: &AppHandle, label: &'static str, placement: Option<Rect>, data: 
 pub fn install_keyboard(app: &AppHandle) -> Result<(), String> {
     for label in ["main", "taskbar", "dock-context-menu", "calendar-flyout"] {
         let window = app.get_webview_window(label).ok_or("Không tìm thấy popup")?;
-        let handle = app.clone();
-        window.gtk_window().map_err(|e| e.to_string())?.connect_key_press_event(move |_, event| {
+        install_window_keyboard(app, &window)?;
+    }
+    Ok(())
+}
+pub fn install_window_keyboard(app: &AppHandle, window: &tauri::WebviewWindow) -> Result<(), String> {
+    let handle = app.clone();
+    window.gtk_window().map_err(|e| e.to_string())?.connect_key_press_event(move |_, event| {
             if event.keyval() == gtk::gdk::keys::constants::Escape {
                 let active = handle.state::<PopupState>().0.lock().ok()
                     .and_then(|c| c.active.map(|(label, _)| (label, c.generation)));
@@ -249,7 +260,6 @@ pub fn install_keyboard(app: &AppHandle) -> Result<(), String> {
             }
             gio::glib::Propagation::Proceed
         });
-    }
     Ok(())
 }
 fn watch_outside(app: AppHandle, label: &'static str, generation: u64, rect: Rect) {

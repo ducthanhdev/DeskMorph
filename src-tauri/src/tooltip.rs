@@ -18,7 +18,7 @@ pub fn install(app: &AppHandle) -> Result<(), String> {
     Ok(())
 }
 #[tauri::command]
-pub fn set_dock_tooltip(app: AppHandle, revision: u64, text: Option<String>, anchor: Option<i32>) -> Result<(), String> {
+pub fn set_dock_tooltip(app: AppHandle, revision: u64, text: Option<String>, anchor: Option<i32>, source_dock: Option<String>) -> Result<(), String> {
     let state = app.state::<TooltipState>();
     let mut current = state.0.lock().map_err(|e| e.to_string())?;
     if revision < *current { return Ok(()); }
@@ -27,7 +27,7 @@ pub fn set_dock_tooltip(app: AppHandle, revision: u64, text: Option<String>, anc
     if text.as_ref().is_none_or(|text| text.is_empty()) || crate::popup::is_active(&app, "dock-context-menu") || crate::popup::is_active(&app, "calendar-flyout") {
         return window.hide().map_err(|e| e.to_string());
     }
-    let dock = app.get_webview_window("taskbar").ok_or("Không tìm thấy Dock")?;
+    let dock = crate::layout::dock(&app, source_dock.as_deref())?;
     if !dock.is_visible().unwrap_or(false) { return Ok(()); }
     let monitor = dock.current_monitor().map_err(|e| e.to_string())?.ok_or("Không tìm thấy màn hình")?;
     let pos = dock.outer_position().map_err(|e| e.to_string())?;

@@ -60,3 +60,28 @@ test('configuration retry resends failed saves, retains errors across events, an
   assert.equal(calls.at(-1).args.expectedRevision, 1); assert.match(store.useConfig().error, /Stale review/);
   delete globalThis.__configErrorTest;
 });
+
+
+test('Dock IPC routes actions from secondary displays and preserves primary and Studio calls', async () => {
+  const calls = [];
+  globalThis.__dockInvoke = async (...args) => { calls.push(args); return true; };
+  const previousWindow = globalThis.window;
+  globalThis.window = { location: { search: '?window=taskbar&dock=taskbar-monitor-test' } };
+  const source = fs.readFileSync(new URL('../src/ipc.ts', import.meta.url), 'utf8')
+    .replace(/import .* from "@tauri-apps\/api\/core";/, 'const nativeInvoke = globalThis.__dockInvoke;')
+    .replace('"./commandError"', JSON.stringify(errorUrl));
+  try {
+    const { invoke } = await import(compile(source));
+    await invoke('show_app_launcher', { iconCenterX: 45 });
+    assert.deepEqual(calls.at(-1).slice(0, 2), ['show_app_launcher', { iconCenterX: 45, sourceDock: 'taskbar-monitor-test' }]);
+    globalThis.window.location.search = '?window=taskbar';
+    await invoke('set_taskbar_autohide_state', { hidden: true });
+    assert.deepEqual(calls.at(-1)[1], { hidden: true, sourceDock: undefined });
+    globalThis.window.location.search = '';
+    await invoke('get_config');
+    assert.equal(calls.at(-1)[1].sourceDock, undefined);
+  } finally {
+    globalThis.window = previousWindow;
+    delete globalThis.__dockInvoke;
+  }
+});

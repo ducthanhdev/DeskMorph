@@ -4,6 +4,13 @@ Mục tiêu giữ nguyên toàn bộ 99 đầu việc trong IMPLEMENTATION_PLAN.
 
 Hiện đã đánh dấu **98/99 mục (~99%)**. Mục còn mở: G2.10 (topology tọa độ âm hợp lệ dưới WM; ma trận scale đã đủ bằng chứng). G5.9 đã chốt trong phạm vi GNOME X11 tham chiếu bằng kiểm toán và bằng chứng bổ sung cuối tài liệu. G9.8 đã chốt bằng soak native122 vòng/1808,461s, Quit/survivors và tổ hợp bằng chứng restart/suspend/HDMI thật. G2.11 đã chốt bằng rút/cắm HDMI vật lý; G6.7 đã chốt bằng scheduler qua system suspend thật138,922s. Chi tiết/phạm vi nằm trong các bản ghi cuối tài liệu. Quyết định phát hành vẫn là **không phát hành** theo RELEASE_CHECKLIST.md.
 
+## Dock trên tất cả màn hình — 2026-10-31
+
+- Studio → Dock → Màn hình đặt Dock có “Tất cả màn hình” (vi/en). Cấu hình `monitor: "*"` dùng chung pin/appearance, mỗi màn hình có Dock và trạng thái tự ẩn riêng; popup dùng vị trí và scale của Dock nguồn. Chế độ chính/màn cụ thể vẫn được giữ.
+- Build frontend, 56/56 test frontend và 87 test Rust đạt (5 ca native opt-in bỏ qua trong lượt unit). [Bằng chứng native hai màn hình](benchmarks/multimonitor-dock-2026-10-31.json): 32 lượt popup launcher/audio/system/calendar, Dock trên/dưới, vi/en, chuyển chính → tất cả → HDMI → tất cả, tắt/bật toàn bộ, restart giữ lựa chọn. Harness dùng AT-SPI trên process/profile tạm, không gửi chuột/phím host hoặc đổi topology.
+- Một lượt harness trước thiếu thao tác đóng launcher; đã sửa theo coordinator thay popup. Lượt sau dừng vì không quan sát được popup đầu tiếng Anh; ba lượt chạy trọn sau đó đạt (hai debug, một release). Không dùng các lượt lỗi làm bằng chứng đạt.
+- Phạm vi mới xác minh: GNOME/X11, hai màn hình 1920×1080 scale 100%. Chưa kiểm hotplug, mixed DPI, Orca hay auto-hide end-to-end cho chế độ nhiều Dock; các bằng chứng cũ của chế độ một Dock không thay thế các ca này. G2.10 tọa độ âm vẫn mở.
+
 ## Môi trường tham chiếu đã xác minh
 
 - Pop!_OS 24.04 LTS, x86_64; GNOME Shell 46.0; X11, DISPLAY=:1.

@@ -2,6 +2,8 @@
 
 ## Unreleased — development 0.1.0
 
+- Thêm lựa chọn “Tất cả màn hình” cho Dock trên X11; mỗi màn hình có Dock riêng, popup bám đúng nguồn, đồng bộ cấu hình và tắt/bật toàn bộ.
+
 - Tích hợp hình nền COSMIC RON v1: resolve user/system/builtin, giữ thiết lập khác, preflight/etag/rollback có điều kiện, tạo file thiếu không thay thế đích và refresh per-output list. Studio vi/en Apply/error/Retry/Shuffle đã qua cosmic-bg1.11.0/cosmic-comp8cb1802 lồng với pixel thật; GNOME hồi quy qua. KDE, scheduler COSMIC và ma trận desktop đầy đủ chưa chứng nhận.
 
 - Thêm recipe `.deb` development cho Ubuntu/Pop!_OS24.04 amd64, dependency runtime và desktop action Launcher. Kiểm dpkg root riêng, nâng version metadata tổng hợp/cài lại/gỡ giữ dữ liệu; binary release trích từ gói qua GUI Wayland và GIO desktop entry/action. Chưa qua cài sạch hoặc đủ cổng release.

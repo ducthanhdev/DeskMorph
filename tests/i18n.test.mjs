@@ -100,7 +100,9 @@ test('import review covers every config field and translates scalar values while
     for (const field of Object.keys(defaults)) assert.ok(configFieldLabel(language, field));
     assert.equal(configReviewValue(language, 'enabled', true), messages[language].on);
     assert.equal(configReviewValue(language, 'enabled', false), messages[language].off);
-    assert.equal(configReviewValue(language, 'monitor', null), messages[language].notSet);
+    assert.equal(configReviewValue(language, 'monitor', null), messages[language].primary);
+    assert.equal(configReviewValue(language, 'monitor', '*'), messages[language].allMonitors);
+    assert.equal(configReviewValue(language, 'monitor', 'HDMI-0'), 'HDMI-0');
     assert.equal(configReviewValue(language, 'position', 'bottom'), messages[language].bottom);
     assert.equal(configReviewValue(language, 'language', 'en'), 'English');
     assert.equal(configReviewValue(language, 'wallpaperFolders', ['/tmp/User_Name']), '[\n  "/tmp/User_Name"\n]');

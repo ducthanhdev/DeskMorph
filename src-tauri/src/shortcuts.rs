@@ -96,7 +96,7 @@ pub fn start(app: &AppHandle) {
                             let _ = handle.run_on_main_thread(move || {
                                 // A save/disable may have happened while GTK was busy.
                                 if !status.lock().is_ok_and(|s| s.generation == generation && s.registered) { return; }
-                                let result = super::show_app_launcher(app.clone(), None).and_then(|_| super::popup::focus_at(&app, "dock-context-menu", timestamp));
+                                let result = super::show_app_launcher(app.clone(), None, None).and_then(|_| super::popup::focus_at(&app, "dock-context-menu", timestamp));
                                 if let Err(error) = result {
                                     if let Ok(mut s) = status.lock() { if s.generation == generation { s.error = Some(format!("shortcut_open: {error}")); } }
                                 }

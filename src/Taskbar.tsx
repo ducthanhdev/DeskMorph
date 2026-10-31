@@ -121,22 +121,16 @@ export const Taskbar: React.FC = () => {
     keepVisibleBriefly(7000);
     let disposed = false;
     let unlisten: (() => void) | undefined;
-    let unlistenPopup: (() => void) | undefined;
-    listen<boolean>("deskmorph:popup-visible", (event) => {
-      if (!disposed) setPopupVisible(event.payload);
-    }).then((stop) => { if (disposed) stop(); else unlistenPopup = stop; }).catch(console.error);
-    listen<boolean>("deskmorph:context-menu-visibility", (event) => {
-      if (disposed) return;
-      setContextMenuVisible(Boolean(event.payload));
-      if (event.payload) {
-        setIsMagnifying(false);
-        setMagnifyScales({});
-      }
+    const source = new URLSearchParams(window.location.search).get("dock") ?? "taskbar";
+    listen<{ source: string; visible: boolean; context: boolean }>("deskmorph:dock-popup", (event) => {
+      if (disposed || event.payload.source !== source) return;
+      setPopupVisible(event.payload.visible);
+      setContextMenuVisible(event.payload.visible && event.payload.context);
+      if (event.payload.visible) { setIsMagnifying(false); setMagnifyScales({}); }
     }).then((stop) => { if (disposed) stop(); else unlisten = stop; }).catch(console.error);
     return () => {
       disposed = true;
       unlisten?.();
-      unlistenPopup?.();
       if (hideTimer.current) clearTimeout(hideTimer.current);
       if (previewTimer.current) clearTimeout(previewTimer.current);
       if (rafId.current) cancelAnimationFrame(rafId.current);

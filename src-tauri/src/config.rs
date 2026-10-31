@@ -314,6 +314,10 @@ pub fn publish(app: &AppHandle, snapshot: &Snapshot, previous: Option<&Value>) -
         super::shortcuts::configure(app, if c["enabled"] == true { c["launcherShortcut"].as_str() } else { None });
     }
     let apply = (|| -> Result<()> {
+        if changed("monitor") || changed("position") || changed("height") {
+            super::popup::hide(app, "dock-context-menu", None).map_err(|e| ConfigError::new("popup_hide", e))?;
+            super::popup::hide(app, "calendar-flyout", None).map_err(|e| ConfigError::new("popup_hide", e))?;
+        }
         super::layout::configure(app, c).map_err(|e| ConfigError::new("layout_config", e))?;
         if c["enabled"] == false && changed("enabled") {
             super::hide_dock_context_menu(app.clone(), None).map_err(|e| ConfigError::new("popup_hide", e))?;
@@ -326,7 +330,7 @@ pub fn publish(app: &AppHandle, snapshot: &Snapshot, previous: Option<&Value>) -
                     .map_err(|e| ConfigError::new("window_position", e))?;
             }
             if changed("enabled") { window.show().map_err(|e| ConfigError::new("window_show", e))?; }
-        } else if changed("enabled") { window.hide().map_err(|e| ConfigError::new("window_hide", e))?; }
+        } else if changed("enabled") { super::layout::apply(app).map_err(|e| ConfigError::new("window_hide", e))?; }
         Ok(())
     })();
     // Persisted state must reach every UI even if a native window operation fails.

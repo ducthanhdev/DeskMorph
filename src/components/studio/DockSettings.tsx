@@ -22,8 +22,8 @@ export function DockSettings() {
       {focusError && <p role="alert"><ErrorText error={focusError} /></p>}
       <label className="settings-field">{t("position")}<select aria-label={t("position")} disabled={!platform?.dockPlacement} value={config.position} onChange={(e) => void updateConfig({ position: e.target.value as "top" | "bottom" })}><option value="bottom">{t("bottom")}</option><option value="top">{t("top")}</option></select></label>
       <label className="settings-field">{t("monitor")}<select aria-label={t("monitor")} disabled={!platform?.dockPlacement} value={config.monitor || ""} onChange={(e) => void updateConfig({ monitor: e.target.value || null })}>
-        <option value="">{t("primary")}</option>{platform?.monitors.map((m) => <option key={`${m.name}:${m.x}:${m.y}`} value={m.name}>{m.name} • {m.width}×{m.height}</option>)}
-        {config.monitor && !platform?.monitors.some((m) => m.name === config.monitor) && <option value={config.monitor}>{config.monitor} ({t("disconnected")})</option>}
+        <option value="">{t("primary")}</option><option value="*">{t("allMonitors")}</option>{platform?.monitors.map((m) => <option key={`${m.name}:${m.x}:${m.y}`} value={m.name}>{m.name} • {m.width}×{m.height}</option>)}
+        {config.monitor && config.monitor !== "*" && !platform?.monitors.some((m) => m.name === config.monitor) && <option value={config.monitor}>{config.monitor} ({t("disconnected")})</option>}
       </select></label>
       {!platform?.dockPlacement && <p role="status">{capabilityReason(platform, "dockPlacement", t, platformError)}</p>}
       <Range label={t("height")} min={40} max={90} value={config.height || 52} onChange={(height) => updateConfig({ height })} />

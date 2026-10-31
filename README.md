@@ -8,6 +8,8 @@ Dock tùy biến cho Linux, xây bằng React 19, TypeScript và Tauri 2/Rust. M
 
 Ảnh chụp Studio thật trên môi trường tham chiếu, không phải mockup.
 
+Trong Studio → Dock → Màn hình đặt Dock, chọn **Tất cả màn hình** để hiện Dock trên cả màn laptop và màn ngoài (X11). Các Dock dùng chung thiết lập và ứng dụng ghim; popup mở cạnh Dock vừa thao tác. Bạn vẫn có thể chọn màn hình chính hoặc một màn hình cụ thể.
+
 ## Môi trường hỗ trợ
 
 | Môi trường/chức năng | Trạng thái |

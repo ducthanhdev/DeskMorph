@@ -97,13 +97,13 @@ pub fn monitor_area(monitor: &tauri::Monitor) -> geometry::Rect {
 }
 
 #[tauri::command]
-fn show_dock_context_menu(app: AppHandle, icon_center_x: i32, menu_data: serde_json::Value) -> Result<bool, String> {
+fn show_dock_context_menu(app: AppHandle, source_dock: Option<String>, icon_center_x: i32, menu_data: serde_json::Value) -> Result<bool, String> {
     let is_list = menu_data["mode"] == "windows";
     let is_audio = menu_data["mode"] == "audio";
     let count = menu_data["windows"].as_array().map_or(0, |v| v.len());
     let (width, height) = if menu_data["mode"] == "system" { (380, 620) } else if is_audio { (360, 540) } else if is_list { (340, 64 + count.min(5) as u32 * 54) }
         else { (340, if menu_data["isRunning"] == true { 550 } else { 370 }) };
-    popup::show(&app, "dock-context-menu", icon_center_x, width, height, Some(menu_data))
+    popup::show(&app, "dock-context-menu", icon_center_x, width, height, Some(menu_data), source_dock.as_deref())
 }
 #[tauri::command]
 fn hide_dock_context_menu(app: AppHandle, generation: Option<u64>) -> Result<bool, String> {
@@ -114,10 +114,10 @@ fn is_context_popup_active(app: AppHandle, generation: u64) -> bool {
     popup::active_generation(&app, "dock-context-menu") == Some(generation)
 }
 #[tauri::command]
-fn toggle_calendar_flyout(app: AppHandle, anchor_x: i32, anchor_y: i32) -> Result<bool, String> {
+fn toggle_calendar_flyout(app: AppHandle, source_dock: Option<String>, anchor_x: i32, anchor_y: i32) -> Result<bool, String> {
     let _ = anchor_y;
-    if popup::is_active(&app, "calendar-flyout") { return popup::hide(&app, "calendar-flyout", None); }
-    popup::show(&app, "calendar-flyout", anchor_x, 320, 340, None)
+    if popup::is_active(&app, "calendar-flyout") && popup::is_for_dock(&app, source_dock.as_deref().unwrap_or("taskbar")) { return popup::hide(&app, "calendar-flyout", None); }
+    popup::show(&app, "calendar-flyout", anchor_x, 320, 340, None, source_dock.as_deref())
 }
 #[tauri::command]
 fn hide_calendar_flyout(app: AppHandle) -> Result<bool, String> {
@@ -191,15 +191,15 @@ fn launch_app(command: String) -> Result<bool, String> {
 }
 
 #[tauri::command]
-fn show_app_launcher(app: AppHandle, icon_center_x: Option<i32>) -> Result<bool, String> {
+fn show_app_launcher(app: AppHandle, icon_center_x: Option<i32>, source_dock: Option<String>) -> Result<bool, String> {
     let anchor = match icon_center_x {
         Some(anchor) => anchor,
         None => {
-            let dock = app.get_webview_window("taskbar").ok_or("Không tìm thấy Dock")?;
+            let dock = layout::dock(&app, source_dock.as_deref())?;
             (f64::from(dock.outer_size().map_err(|e| e.to_string())?.width) / dock.scale_factor().map_err(|e| e.to_string())? / 2.).round() as i32
         }
     };
-    popup::show(&app, "dock-context-menu", anchor, 500, 580, Some(serde_json::json!({"mode":"launcher","appName":"Ứng dụng"})))
+    popup::show(&app, "dock-context-menu", anchor, 500, 580, Some(serde_json::json!({"mode":"launcher","appName":"Ứng dụng"})), source_dock.as_deref())
 }
 
 #[tauri::command]
@@ -345,9 +345,9 @@ fn run_app() -> Result<(), String> {
             Ok(())
         })
         .on_window_event(|window, event| {
-            if window.label() == "taskbar" {
+            if layout::is_dock(window.label()) {
                 if let tauri::WindowEvent::Resized(size) = event {
-                    if let Err(error) = layout::settle_size(window.app_handle(), size) { eprintln!("dock_geometry_settle: {error}"); }
+                    if let Err(error) = layout::settle_size(window.app_handle(), window.label(), size) { eprintln!("dock_geometry_settle: {error}"); }
                 }
             }
             if let tauri::WindowEvent::CloseRequested { api, .. } = event {

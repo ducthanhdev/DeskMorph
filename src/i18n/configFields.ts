@@ -17,6 +17,10 @@ export function configFieldLabel(language: Language, field: string): string {
   return Object.prototype.hasOwnProperty.call(configFieldLabels, field) ? translate(language, configFieldLabels[field as keyof TaskbarConfig]) : field;
 }
 export function configReviewValue(language: Language, field: string, value: unknown): string {
+  if (field === "monitor") {
+    if (value === "*") return translate(language, "allMonitors");
+    if (value == null) return translate(language, "primary");
+  }
   if (typeof value === "boolean") return translate(language, value ? "on" : "off");
   if (value === null || value === undefined) return translate(language, "notSet");
   if (field === "position" && (value === "top" || value === "bottom")) return translate(language, value);
