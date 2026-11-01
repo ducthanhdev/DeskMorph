@@ -1,77 +1,92 @@
 # DeskMorph
 
-Dock tùy biến cho Linux, xây bằng React 19, TypeScript và Tauri 2/Rust. Mục tiêu là luồng tìm ứng dụng → mở → ghim → sắp xếp → quản lý cửa sổ, cùng Studio, hình nền và tiện ích hệ thống.
+DeskMorph là Dock tùy chỉnh cho Linux, kèm Studio để quản lý ứng dụng, giao diện, hình nền và tiện ích hệ thống. Ứng dụng ưu tiên trải nghiệm GNOME/X11 và không tự thay đổi các thiết lập hệ thống khi chưa có thao tác của bạn.
 
-Đang phát triển, chưa có bản phát hành đã qua cài sạch/nâng cấp. Xem [kế hoạch 99 đầu việc](docs/IMPLEMENTATION_PLAN.md) và [kết quả kiểm thử thực tế](docs/PROGRESS.md) để phân biệt implementation với phạm vi đã xác minh.
+![Cửa sổ DeskMorph Studio](docs/images/studio.png)
 
-![Studio tùy chỉnh giao diện Dock trên GNOME/X11](docs/images/studio.png)
+> Dự án đang phát triển. Phạm vi đã kiểm chứng chi tiết nằm trong [PROGRESS.md](docs/PROGRESS.md); đây chưa phải bản phát hành đã qua toàn bộ kiểm thử nâng cấp/cài sạch.
 
-Ảnh chụp Studio thật trên môi trường tham chiếu, không phải mockup.
+## Tính năng chính
 
-Trong Studio → Dock → Màn hình đặt Dock, chọn **Tất cả màn hình** để hiện Dock trên cả màn laptop và màn ngoài (X11). Các Dock dùng chung thiết lập và ứng dụng ghim; popup mở cạnh Dock vừa thao tác. Bạn vẫn có thể chọn màn hình chính hoặc một màn hình cụ thể.
+- Dock có thể ghim, mở và quản lý cửa sổ ứng dụng; có launcher, menu chuột phải, kéo thả sắp xếp và điều khiển bằng bàn phím.
+- Hiện Dock ở màn hình chính, một màn hình cụ thể, hoặc tất cả màn hình trên GNOME/X11.
+- Studio để đổi kích thước, màu sắc, vị trí trên/dưới, tự ẩn, widget đồng hồ, âm thanh, media, pin và mạng.
+- Thư viện hình nền, yêu thích, lọc, shuffle và lịch đổi hình nền.
+- Đổi màn hình chính trên GNOME/Mutter: GNOME hiện hộp thoại **Giữ thay đổi / Hoàn tác**; DeskMorph không tự tạo countdown cạnh tranh.
+- Nhập/xuất cấu hình JSON, preset giao diện và hoàn tác những thay đổi trong Studio.
 
-Studio → **Màn hình** hiển thị primary/secondary và thông số màn hình trên GNOME. Trên GNOME có quyền DisplayConfig, có thể chọn màn logical đang hoạt động để đặt làm màn chính; GNOME tự hiển thị hộp Giữ thay đổi/Hoàn tác và tự phục hồi khi hết hạn. Xem giới hạn kiểm chứng trong [phạm vi triển khai](docs/PRIMARY_MONITOR_IMPLEMENTATION.md).
+## Hỗ trợ hiện tại
 
-## Môi trường hỗ trợ
-
-| Môi trường/chức năng | Trạng thái |
+| Môi trường | Trạng thái |
 | --- | --- |
-| Pop!_OS 24.04, GNOME 46, X11, x86_64 | Môi trường kiểm thử tham chiếu; chưa qua toàn bộ cổng phát hành |
-| Quản lý cửa sổ X11 | Adapter X11; cần `xprop` và DISPLAY hợp lệ |
-| Hình nền GNOME / COSMIC | GNOME GSettings; COSMIC RON v1 qua UI Apply/error/Retry/Shuffle trên cosmic-bg1.11.0 và compositor lồng; xem [phạm vi](docs/WALLPAPER.md). KDE chưa bật |
-| Audio | `pactl` JSON + PulseAudio hoặc PipeWire PulseAudio; native test bằng null sink |
-| Media | MPRIS trên session bus; hai fixture players đã qua test; ảnh bìa chỉ nhận file cục bộ |
-| Pin/mạng | UPower display aggregate và NetworkManager; có trạng thái thiếu service |
-| Downloads | XDG user directories qua native GFile/GIO; đã kiểm thử với COSMIC Files trên máy tham chiếu |
-| Phím tắt launcher X11 | Tùy chỉnh, mặc định tắt; phát hiện xung đột, thử lại và tắt trong Hệ thống |
-| Thùng rác | Chỉ bật khi desktop có URI handler; chưa khả dụng trên máy tham chiếu |
-| Wayland native / KDE / COSMIC session | Chưa được xác minh; không công bố hỗ trợ window management native |
+| Pop!_OS 24.04 / Ubuntu 24.04, GNOME 46, X11, x86_64 | Môi trường tham chiếu đã kiểm thử |
+| GNOME/Mutter DisplayConfig | Đọc trạng thái màn hình; đổi primary khi desktop cấp quyền |
+| PipeWire PulseAudio / PulseAudio | Âm thanh qua `pactl`; media qua MPRIS |
+| COSMIC wallpaper config | Có adapter RON v1; KDE wallpaper chưa bật |
+| Wayland, KDE, COSMIC session | Chưa công bố hỗ trợ native window management |
 
-Có COSMIC Files được cài không đồng nghĩa phiên desktop là COSMIC. Máy tham chiếu hiện chạy GNOME/X11. Mixed DPI, hotplug, sleep/resume thực tế và global shortcuts portal trên Wayland còn trong kế hoạch.
+Xem [CAPABILITIES.md](docs/CAPABILITIES.md) để biết chi tiết các capability và giới hạn theo desktop.
 
-Prototype extension GNOME 46 đã thử placement/auto-hide và điều khiển cửa sổ native trong lab riêng; chưa tích hợp vào sản phẩm. Xem [quyết định adapter Wayland](docs/WAYLAND_ADAPTER_DECISION.md).
+## Cài nhanh bằng gói Debian
 
-Xem [ma trận capability và cách phát hiện](docs/CAPABILITIES.md) cho liệt kê/chuyển/đóng cửa sổ, các trường hợp thiếu hỗ trợ và giới hạn Wayland.
-
-## Dùng trong chế độ phát triển
-
-Cần Node.js 22.12 trở lên, npm, Rust stable/Cargo và các thư viện native. Trên Ubuntu/Pop!_OS 24.04:
+Khi bạn có file `.deb` phù hợp cho Ubuntu/Pop!_OS 24.04 amd64, cài bằng:
 
 ```sh
-sudo apt install build-essential pkg-config libssl-dev libgtk-3-dev libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev libx11-dev libxi-dev libxcb1-dev patchelf x11-utils pulseaudio-utils
+sudo apt install ./DeskMorph_0.1.0_amd64.deb
+```
+
+Sau đó mở **DeskMorph** từ menu ứng dụng. Chạy `deskmorph` lần nữa sẽ mở Studio của instance đang chạy, không tạo Dock thứ hai.
+
+Để gỡ:
+
+```sh
+sudo apt remove desk-morph
+```
+
+Gói không xóa cấu hình cá nhân, pin hay cache của bạn. Hướng dẫn đóng gói và giới hạn artifact development nằm trong [PACKAGING.md](docs/PACKAGING.md).
+
+## Cài từ source
+
+Cần Node.js 22.12+, npm, Rust stable/Cargo và các thư viện native. Trên Ubuntu/Pop!_OS 24.04:
+
+```sh
+sudo apt install build-essential pkg-config libssl-dev libgtk-3-dev \
+  libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev \
+  libx11-dev libxi-dev libxcb1-dev patchelf x11-utils pulseaudio-utils
+git clone git@github.com:ducthanhdev/DeskMorph.git
+cd DeskMorph
 npm ci
 npm run tauri -- dev
 ```
 
-Lần đầu Cargo cần tải dependencies. Cổng Vite mặc định là 1420. Nếu một instance cùng profile đang chạy, lần mở tiếp theo chuyển tới instance đó và mở Studio; không tạo Dock thứ hai.
-
-Đóng Studio giữ Dock khi bật “Giữ Dock khi đóng Studio”. Chạy executable một lần nữa để mở lại Studio; dùng “Thoát DeskMorph” trong Hệ thống để thoát hẳn. Tự ẩn, chọn màn hình và các widget được điều chỉnh ở Taskbar Studio.
-
-Kéo icon đã ghim lên icon khác để đổi thứ tự; thả ngoài Dock hoặc Escape để hủy. Bạn cũng có thể focus icon rồi dùng Ctrl+Shift+←/→, hoặc chọn Sang trái/Sang phải trong menu chuột phải. Thứ tự được lưu khi thả và giữ sau restart.
-
-Nếu cửa sổ không được nhận vào pin, mở Studio → Ứng dụng → Ghép lớp cửa sổ tại pin đó. Đọc các lớp đang mở hoặc nhập một WM_CLASS đầy đủ mỗi dòng rồi Lưu; xóa hết để bỏ ghép. So khớp không phân biệt hoa thường và không dùng chuỗi con (`code` không nhận `DecodeTool`). Mapping chỉ đổi cách gom cửa sổ, giữ nguyên lệnh mở và desktop ID; không đoán lệnh cho cửa sổ không xác định. Lớp đã thuộc pin khác phải được bỏ ở pin đó trước. Cấu hình cũ vẫn được giữ; alias từng dựa vào chuỗi con cần bổ sung WM_CLASS đầy đủ.
-
-Trong Hệ thống, bạn có thể bật phím tắt launcher như `Ctrl+Super+K`. Cú pháp dùng Ctrl/Alt/Shift/Super và chữ ASCII, số, F1–F12 hoặc Space; không nhận phím trần hay chỉ Shift. `Ctrl+Alt+F1–F12` bị từ chối vì có thể chuyển virtual console. Khi có xung đột, phím đã chọn được lưu nhưng báo chưa hoạt động; đổi phím hoặc thử lại sau khi giải phóng tổ hợp. Tắt Dock tạm ngừng đăng ký; mở lại Dock khôi phục lựa chọn. Wayland hiện chưa hỗ trợ.
-
-Executable nhận `--launcher` để mở cửa sổ tìm ứng dụng, kể cả khi Dock tắt; không có đối số mở Studio. GNOME Wayland có [hướng dẫn gán/gỡ phím desktop](docs/WAYLAND_SHORTCUTS.md). CLI đã qua cold/warm/search/Escape trên Wayland lab; compositor quyết định vị trí/focus và bạn có thể chọn DeskMorph Launcher từ trình chuyển cửa sổ. Custom shortcut GNOME46 qua media-keys thật đã kiểm cold/warm/focus/search/Escape và gỡ phím trong lab riêng; portal/token và compositor khác chưa được chứng nhận.
-
-## Gói Debian development
-
-Đã có recipe `.deb` cho Ubuntu/Pop!_OS24.04 amd64: `npm run package:deb`. Xem [build, cài/gỡ và bằng chứng kiểm thử](docs/PACKAGING.md). Artifact đã qua dpkg root riêng và GUI của binary trích từ gói; chưa qua tài khoản/máy sạch hoặc đủ cổng phát hành. Tên package là `desk-morph`, executable `deskmorph`.
-
-## Build và cài thủ công
+Lệnh trên mở bản phát triển. Để build binary production từ source:
 
 ```sh
-npm run tauri -- build --no-bundle
+npm run build
+cargo build --release --manifest-path src-tauri/Cargo.toml --features custom-protocol
 install -Dm755 src-tauri/target/release/deskmorph "$HOME/.local/bin/deskmorph"
 "$HOME/.local/bin/deskmorph"
 ```
 
-Đây là cách cài từ source, chưa phải gói phát hành đã xác minh. Sau khi đặt executable ở vị trí cố định, dùng “Đăng ký vào menu ứng dụng” và tùy chọn autostart trong Hệ thống. Đăng ký từ thư mục build tạm sẽ khiến desktop entry trỏ vào executable tạm đó.
+Sau khi cài binary vào vị trí ổn định, mở Studio → **Hệ thống** để đăng ký vào menu ứng dụng hoặc bật tự khởi động. Không đăng ký binary trong thư mục build tạm, vì desktop entry sẽ trỏ sai đường dẫn sau khi dọn dẹp build.
 
-Để nâng cấp thủ công, xuất JSON dự phòng, thoát DeskMorph rồi thay executable tại cùng vị trí. Cấu hình nằm ngoài thư mục executable. Luồng nâng cấp/cài sạch vẫn cần kiểm thử phát hành.
+## Cách dùng cơ bản
 
-Để gỡ, tắt autostart và thoát app; xóa executable đã cài cùng các desktop entry do app tạo:
+1. Mở Studio bằng cách chạy `deskmorph` hoặc chọn DeskMorph trong menu.
+2. Trong **Dock**, bật/tắt Dock và chọn màn hình đặt Dock: chính, cụ thể hoặc tất cả.
+3. Trong **Ứng dụng**, tìm ứng dụng và ghim vào Dock. Kéo thả icon hoặc dùng `Ctrl+Shift+Trái/Phải` để sắp xếp.
+4. Trong **Giao diện** và **Hình nền**, chọn giao diện, preset, ảnh nền và lịch thay đổi.
+5. Trong **Màn hình**, chọn màn logical đang hoạt động rồi bấm **Đặt làm màn hình chính**. Xác nhận hoặc hoàn tác trong hộp thoại GNOME.
+
+Đóng Studio có thể vẫn giữ Dock nếu đã bật **Giữ Dock khi đóng Studio**. Chọn **Thoát DeskMorph** trong Hệ thống để thoát hoàn toàn.
+
+## Dữ liệu và sao lưu
+
+- Cấu hình: `${XDG_CONFIG_HOME:-~/.config}/com.ducthanhdev.deskmorph/config.json`.
+- Studio có nhập/xuất JSON và bước xem trước thay đổi. Nên export bản sao trước khi nâng cấp thủ công.
+- Cấu hình màn hình chính là của desktop, không nằm trong preset hay file cấu hình DeskMorph.
+
+Nếu cần gỡ bản cài thủ công, tắt autostart và thoát ứng dụng trước, sau đó xóa binary và desktop entry của DeskMorph:
 
 ```sh
 rm -f "$HOME/.local/bin/deskmorph"
@@ -79,64 +94,22 @@ rm -f "${XDG_CONFIG_HOME:-$HOME/.config}/autostart/deskmorph.desktop"
 rm -f "${XDG_DATA_HOME:-$HOME/.local/share}/applications/deskmorph.desktop"
 ```
 
-Các lệnh này giữ cấu hình và cache để có thể khôi phục. Không tự xóa hình nền hay dữ liệu Thùng rác.
+Những lệnh này giữ lại cấu hình và cache để bạn có thể cài lại sau này.
 
-## Cấu hình và dữ liệu
+## Sự cố thường gặp
 
-- Cấu hình: `${XDG_CONFIG_HOME:-~/.config}/com.ducthanhdev.deskmorph/config.json`, có `schemaVersion` và `revision`.
-- Cập nhật qua native store: validate → file tạm/sync/rename → phát snapshot tới các cửa sổ. File hỏng được giữ trong `.recovery.json`; localStorage cũ chỉ dùng di trú.
-- Export/import JSON và reset có bước xem thay đổi/hoàn tác; import cũ bị từ chối nếu cấu hình đã thay đổi sau khi review.
-- `DESKMORPH_CONFIG_HOME` là override tuyệt đối riêng cho profile/config/instance/autostart của DeskMorph. Khi test GSettings, giữ nguyên `XDG_CONFIG_HOME` của desktop để dconf đọc và ghi cùng namespace.
-- Gallery giới hạn 20.000 mục/5.000 ảnh mỗi scan, không theo symlink thư mục; render 24 ảnh/trang. Lịch chạy ở backend khi Studio đóng; sleep/clock jump mới được test mô phỏng.
-- Chọn đầu ra audio chỉ đổi default cho luồng mới. Không chuyển stream đang phát; slider không tự tăng/giảm mức âm lượng hệ thống trước khi bạn điều chỉnh.
+- **Không thấy Dock:** mở Studio, kiểm tra Đã bật Dock và màn hình đã chọn. X11 cần `xprop` và `DISPLAY` hợp lệ.
+- **Cửa sổ WebKit trống:** thử `WEBKIT_DISABLE_DMABUF_RENDERER=1 deskmorph`.
+- **Không đổi được màn hình chính:** chỉ GNOME/Mutter có DisplayConfig cấp quyền mới bật nút này. Dùng **Mở cài đặt màn hình hệ thống** nếu nút bị khóa.
+- **Không có âm thanh:** kiểm tra `pactl info`; DeskMorph vẫn chạy khi PulseAudio/PipeWire PulseAudio không có.
+- **Mở app lần nữa chỉ hiện Studio:** đây là hành vi single-instance bình thường.
 
-## Kiểm thử
+## Phát triển và kiểm thử
 
 ```sh
 npm test
 npm run build
-cargo check --locked --manifest-path src-tauri/Cargo.toml
-cargo test --locked --manifest-path src-tauri/Cargo.toml --lib -- --include-ignored
+cargo test --offline --manifest-path src-tauri/Cargo.toml --lib
 ```
 
-Workflow CI được cấu hình để chạy các kiểm tra này (Rust tests dùng Xvfb với `xvfb`/`xauth`) trên Ubuntu 24.04; chưa chạy trên GitHub trong phiên này và không thay thế kiểm thử desktop. Trong sandbox cấm Unix socket, chạy Rust tests không có `--include-ignored` và ghi rõ test bị bỏ qua.
-
-Native UI tests là opt-in, chỉ thao tác profile tạm có nhận diện PID riêng. Chúng cần phiên X11 đang **mở khóa**, AT-SPI/Python GI/GTK3/libXtst và binary với frontend được nhúng. Script chặn phím khi focus không thuộc PID test. Các ca audio dùng null sink, MPRIS dùng fixtures, wallpaper khôi phục trạng thái cũ trong `finally`.
-
-```sh
-npm run build
-cargo build --offline --manifest-path src-tauri/Cargo.toml --target-dir src-tauri/target/agent --features custom-protocol
-/usr/bin/python3 tests/desktop_smoke.py --restart --basic --studio-smoke --config-smoke --launcher-smoke
-/usr/bin/python3 tests/desktop_smoke.py --autohide-smoke --popup-smoke
-/usr/bin/python3 tests/desktop_smoke.py --shortcut-smoke
-/usr/bin/python3 tests/desktop_smoke.py --reorder-smoke
-/usr/bin/python3 tests/desktop_smoke.py --tooltip-smoke
-/usr/bin/python3 tests/desktop_smoke.py --launch-smoke
-/usr/bin/python3 tests/desktop_smoke.py --overflow-smoke
-/usr/bin/python3 tests/desktop_smoke.py --layout-smoke
-/usr/bin/python3 tests/desktop_smoke.py --indicator-smoke
-/usr/bin/python3 tests/desktop_smoke.py --window-list-smoke
-/usr/bin/python3 tests/desktop_smoke.py --lifecycle-smoke
-/usr/bin/python3 tests/desktop_smoke.py --registration-smoke
-/usr/bin/python3 tests/desktop_smoke.py --audio-smoke --media-smoke --audio-exit
-/usr/bin/python3 tests/desktop_smoke.py --force-close-smoke --wallpaper-smoke
-/usr/bin/python3 tests/desktop_smoke.py --system-smoke --system-open-smoke
-```
-
-Ca `--layout-smoke` tạm bật/tắt `org.gnome.desktop.interface enable-animations` để kiểm tra reduced-motion thật của WebKit, rồi khôi phục preference GNOME và toàn bộ cấu hình test trong `finally`.
-
-Các ca `--system-open-smoke` hiện dành cho COSMIC Files trên máy tham chiếu. Xem PROGRESS.md để biết các ca service lỗi, scheduler và thư viện lớn. Báo cáo nằm trong `/tmp/deskmorph-desktop-test`; không suy diễn một lần pass thành hỗ trợ mọi desktop.
-
-Stress popup tự restart profile test và dùng Hidden overrides trong XDG_DATA_HOME tạm để launcher chỉ mở fixture; vẫn giữ thư mục MIME/icon/schema của hệ thống. Auto-hide có ca riêng ở top/bottom; các ca tương tác khác đặt baseline Dock hiện đầy đủ. Outside-click được kiểm tra nằm ngoài popup trước khi gửi click vật lý.
-
-## Xử lý lỗi thường gặp
-
-- Không thấy Dock: mở lại Studio; kiểm tra “Bật Dock”, màn hình đã chọn và session X11/xprop. Wayland native hiện chưa có adapter quản lý cửa sổ.
-- WebKit render trống trên máy có lỗi DMA-BUF: thử chạy với `WEBKIT_DISABLE_DMABUF_RENDERER=1`; desktop entry do app đăng ký đã thêm biến này.
-- Audio không khả dụng: kiểm tra `pactl info` và PulseAudio/PipeWire PulseAudio của phiên người dùng. App vẫn dùng được khi service thiếu.
-- Hình nền không đổi: GNOME cần schema/writable settings; COSMIC cần cosmic-bg và cấu hình RON v1 hợp lệ, target ghi được. Không ghi đè user config lỗi. Nếu kết quả ghi chưa xác minh, kiểm hình nền và thiết lập từng màn hình trước thử lại. Xem [WALLPAPER.md](docs/WALLPAPER.md).
-- Test bị chặn focus hoặc active XID là `0x0`: kiểm tra desktop có khóa màn hình hay không; không bỏ qua PID guard.
-- Mở app lần nữa chỉ hiện Studio: đó là hành vi single-instance. Dùng profile riêng nếu cần chạy instance kiểm thử.
-- Lỗi instance không xác nhận mở Studio: instance development cũ có thể chưa hỗ trợ ACK của giao thức mới. Thoát instance đó bình thường rồi mở lại; không xóa lock/socket khi tiến trình còn chạy. Các lỗi startup trả exit code 1 và thông điệp trên stderr.
-
-Kiến trúc hiện tại và các giới hạn: [ARCHITECTURE.md](docs/ARCHITECTURE.md). Bảng so sánh hệ điều hành cũ chỉ là tài liệu tham khảo, không phải bằng chứng hoàn thành tính năng.
+Native UI test là opt-in và chỉ nên chạy trên X11 đã mở khóa. Xem [PROGRESS.md](docs/PROGRESS.md), [ARCHITECTURE.md](docs/ARCHITECTURE.md) và [RELEASE_CHECKLIST.md](docs/RELEASE_CHECKLIST.md) trước khi coi một build là sẵn sàng phát hành.
