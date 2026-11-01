@@ -14,6 +14,7 @@ Ngày: 01/11/2026. Tham chiếu: [kế hoạch](PRIMARY_MONITOR_PLAN.md), [phân
 - Platform summary có cờ primary. Watcher Dock theo dõi primary tường minh bên cạnh geometry; display snapshot thay đổi topology/primary sau baseline mới invalidates popup và yêu cầu layout đọc lại màn hình từ GTK; snapshot đầu hoặc chỉ đổi serial/permission không đóng popup.
 - Nút mở GNOME Display Settings qua GIO desktop entry, kiểm caller là Studio; không ghép shell command.
 - Khi GNOME cho phép, capability mở thao tác đổi primary; command chỉ nhận từ cửa sổ Studio, kiểm revision, đọc lại snapshot, VERIFY rồi gửi persistent apply. Sau apply, kiểm lại service owner trước refresh.
+- Trước apply và sau VERIFY, adapter đối chiếu owner cùng topology với revision Studio đã chọn. Nếu Settings, hotplug hoặc primary khác đã đổi giữa các bước, request dừng với `display_stale_revision`; DeskMorph không ghi đè trạng thái mới hơn.
 - Native giữ lease 30 giây sau apply để chặn request DeskMorph trùng trong lúc GNOME xác nhận; lease này không thay thế deadline hay phục hồi compositor.
 - Candidate giữ vị trí, scale, transform, mode ID, nhóm mirror, underscan và `layout-mode` khi compositor công bố nó có thể đổi. Không ghi `monitors.xml`, không lưu primary trong config DeskMorph.
 - GNOME Shell sở hữu Keep/Revert và timeout. Studio chỉ báo đang chờ GNOME, không suy active preview là persistence đã xác nhận.
@@ -40,7 +41,7 @@ Không có agent, journal hay khóa mutation runtime riêng: an toàn xác nhậ
 
 - `npm run build` đạt; `npm test`: 59/59.
 - `cargo test --offline --manifest-path src-tauri/Cargo.toml --target-dir src-tauri/target/agent --lib`: 97 đạt, 5 native opt-in bỏ qua.
-- Sáu test Rust mới: primary/mode/privacy, primary thay đổi không đổi geometry, mirror/inactive, response lỗi, service owner/permission và snapshot ban đầu/metadata không được đóng popup.
+- Rust kiểm primary/mode/privacy, primary thay đổi không đổi geometry, mirror/inactive, response lỗi, service owner/permission, snapshot ban đầu/metadata không được đóng popup và topology/owner thay đổi sau revision Studio bị từ chối trước apply.
 - Test frontend kiểm request `set_primary_monitor` chỉ với target secondary/capability hợp lệ và revision hiện hành.
 - GUI host smoke đã được đổi để không click nút mutation và chỉ kiểm action có sẵn. Hai lượt ở đây dừng trước khi accessibility tree công bố tab Màn hình; không tính là bằng chứng UI native mới.
 - Ca end-to-end GNOME/X11 thật ngày 01/11/2026: Studio DeskMorph gửi `eDP-1-1` → `HDMI-0`; GNOME xác nhận Keep. Đọc DisplayConfig và `xrandr` sau Keep cùng xác nhận HDMI primary, với vị trí `(1920,0)/(0,0)`, scale/transform `1/0`, HDMI `1920x1080@60` và laptop `1920x1080@144` không đổi. Lượt kế tiếp yêu cầu HDMI → laptop rồi chọn Revert; API xác nhận trả đúng baseline lượt hai là HDMI primary. Đây là kiểm app → GNOME dialog → API thật, không dùng để suy hotplug, logout/login, mixed DPI hay accessibility đã đạt.

@@ -78,13 +78,22 @@ pub struct Snapshot {
     physical_monitors: Vec<PhysicalMonitor>,
     transaction: Option<()>,
 }
-#[derive(PartialEq)]
+#[derive(Clone, PartialEq)]
 struct Observed {
     owner: String,
     serial: u32,
     capabilities: Capabilities,
     logical: Vec<LogicalMonitor>,
     physical: Vec<PhysicalMonitor>,
+}
+
+/// A UI revision is tied to the DisplayConfig owner and its visible topology.
+/// The serial itself may advance for unrelated compositor metadata, so the
+/// mutation uses the newest serial after confirming these invariants.
+fn same_requested_topology(cached: &Observed, current: &Observed) -> bool {
+    cached.owner == current.owner
+        && cached.logical == current.logical
+        && cached.physical == current.physical
 }
 struct Cache {
     epoch: String,
@@ -579,6 +588,11 @@ fn set_primary(
             "Display state changed before applying",
         ));
     }
+    let expected_observed = cached
+        .observed
+        .as_ref()
+        .ok_or_else(|| error("display_stale_revision", "Display state has not loaded"))?
+        .clone();
     drop(cached);
     let lease = MutationLease::acquire(state.mutation_until.clone())?;
     let bus = gio::bus_get_sync(gio::BusType::Session, gio::Cancellable::NONE)
@@ -611,6 +625,12 @@ fn set_primary(
         )
         .unwrap_or(false);
     let observed = parse(&raw, format!("{}:{owner}", bus.guid()), allowed)?;
+    if !same_requested_topology(&expected_observed, &observed) {
+        return Err(error(
+            "display_stale_revision",
+            "Display topology changed before applying",
+        ));
+    }
     if !observed.capabilities.can_set_primary {
         return Err(error(
             observed.capabilities.reason,
@@ -654,6 +674,12 @@ fn set_primary(
     }
     let current = call(&bus, &owner, PATH, SERVICE, "GetCurrentState", None)?;
     let current_observed = parse(&current, format!("{}:{owner}", bus.guid()), true)?;
+    if !same_requested_topology(&observed, &current_observed) {
+        return Err(error(
+            "display_stale_revision",
+            "Display topology changed while verifying",
+        ));
+    }
     let apply = configuration_with_primary(
         &current,
         &target_id,
@@ -944,6 +970,15 @@ mod tests {
                 .map(|m| (m.x, m.y))
                 .collect::<Vec<_>>()
         );
+    }
+    #[test]
+    fn mutation_rejects_a_topology_that_changed_after_the_ui_revision() {
+        let baseline = parse(&separate(true), ":1.1".into(), true).unwrap();
+        let primary_changed = parse(&separate(false), ":1.1".into(), true).unwrap();
+        let owner_changed = parse(&separate(true), ":1.2".into(), true).unwrap();
+        assert!(!same_requested_topology(&baseline, &primary_changed));
+        assert!(!same_requested_topology(&baseline, &owner_changed));
+        assert!(same_requested_topology(&baseline, &baseline.clone()));
     }
     #[test]
     fn mirror_is_one_logical_target_and_inactive_outputs_remain_visible() {
