@@ -39,7 +39,7 @@ Không có agent, journal hay khóa mutation runtime riêng: an toàn xác nhậ
 ## Kiểm thử và bằng chứng
 
 - `npm run build` đạt; `npm test`: 59/59.
-- `cargo test --offline --manifest-path src-tauri/Cargo.toml --target-dir src-tauri/target/agent --lib`: 96 đạt, 5 native opt-in bỏ qua.
+- `cargo test --offline --manifest-path src-tauri/Cargo.toml --target-dir src-tauri/target/agent --lib`: 97 đạt, 5 native opt-in bỏ qua.
 - Sáu test Rust mới: primary/mode/privacy, primary thay đổi không đổi geometry, mirror/inactive, response lỗi, service owner/permission và snapshot ban đầu/metadata không được đóng popup.
 - Test frontend kiểm request `set_primary_monitor` chỉ với target secondary/capability hợp lệ và revision hiện hành.
 - GUI host smoke đã được đổi để không click nút mutation và chỉ kiểm action có sẵn. Hai lượt ở đây dừng trước khi accessibility tree công bố tab Màn hình; không tính là bằng chứng UI native mới.
