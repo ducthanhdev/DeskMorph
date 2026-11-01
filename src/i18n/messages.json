@@ -296,7 +296,7 @@
     "wallpaperWriteUnverified": "Chưa thể xác nhận đổi hình nền hoàn tất. Hãy kiểm tra hình nền và thiết lập từng màn hình trước khi thử lại.",
     "allMonitors": "Tất cả màn hình",
     "displaysTab": "Màn hình",
-    "displayPrimaryHelp": "Xem màn hình chính của desktop. Thiết lập này khác với màn hình đặt Dock. Bạn có thể chuyển màn hình chính trong cài đặt màn hình hệ thống.",
+    "displayPrimaryHelp": "Xem và đổi màn hình chính của desktop. Thiết lập này khác với màn hình đặt Dock. GNOME sẽ hiện hộp xác nhận và tự hoàn tác nếu bạn không giữ thay đổi.",
     "displayRefresh": "Tải lại màn hình",
     "displayOpenSettings": "Mở cài đặt màn hình hệ thống",
     "displayList": "Các màn hình đang kết nối",
@@ -316,7 +316,11 @@
     "displayInvalidResponse": "Dữ liệu màn hình không hợp lệ; hãy mở cài đặt hệ thống để kiểm tra.",
     "displaySettingsMissing": "Không tìm thấy cài đặt màn hình GNOME. Hãy mở cài đặt màn hình từ desktop.",
     "displaySettingsOpenFailed": "Không mở được cài đặt màn hình hệ thống.",
-    "displayStale": "Trạng thái màn hình đã thay đổi. Hãy tải lại."
+    "displayStale": "Trạng thái màn hình đã thay đổi. Hãy tải lại.",
+    "displayTargetMissing": "Màn hình đã chọn không còn hoạt động. Hãy tải lại.",
+    "displayConfirmWithGnome": "GNOME đang chờ bạn xác nhận thay đổi màn hình. Chọn Giữ thay đổi hoặc Hoàn tác trong hộp thoại của GNOME.",
+    "displayApplyFailed": "Không gửi được thay đổi màn hình tới GNOME. Hãy tải lại và thử lại.",
+    "displayBusy": "GNOME đang xác nhận một thay đổi màn hình khác. Hãy chờ hộp thoại đó hoàn tất."
   },
   "en": {
     "configRepaired": "Some configuration fields were repaired or reset to defaults; the original was kept in a recovery file.",
@@ -615,7 +619,7 @@
     "wallpaperWriteUnverified": "The wallpaper change could not be fully verified. Check the wallpaper and per-display settings before retrying.",
     "allMonitors": "All monitors",
     "displaysTab": "Displays",
-    "displayPrimaryHelp": "View the desktop primary display. This setting is separate from Dock placement. You can change the primary display in system display settings.",
+    "displayPrimaryHelp": "View and change the desktop primary display. This setting is separate from Dock placement. GNOME shows a confirmation dialog and reverts if you do not keep the change.",
     "displayRefresh": "Refresh displays",
     "displayOpenSettings": "Open system display settings",
     "displayList": "Connected displays",
@@ -635,6 +639,10 @@
     "displayInvalidResponse": "Invalid display state. Check system display settings.",
     "displaySettingsMissing": "GNOME display settings was not found. Open display settings from your desktop.",
     "displaySettingsOpenFailed": "Unable to open system display settings.",
-    "displayStale": "Display state has changed. Refresh to try again."
+    "displayStale": "Display state has changed. Refresh to try again.",
+    "displayTargetMissing": "The selected display is no longer active. Refresh to try again.",
+    "displayConfirmWithGnome": "GNOME is waiting for you to confirm the display change. Choose Keep Changes or Revert Settings in GNOME's dialog.",
+    "displayApplyFailed": "Unable to send the display change to GNOME. Refresh and try again.",
+    "displayBusy": "GNOME is confirming another display change. Wait for that dialog to finish."
   }
 }

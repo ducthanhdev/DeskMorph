@@ -1,5 +1,5 @@
-//! DisplayConfig read path. Mutation stays unavailable until a confirmation /
-//! persistence / independent-recovery policy passes native acceptance.
+//! GNOME DisplayConfig adapter. Mutter owns confirmation and recovery for
+//! persistent topology changes; DeskMorph only submits a primary-only request.
 use gio::{
     glib::{self, prelude::*, FromVariant, VariantDict},
     prelude::*,
@@ -19,6 +19,9 @@ use tauri::{AppHandle, Emitter, Manager};
 const SERVICE: &str = "org.gnome.Mutter.DisplayConfig";
 const PATH: &str = "/org/gnome/Mutter/DisplayConfig";
 const STATE_TYPE: &str = "(ua((ssss)a(siiddada{sv})a{sv})a(iiduba(ssss)a{sv})a{sv})";
+const APPLY_TYPE: &str = "(uua(iiduba(ssa{sv}))a{sv})";
+const METHOD_VERIFY: u32 = 0;
+const METHOD_PERSISTENT: u32 = 2;
 
 #[derive(Clone, Debug, Serialize)]
 pub struct DisplayError {
@@ -99,10 +102,49 @@ impl Default for Cache {
         }
     }
 }
+struct MutationLease {
+    until: Arc<Mutex<Option<Instant>>>,
+    retain: bool,
+}
+impl MutationLease {
+    fn acquire(until: Arc<Mutex<Option<Instant>>>) -> Result<Self, DisplayError> {
+        let mut slot = until.lock().map_err(|e| error("display_read_failed", e))?;
+        if slot.is_some_and(|deadline| deadline > Instant::now()) {
+            return Err(error(
+                "display_busy",
+                "GNOME is still confirming a display change",
+            ));
+        }
+        *slot = Some(Instant::now());
+        drop(slot);
+        Ok(Self {
+            until,
+            retain: false,
+        })
+    }
+    fn retain_for_compositor_confirmation(mut self) {
+        if let Ok(mut slot) = self.until.lock() {
+            // This is a duplicate-request guard only. GNOME owns the actual
+            // confirmation timeout and recovery, not DeskMorph.
+            *slot = Some(Instant::now() + Duration::from_secs(30));
+        }
+        self.retain = true;
+    }
+}
+impl Drop for MutationLease {
+    fn drop(&mut self) {
+        if !self.retain {
+            if let Ok(mut slot) = self.until.lock() {
+                *slot = None;
+            }
+        }
+    }
+}
 #[derive(Default)]
 pub struct DisplayState {
     cache: Arc<Mutex<Cache>>,
     read_lock: Arc<Mutex<()>>,
+    mutation_until: Arc<Mutex<Option<Instant>>>,
     stop: Arc<AtomicBool>,
     worker: Mutex<Option<JoinHandle<()>>>,
 }
@@ -128,21 +170,37 @@ fn properties(value: &glib::Variant) -> Result<VariantDict, DisplayError> {
 fn prop<T: glib::variant::FromVariant>(dict: &VariantDict, key: &str) -> Option<T> {
     dict.lookup(key).ok().flatten()
 }
-fn capabilities(can_read: bool, allowed: bool) -> Capabilities {
+fn capabilities_for(can_read: bool, allowed: bool, gnome: bool) -> Capabilities {
+    // Mutter owns the confirmation dialog and reverts a rejected or timed out
+    // persistent request. The product never attempts to mimic that timer.
+    let supported = can_read && allowed && gnome;
     Capabilities {
         can_read,
-        can_set_primary: false,
-        can_persist: false,
-        recovery_available: false,
-        confirmation_owner: "unavailable",
-        reason: if !can_read {
+        can_set_primary: supported,
+        can_persist: supported,
+        recovery_available: supported,
+        confirmation_owner: if supported {
+            "compositor"
+        } else {
+            "unavailable"
+        },
+        reason: if supported {
+            ""
+        } else if !can_read {
             "display_unsupported"
         } else if !allowed {
             "display_permission_denied"
         } else {
-            "display_recovery_unverified"
+            "display_unsupported"
         },
     }
+}
+fn capabilities(can_read: bool, allowed: bool) -> Capabilities {
+    let gnome = std::env::var("XDG_CURRENT_DESKTOP")
+        .unwrap_or_default()
+        .split(':')
+        .any(|desktop| desktop.eq_ignore_ascii_case("GNOME"));
+    capabilities_for(can_read, allowed, gnome)
 }
 fn parse(value: &glib::Variant, owner: String, allowed: bool) -> Result<Observed, DisplayError> {
     if value.type_().as_str() != STATE_TYPE || value.size() > 256 * 1024 {
@@ -379,6 +437,261 @@ fn read() -> Result<Observed, DisplayError> {
     }
     Ok(observed)
 }
+
+fn configuration_with_primary(
+    state: &glib::Variant,
+    target_id: &str,
+    serial: u32,
+    method: u32,
+) -> Result<glib::Variant, DisplayError> {
+    if !matches!(method, METHOD_VERIFY | METHOD_PERSISTENT) {
+        return Err(error(
+            "display_response_invalid",
+            "Unsupported display apply method",
+        ));
+    }
+    let observed = parse(state, "candidate".into(), true)?;
+    if observed
+        .logical
+        .iter()
+        .all(|monitor| monitor.id != target_id)
+    {
+        return Err(error(
+            "display_target_missing",
+            "Selected display is no longer active",
+        ));
+    }
+    let physical = state.child_value(1);
+    let mut current_modes = HashMap::new();
+    let mut underscanning = HashMap::new();
+    for i in 0..physical.n_children() {
+        let item = physical.child_value(i);
+        let connector: String = field(&item.child_value(0), 0)?;
+        let mut current = None;
+        for j in 0..item.child_value(1).n_children() {
+            let mode = item.child_value(1).child_value(j);
+            if prop::<bool>(&properties(&mode.child_value(6))?, "is-current") == Some(true) {
+                current = Some(field::<String>(&mode, 0)?);
+            }
+        }
+        current_modes.insert(connector, current);
+        let monitor_props = properties(&item.child_value(2))?;
+        if let Some(value) = prop::<bool>(&monitor_props, "is-underscanning") {
+            underscanning.insert(field::<String>(&item.child_value(0), 0)?, value);
+        }
+    }
+    let mut logicals = Vec::new();
+    let logical = state.child_value(2);
+    for i in 0..logical.n_children() {
+        let item = logical.child_value(i);
+        let specs = item.child_value(5);
+        let mut connectors = Vec::new();
+        let mut outputs = Vec::new();
+        for j in 0..specs.n_children() {
+            let spec = specs.child_value(j);
+            let connector: String = field(&spec, 0)?;
+            connectors.push(connector.clone());
+            // `is-underscanning` is the only currently documented mutable
+            // per-output property in this adapter; every other read property
+            // remains owned by Mutter and is intentionally not copied.
+            let output = VariantDict::new(None);
+            if let Some(value) = underscanning.get(&connector) {
+                output.insert("underscanning", value.to_variant());
+            }
+            outputs.push(glib::Variant::tuple_from_iter([
+                connector.to_variant(),
+                current_modes
+                    .get(&connector)
+                    .and_then(|mode| mode.as_ref())
+                    .ok_or_else(|| {
+                        error("display_response_invalid", "Active display mode is missing")
+                    })?
+                    .to_variant(),
+                output.end(),
+            ]));
+        }
+        connectors.sort();
+        let id =
+            serde_json::to_string(&connectors).map_err(|e| error("display_response_invalid", e))?;
+        let is_target = id == target_id;
+        logicals.push(glib::Variant::tuple_from_iter([
+            field::<i32>(&item, 0)?.to_variant(),
+            field::<i32>(&item, 1)?.to_variant(),
+            field::<f64>(&item, 2)?.to_variant(),
+            field::<u32>(&item, 3)?.to_variant(),
+            is_target.to_variant(),
+            glib::Variant::array_from_iter_with_type(
+                glib::VariantTy::new("(ssa{sv})").unwrap(),
+                outputs,
+            ),
+        ]));
+    }
+    let logicals = glib::Variant::array_from_iter_with_type(
+        glib::VariantTy::new("(iiduba(ssa{sv}))").unwrap(),
+        logicals,
+    );
+    let source_properties = properties(&state.child_value(3))?;
+    let properties = VariantDict::new(None);
+    // Mutter requires this only when the compositor advertises that the layout
+    // mode itself may be changed. Copying it prevents an accidental mode reset.
+    if prop::<bool>(&source_properties, "supports-changing-layout-mode") == Some(true) {
+        let layout_mode = prop::<u32>(&source_properties, "layout-mode")
+            .ok_or_else(|| error("display_response_invalid", "Missing mutable layout mode"))?;
+        properties.insert("layout-mode", layout_mode.to_variant());
+    }
+    let properties = properties.end();
+    let request = glib::Variant::tuple_from_iter([
+        serial.to_variant(),
+        method.to_variant(),
+        logicals,
+        properties,
+    ]);
+    if request.type_().as_str() != APPLY_TYPE {
+        return Err(error(
+            "display_response_invalid",
+            "Invalid display apply payload",
+        ));
+    }
+    Ok(request)
+}
+
+fn set_primary(
+    app: &AppHandle,
+    target_id: String,
+    expected_revision: String,
+) -> Result<Snapshot, DisplayError> {
+    let state = app.state::<DisplayState>();
+    let _read = state
+        .read_lock
+        .lock()
+        .map_err(|e| error("display_read_failed", e))?;
+    let cached = state
+        .cache
+        .lock()
+        .map_err(|e| error("display_read_failed", e))?;
+    let expected = cached
+        .snapshot
+        .as_ref()
+        .ok_or_else(|| error("display_stale_revision", "Display state has not loaded"))?;
+    if expected.revision != expected_revision {
+        return Err(error(
+            "display_stale_revision",
+            "Display state changed before applying",
+        ));
+    }
+    drop(cached);
+    let lease = MutationLease::acquire(state.mutation_until.clone())?;
+    let bus = gio::bus_get_sync(gio::BusType::Session, gio::Cancellable::NONE)
+        .map_err(|e| error("display_apply_failed", e))?;
+    bus.set_exit_on_close(false);
+    let owner: String = field(
+        &call(
+            &bus,
+            "org.freedesktop.DBus",
+            "/org/freedesktop/DBus",
+            "org.freedesktop.DBus",
+            "GetNameOwner",
+            Some(&(SERVICE,).to_variant()),
+        )?,
+        0,
+    )?;
+    let raw = call(&bus, &owner, PATH, SERVICE, "GetCurrentState", None)?;
+    let props = call(
+        &bus,
+        &owner,
+        PATH,
+        "org.freedesktop.DBus.Properties",
+        "GetAll",
+        Some(&(SERVICE,).to_variant()),
+    )?;
+    let allowed = props.type_().as_str() == "(a{sv})"
+        && prop::<bool>(
+            &properties(&props.child_value(0))?,
+            "ApplyMonitorsConfigAllowed",
+        )
+        .unwrap_or(false);
+    let observed = parse(&raw, format!("{}:{owner}", bus.guid()), allowed)?;
+    if !observed.capabilities.can_set_primary {
+        return Err(error(
+            observed.capabilities.reason,
+            "Display primary mutation is unavailable",
+        ));
+    }
+    if observed
+        .logical
+        .iter()
+        .any(|monitor| monitor.primary && monitor.id == target_id)
+    {
+        drop(_read);
+        return refresh(app);
+    }
+    let verify = configuration_with_primary(&raw, &target_id, observed.serial, METHOD_VERIFY)?;
+    call(
+        &bus,
+        &owner,
+        PATH,
+        SERVICE,
+        "ApplyMonitorsConfig",
+        Some(&verify),
+    )
+    .map_err(|e| error("display_verify_failed", e.message))?;
+    let owner_after_verify: String = field(
+        &call(
+            &bus,
+            "org.freedesktop.DBus",
+            "/org/freedesktop/DBus",
+            "org.freedesktop.DBus",
+            "GetNameOwner",
+            Some(&(SERVICE,).to_variant()),
+        )?,
+        0,
+    )?;
+    if owner_after_verify != owner {
+        return Err(error(
+            "display_stale_revision",
+            "Display service restarted while verifying",
+        ));
+    }
+    let current = call(&bus, &owner, PATH, SERVICE, "GetCurrentState", None)?;
+    let current_observed = parse(&current, format!("{}:{owner}", bus.guid()), true)?;
+    let apply = configuration_with_primary(
+        &current,
+        &target_id,
+        current_observed.serial,
+        METHOD_PERSISTENT,
+    )?;
+    call(
+        &bus,
+        &owner,
+        PATH,
+        SERVICE,
+        "ApplyMonitorsConfig",
+        Some(&apply),
+    )
+    .map_err(|e| error("display_apply_failed", e.message))?;
+    let owner_after: String = field(
+        &call(
+            &bus,
+            "org.freedesktop.DBus",
+            "/org/freedesktop/DBus",
+            "org.freedesktop.DBus",
+            "GetNameOwner",
+            Some(&(SERVICE,).to_variant()),
+        )?,
+        0,
+    )?;
+    if owner_after != owner {
+        return Err(error(
+            "display_stale_revision",
+            "Display service restarted while applying",
+        ));
+    }
+    lease.retain_for_compositor_confirmation();
+    drop(_read);
+    // Mutter owns the confirmation and timeout. Refresh publishes the preview,
+    // then MonitorsChanged publishes the kept or restored topology.
+    refresh(app)
+}
 fn requires_layout(previous: Option<&Observed>, next: &Observed) -> bool {
     // Startup/config already lays out the Dock. A delayed first read, permission
     // change or serial-only publication must not dismiss an active interaction.
@@ -435,6 +748,26 @@ pub async fn get_display_state(app: AppHandle) -> Result<Snapshot, DisplayError>
     tauri::async_runtime::spawn_blocking(move || refresh(&app))
         .await
         .map_err(|e| error("display_read_failed", e))?
+}
+#[tauri::command]
+pub async fn set_primary_monitor(
+    app: AppHandle,
+    window: tauri::WebviewWindow,
+    target_id: String,
+    expected_revision: String,
+) -> Result<Snapshot, DisplayError> {
+    if window.label() != "main" {
+        return Err(error(
+            "display_permission_denied",
+            "Primary display can only be changed from Studio",
+        ));
+    }
+    if target_id.len() > 1024 || expected_revision.len() > 256 {
+        return Err(error("display_target_missing", "Invalid display selection"));
+    }
+    tauri::async_runtime::spawn_blocking(move || set_primary(&app, target_id, expected_revision))
+        .await
+        .map_err(|e| error("display_apply_failed", e))?
 }
 #[tauri::command]
 pub async fn open_display_settings(window: tauri::WebviewWindow) -> Result<(), DisplayError> {
@@ -558,13 +891,16 @@ pub fn stop(app: &AppHandle) {
 mod tests {
     use super::*;
     fn fixture(groups: &str) -> glib::Variant {
+        fixture_with_properties(groups, "{}")
+    }
+    fn fixture_with_properties(groups: &str, global_properties: &str) -> glib::Variant {
         let text = format!(
             r#"(uint32 7,
           [(('eDP-1','Acme','Panel','private-device-id'),
             [('1920x1080@60',1920,1080,60.0,1.0,[1.0],{{'is-current': <true>}})],{{'display-name': <'Laptop'>}}),
            (('HDMI-1','Acme','Panel','another-private-id'),
             [('1280x720@75',1280,720,75.0,1.0,[1.0],{{'is-current': <true>}})],{{'display-name': <'External'>}})],
-          {groups}, {{}})"#
+          {groups}, {global_properties})"#
         );
         glib::Variant::parse(Some(glib::VariantTy::new(STATE_TYPE).unwrap()), &text).unwrap()
     }
@@ -591,8 +927,7 @@ mod tests {
                 .refresh_hz,
             Some(75.)
         );
-        assert_eq!(state.capabilities.reason, "display_recovery_unverified");
-        assert!(!state.capabilities.can_set_primary);
+        assert!(state.capabilities.can_read);
         let public = serde_json::to_string(&state.physical).unwrap();
         assert!(!public.contains("private-id") && !public.contains("private-device-id"));
     }
@@ -651,6 +986,83 @@ mod tests {
         assert!(first != restarted && first != denied);
         assert_eq!(denied.capabilities.reason, "display_permission_denied");
         assert!(!denied.capabilities.can_set_primary);
+    }
+    #[test]
+    fn capabilities_require_gnome_read_access_and_mutation_permission() {
+        let supported = capabilities_for(true, true, true);
+        assert!(supported.can_set_primary && supported.can_persist);
+        assert_eq!(supported.confirmation_owner, "compositor");
+        let non_gnome = capabilities_for(true, true, false);
+        assert!(!non_gnome.can_set_primary);
+        assert_eq!(non_gnome.reason, "display_unsupported");
+        let denied = capabilities_for(true, false, true);
+        assert_eq!(denied.reason, "display_permission_denied");
+    }
+    #[test]
+    fn compositor_confirmation_lease_rejects_duplicate_requests() {
+        let slot = Arc::new(Mutex::new(None));
+        let lease = MutationLease::acquire(slot.clone()).unwrap();
+        lease.retain_for_compositor_confirmation();
+        assert!(MutationLease::acquire(slot).is_err());
+    }
+    #[test]
+    fn primary_request_preserves_layout_and_only_changes_primary() {
+        let state = separate(true);
+        let target = parse(&state, ":1.1".into(), true)
+            .unwrap()
+            .logical
+            .into_iter()
+            .find(|monitor| monitor.connectors == ["HDMI-1"])
+            .unwrap()
+            .id;
+        let request = configuration_with_primary(&state, &target, 7, METHOD_VERIFY).unwrap();
+        assert_eq!(request.type_().as_str(), APPLY_TYPE);
+        assert_eq!(field::<u32>(&request, 0).unwrap(), 7);
+        assert_eq!(field::<u32>(&request, 1).unwrap(), METHOD_VERIFY);
+        let logicals = request.child_value(2);
+        assert_eq!(logicals.n_children(), 2);
+        let first = logicals.child_value(0);
+        let second = logicals.child_value(1);
+        assert_eq!(field::<i32>(&first, 0).unwrap(), 0);
+        assert_eq!(field::<i32>(&second, 0).unwrap(), 1920);
+        assert_eq!(field::<f64>(&first, 2).unwrap(), 1.0);
+        assert!(!field::<bool>(&first, 4).unwrap());
+        assert!(field::<bool>(&second, 4).unwrap());
+        assert_eq!(
+            field::<String>(&first.child_value(5).child_value(0), 1).unwrap(),
+            "1920x1080@60"
+        );
+        assert_eq!(
+            field::<String>(&second.child_value(5).child_value(0), 1).unwrap(),
+            "1280x720@75"
+        );
+        assert!(configuration_with_primary(&state, "missing", 7, METHOD_VERIFY).is_err());
+        assert!(configuration_with_primary(&state, &target, 7, 1).is_err());
+    }
+    #[test]
+    fn primary_request_copies_mutable_layout_mode() {
+        let state = fixture_with_properties(
+            "[(0,0,1.0,uint32 0,true,[('eDP-1','Acme','Panel','private-device-id')],{}), (1920,0,1.0,uint32 0,false,[('HDMI-1','Acme','Panel','another-private-id')],{})]",
+            "{'supports-changing-layout-mode': <true>, 'layout-mode': <uint32 2>}"
+        );
+        let target = parse(&state, ":1.1".into(), true)
+            .unwrap()
+            .logical
+            .into_iter()
+            .find(|monitor| monitor.connectors == ["HDMI-1"])
+            .unwrap()
+            .id;
+        let request = configuration_with_primary(&state, &target, 7, METHOD_VERIFY).unwrap();
+        let properties = properties(&request.child_value(3)).unwrap();
+        assert_eq!(prop::<u32>(&properties, "layout-mode"), Some(2));
+        let missing = fixture_with_properties(
+            "[(0,0,1.0,uint32 0,true,[('eDP-1','Acme','Panel','private-device-id')],{})]",
+            "{'supports-changing-layout-mode': <true>}",
+        );
+        let only = parse(&missing, ":1.1".into(), true).unwrap().logical[0]
+            .id
+            .clone();
+        assert!(configuration_with_primary(&missing, &only, 7, METHOD_VERIFY).is_err());
     }
     #[test]
     fn startup_and_metadata_publications_do_not_interrupt_popups_but_primary_changes_do() {

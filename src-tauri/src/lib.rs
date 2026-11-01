@@ -403,6 +403,7 @@ fn run_app() -> Result<(), String> {
             focus_dock,
             quit_app,
             displays::get_display_state,
+            displays::set_primary_monitor,
             displays::open_display_settings,
             platform::get_platform_info,
             platform::refresh_platform_info,

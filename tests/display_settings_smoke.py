@@ -52,7 +52,10 @@ def run(binary,output):
             cfg=json.loads((REPO/'src/config/defaults.json').read_text());cfg.update(language=language,enabled=False,launcherShortcut='',wallpaperScheduleEnabled=False)
             profile.write_text(json.dumps(dict(schemaVersion=1,revision=0,config=cfg,warning=None)))
             with (root/'app.log').open('a') as log:
-                process=subprocess.Popen([str(binary)],cwd=REPO,env=dict(os.environ,DESKMORPH_CONFIG_HOME=str(root/'config'),XDG_DATA_HOME=str(root/'data'),WEBKIT_DISABLE_DMABUF_RENDERER='1'),stdout=log,stderr=log)
+                process=subprocess.Popen([str(binary)],cwd=REPO,env=dict(os.environ,
+                    DESKMORPH_CONFIG_HOME=str(root/'config'),XDG_DATA_HOME=str(root/'data'),
+                    WEBKIT_DISABLE_DMABUF_RENDERER='1', WEBKIT_FORCE_ACCESSIBILITY='1',
+                    GTK_MODULES='atk-bridge', NO_AT_BRIDGE='0'),stdout=log,stderr=log)
             def owned():
                 desktop=Atspi.get_desktop(0)
                 return next((desktop.get_child_at_index(i) for i in range(desktop.get_child_count()) if desktop.get_child_at_index(i).get_process_id()==process.pid),None)
@@ -66,13 +69,19 @@ def run(binary,output):
             def text(node):
                 value=node.get_text_iface()
                 return node.get_name()+' '+(Atspi.Text.get_text(value,0,-1) if value else '')
-            wait(lambda:any(labels['displayRecoveryUnverified'] in text(n) for n in tree()),'Capability explanation absent')
+            wait(lambda:any(labels['displayPrimaryHelp'] in text(n) for n in tree()),'Display help absent')
             primary_buttons=wait(lambda:[n for n in tree() if n.get_role_name()=='button' and n.get_name().endswith(labels['displayAlreadyPrimary'])],'Primary status missing')
             assert len(primary_buttons)==1
+            assert not primary_buttons[0].get_state_set().contains(Atspi.StateType.ENABLED),'Current primary must not be selectable'
+            secondary_enabled=[]
             for group in before[2]:
                 suffix=labels['displayAlreadyPrimary'] if group[4] else labels['displaySetPrimary']
                 node=wait(lambda:next((n for n in tree() if n.get_role_name()=='button' and n.get_name().endswith(suffix)),None),'Display status/action absent')
-                assert not node.get_state_set().contains(Atspi.StateType.ENABLED),'Unverified mutation must be disabled'
+                if not group[4]:
+                    secondary_enabled.append(node.get_state_set().contains(Atspi.StateType.ENABLED))
+            # This smoke test never activates this control: changing host
+            # topology belongs to the isolated compositor integration suite.
+            assert all(secondary_enabled),'GNOME primary action should be available for every secondary display'
             all_names=[n.get_name() for n in tree()]
             assert any(primary in name for name in all_names),'Primary connector absent'
             action(button(labels['displayRefresh']))
@@ -81,7 +90,7 @@ def run(binary,output):
             if marker.exists():marker.unlink()
             action(button(labels['displayOpenSettings']))
             wait(marker.exists,'GIO settings fixture did not launch')
-            report['runs'].append(dict(language=language,primary=primary,logicalMonitors=len(before[2]),disabledMutation=True,refresh=True,gioSettingsFixture=True))
+            report['runs'].append(dict(language=language,primary=primary,logicalMonitors=len(before[2]),secondaryMutationEnabled=True,mutationInvoked=False,refresh=True,gioSettingsFixture=True))
             stop()
         after=bus.call_sync('org.gnome.Mutter.DisplayConfig','/org/gnome/Mutter/DisplayConfig','org.gnome.Mutter.DisplayConfig','GetCurrentState',None,None,Gio.DBusCallFlags.NONE,5000,None).unpack()
         assert before==after,'Host display state changed during read-only UI test'

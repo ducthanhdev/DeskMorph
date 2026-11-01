@@ -11,15 +11,15 @@ Hiện đã đánh dấu **98/99 mục (~99%)**. Mục còn mở: G2.10 (topolog
 - Một lượt harness trước thiếu thao tác đóng launcher; đã sửa theo coordinator thay popup. Lượt sau dừng vì không quan sát được popup đầu tiếng Anh; ba lượt chạy trọn sau đó đạt (hai debug, một release). Không dùng các lượt lỗi làm bằng chứng đạt.
 - Phạm vi mới xác minh: GNOME/X11, hai màn hình 1920×1080 scale 100%. Chưa kiểm hotplug, mixed DPI, Orca hay auto-hide end-to-end cho chế độ nhiều Dock; các bằng chứng cũ của chế độ một Dock không thay thế các ca này. G2.10 tọa độ âm vẫn mở.
 
-## Chuyển màn hình chính — đợt thực thi đầu
+## Chuyển màn hình chính — thực thi GNOME
 
-Đã triển khai native read path, tab Màn hình vi/en và mở Settings hệ thống; xem [phạm vi, bằng chứng và công việc còn lại](PRIMARY_MONITOR_IMPLEMENTATION.md). Không coi chức năng đổi primary trực tiếp đã hoàn thành: canSetPrimary=false cho đến khi policy giữ/lưu/phục hồi được kiểm chứng. Không thay topology trên desktop người dùng.
+DeskMorph hỗ trợ đổi primary trên GNOME/Mutter có `ApplyMonitorsConfigAllowed`; xem [phạm vi, bằng chứng và công việc còn lại](PRIMARY_MONITOR_IMPLEMENTATION.md). Ca GNOME/X11 thật ngày 01/11/2026 đã qua một lượt Keep laptop → HDMI và một lượt Revert HDMI → laptop, API DisplayConfig/xrandr xác nhận topology/mode/scale giữ nguyên. Không suy kết quả này thành hotplug, mixed DPI, logout/login hoặc desktop khác.
 
 ## Môi trường tham chiếu đã xác minh
 
 - Pop!_OS 24.04 LTS, x86_64; GNOME Shell 46.0; X11, DISPLAY=:1.
 - GTK 3.24.41, WebKitGTK 2.52.6.
-- Hai màn hình hiện tại: eDP-1-1 chính 1920×1080 tại (0,0); HDMI-0 1920×1080 tại (1920,0).
+- Hai màn hình hiện tại: HDMI-0 chính 1920×1080 tại (1920,0); eDP-1-1 1920×1080 tại (0,0). HDMI được người dùng chọn Giữ trong ca primary ngày 01/11/2026.
 - Baseline GNOME scaling-factor=0 (tự động), text-scaling-factor=1.0; [48/48 ca fractional/mixed DPI](benchmarks/dpi-native-full-matrix-2026-10-30/result.json) về sau đã chạy thật và khôi phục baseline.
 - Có một phiên phát triển khác đang dùng target/debug và cổng dev. Build kiểm thử dùng riêng target/agent để tránh tranh chấp; script chỉ thao tác instance có DESKMORPH_CONFIG_HOME=/tmp/deskmorph-desktop-test/config (nhận diện XDG_CONFIG_HOME cũ chỉ để restart bản test cũ). Các ca hình nền giữ XDG_CONFIG_HOME của desktop để GSettings và dconf service đọc/ghi cùng namespace; ca system-locations cố ý dùng MIME/user-dirs riêng và không thay hình nền.
 

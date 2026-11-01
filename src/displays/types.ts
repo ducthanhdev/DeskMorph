@@ -1,6 +1,6 @@
 export interface DisplayCapabilities {
   canRead: boolean; canSetPrimary: boolean; canPersist: boolean; recoveryAvailable: boolean;
-  confirmationOwner: 'unavailable'; reason: string;
+  confirmationOwner: 'compositor' | 'unavailable'; reason: string;
 }
 export interface LogicalMonitor {
   id: string; name: string; connectors: string[]; primary: boolean;

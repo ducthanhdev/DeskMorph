@@ -1,12 +1,12 @@
 # Kế hoạch đổi màn hình chính của hệ điều hành
 
-Ngày lập: 31/10/2026. Trạng thái: chỉ lập kế hoạch, chưa triển khai hoặc thay cấu hình màn hình.
+Ngày lập: 31/10/2026. Cập nhật: 01/11/2026. Trạng thái: adapter GNOME và thao tác đổi primary đã được triển khai có kiểm soát; các mục chưa đánh dấu vẫn là phạm vi chưa nghiệm thu.
 
 Tài liệu giai đoạn tiếp theo: [Phân tích hệ thống](PRIMARY_MONITOR_SYSTEM_ANALYSIS.md), gồm khảo sát API chỉ đọc, yêu cầu, mô hình dữ liệu và các điểm cần kiểm chứng trước khi thiết kế.
 
 Thiết kế triển khai: [System Design v1](PRIMARY_MONITOR_SYSTEM_DESIGN.md), quy định module, IPC, recovery agent, khóa theo session và các cổng kiểm chứng GNOME.
 
-Tiến độ thực thi: [đợt read path và chuyển sang cài đặt hệ thống](PRIMARY_MONITOR_IMPLEMENTATION.md). Chưa hoàn thành mutation trực tiếp; checklist dưới đây không được coi đã đạt toàn bộ.
+Tiến độ thực thi: [đợt chuyển giao và thực thi](PRIMARY_MONITOR_IMPLEMENTATION.md). Checklist dưới đây không được coi đã đạt toàn bộ.
 
 ## 1. Kết quả mong muốn
 
@@ -25,9 +25,9 @@ Khi đổi primary, giữ nguyên vị trí trái/phải/trên/dưới, mode, t�
 
 ## 3. Khảo sát và chốt cơ chế hệ thống
 
-- [ ] P1.1 Probe `org.gnome.Mutter.DisplayConfig`: introspection, GetCurrentState, MonitorsChanged, phương thức apply và giới hạn cấu hình. Tái sử dụng kinh nghiệm từ harness Mutter hiện có, không đưa mã test vào runtime.
-- [ ] P1.2 Đọc topology thực: logical monitor, connector, mode ID, scale, transform, primary, layout mode và các thuộc tính cần bảo toàn. Dùng snapshot có serial/revision, không chỉ tên màn hình từ Tauri.
-- [ ] P1.3 Trong môi trường thử riêng, xác minh VERIFY, cách apply/persist và cơ chế xác nhận/timeout do compositor cung cấp. Xác định ai hiển thị hộp xác nhận để tránh hai hộp cạnh tranh.
+- [x] P1.1 Probe `org.gnome.Mutter.DisplayConfig`: introspection, GetCurrentState, MonitorsChanged, phương thức apply và giới hạn cấu hình. Tái sử dụng kinh nghiệm từ harness Mutter hiện có, không đưa mã test vào runtime.
+- [x] P1.2 Đọc topology thực: logical monitor, connector, mode ID, scale, transform, primary, layout mode và các thuộc tính cần bảo toàn. Dùng snapshot có serial/revision, không chỉ tên màn hình từ Tauri.
+- [x] P1.3 Trong môi trường thử riêng, xác minh VERIFY, persistent apply và xác nhận/timeout do compositor cung cấp. GNOME Shell sở hữu hộp xác nhận, Studio không dựng timer cạnh tranh.
 - [ ] P1.4 Chứng minh khả năng phục hồi nếu UI không phản hồi hoặc tiến trình chết. Ưu tiên timeout do compositor quản lý; nếu không có, cần cơ chế giám sát độc lập được kiểm chứng trước khi mở tính năng. Timer trong React hoặc trong cùng tiến trình không đủ làm bảo đảm phục hồi.
 - [ ] P1.5 Kiểm chứng việc lưu qua logout/login hoặc restart phiên desktop. Phân biệt rõ thay đổi tạm và đã lưu.
 
@@ -35,11 +35,11 @@ Khi đổi primary, giữ nguyên vị trí trái/phải/trên/dưới, mode, t�
 
 ## 4. Native backend
 
-- [ ] P2.1 Tạo module `src-tauri/src/displays/` với adapter GNOME, model snapshot và lỗi có mã ổn định. Capability quản lý primary độc lập với capability đặt Dock.
+- [x] P2.1 Tạo module `src-tauri/src/displays/` với adapter GNOME, model snapshot và lỗi có mã ổn định. Capability quản lý primary độc lập với capability đặt Dock.
 - [ ] P2.2 Cung cấp IPC dự kiến: `get_display_state`, `preview_primary_monitor`, `confirm_primary_monitor`, `revert_primary_monitor`. Preview trả transaction ID và deadline do native quản lý; confirm/revert chỉ nhận transaction hiện hành.
-- [ ] P2.3 Đọc snapshot mới trước khi apply; xác minh target còn hoạt động và revision khớp. Target là logical monitor có identity từ adapter, không suy ra bằng vị trí hoặc tên hiển thị.
-- [ ] P2.4 Tạo cấu hình từ snapshot, chỉ đổi cờ primary. Giữ nguyên thuộc tính khác; VERIFY trước khi apply nếu backend hỗ trợ. Không chạy shell với tên connector do UI cung cấp.
-- [ ] P2.5 Serialize mutation: tối đa một giao dịch đang chờ xác nhận trong toàn ứng dụng. Chọn màn vốn đang là primary trả thành công không thay đổi.
+- [x] P2.3 Đọc snapshot mới trước khi apply; xác minh target còn hoạt động và revision khớp. Target là logical monitor có identity từ adapter, không suy ra bằng vị trí hoặc tên hiển thị.
+- [x] P2.4 Tạo cấu hình từ snapshot, chỉ đổi cờ primary. Giữ nguyên thuộc tính khác; VERIFY trước khi apply nếu backend hỗ trợ. Không chạy shell với tên connector do UI cung cấp.
+- [x] P2.5 Serialize mutation: tối đa một yêu cầu DeskMorph trong khoảng GNOME đang xác nhận; request trùng nhận `display_busy`. Chọn màn vốn đang là primary trả thành công không thay đổi.
 - [ ] P2.6 Đọc lại trạng thái sau apply/confirm/revert. Chỉ báo thành công khi trạng thái hệ điều hành xác nhận; phản ánh lỗi lưu nếu preview thành công nhưng persist thất bại.
 - [ ] P2.7 Khi hotplug hoặc desktop Settings thay đổi topology giữa giao dịch: vô hiệu hóa giao dịch, refresh và báo rõ. Chỉ khôi phục khi snapshot còn tương thích và trạng thái hiện tại vẫn thuộc giao dịch của mình; không apply lại snapshot cũ lên màn đã rút hoặc ghi đè thay đổi mới bên ngoài.
 - [ ] P2.8 Subscribe sự kiện thay đổi, gộp sự kiện trùng và hủy subscription khi thoát. Lỗi D-Bus, unsupported, serial cũ, target mất, apply bị từ chối và rollback thất bại có thông báo riêng.
@@ -47,9 +47,9 @@ Khi đổi primary, giữ nguyên vị trí trái/phải/trên/dưới, mode, t�
 ## 5. Giao diện Studio
 
 - [x] P3.1 Thêm mục “Màn hình” vào Studio, có tên/connector, độ phân giải, scale và nhãn “Màn hình chính”. Danh sách là bắt buộc; sơ đồ vị trí chỉ thêm nếu hỗ trợ nhận diện rõ hơn.
-- [ ] P3.2 Nút “Đặt làm màn hình chính” cho từng logical monitor hợp lệ. Vô hiệu hóa nút trên primary hiện tại và trong lúc có giao dịch.
+- [x] P3.2 Nút “Đặt làm màn hình chính” cho từng logical monitor hợp lệ. Vô hiệu hóa nút trên primary hiện tại và trong lúc gửi yêu cầu.
 - [ ] P3.3 Mô tả ngắn tác động đến desktop và giữ nguyên bố trí. Chọn → áp dụng thử → “Giữ thay đổi” hoặc “Hoàn tác”, thời gian dự kiến 15–20 giây, chốt theo cơ chế compositor đã xác minh.
-- [ ] P3.4 Chỉ có một nơi điều khiển xác nhận. Nếu compositor cung cấp hộp xác nhận, Studio theo dõi kết quả thay vì dựng countdown độc lập không cùng deadline.
+- [x] P3.4 Chỉ có một nơi điều khiển xác nhận. GNOME cung cấp hộp xác nhận; Studio không dựng countdown độc lập.
 - [ ] P3.5 UI tiếng Việt/Anh, thao tác bằng bàn phím, focus hợp lý, thông báo screen reader khi áp dụng/hoàn tác/lỗi. Timeout vẫn hoạt động khi Studio mất focus hoặc bị đóng.
 - [ ] P3.6 Refresh theo thay đổi desktop và có nút tải lại. Hiển thị lỗi kèm thử lại; không để lựa chọn optimistic tồn tại khi apply thất bại.
 
@@ -72,7 +72,7 @@ Khi đổi primary, giữ nguyên vị trí trái/phải/trên/dưới, mode, t�
 
 ### Kiểm thực tế, tách khỏi unit test
 
-- [ ] P6.1 Hai màn laptop/HDMI: chuyển A → B → A ít nhất ba vòng, xác minh primary bằng API hệ điều hành, không chỉ nhãn UI.
+- [ ] P6.1 Đã qua một lượt Studio → GNOME Keep: laptop → HDMI và một lượt HDMI → laptop → GNOME Revert, xác minh bằng DisplayConfig/xrandr. Còn thiếu ba vòng A → B → A đầy đủ.
 - [ ] P6.2 Chạy ba chế độ Dock (primary/cụ thể/tất cả), vị trí trên/dưới; đo vị trí/kích thước/input region và kiểm popup trên từng màn hình.
 - [ ] P6.3 Giữ thay đổi, hoàn tác thủ công, hết giờ, đóng Studio và kill tiến trình trong thời gian thử. Không chấp nhận nếu mất khả năng điều khiển hoặc không phục hồi như thiết kế.
 - [ ] P6.4 Rút/cắm HDMI trong giao dịch; đổi primary từ Settings ngoài ứng dụng; ứng dụng phản ánh trạng thái mới và không ghi đè thao tác bên ngoài.

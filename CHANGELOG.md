@@ -2,7 +2,7 @@
 
 ## Unreleased — development 0.1.0
 
-- Thêm tab Màn hình vi/en: đọc GNOME primary/logical groups/mode/Hz, cập nhật sự kiện và mở Display Settings qua GIO. Đổi primary trực tiếp chưa bật; spike chỉ xác nhận preview và timeout auto-revert trong GNOME headless, chưa chứng nhận keep/persistence/crash recovery.
+- Thêm đổi màn hình chính GNOME trong Studio: VERIFY trước khi gửi persistent DisplayConfig, giữ mode/Hz/scale/transform/vị trí/mirror, và để GNOME sở hữu hộp Giữ thay đổi/Hoàn tác. Lab headless riêng đã kiểm explicit Keep/Revert và Shell restart; chưa chứng nhận persistence qua logout/login hay tất cả desktop khác.
 
 - Thêm lựa chọn “Tất cả màn hình” cho Dock trên X11; mỗi màn hình có Dock riêng, popup bám đúng nguồn, đồng bộ cấu hình và tắt/bật toàn bộ.
 
