@@ -42,7 +42,7 @@ export const DockContextMenu: React.FC<DockContextMenuProps> = ({
               width: "6px",
               height: "6px",
               borderRadius: "50%",
-              background: menu.isRunning ? "#10b981" : "#64748b",
+              background: menu.isRunning ? "var(--status-positive, #2e9e62)" : "#64748b",
               display: "inline-block",
             }}
           />
@@ -68,7 +68,7 @@ export const DockContextMenu: React.FC<DockContextMenuProps> = ({
         className="dock-menu-item"
         onClick={() => onTogglePin(menu.appId, menu.appName, menu.command)}
       >
-        <span className="dock-menu-item-icon" style={{ color: menu.isPinned ? "#f59e0b" : "#94a3b8" }}>
+        <span className="dock-menu-item-icon" style={{ color: menu.isPinned ? "var(--status-warning, #e5a93b)" : "#94a3b8" }}>
           {menu.isPinned ? <PinOff size={15} /> : <Pin size={15} />}
         </span>
         <span>{menu.isPinned ? t("unpin") : t("pin")}</span>
@@ -95,7 +95,7 @@ export const DockContextMenu: React.FC<DockContextMenuProps> = ({
             className="dock-menu-item dock-menu-item-danger"
             onClick={() => onForceKill(menu.windowId)}
           >
-            <span className="dock-menu-item-icon" style={{ color: "#ef4444" }}>
+            <span className="dock-menu-item-icon" style={{ color: "var(--status-negative, #e5484d)" }}>
               <Flame size={15} />
             </span>
             <span>{t("forceQuit")}</span>

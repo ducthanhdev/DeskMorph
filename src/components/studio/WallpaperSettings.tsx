@@ -11,6 +11,12 @@ import { useI18n } from "../../i18n/useI18n";
 import { Card, Toggle } from "./Controls";
 import { formatClock, formatClockDateTime } from "../../dateTime";
 import { capabilityReason } from "../../capabilities";
+
+function StarIcon({ filled }: { filled: boolean }) {
+  return <svg width="14" height="14" viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+  </svg>;
+}
 interface Image { path: string; filename: string; folder: string; format: string }
 interface Scan { images: Image[]; issues: { path: string; message: string }[]; limited: boolean }
 interface ScheduleStatus { enabled: boolean; running: boolean; nextRunUnixMs: number | null; lastRunUnixMs: number | null; lastPath: string | null; lastError: string | null }
@@ -132,7 +138,7 @@ export function WallpaperSettings() {
           {thumbnails[image.path]?.thumbnail ? <img className="wallpaper-thumb-img" loading="lazy" src={convertFileSrc(thumbnails[image.path].thumbnail!)} alt="" onError={() => setThumbnails((previous) => ({ ...previous, [image.path]: { path: image.path, thumbnail: null, error: "unavailable" } }))} /> : <div className="wallpaper-thumb-placeholder">{thumbnails[image.path]?.error ? t("thumbnailError") : t("loading")}</div>}
           <span className="wallpaper-name">{image.filename}</span>
         </button>
-        <button data-popup-focus-scope data-library-focus className="wallpaper-favorite" aria-label={`${t("favorite")} ${image.filename}`} aria-pressed={favorites.has(image.path)} onClick={() => void updateConfig({ wallpaperFavorites: favorites.has(image.path) ? config.wallpaperFavorites.filter((path) => path !== image.path) : [...config.wallpaperFavorites, image.path] })}>{favorites.has(image.path) ? "★" : "☆"}</button>
+        <button data-popup-focus-scope data-library-focus className="wallpaper-favorite" aria-label={`${t("favorite")} ${image.filename}`} aria-pressed={favorites.has(image.path)} onClick={() => void updateConfig({ wallpaperFavorites: favorites.has(image.path) ? config.wallpaperFavorites.filter((path) => path !== image.path) : [...config.wallpaperFavorites, image.path] })}><StarIcon filled={favorites.has(image.path)} /></button>
       </article>)}</div>
       <div className="settings-inline"><button data-popup-focus-scope data-library-focus data-library-page disabled={currentPage === 0} onClick={() => setPage(currentPage - 1)}>{t("previousPage")}</button><button data-popup-focus-scope data-library-focus data-library-page disabled={currentPage >= pages - 1} onClick={() => setPage(currentPage + 1)}>{t("nextPage")}</button></div>
     </>}

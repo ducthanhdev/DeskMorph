@@ -34,7 +34,10 @@ export function usePlatform() {
       }
     };
     void load();
-    listen("deskmorph:platform-changed", load).then((unlisten) => { if (disposed) unlisten(); else stop = unlisten; }).catch((e) => { if (!disposed) setError(errorMessage(e)); });
+    listen("deskmorph:platform-changed", load).then((unlisten) => { if (disposed) unlisten(); else stop = unlisten; }).catch((e) => {
+      const isBrowser = typeof window !== "undefined" && !("__TAURI_INTERNALS__" in window);
+      if (!disposed && !isBrowser) setError(errorMessage(e));
+    });
     return () => { disposed = true; stop?.(); };
   }, [reload]);
   const refresh = () => {

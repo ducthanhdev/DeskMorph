@@ -61,7 +61,7 @@ export function DockPreview() {
     {windowError && <p role="status">{t("windowStatusUnavailable")}</p>}
     <div className={`dock-preview-stage ${config.position === "top" ? "preview-top" : ""}`}>
       <div className={`taskbar-container preview-surface ${reducedMotion ? "reduce-motion" : ""}`} style={dockSurface(config)}>
-        <div className="dock-left"><span className="dock-launcher-btn" role="img" aria-label={t("searchApps")} style={{ width: launcherSize, height: launcherSize, background: `linear-gradient(135deg, ${config.accentColor}, #8b5cf6)` }}><Sparkles className="dock-launcher-glyph" size={Math.round(launcherSize * .48)} color="#0c1017" /></span><div className="dock-divider" /></div>
+        <div className="dock-left"><span className="dock-launcher-btn" role="img" aria-label={t("searchApps")} style={{ width: launcherSize, height: launcherSize, background: config.accentColor }}><Sparkles className="dock-launcher-glyph" size={Math.round(launcherSize * .48)} color="#0c1017" /></span><div className="dock-divider" /></div>
         {config.showApps && <div className="dock-apps-viewport"><div className={`dock-apps ${hover !== null ? "is-magnifying" : ""}`} onMouseMove={event => setHover(event.clientX)} onMouseLeave={() => setHover(null)}>
           <div className="dock-pinned-group">{pinnedItems.map(({ pinned, windows }) => {
             const installed = installedForPin(pinned, apps);

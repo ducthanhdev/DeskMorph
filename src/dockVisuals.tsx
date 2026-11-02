@@ -13,9 +13,9 @@ export const getPinnedVisual = (app: PinnedApp) => {
       case "code":
         return {
           icon: <Code2 size={20} />,
-          color: app.color || "#818cf8",
-          bg: "rgba(129, 140, 248, 0.2)",
-          border: "rgba(129, 140, 248, 0.5)",
+          color: app.color || "#38bdf8",
+          bg: "rgba(56, 189, 248, 0.2)",
+          border: "rgba(56, 189, 248, 0.5)",
         };
       case "terminal":
         return {
@@ -41,9 +41,9 @@ export const getPinnedVisual = (app: PinnedApp) => {
       default:
         return {
           icon: <AppWindow size={20} />,
-          color: app.color || "#c084fc",
-          bg: "rgba(192, 132, 252, 0.18)",
-          border: "rgba(192, 132, 252, 0.45)",
+          color: app.color || "#38bdf8",
+          bg: "rgba(56, 189, 248, 0.18)",
+          border: "rgba(56, 189, 248, 0.45)",
         };
     }
   };
@@ -88,9 +88,9 @@ export const getAppVisual = (className: string) => {
     ) {
       return {
         icon: <Code2 size={20} />,
-        color: "#818cf8",
-        bg: "rgba(129, 140, 248, 0.2)",
-        border: "rgba(129, 140, 248, 0.5)",
+        color: "#38bdf8",
+        bg: "rgba(56, 189, 248, 0.2)",
+        border: "rgba(56, 189, 248, 0.5)",
       };
     }
     if (lower.includes("nautilus") || lower.includes("file") || lower.includes("thunar")) {
@@ -119,9 +119,9 @@ export const getAppVisual = (className: string) => {
     }
     return {
       icon: <AppWindow size={20} />,
-      color: "#c084fc",
-      bg: "rgba(192, 132, 252, 0.18)",
-      border: "rgba(192, 132, 252, 0.45)",
+      color: "#38bdf8",
+      bg: "rgba(56, 189, 248, 0.18)",
+      border: "rgba(56, 189, 248, 0.45)",
     };
   };
 

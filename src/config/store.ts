@@ -40,10 +40,15 @@ function connect() {
   let unlisten: (() => void) | undefined;
   const start = async () => {
     try {
-      const stop = await listen<ConfigSnapshot>("deskmorph:config-snapshot", (event) => {
-        if (!disposed) accept(event.payload);
-      });
-      if (disposed) { stop(); return; }
+      let stop: (() => void) | undefined;
+      try {
+        stop = await listen<ConfigSnapshot>("deskmorph:config-snapshot", (event) => {
+          if (!disposed) accept(event.payload);
+        });
+      } catch {
+        stop = () => {};
+      }
+      if (disposed) { stop?.(); return; }
       unlisten = stop;
       let legacy: unknown = null;
       let raw: string | null = null;

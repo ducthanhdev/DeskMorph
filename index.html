@@ -3,7 +3,67 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <title>DeskMorph</title>
+    <script>
+      if (!window.__TAURI_INTERNALS__) {
+        window.__BROWSER_INVOKE__ = function(command, args) {
+          if (command === "get_config") {
+            return {
+              schemaVersion: 1, revision: 1,
+              config: {
+                enabled: true, position: "bottom", height: 56, iconSize: 36, iconSpacing: 8,
+                opacity: 0.9, borderRadius: 14, accentColor: "#48b9c7", bouncingLaunch: true,
+                dynamicShadow: false, magnification: true, maxMagnificationScale: 1.35,
+                reduceMotion: false, autoHide: false, keepDockOnClose: true, monitor: "primary",
+                language: "vi", clockSeconds: false, showStats: true, showShuffle: true,
+                showAudio: true, showClock: true, showApps: true, launcherShortcut: "Ctrl+Super+K",
+                pinnedApps: [
+                  { id: "term", name: "Terminal", command: "alacritty", matchClasses: ["alacritty"], iconType: "terminal", color: "#34d399", enabled: true },
+                  { id: "files", name: "Files", command: "nautilus", matchClasses: ["nautilus"], iconType: "files", color: "#fbbf24", enabled: true },
+                  { id: "browser", name: "Browser", command: "chromium", matchClasses: ["chromium"], iconType: "chrome", color: "#38bdf8", enabled: true },
+                  { id: "code", name: "VS Code", command: "code", matchClasses: ["code"], iconType: "code", color: "#38bdf8", enabled: true }
+                ],
+                wallpaperFolders: [], wallpaperRecursive: true, wallpaperFavorites: [],
+                wallpaperIntervalMinutes: 15, customApps: []
+              },
+              warning: null
+            };
+          }
+          if (command === "get_platform_info") {
+            return {
+              session: "wayland", desktop: "GNOME", windowManagement: true, wallpaper: true,
+              forceQuit: true, dockPlacement: true, autoHide: true, unavailableReasons: {},
+              windows: { enumerate: true, activate: true, close: true }, workspaces: true, reasons: [],
+              monitors: [{ primary: true, name: "DP-1", x: 0, y: 0, width: 1920, height: 1080, scale: 1 }]
+            };
+          }
+          if (command === "get_system_stats") {
+            return { cpu_usage: 14.5, ram_used_mb: 4096, ram_total_mb: 16384, ram_percent: 25.0 };
+          }
+          if (command === "get_installed_applications") {
+            return [
+              { id: "alacritty", name: "Terminal", exec: "alacritty", iconPath: null },
+              { id: "nautilus", name: "Files", exec: "nautilus", iconPath: null },
+              { id: "chromium", name: "Browser", exec: "chromium", iconPath: null },
+              { id: "code", name: "Code", exec: "code", iconPath: null }
+            ];
+          }
+          if (command === "get_open_windows") return [];
+          if (command === "get_displays") {
+            return {
+              epoch: "dev", sequence: 1, revision: "dev:1", logicalMonitors: [], physicalMonitors: [],
+              transaction: null,
+              capabilities: { canRead: true, canSetPrimary: true, canPersist: true, recoveryAvailable: false, confirmationOwner: "self" }
+            };
+          }
+          if (command === "scan_wallpapers") return { images: [], issues: [], limited: false };
+          return undefined;
+        };
+      }
+    </script>
   </head>
 
   <body>

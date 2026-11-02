@@ -547,7 +547,7 @@ export const Taskbar: React.FC = () => {
             style={{
               width: `${launcherSize}px`,
               height: `${launcherSize}px`,
-              background: `linear-gradient(135deg, ${config.accentColor}, #8b5cf6)`,
+              background: config.accentColor,
             }}
           >
             <Sparkles className="dock-launcher-glyph" size={Math.round(launcherSize * 0.48)} color="#0c1017" />

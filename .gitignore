@@ -25,3 +25,7 @@ dist-ssr
 
 # Python native UI test cache
 __pycache__/
+
+# Design taste skill artifacts & local assistant agents
+.taste-skill/
+.agents/

@@ -22,6 +22,8 @@ const STATE_TYPE: &str = "(ua((ssss)a(siiddada{sv})a{sv})a(iiduba(ssss)a{sv})a{s
 const APPLY_TYPE: &str = "(uua(iiduba(ssa{sv}))a{sv})";
 const METHOD_VERIFY: u32 = 0;
 const METHOD_PERSISTENT: u32 = 2;
+const APPLY_READBACK_ATTEMPTS: u8 = 3;
+const APPLY_READBACK_DELAY: Duration = Duration::from_millis(150);
 
 #[derive(Clone, Debug, Serialize)]
 pub struct DisplayError {
@@ -94,6 +96,42 @@ fn same_requested_topology(cached: &Observed, current: &Observed) -> bool {
     cached.owner == current.owner
         && cached.logical == current.logical
         && cached.physical == current.physical
+}
+
+/// The response after Apply must retain every observable layout field. Only
+/// the primary flag is permitted to move to the selected logical monitor.
+fn applied_primary_preserves_layout(
+    baseline: &Observed,
+    applied: &Observed,
+    target_id: &str,
+) -> bool {
+    if baseline.owner != applied.owner
+        || baseline.physical != applied.physical
+        || baseline.logical.len() != applied.logical.len()
+    {
+        return false;
+    }
+    baseline.logical.iter().all(|before| {
+        applied
+            .logical
+            .iter()
+            .find(|after| after.id == before.id)
+            .is_some_and(|after| {
+                before.id == after.id
+                    && before.name == after.name
+                    && before.connectors == after.connectors
+                    && before.x == after.x
+                    && before.y == after.y
+                    && before.scale == after.scale
+                    && before.transform == after.transform
+                    && after.primary == (before.id == target_id)
+            })
+    }) && applied
+        .logical
+        .iter()
+        .filter(|monitor| monitor.primary)
+        .map(|monitor| monitor.id.as_str())
+        .eq(std::iter::once(target_id))
 }
 struct Cache {
     epoch: String,
@@ -713,10 +751,32 @@ fn set_primary(
         ));
     }
     lease.retain_for_compositor_confirmation();
+    let mut applied = None;
+    for attempt in 0..APPLY_READBACK_ATTEMPTS {
+        match read() {
+            Ok(next) if applied_primary_preserves_layout(&observed, &next, &target_id) => {
+                applied = Some(next);
+                break;
+            }
+            Ok(_) | Err(_) if attempt + 1 < APPLY_READBACK_ATTEMPTS => {
+                std::thread::sleep(APPLY_READBACK_DELAY);
+            }
+            Ok(_) => break,
+            Err(_) => break,
+        }
+    }
     drop(_read);
     // Mutter owns the confirmation and timeout. Refresh publishes the preview,
     // then MonitorsChanged publishes the kept or restored topology.
-    refresh(app)
+    let snapshot = refresh(app)?;
+    if applied.is_some() {
+        Ok(snapshot)
+    } else {
+        Err(error(
+            "display_apply_unconfirmed",
+            "The compositor did not confirm the requested primary display",
+        ))
+    }
 }
 fn requires_layout(previous: Option<&Observed>, next: &Observed) -> bool {
     // Startup/config already lays out the Dock. A delayed first read, permission
@@ -979,6 +1039,29 @@ mod tests {
         assert!(!same_requested_topology(&baseline, &primary_changed));
         assert!(!same_requested_topology(&baseline, &owner_changed));
         assert!(same_requested_topology(&baseline, &baseline.clone()));
+    }
+    #[test]
+    fn apply_readback_requires_only_the_requested_primary_to_change() {
+        let baseline = parse(&separate(true), ":1.1".into(), true).unwrap();
+        let target = baseline
+            .logical
+            .iter()
+            .find(|monitor| !monitor.primary)
+            .unwrap()
+            .id
+            .clone();
+        let applied = parse(&separate(false), ":1.1".into(), true).unwrap();
+        assert!(applied_primary_preserves_layout(
+            &baseline, &applied, &target
+        ));
+
+        let moved = parse(
+            &fixture("[(0,0,1.0,uint32 0,false,[('eDP-1','Acme','Panel','private-device-id')],{}), (2000,0,1.0,uint32 0,true,[('HDMI-1','Acme','Panel','another-private-id')],{})]"),
+            ":1.1".into(), true,
+        ).unwrap();
+        assert!(!applied_primary_preserves_layout(
+            &baseline, &moved, &target
+        ));
     }
     #[test]
     fn mirror_is_one_logical_target_and_inactive_outputs_remain_visible() {

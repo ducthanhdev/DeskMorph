@@ -46,6 +46,6 @@ export function magnificationScale(distance: number, maxScale: number) {
 }
 export const BUILTIN_PRESETS = [
   { id: "nord", nameKey: "themeNord", appearance: { position: "bottom", height: 48, iconSize: 32, iconSpacing: 6, opacity: .8, borderRadius: 12, accentColor: "#88c0d0", bouncingLaunch: false, dynamicShadow: false, magnification: true, maxMagnificationScale: 1.2, reduceMotion: false } },
-  { id: "neon", nameKey: "themeNeon", appearance: { position: "bottom", height: 64, iconSize: 42, iconSpacing: 10, opacity: .92, borderRadius: 20, accentColor: "#8b5cf6", bouncingLaunch: true, dynamicShadow: true, magnification: true, maxMagnificationScale: 1.35, reduceMotion: false } },
+  { id: "neon", nameKey: "themeNeon", appearance: { position: "bottom", height: 64, iconSize: 42, iconSpacing: 10, opacity: .92, borderRadius: 20, accentColor: "#06b6d4", bouncingLaunch: true, dynamicShadow: true, magnification: true, maxMagnificationScale: 1.35, reduceMotion: false } },
   { id: "pop", nameKey: "themePop", appearance: { position: "bottom", height: 52, iconSize: 36, iconSpacing: 8, opacity: .85, borderRadius: 16, accentColor: "#48b9c7", bouncingLaunch: true, dynamicShadow: true, magnification: true, maxMagnificationScale: 1.35, reduceMotion: false } },
 ] as const;

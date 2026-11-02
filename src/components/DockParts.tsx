@@ -25,10 +25,10 @@ export function DockStats({ stats, accentColor }: { stats: SystemStats | null; a
   const ramDescription = `RAM: ${(stats.ram_used_mb / 1024).toFixed(1)} GiB / ${(stats.ram_total_mb / 1024).toFixed(1)} GiB (${stats.ram_percent}%)`;
   return <div className="taskbar-section stats-section">
     <div className="stat-pill" role="img" aria-label={`CPU: ${stats.cpu_usage}%`} data-dock-tooltip={`CPU: ${stats.cpu_usage}%`}>
-      <Cpu size={14} className="stat-icon cpu-icon" /><div className="stat-bar-mini"><div className="stat-bar-fill" style={{ width: `${Math.min(stats.cpu_usage, 100)}%`, background: stats.cpu_usage > 75 ? "#ef4444" : accentColor }} /></div><span className="stat-text">{stats.cpu_usage.toFixed(0)}%</span>
+      <Cpu size={14} className="stat-icon cpu-icon" /><div className="stat-bar-mini"><div className="stat-bar-fill" style={{ width: `${Math.min(stats.cpu_usage, 100)}%`, background: stats.cpu_usage > 75 ? "var(--status-negative, #e5484d)" : accentColor }} /></div><span className="stat-text">{stats.cpu_usage.toFixed(0)}%</span>
     </div>
     <div className="stat-pill" role="img" aria-label={ramDescription} data-dock-tooltip={ramDescription}>
-      <HardDrive size={14} className="stat-icon ram-icon" /><div className="stat-bar-mini"><div className="stat-bar-fill" style={{ width: `${Math.min(stats.ram_percent, 100)}%`, background: stats.ram_percent > 85 ? "#ef4444" : "#a855f7" }} /></div><span className="stat-text">{stats.ram_percent.toFixed(0)}%</span>
+      <HardDrive size={14} className="stat-icon ram-icon" /><div className="stat-bar-mini"><div className="stat-bar-fill" style={{ width: `${Math.min(stats.ram_percent, 100)}%`, background: stats.ram_percent > 85 ? "var(--status-negative, #e5484d)" : accentColor }} /></div><span className="stat-text">{stats.ram_percent.toFixed(0)}%</span>
     </div>
   </div>;
 }
